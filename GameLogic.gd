@@ -113,6 +113,7 @@ func NextWeek():
 	# operation proceedings
 	i = 0
 	while i < len(Operations):
+		Operations[i].WeeksPassed += 1
 		if Operations[i].Stage == OperationGenerator.Stage.NOT_STARTED:
 			# looking for free officers
 			if OfficersInHQ > 0:
@@ -278,6 +279,60 @@ func NextWeek():
 					}
 				)
 			doesItEndWithCall = true
+		elif Operations[i].Stage == OperationGenerator.Stage.ABROAD_OPERATION:
+			# here add random complications in the future
+			Operations[i].AbroadProgress -= Operations[i].AbroadRateOfProgress
+			if Operations[i].AbroadProgress <= 0:
+				# operation finished
+				# debriefing variables
+				Operations[i].Stage = OperationGenerator.Stage.FINISHED
+				OfficersInHQ += Operations[i].AbroadPlan.Officers
+				OfficersAbroad -= Operations[i].AbroadPlan.Officers
+				BudgetOngoingOperations -= Operations[i].AbroadPlan.Cost
+				# debriefing government and effect on the user
+				var govFeedback = 0  # from -100 to 100, usually -20 to 20
+				var weekDiff = (0.0 + Operations[i].WeeksPassed - Operations[i].ExpectedWeeks) / Operations[i].ExpectedWeeks
+				govFeedback += weekDiff * 20  # -2 for being 10% late
+				var qualityDiff = (0.0 + Operations[i].AbroadPlan.Quality - Operations[i].ExpectedQuality) / Operations[i].ExpectedQuality
+				if qualityDiff > 2.0: qualityDiff = 2.0
+				govFeedback += qualityDiff * 10  # +1 for 10% better quality
+				if govFeedback > 0: govFeedback *= 0.5  # positive trust more difficult to gather
+				govFeedback = int(govFeedback)
+				Trust += govFeedback
+				print(govFeedback)
+				var govFeedbackDesc = "positively rated its execution.\nThe bureau gained "+str(govFeedback)+"% of trust."
+				if govFeedback < 0: govFeedbackDesc = "negatively rated its execution.\nThe bureau lost "+str((-1)*govFeedback)+"% of trust."
+				# debriefing user
+				AddEvent(Operations[i].Name + ": "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned to homeland")
+				AddEvent("Bureau finished operation "+Operations[i].Name)
+				CallManager.CallQueue.append(
+					{
+						"Header": "Important Information",
+						"Level": Operations[i].Level,
+						"Operation": Operations[i].Name,
+						"Content": "Operation was sucessfully finished.\n" \
+							+ "Government " + govFeedbackDesc,
+						"Show1": false,
+						"Show2": false,
+						"Show3": false,
+						"Show4": true,
+						"Text1": "",
+						"Text2": "",
+						"Text3": "",
+						"Text4": "Understood",
+						"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision1Argument": null,
+						"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision2Argument": null,
+						"Decision3Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision3Argument": null,
+						"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision4Argument": null,
+					}
+				)
+				doesItEndWithCall = true
+			else:
+				AddEvent(Operations[i].Name + ": abroad operation continues")
 		i += 1
 	# call to action
 	if doesItEndWithCall == true:
@@ -290,7 +345,7 @@ func ImplementAbroad(thePlan):
 	# operation update
 	Operations[thePlan.OperationId].Stage = OperationGenerator.Stage.ABROAD_OPERATION
 	Operations[thePlan.OperationId].AbroadPlan = thePlan
-	Operations[thePlan.OperationId].AbroadRateOfProgress = 100.0/thePlan.Length
+	Operations[thePlan.OperationId].AbroadRateOfProgress = 99.0/thePlan.Length
 	# moving officers
 	OfficersInHQ -= thePlan.Officers
 	OfficersAbroad += thePlan.Officers

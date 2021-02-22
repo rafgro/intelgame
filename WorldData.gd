@@ -26,28 +26,28 @@ var Methods = [
 	{
 		"Name": "street observation on foot",
 		"Cost": 0,  # weekly
-		"Quality": 20,  # from 0 (useless) to 100 (perfect theft)
+		"Quality": 10,  # from 0 (useless) to 100 (perfect theft)
 		"Risk": 40,  # from 0 (hacking) to 100 (shooting), given well working counterintelligence
 		"OfficersRequired": 1,  # how many must be involved in operation
 	},
 	{
 		"Name": "street observation by car",
 		"Cost": 1,  # weekly
-		"Quality": 20,  # from 0 (useless) to 100 (perfect theft)
+		"Quality": 15,  # from 0 (useless) to 100 (perfect theft)
 		"Risk": 20,  # from 0 (hacking) to 100 (shooting), given well working counterintelligence
 		"OfficersRequired": 2,  # how many must be involved in operation
 	},
 	{
 		"Name": "rent house for observation",
 		"Cost": 10,  # weekly
-		"Quality": 50,  # from 0 (useless) to 100 (perfect theft)
+		"Quality": 30,  # from 0 (useless) to 100 (perfect theft)
 		"Risk": 5,  # from 0 (hacking) to 100 (shooting), given well working counterintelligence
 		"OfficersRequired": 2,  # how many must be involved in operation
 	},
 	{
 		"Name": "install and operate hidden cameras",
 		"Cost": 2,  # weekly
-		"Quality": 50,  # from 0 (useless) to 100 (perfect theft)
+		"Quality": 30,  # from 0 (useless) to 100 (perfect theft)
 		"Risk": 20,  # from 0 (hacking) to 100 (shooting), given well working counterintelligence
 		"OfficersRequired": 1,  # how many must be involved in operation
 	}

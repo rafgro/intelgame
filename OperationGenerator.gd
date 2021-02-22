@@ -120,6 +120,7 @@ enum Stage {
 	FINDING_LOCATION,
 	PLANNING_OPERATION,
 	ABROAD_OPERATION,
+	FINISHED,
 }
 
 func NewOperation():
@@ -138,4 +139,7 @@ func NewOperation():
 		"AbroadPlan": null,
 		"AbroadRateOfProgress": 10,
 		"AbroadProgress": 100,
+		"WeeksPassed": 0,
+		"ExpectedWeeks": 2+3,
+		"ExpectedQuality": 20,
 	}
