@@ -28,6 +28,8 @@ config/icon="res://icon.png"
 
 GameLogic="*res://GameLogic.gd"
 CallManager="*res://CallManager.gd"
+WorldData="*res://WorldData.gd"
+OperationGenerator="*res://OperationGenerator.gd"
 
 [display]
 

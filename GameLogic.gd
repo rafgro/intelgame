@@ -2,8 +2,7 @@
 
 extends Node
 
-# imports
-var OperationGenerator = load("res://OperationGenerator.gd").new()
+var random = RandomNumberGenerator.new()
 
 # Basic general variables, in the main screen order
 var DateDay = 1
@@ -22,8 +21,10 @@ var BudgetOffice = 5
 var BudgetRecruitment = 0
 var BudgetUpskilling = 0
 var BudgetSecurity = 0
+var BudgetOngoingOperations = 0
 # Operations
 var Operations = []  # array of operation dictionaries
+var ImmediatePlans = []
 # Internal logic variables, always describe them
 var RecruitProgress = 0.0  # when reaches 1, a new officer arrives
 # Sort of constants but also internal, always describe them
@@ -37,11 +38,17 @@ func AddEvent(text):
 	localDate += str(DateMonth)
 	BureauEvents.push_front("[u][b]"+localDate+"[/b] " + text + "[/u]")
 
+func FreeFundsWeekly():
+	return (BudgetFull - (BudgetSalaries+BudgetOffice+BudgetRecruitment \
+		+BudgetUpskilling+BudgetSecurity+BudgetOngoingOperations)) / 4
+
 # first ever call: proper initialization of vars
 func _init():
+	random.randomize()
 	AddEvent("The bureau has opened")
 
 func NextWeek():
+	var doesItEndWithCall = false
 	# clearing u-tags in events
 	var i = 0
 	while i < len(BureauEvents):
@@ -73,17 +80,167 @@ func NextWeek():
 		RecruitProgress -= 1.0
 		AddEvent("New officer joined the bureau")
 	# new operation given by the government
-	if 1 == 2:
+	if DateDay == 8:
 		Operations.append(OperationGenerator.NewOperation())
 		AddEvent("Government designated a new operation: " + Operations[-1].name)
-	"""
+	# operation proceedings
+	i = 0
+	while i < len(Operations):
+		if Operations[i].Stage == OperationGenerator.Stage.NOT_STARTED:
+			# looking for free officers
+			if OfficersInHQ > 0:
+				Operations[i].AnalyticalOfficers = OfficersInHQ
+				Operations[i].Stage = OperationGenerator.Stage.FINDING_LOCATION
+		# didn't use elif on purpose here: possible to find location under a week
+		if Operations[i].Stage == OperationGenerator.Stage.FINDING_LOCATION:
+			# search progress
+			var which = Operations[i].Target
+			WorldData.Targets[which].LocationSecrecyProgress -= WorldData.Targets[which].LocationOpenness * Operations[i].AnalyticalOfficers
+			if WorldData.Targets[which].LocationSecrecyProgress <= 0:
+				WorldData.Targets[which].LocationIsKnown = true
+				Operations[i].Stage = OperationGenerator.Stage.PLANNING_OPERATION
+				AddEvent(Operations[i].name + ": Officers found location of the target")
+		# but used elif on purpose here: one week break after finding location
+		elif Operations[i].Stage == OperationGenerator.Stage.PLANNING_OPERATION and OfficersInHQ > 0:
+			# designing possible approaches, three plus waiting another week
+			# differring by parameters: officers on the ground, cost of methods,
+			# quality of operation, risk of failure
+			var which = Operations[i].Target
+			var minOfficers = 1
+			var maxOfficers = OfficersInHQ
+			var localPlans = []
+			var j = 0
+			while j < 6:  # six tries but will present only first three
+				var totalCost = 0
+				var predictedLength = 3  # in weeks, randomize later, should affect quality
+				var usedOfficers = minOfficers
+				# finding methods to use in the operation
+				var noOfMethods = random.randi_range(1, len(WorldData.Targets[which].AvailableDMethods))
+				var theMethods = []
+				var safetyCounter = 0
+				while safetyCounter < noOfMethods*2 or len(theMethods) < noOfMethods:
+					safetyCounter += 1
+					var methodId = WorldData.Targets[which].AvailableDMethods[randi() % WorldData.Targets[which].AvailableDMethods.size()]
+					if methodId in theMethods:
+						continue  # avoid duplications
+					theMethods.append(methodId)
+					if WorldData.Methods[methodId].OfficersRequired > usedOfficers:
+						usedOfficers = WorldData.Methods[methodId].OfficersRequired  # adjust to methods
+				# adjusting number of officers
+				usedOfficers = random.randi_range(usedOfficers, maxOfficers)
+				# calculating cost and checking if it's possible
+				var singleOfficerCost = WorldData.Countries[WorldData.Targets[which].Country].LocalCost \
+					+ (WorldData.Countries[WorldData.Targets[which].Country].TravelCost / predictedLength / 2)
+				totalCost += singleOfficerCost * usedOfficers * predictedLength
+				for m in theMethods:
+					totalCost += WorldData.Methods[m].Cost * predictedLength
+				# debug commented
+				#if totalCost > FreeFundsWeekly()*predictedLength:
+				#	continue
+				# calculating total operation parameters: clash of location and methods
+				# in the future also modify it by time
+				var totalQuality = 0
+				for m in theMethods:
+					totalQuality += WorldData.Methods[m].Quality
+				totalQuality *= ((100-WorldData.Targets[Operations[i].Target].DiffOfObservation)/100)
+				var totalRisk = 0
+				for m in theMethods:
+					totalRisk += WorldData.Methods[m].Risk
+				totalRisk *= (WorldData.Targets[Operations[i].Target].RiskOfCounterintelligence/100)
+				# saving and describing
+				var theDescription = "€"+str(totalCost)+",000 | "+str(usedOfficers)+" officers | " \
+					+str(predictedLength)+" weeks\n"
+				for m in theMethods:
+					theDescription += WorldData.Methods[m].Name+"\n"
+				localPlans.append(
+					{
+						"Officers": usedOfficers,
+						"Cost": totalCost,
+						"Length": predictedLength,
+						"Risk": totalRisk,
+						"Quality": totalQuality,
+						"Methods": theMethods,
+						"Description": theDescription,
+					}
+				)
+				j += 1
+			if len(localPlans) == 0:
+				CallManager.CallQueue.append(
+					{
+						"Level": Operations[i].Level,
+						"Operation": Operations[i].Name,
+						"Content": "Officers tried to design a plan for abroad operation.\n" \
+								 + "However, given current staff and budget, they could not\n" \
+								 + "create any realistic plans.",
+						"Show1": false,
+						"Show2": true,
+						"Show3": false,
+						"Show4": false,
+						"Text1": "",
+						"Text2": "Understood",
+						"Text3": "",
+						"Text4": "",
+						"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision1Argument": null,
+						"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision2Argument": null,
+						"Decision3Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision3Argument": null,
+						"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision4Argument": null,
+					}
+				)
+			else:
+				var wholeContent = "Officers designed following abroad operation plans.\n\n"
+				var sh2 = true
+				var sh3 = true
+				if len(localPlans) == 1:
+					wholeContent += "Plan A\n" + localPlans[0].Description+"\n"
+					sh2 = false
+					sh3 = false
+					localPlans.append(null)
+					localPlans.append(null)
+				elif len(localPlans) <= 2:
+					wholeContent += "Plan A\n" + localPlans[0].Description+"\nPlan B\n" \
+						+ localPlans[1].Description+"\n"
+					sh3 = false
+					localPlans.append(null)
+				else:
+					wholeContent += "Plan A\n" + localPlans[0].Description+"\nPlan B\n" \
+						+ localPlans[1].Description+"\nPlan C\n"+localPlans[2].Description+"\n"
+				# setting the call for player
+				CallManager.CallQueue.append(
+					{
+						"Level": Operations[i].Level,
+						"Operation": Operations[i].Name,
+						"Content": wholeContent,
+						"Show1": true,
+						"Show2": sh2,
+						"Show3": sh3,
+						"Show4": true,
+						"Text1": "Plan A",
+						"Text2": "Plan B",
+						"Text3": "Plan C",
+						"Text4": "Return in the next week\nwith new plans",
+						"Decision1Callback": funcref(GameLogic, "ImplementAbroad"),
+						"Decision1Argument": localPlans[0],
+						"Decision2Callback": funcref(GameLogic, "ImplementAbroad"),
+						"Decision2Argument": localPlans[1],
+						"Decision3Callback": funcref(GameLogic, "ImplementAbroad"),
+						"Decision3Argument": localPlans[2],
+						"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision4Argument": null,
+					}
+				)
+			doesItEndWithCall = true
+		i += 1
 	# call to action
-	if 1 == 1:
-		CallManager.Level = "Unclassified"
-		CallManager.Decision1Callback = funcref(GameLogic, "Test1")
+	if doesItEndWithCall == true:
 		get_tree().change_scene("res://call.tscn")
-	"""
 	# finish
 
-func Test1():
-	print('hi')
+func ImplementAbroad(thePlan):
+	print(thePlan)
+
+func EmptyFunc(anyArgument):
+	pass  # nothing happens

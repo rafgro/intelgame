@@ -1,10 +1,20 @@
 extends Panel
 
+func LoadLastFromQueue():
+	$M/R/Level.text = CallManager.CallQueue[-1].Level
+	$M/R/Operation.text = CallManager.CallQueue[-1].Operation
+	$M/R/Content.text = CallManager.CallQueue[-1].Content
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	$M/R/Level.text = CallManager.Level
-	$M/R/Operation.text = CallManager.Operation
-	$M/R/Content.text = CallManager.Content
+	LoadLastFromQueue()
+
+func EmptyFunc():
+	pass
 
 func _on_Decision1_pressed():
-	CallManager.Decision1Callback.call_func()
+	# call performs logic only
+	CallManager.CallQueue[-1].Decision1Callback.call_func(
+		CallManager.CallQueue[-1].Decision1Argument
+	)
+	# then we decide if we pick up a next call or do we return to the main screen

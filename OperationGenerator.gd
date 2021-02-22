@@ -3,7 +3,7 @@ extends Node
 var PossibleNames = [
 	"Pilgrim’s Progress",
 	"Robinson Crusoe",
-	"Gulliver’s Travels",
+	"Gulliver’s Travel",
 	"Clarissa",
 	"Tom Jones",
 	"Tristram Shandy",
@@ -93,14 +93,21 @@ var PossibleNames = [
 	"Housekeeping",
 	"A Suicide Note",
 	"Beginning of Spring",
-	"Breathing Lessons",
+	"Breathing Lesson",
 	"Amongst Women",
 	"Underworld",
 	"Disgrace",
 	"True History"
 ]
 
-enum OperationType {
+enum Approach {
+	PASSIVE,
+	DEFENSIVE,
+	OFFENSIVE,
+}
+
+enum Type {
+	PLACE_OBSERVATION,
 	PERSON_OBSERVATION,
 	PERSON_RECRUITMENT,
 	PERSON_KIDNAPPING,
@@ -109,11 +116,22 @@ enum OperationType {
 	TECHNOLOGY_DESTROYING,
 }
 
+enum Stage {
+	NOT_STARTED,
+	FINDING_LOCATION,
+	PLANNING_OPERATION,
+}
+
 func NewOperation():
 	var whichName = randi() % PossibleNames.size()
 	var theName = PossibleNames[whichName]
 	PossibleNames.remove(whichName)  # to avoid using the same name again
 	return {
-		"name": theName,
-		"type": OperationType.PERSON_OBSERVATION
+		"Name": theName,
+		"Type": Type.PLACE_OBSERVATION,
+		"Level": "Unclassified",  # level displayed in calls
+		"Target": 0,  # id from WorldData.Targets, it contains location
+		"AnalyticalOfficers": 0,
+		"OperationalOfficers": 0,
+		"Stage": Stage.NOT_STARTED,
 	}
