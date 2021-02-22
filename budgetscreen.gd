@@ -4,7 +4,7 @@ extends Panel
 func CalculateCurrentBudget():
 	var spent = 100*(float(GameLogic.BudgetSalaries+GameLogic.BudgetOffice \
 		+GameLogic.BudgetRecruitment+GameLogic.BudgetUpskilling \
-		+GameLogic.BudgetSecurity+GameLogic.BudgetFull*0.2) / GameLogic.BudgetFull)
+		+GameLogic.BudgetSecurity+GameLogic.BudgetOngoingOperations) / GameLogic.BudgetFull)
 	$M/R/MonthlyBudget.text = "Monthly budget: €" + str(GameLogic.BudgetFull) \
 		+ ",000 (" + str(spent) + "% spent)"
 	return spent
@@ -13,8 +13,9 @@ func _ready():
 	CalculateCurrentBudget()
 	$M/R/BasicCosts.text = "Basic costs\n" \
  		+ " - €" + str(GameLogic.BudgetSalaries) + ",000 staff compensation\n" \
-		+ " - €" + str(GameLogic.BudgetOffice) + ",000 office maintenance\n" \
-		+ " - €" + str(GameLogic.BudgetFull*0.2) + ",000 emergency reserve"
+		+ " - €" + str(GameLogic.BudgetOffice) + ",000 office maintenance\n\n" \
+		+ "Ongoing abroad operations\n - €" + str(GameLogic.BudgetOngoingOperations) \
+		+ ",000 travel, maintenance, technology"
 	$M/R/CRecruit/RecruitBudget.text = "Recruit officers: €" + str(GameLogic.BudgetRecruitment) + ",000"
 	$M/R/CRecruit/RecruitSlider.max_value = GameLogic.BudgetFull-(GameLogic.BudgetSalaries+GameLogic.BudgetOffice)
 	$M/R/CRecruit/RecruitSlider.value = GameLogic.BudgetRecruitment

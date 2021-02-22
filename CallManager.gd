@@ -10,6 +10,7 @@ var CallQueue = []
 """
 # Expected call structure
 {
+	"Header": "Urgent Decision",
 	"Level": "Unspecified",
 	"Operation": "Test",
 	"Content": "Content.",

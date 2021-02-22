@@ -91,12 +91,11 @@ var PossibleNames = [
 	"Bend in the River",
 	"Midnight’s Children",
 	"Housekeeping",
-	"A Suicide Note",
+	"Suicide Note",
 	"Beginning of Spring",
 	"Breathing Lesson",
 	"Amongst Women",
 	"Underworld",
-	"Disgrace",
 	"True History"
 ]
 
@@ -120,6 +119,7 @@ enum Stage {
 	NOT_STARTED,
 	FINDING_LOCATION,
 	PLANNING_OPERATION,
+	ABROAD_OPERATION,
 }
 
 func NewOperation():
@@ -129,9 +129,13 @@ func NewOperation():
 	return {
 		"Name": theName,
 		"Type": Type.PLACE_OBSERVATION,
+		"GoalDescription": "Gather intel on " + WorldData.Targets[0].Name,
 		"Level": "Unclassified",  # level displayed in calls
 		"Target": 0,  # id from WorldData.Targets, it contains location
 		"AnalyticalOfficers": 0,
 		"OperationalOfficers": 0,
 		"Stage": Stage.NOT_STARTED,
+		"AbroadPlan": null,
+		"AbroadRateOfProgress": 10,
+		"AbroadProgress": 100,
 	}

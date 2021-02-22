@@ -44,7 +44,7 @@ func FreeFundsWeekly():
 
 # first ever call: proper initialization of vars
 func _init():
-	random.randomize()
+	randomize()
 	AddEvent("The bureau has opened")
 
 func NextWeek():
@@ -82,7 +82,34 @@ func NextWeek():
 	# new operation given by the government
 	if DateDay == 8:
 		Operations.append(OperationGenerator.NewOperation())
-		AddEvent("Government designated a new operation: " + Operations[-1].name)
+		AddEvent("Government designated a new operation: " + Operations[-1].Name)
+		CallManager.CallQueue.append(
+			{
+				"Header": "Important Information",
+				"Level": Operations[-1].Level,
+				"Operation": Operations[-1].Name,
+				"Content": "Government designated a new operation. Goal:\n" \
+					+ Operations[-1].GoalDescription + ".\n" \
+					+ "Find the target, execute operation, return with results.",
+				"Show1": false,
+				"Show2": false,
+				"Show3": false,
+				"Show4": true,
+				"Text1": "",
+				"Text2": "",
+				"Text3": "",
+				"Text4": "Understood",
+				"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
+				"Decision1Argument": null,
+				"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
+				"Decision2Argument": null,
+				"Decision3Callback": funcref(GameLogic, "EmptyFunc"),
+				"Decision3Argument": null,
+				"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
+				"Decision4Argument": null,
+			}
+		)
+		doesItEndWithCall = true
 	# operation proceedings
 	i = 0
 	while i < len(Operations):
@@ -99,7 +126,7 @@ func NextWeek():
 			if WorldData.Targets[which].LocationSecrecyProgress <= 0:
 				WorldData.Targets[which].LocationIsKnown = true
 				Operations[i].Stage = OperationGenerator.Stage.PLANNING_OPERATION
-				AddEvent(Operations[i].name + ": Officers found location of the target")
+				AddEvent(Operations[i].Name + ": Officers found location of the target")
 		# but used elif on purpose here: one week break after finding location
 		elif Operations[i].Stage == OperationGenerator.Stage.PLANNING_OPERATION and OfficersInHQ > 0:
 			# designing possible approaches, three plus waiting another week
@@ -118,7 +145,7 @@ func NextWeek():
 				var noOfMethods = random.randi_range(1, len(WorldData.Targets[which].AvailableDMethods))
 				var theMethods = []
 				var safetyCounter = 0
-				while safetyCounter < noOfMethods*2 or len(theMethods) < noOfMethods:
+				while len(theMethods) < noOfMethods and safetyCounter < noOfMethods*2:
 					safetyCounter += 1
 					var methodId = WorldData.Targets[which].AvailableDMethods[randi() % WorldData.Targets[which].AvailableDMethods.size()]
 					if methodId in theMethods:
@@ -134,26 +161,40 @@ func NextWeek():
 				totalCost += singleOfficerCost * usedOfficers * predictedLength
 				for m in theMethods:
 					totalCost += WorldData.Methods[m].Cost * predictedLength
-				# debug commented
-				#if totalCost > FreeFundsWeekly()*predictedLength:
-				#	continue
+				if totalCost > FreeFundsWeekly()*predictedLength:
+					continue
 				# calculating total operation parameters: clash of location and methods
 				# in the future also modify it by time
+				# quality
 				var totalQuality = 0
 				for m in theMethods:
 					totalQuality += WorldData.Methods[m].Quality
-				totalQuality *= ((100-WorldData.Targets[Operations[i].Target].DiffOfObservation)/100)
+				totalQuality *= ((100-WorldData.Targets[Operations[i].Target].DiffOfObservation)/100.0)
+				var qualityDesc = "poor"
+				if totalQuality >= 90: qualityDesc = "great"
+				elif totalQuality >= 60: qualityDesc = "good"
+				elif totalQuality >= 40: qualityDesc = "medium"
+				elif totalQuality >= 10: qualityDesc = "weak"
+				# risk
 				var totalRisk = 0
 				for m in theMethods:
 					totalRisk += WorldData.Methods[m].Risk
-				totalRisk *= (WorldData.Targets[Operations[i].Target].RiskOfCounterintelligence/100)
+				totalRisk *= (WorldData.Targets[Operations[i].Target].RiskOfCounterintelligence/100.0)
+				var riskDesc = "no"
+				if totalRisk >= 90: riskDesc = "extreme"
+				elif totalRisk >= 60: riskDesc = "high"
+				elif totalRisk >= 40: riskDesc = "medium"
+				elif totalRisk >= 10: riskDesc = "low"
 				# saving and describing
 				var theDescription = "€"+str(totalCost)+",000 | "+str(usedOfficers)+" officers | " \
-					+str(predictedLength)+" weeks\n"
+					+str(predictedLength)+" weeks | "+qualityDesc+" quality, "+riskDesc+" risk\n"
 				for m in theMethods:
 					theDescription += WorldData.Methods[m].Name+"\n"
 				localPlans.append(
 					{
+						"OperationId": i,
+						"Country": WorldData.Countries[WorldData.Targets[which].Country].Name,
+						"Street": WorldData.Targets[which].LocationPrecise,
 						"Officers": usedOfficers,
 						"Cost": totalCost,
 						"Length": predictedLength,
@@ -167,19 +208,20 @@ func NextWeek():
 			if len(localPlans) == 0:
 				CallManager.CallQueue.append(
 					{
+						"Header": "Important Information",
 						"Level": Operations[i].Level,
 						"Operation": Operations[i].Name,
 						"Content": "Officers tried to design a plan for abroad operation.\n" \
 								 + "However, given current staff and budget, they could not\n" \
 								 + "create any realistic plans.",
 						"Show1": false,
-						"Show2": true,
+						"Show2": false,
 						"Show3": false,
-						"Show4": false,
+						"Show4": true,
 						"Text1": "",
-						"Text2": "Understood",
+						"Text2": "",
 						"Text3": "",
-						"Text4": "",
+						"Text4": "Understood",
 						"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
 						"Decision1Argument": null,
 						"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
@@ -191,26 +233,29 @@ func NextWeek():
 					}
 				)
 			else:
-				var wholeContent = "Officers designed following abroad operation plans.\n\n"
+				var wholeContent = "Officers designed following abroad operation plans\n" \
+					+ "to be executed in "+localPlans[0].Street+", "+localPlans[0].Country+".\n\n"
 				var sh2 = true
 				var sh3 = true
 				if len(localPlans) == 1:
-					wholeContent += "Plan A\n" + localPlans[0].Description+"\n"
+					wholeContent += "[b]Plan A[/b]\n" + localPlans[0].Description+"\n"
 					sh2 = false
 					sh3 = false
 					localPlans.append(null)
 					localPlans.append(null)
 				elif len(localPlans) <= 2:
-					wholeContent += "Plan A\n" + localPlans[0].Description+"\nPlan B\n" \
+					wholeContent += "[b]Plan A[/b]\n" + localPlans[0].Description+"\n[b]Plan B[/b]\n" \
 						+ localPlans[1].Description+"\n"
 					sh3 = false
 					localPlans.append(null)
 				else:
-					wholeContent += "Plan A\n" + localPlans[0].Description+"\nPlan B\n" \
-						+ localPlans[1].Description+"\nPlan C\n"+localPlans[2].Description+"\n"
+					wholeContent += "[b]Plan A[/b]\n" + localPlans[0].Description+"\n[b]Plan B[/b]\n" \
+						+ localPlans[1].Description+"\n[b]Plan C[/b]\n"+localPlans[2].Description+"\n"
+				wholeContent += "\n\nChoose appropriate plan or wait for new plans."
 				# setting the call for player
 				CallManager.CallQueue.append(
 					{
+						"Header": "Urgent Decision",
 						"Level": Operations[i].Level,
 						"Operation": Operations[i].Name,
 						"Content": wholeContent,
@@ -240,7 +285,17 @@ func NextWeek():
 	# finish
 
 func ImplementAbroad(thePlan):
-	print(thePlan)
+	AddEvent(Operations[thePlan.OperationId].Name + ": "+str(thePlan.Officers)+" officer(s) departed to "+thePlan.Country)
+	PursuedOperations += 1
+	# operation update
+	Operations[thePlan.OperationId].Stage = OperationGenerator.Stage.ABROAD_OPERATION
+	Operations[thePlan.OperationId].AbroadPlan = thePlan
+	Operations[thePlan.OperationId].AbroadRateOfProgress = 100.0/thePlan.Length
+	# moving officers
+	OfficersInHQ -= thePlan.Officers
+	OfficersAbroad += thePlan.Officers
+	# moving budget
+	BudgetOngoingOperations += thePlan.Cost
 
 func EmptyFunc(anyArgument):
 	pass  # nothing happens

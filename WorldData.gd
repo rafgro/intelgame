@@ -57,7 +57,7 @@ var Methods = [
 var Targets = [
 	{
 		"Type": TargetType.PLACE,
-		"Name": "Russian Embassy",
+		"Name": "Russian Embassy in Ireland",
 		"Country": 1,  # id from Countries, can change
 		"LocationPrecise": "Dublin, Orwell Rd",  # for display only, can change
 		"LocationOpenness": 100,  # from 100 (one google search) to 1 (bin laden)
