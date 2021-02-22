@@ -22,6 +22,10 @@ var BudgetRecruitment = 0
 var BudgetUpskilling = 0
 var BudgetSecurity = 0
 var BudgetOngoingOperations = 0
+# Staff screen
+var StaffSkill = 10  # 0 to 100
+var StaffExperience = 0  # 0 to 100
+var StaffTrust = 50  # 0 to 100
 # Operations
 var Operations = []  # array of operation dictionaries
 var ImmediatePlans = []
@@ -29,6 +33,8 @@ var ImmediatePlans = []
 var RecruitProgress = 0.0  # when reaches 1, a new officer arrives
 # Sort of constants but also internal, always describe them
 var NewOfficerCost = 80  # thousands needed to spend on a new officer
+var SkillMaintenanceCost = 1  # thousands needed to maintain skills for an officer
+var SecurityMaintenanceCost = 1  # thousands needed to maintain security per officer
 
 func AddEvent(text):
 	var localDate = ""
@@ -70,7 +76,8 @@ func NextWeek():
 			if DateMonth == 13:
 				DateMonth = 1
 				DateYear += 1
-	# budget-based officer recruitment
+	# budget-based staff changes
+	# recruitment
 	RecruitProgress += BudgetRecruitment / 4 / NewOfficerCost
 	if RecruitProgress >= 1.0:
 		# currently always plus one, sort of weekly onboarding limit
@@ -79,6 +86,16 @@ func NextWeek():
 		OfficersInHQ += 1
 		RecruitProgress -= 1.0
 		AddEvent("New officer joined the bureau")
+	# upskilling
+	var upskillDiff = BudgetUpskilling-(SkillMaintenanceCost*ActiveOfficers)
+	if upskillDiff > 2: upskillDiff = 2
+	elif upskillDiff < -1: upskillDiff = -1
+	StaffSkill += upskillDiff
+	# security and trust, breaches in the future
+	var trustDiff = BudgetSecurity-(SecurityMaintenanceCost*ActiveOfficers)
+	if trustDiff > 1: trustDiff = 1
+	elif trustDiff < -2: trustDiff = -2
+	StaffTrust += trustDiff
 	# new operation given by the government
 	if DateDay == 8:
 		Operations.append(OperationGenerator.NewOperation())
@@ -114,12 +131,21 @@ func NextWeek():
 	i = 0
 	while i < len(Operations):
 		Operations[i].WeeksPassed += 1
+		###########################################################################
 		if Operations[i].Stage == OperationGenerator.Stage.NOT_STARTED:
 			# looking for free officers
 			if OfficersInHQ > 0:
 				Operations[i].AnalyticalOfficers = OfficersInHQ
 				Operations[i].Stage = OperationGenerator.Stage.FINDING_LOCATION
+				var dateString = ""
+				if DateDay < 10: dateString += "0"
+				dateString += str(DateDay) + "/"
+				if DateMonth < 10: dateString += "0"
+				dateString += str(DateMonth) + "/" + str(DateYear)
+				Operations[i].Started = dateString
+				Operations[i].Result = "ONGOING"
 		# didn't use elif on purpose here: possible to find location under a week
+		###########################################################################
 		if Operations[i].Stage == OperationGenerator.Stage.FINDING_LOCATION:
 			# search progress
 			var which = Operations[i].Target
@@ -129,6 +155,7 @@ func NextWeek():
 				Operations[i].Stage = OperationGenerator.Stage.PLANNING_OPERATION
 				AddEvent(Operations[i].Name + ": Officers found location of the target")
 		# but used elif on purpose here: one week break after finding location
+		###########################################################################
 		elif Operations[i].Stage == OperationGenerator.Stage.PLANNING_OPERATION and OfficersInHQ > 0:
 			# designing possible approaches, three plus waiting another week
 			# differring by parameters: officers on the ground, cost of methods,
@@ -279,9 +306,38 @@ func NextWeek():
 					}
 				)
 			doesItEndWithCall = true
+		###########################################################################
 		elif Operations[i].Stage == OperationGenerator.Stage.ABROAD_OPERATION:
-			# here add random complications in the future
-			Operations[i].AbroadProgress -= Operations[i].AbroadRateOfProgress
+			# operation progressing or not
+			if random.randi(0, 100) > Operations[i].AbroadPlan.Risk:
+				Operations[i].AbroadProgress -= Operations[i].AbroadRateOfProgress
+				if Operations[i].AbroadProgress > 0:  # check to avoid doubling events
+					AddEvent(Operations[i].Name + ": abroad operation continues")
+			else:
+				# many shades of _something went wrong_
+				var whatHappened = random.randi(0, 100)
+				# base p=10/100
+				if whatHappened <= 20:
+					pass  # probably something like catching or killing an officer
+				# base p=30/100
+				elif whatHappened <= 20+30:
+					AddEvent(Operations[i].Name + ": officers abroad were caught and fled to homeland")
+					# internal debriefing
+					Operations[i].Stage = OperationGenerator.Stage.PLANNING_OPERATION
+					OfficersInHQ += Operations[i].AbroadPlan.Officers
+					OfficersAbroad -= Operations[i].AbroadPlan.Officers
+					BudgetOngoingOperations -= Operations[i].AbroadPlan.Cost
+					Operations[i].AbroadPlan = null
+					# world taking notice of our failure
+					WorldData.Targets[Operations[i].Target].RiskOfCounterintelligence *= 2
+					StaffTrust -= 5
+					StaffExperience = StaffExperience*1.07
+				# base p=60/100
+				else:
+					AddEvent(Operations[i].Name + ": counterintelligence slowed down abroad operation")
+					StaffSkill = StaffSkill*1.01
+					StaffExperience = StaffExperience*1.02
+			# operation finish
 			if Operations[i].AbroadProgress <= 0:
 				# operation finished
 				# debriefing variables
@@ -299,9 +355,13 @@ func NextWeek():
 				if govFeedback > 0: govFeedback *= 0.5  # positive trust more difficult to gather
 				govFeedback = int(govFeedback)
 				Trust += govFeedback
-				print(govFeedback)
-				var govFeedbackDesc = "positively rated its execution.\nThe bureau gained "+str(govFeedback)+"% of trust."
-				if govFeedback < 0: govFeedbackDesc = "negatively rated its execution.\nThe bureau lost "+str((-1)*govFeedback)+"% of trust."
+				var govFeedbackDesc = "negatively rated its execution.\nThe bureau lost "+str((-1)*govFeedback)+"% of trust."
+				Operations[i].Result = "COMPLETED, negative feedback"
+				if govFeedback > 0:
+					var budgetIncrease = BudgetFull*(0.01*govFeedback)
+					BudgetFull += budgetIncrease
+					govFeedbackDesc = "positively rated its execution.\nThe bureau gained "+str(govFeedback)+"% of trust. As a confirmation,\ngovernment increased bureau's budget by €"+str(budgetIncrease)+",000.\n"
+					Operations[i].Result = "SUCCESS, positive feedback"
 				# debriefing user
 				AddEvent(Operations[i].Name + ": "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned to homeland")
 				AddEvent("Bureau finished operation "+Operations[i].Name)
@@ -331,8 +391,10 @@ func NextWeek():
 					}
 				)
 				doesItEndWithCall = true
-			else:
-				AddEvent(Operations[i].Name + ": abroad operation continues")
+				# internal debriefing
+				StaffExperience += Operations[i].AbroadPlan.Officers
+				StaffSkill += Operations[i].AbroadPlan.Officers*1.0*qualityDiff
+				StaffTrust = StaffTrust*1.1
 		i += 1
 	# call to action
 	if doesItEndWithCall == true:

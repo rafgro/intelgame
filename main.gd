@@ -34,3 +34,18 @@ func _on_NextWeek_pressed():
 
 func _on_Budget_pressed():
 	get_tree().change_scene("res://budget.tscn")
+
+func _on_Staff_pressed():
+	get_tree().change_scene("res://staff.tscn")
+
+func _on_Government_pressed():
+	get_tree().change_scene("res://government.tscn")
+
+func _on_GatheredIntel_pressed():
+	get_tree().change_scene("res://gatheredintel.tscn")
+
+func _on_Operations_pressed():
+	get_tree().change_scene("res://operations.tscn")
+
+func _on_Technology_pressed():
+	get_tree().change_scene("res://technology.tscn")

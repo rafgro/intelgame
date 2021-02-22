@@ -142,4 +142,6 @@ func NewOperation():
 		"WeeksPassed": 0,
 		"ExpectedWeeks": 2+3,
 		"ExpectedQuality": 20,
+		"Started": "-//-",
+		"Result": "NOT STARTED",
 	}
