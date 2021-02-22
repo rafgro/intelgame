@@ -1,3 +1,5 @@
+# Logic usually separated from the display
+
 extends Node
 
 # imports
@@ -74,7 +76,14 @@ func NextWeek():
 	if 1 == 2:
 		Operations.append(OperationGenerator.NewOperation())
 		AddEvent("Government designated a new operation: " + Operations[-1].name)
+	"""
 	# call to action
 	if 1 == 1:
+		CallManager.Level = "Unclassified"
+		CallManager.Decision1Callback = funcref(GameLogic, "Test1")
 		get_tree().change_scene("res://call.tscn")
+	"""
 	# finish
+
+func Test1():
+	print('hi')

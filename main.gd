@@ -25,7 +25,6 @@ func UpdateMainScreen():
 func _ready():
 	UpdateMainScreen()
 
-
 # Main event: moving a week forwad
 func _on_NextWeek_pressed():
 	$M/R/Buttons3/NextWeek.disabled = true
