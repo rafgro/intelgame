@@ -58,18 +58,19 @@ var Organizations = [
 		"Countries": [2],  # ids of host countries
 		# generated and/or frequently modified
 		"OpsAgainstHomeland": [],  # future possibility
+		"IntelDescription": [],  # just for user display, for many authomatically filled
 	},
-	{ "Type": OrgType.INTEL, "Name": "BND", "Fixed": true, "Known": true, "Staff": 6500, "Budget": 85000, "Counterintelligence": 80, "Countries": [4], "OpsAgainstHomeland": [], },
-	{ "Type": OrgType.INTEL, "Name": "CIA", "Fixed": true, "Known": true, "Staff": 22000, "Budget": 1250000, "Counterintelligence": 85, "Countries": [5], "OpsAgainstHomeland": [], },
-	{ "Type": OrgType.INTEL, "Name": "AW (Agencja Wywiadu)", "Fixed": true, "Known": true, "Staff": 1000, "Budget": 20800, "Counterintelligence": 70, "Countries": [6], "OpsAgainstHomeland": [], },
-	{ "Type": OrgType.INTEL, "Name": "DGSE", "Fixed": true, "Known": true, "Staff": 6100, "Budget": 42000, "Counterintelligence": 85, "Countries": [7], "OpsAgainstHomeland": [], },
-	{ "Type": OrgType.INTEL, "Name": "ФСБ (FSB)", "Fixed": true, "Known": true, "Staff": 66200, "Budget": 1000000, "Counterintelligence": 85, "Countries": [8], "OpsAgainstHomeland": [], },
-	{ "Type": OrgType.INTEL, "Name": "Guoanbu", "Fixed": true, "Known": true, "Staff": 100000, "Budget": 2000000, "Counterintelligence": 95, "Countries": [9], "OpsAgainstHomeland": [], },
-	{ "Type": OrgType.INTEL, "Name": "Mossad", "Fixed": true, "Known": true, "Staff": 7000, "Budget": 228000, "Counterintelligence": 95, "Countries": [10], "OpsAgainstHomeland": [], },
-	{ "Type": OrgType.INTEL, "Name": "MIT (Milli Istihbarat Teskilati)", "Fixed": true, "Known": true, "Staff": 8000, "Budget": 180000, "Counterintelligence": 90, "Countries": [11], "OpsAgainstHomeland": [], },
-	{ "Type": OrgType.INTEL, "Name": "Mukhabarat", "Fixed": true, "Known": true, "Staff": 4000, "Budget": 20000, "Counterintelligence": 75, "Countries": [12], "OpsAgainstHomeland": [], },
-	{ "Type": OrgType.INTEL, "Name": "NDS", "Fixed": true, "Known": true, "Staff": 3000, "Budget": 10000, "Counterintelligence": 70, "Countries": [13], "OpsAgainstHomeland": [], },
-	{ "Type": OrgType.GENERALTERROR, "Name": "Al-Qaeda", "Fixed": false, "Known": true, "Staff": 45000, "Budget": 25000, "Counterintelligence": 60, "Countries": [12,13], "OpsAgainstHomeland": [], }
+	{ "Type": OrgType.INTEL, "Name": "BND", "Fixed": true, "Known": true, "Staff": 6500, "Budget": 85000, "Counterintelligence": 80, "Countries": [4], "OpsAgainstHomeland": [], "IntelDescription": [], },
+	{ "Type": OrgType.INTEL, "Name": "CIA", "Fixed": true, "Known": true, "Staff": 22000, "Budget": 1250000, "Counterintelligence": 85, "Countries": [5], "OpsAgainstHomeland": [], "IntelDescription": [], },
+	{ "Type": OrgType.INTEL, "Name": "AW (Agencja Wywiadu)", "Fixed": true, "Known": true, "Staff": 1000, "Budget": 20800, "Counterintelligence": 70, "Countries": [6], "OpsAgainstHomeland": [], "IntelDescription": [], },
+	{ "Type": OrgType.INTEL, "Name": "DGSE", "Fixed": true, "Known": true, "Staff": 6100, "Budget": 42000, "Counterintelligence": 85, "Countries": [7], "OpsAgainstHomeland": [], "IntelDescription": [], },
+	{ "Type": OrgType.INTEL, "Name": "ФСБ (FSB)", "Fixed": true, "Known": true, "Staff": 66200, "Budget": 1000000, "Counterintelligence": 85, "Countries": [8], "OpsAgainstHomeland": [], "IntelDescription": [], },
+	{ "Type": OrgType.INTEL, "Name": "Guoanbu", "Fixed": true, "Known": true, "Staff": 100000, "Budget": 2000000, "Counterintelligence": 95, "Countries": [9], "OpsAgainstHomeland": [], "IntelDescription": [], },
+	{ "Type": OrgType.INTEL, "Name": "Mossad", "Fixed": true, "Known": true, "Staff": 7000, "Budget": 228000, "Counterintelligence": 95, "Countries": [10], "OpsAgainstHomeland": [], "IntelDescription": [], },
+	{ "Type": OrgType.INTEL, "Name": "MIT (Milli Istihbarat Teskilati)", "Fixed": true, "Known": true, "Staff": 8000, "Budget": 180000, "Counterintelligence": 90, "Countries": [11], "OpsAgainstHomeland": [], "IntelDescription": [], },
+	{ "Type": OrgType.INTEL, "Name": "Mukhabarat", "Fixed": true, "Known": true, "Staff": 4000, "Budget": 20000, "Counterintelligence": 75, "Countries": [12], "OpsAgainstHomeland": [], "IntelDescription": [], },
+	{ "Type": OrgType.INTEL, "Name": "NDS", "Fixed": true, "Known": true, "Staff": 3000, "Budget": 10000, "Counterintelligence": 70, "Countries": [13], "OpsAgainstHomeland": [], "IntelDescription": [], },
+	{ "Type": OrgType.GENERALTERROR, "Name": "Al-Qaeda", "Fixed": false, "Known": true, "Staff": 45000, "Budget": 25000, "Counterintelligence": 60, "Countries": [12,13], "OpsAgainstHomeland": [], "IntelDescription": [], }
 ]
 
 enum TargetType {

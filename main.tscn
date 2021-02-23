@@ -268,12 +268,12 @@ scroll_active = false
 [node name="CEvents4" type="HBoxContainer" parent="M/R"]
 margin_top = 945.0
 margin_right = 680.0
-margin_bottom = 1245.0
+margin_bottom = 1195.0
 
 [node name="RichTextLabel" type="RichTextLabel" parent="M/R/CEvents4"]
 margin_right = 680.0
-margin_bottom = 300.0
-rect_min_size = Vector2( 0, 300 )
+margin_bottom = 250.0
+rect_min_size = Vector2( 0, 250 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_fonts/bold_font = SubResource( 1 )
@@ -282,10 +282,19 @@ bbcode_enabled = true
 bbcode_text = "[b]21/01[/b] Test"
 text = "21/01 Test"
 
-[node name="Buttons3" type="HBoxContainer" parent="M/R"]
-margin_top = 1260.0
+[node name="Label2" type="Label" parent="M/R"]
+margin_top = 1209.0
 margin_right = 680.0
-margin_bottom = 1380.0
+margin_bottom = 1239.0
+rect_min_size = Vector2( 0, 30 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Buttons3" type="HBoxContainer" parent="M/R"]
+margin_top = 1255.0
+margin_right = 680.0
+margin_bottom = 1375.0
 
 [node name="Label" type="Label" parent="M/R/Buttons3"]
 margin_top = 53.0

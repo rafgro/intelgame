@@ -22,6 +22,28 @@ func Generate():
 				}
 			)
 
+func GenerateHostileName():
+	var words = ["Tobiah","Yseut","Esther","Iphigenia","Yemima","Rexana","Amaterasu","Joslyn","Mattityahu","Karl","Izanami","Jemma","Lorinda","Avram","Ned","Trophimus","Isolde","Harvey","Marsha","Lyn","Shani","Anu","Marilyn","Montgomery","Davey","Leland","Crescens","Jordana","Vern","Bradford","Marianne","Adamu","Manahem","Earleen","Peronel","Enosh","Ryker","Adelle","Myrddin","Carver","Jody","Anat","Atarah","Capricia","Sidney","Cindra","Nik","Jehoash","Atarah","Iahel"]
+	var content = ""
+	var length = GameLogic.random.randi_range(1,3)
+	if length == 1:
+		return words[randi() % words.size()]
+	elif length == 2:
+		content += words[randi() % words.size()]
+		if GameLogic.random.randi_range(1,4) == 1: content += "-"
+		else: content += " "
+		content += words[randi() % words.size()]
+		return content
+	else:
+		content += words[randi() % words.size()]
+		if GameLogic.random.randi_range(1,4) == 1: content += "-"
+		else: content += " "
+		content += words[randi() % words.size()]
+		if GameLogic.random.randi_range(1,4) == 1: content += "-"
+		else: content += " "
+		content += words[randi() % words.size()]
+		return content
+
 func NewGenerate():
 	GameLogic.random.randomize()
 	randomize()
@@ -131,7 +153,7 @@ func NewGenerate():
 	# governments
 	for i in range(1, len(WorldData.Countries)):
 		WorldData.Organizations.append(
-			{ "Type": WorldData.OrgType.GOVERNMENT, "Name": WorldData.Countries[i].Adjective + " Government", "Fixed": true, "Known": true, "Staff": WorldData.Countries[i].Size*300, "Budget": WorldData.Countries[i].Size*10000, "Counterintelligence": 60, "Countries": [i], "OpsAgainstHomeland": [], }
+			{ "Type": WorldData.OrgType.GOVERNMENT, "Name": WorldData.Countries[i].Adjective + " Government", "Fixed": true, "Known": true, "Staff": WorldData.Countries[i].Size*300, "Budget": WorldData.Countries[i].Size*10000, "Counterintelligence": 60, "Countries": [i], "OpsAgainstHomeland": [], "IntelDescription": [], }
 		)
 	# few general terror orgs
 	for i in range(0,3):
@@ -142,8 +164,12 @@ func NewGenerate():
 			if !(trying in places):
 				places.append(trying)
 		WorldData.Organizations.append(
-			{ "Type": WorldData.OrgType.GENERALTERROR, "Name": "Government", "Fixed": false, "Known": false, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-100,100), "Counterintelligence": GameLogic.random.randi_range(10,60), "Countries": places, "OpsAgainstHomeland": [], }
+			{ "Type": WorldData.OrgType.GENERALTERROR, "Name": GenerateHostileName(), "Fixed": false, "Known": false, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-100,100), "Counterintelligence": GameLogic.random.randi_range(10,60), "Countries": places, "OpsAgainstHomeland": [], "IntelDescription": [], }
 		)
+	############################################################################
+	# filling in some organizatiions
+	for o in range(0, len(WorldData.Organizations)):
+		WorldIntel.GatherOnOrg(o, 0, "01/01/2021")
 	############################################################################
 	# simulating last few years
 	var pastDay = 1
