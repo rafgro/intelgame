@@ -222,7 +222,7 @@ margin_bottom = 120.0
 rect_min_size = Vector2( 200, 120 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 2 )
-text = "Gathered Intel"
+text = "Intelligence"
 
 [node name="Operations" type="Button" parent="M/R/Buttons2"]
 margin_left = 233.0
@@ -283,9 +283,9 @@ bbcode_text = "[b]21/01[/b] Test"
 text = "21/01 Test"
 
 [node name="Label2" type="Label" parent="M/R"]
-margin_top = 1209.0
+margin_top = 1210.0
 margin_right = 680.0
-margin_bottom = 1239.0
+margin_bottom = 1240.0
 rect_min_size = Vector2( 0, 30 )
 __meta__ = {
 "_edit_use_anchors_": false

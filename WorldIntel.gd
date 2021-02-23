@@ -4,7 +4,7 @@ extends Node
 func GatherOnOrg(o, quality, date):
 	var desc = "[b]"+date+"[/b] "
 	if WorldData.Organizations[o].Type == WorldData.OrgType.INTEL:
-		if quality < 10:
+		if quality >= 0 and quality < 10:
 			if WorldData.Organizations[o].Staff < 5000: desc += "small number of officers"
 			elif WorldData.Organizations[o].Staff < 15000: desc += "medium number of officers"
 			elif WorldData.Organizations[o].Staff < 30000: desc += "large number of officers"
@@ -14,3 +14,5 @@ func GatherOnOrg(o, quality, date):
 			elif WorldData.Organizations[o].Budget < 1000000: desc += ", large budget"
 			else: desc += ", huge budget"
 			WorldData.Organizations[o].IntelDescription.push_front(desc)
+		else:
+			WorldData.Organizations[o].IntelDescription.push_front("placeholder for deeper intel")

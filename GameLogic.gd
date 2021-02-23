@@ -37,22 +37,28 @@ var NewOfficerCost = 80  # thousands needed to spend on a new officer
 var SkillMaintenanceCost = 1  # thousands needed to maintain skills for an officer
 var SecurityMaintenanceCost = 1  # thousands needed to maintain security per officer
 
+func GiveDateWithYear():
+	var dateString = ""
+	if DateDay < 10: dateString += "0"
+	dateString += str(DateDay) + "/"
+	if DateMonth < 10: dateString += "0"
+	dateString += str(DateMonth) + "/" + str(DateYear)
+	return dateString
+	
+func GiveDateWithoutYear():
+	var dateString = ""
+	if DateDay < 10: dateString += "0"
+	dateString += str(DateDay) + "/"
+	if DateMonth < 10: dateString += "0"
+	dateString += str(DateMonth)
+	return dateString
+
 func AddEvent(text):
-	var localDate = ""
-	if DateDay < 10: localDate += "0"
-	localDate += str(DateDay) + "/"
-	if DateMonth < 10: localDate += "0"
-	localDate += str(DateMonth)
-	BureauEvents.push_front("[u][b]"+localDate+"[/b] " + text + "[/u]")
+	BureauEvents.push_front("[u][b]"+GiveDateWithoutYear()+"[/b] " + text + "[/u]")
 
 func AddWorldEvent(text, past):
 	if past == null:
-		var localDate = ""
-		if DateDay < 10: localDate += "0"
-		localDate += str(DateDay) + "/"
-		if DateMonth < 10: localDate += "0"
-		localDate += str(DateMonth) + "/" + str(DateYear)
-		WorldEvents.push_front("[u][b]"+localDate+"[/b] " + text + "[/u]")
+		WorldEvents.push_front("[u][b]"+GiveDateWithYear()+"[/b] " + text + "[/u]")
 	else:
 		WorldEvents.push_front("[b]"+past+"[/b] " + text)
 
@@ -67,7 +73,6 @@ func _init():
 	AddEvent("The bureau has opened")
 
 func _ready():
-	WorldGenerator.Generate()
 	WorldGenerator.NewGenerate()
 
 func NextWeek():
@@ -119,16 +124,16 @@ func NextWeek():
 	elif trustDiff < -2: trustDiff = -2
 	StaffTrust += trustDiff
 	# new operation given by the government
+	"""
 	if DateDay == 8 or random.randi_range(1,20) == 5:
-		Operations.append(OperationGenerator.NewOperation())
-		AddEvent("Government designated a new operation: " + Operations[-1].Name)
+		OperationGenerator.NewOperation()
 		CallManager.CallQueue.append(
 			{
 				"Header": "Important Information",
 				"Level": Operations[-1].Level,
 				"Operation": Operations[-1].Name,
-				"Content": "Government designated a new operation. Goal:\n" \
-					+ Operations[-1].GoalDescription + ".\n" \
+				"Content": "Government designated a new operation. Goal:\n"
+					+ Operations[-1].GoalDescription + ".\n"
 					+ "Find the target, execute operation, return with results.",
 				"Show1": false,
 				"Show2": false,
@@ -149,6 +154,7 @@ func NextWeek():
 			}
 		)
 		doesItEndWithCall = true
+	"""
 	# operations
 	var ifCall = OperationHandler.ProgressOperations()
 	if ifCall == true: doesItEndWithCall = true
@@ -166,6 +172,7 @@ func ImplementAbroad(thePlan):
 	Operations[thePlan.OperationId].Stage = OperationGenerator.Stage.ABROAD_OPERATION
 	Operations[thePlan.OperationId].AbroadPlan = thePlan
 	Operations[thePlan.OperationId].AbroadRateOfProgress = 99.0/thePlan.Length
+	Operations[thePlan.OperationId].Result = "ONGOING (GROUND)"
 	# moving officers
 	OfficersInHQ -= thePlan.Officers
 	OfficersAbroad += thePlan.Officers

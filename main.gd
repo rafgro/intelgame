@@ -7,12 +7,7 @@ extends Panel
 # Not only refreshing but also initiating all data on the main screen
 func UpdateMainScreen():
 	# date formatting
-	var dateString = ""
-	if GameLogic.DateDay < 10: dateString += "0"
-	dateString += str(GameLogic.DateDay) + "/"
-	if GameLogic.DateMonth < 10: dateString += "0"
-	dateString += str(GameLogic.DateMonth) + "/" + str(GameLogic.DateYear)
-	$M/R/CDate/Date.text = dateString
+	$M/R/CDate/Date.text = GameLogic.GiveDateWithYear()
 	# other
 	$M/R/CTrust/TrustPercent.value = GameLogic.Trust
 	$M/R/COfficer/Active.text = "Active officers: " + str(GameLogic.ActiveOfficers)

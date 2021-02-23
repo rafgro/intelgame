@@ -106,43 +106,48 @@ enum Approach {
 }
 
 enum Type {
-	PLACE_OBSERVATION,
-	PERSON_OBSERVATION,
-	PERSON_RECRUITMENT,
-	PERSON_KIDNAPPING,
-	PERSON_ASSASINATION,
-	TECHNOLOGY_STEALING,
-	TECHNOLOGY_DESTROYING,
+	MORE_INTEL = 0,
+	RECRUIT_SOURCE = 1,
+	OFFENSIVE = 2,
 }
 
 enum Stage {
 	NOT_STARTED,
-	FINDING_LOCATION,
 	PLANNING_OPERATION,
 	ABROAD_OPERATION,
 	FINISHED,
 }
 
-func NewOperation():
+func NewOperation(source, againstOrg, whatType):
 	var whichName = randi() % PossibleNames.size()
 	var theName = PossibleNames[whichName]
 	PossibleNames.remove(whichName)  # to avoid using the same name again
-	var whatTarget = randi() % WorldData.Targets.size()
-	return {
-		"Name": theName,
-		"Type": Type.PLACE_OBSERVATION,
-		"GoalDescription": "Gather intel on " + WorldData.Targets[whatTarget].Name,
-		"Level": "Unclassified",  # level displayed in calls
-		"Target": whatTarget,  # id from WorldData.Targets, it contains location
-		"AnalyticalOfficers": 0,
-		"OperationalOfficers": 0,
-		"Stage": Stage.NOT_STARTED,
-		"AbroadPlan": null,
-		"AbroadRateOfProgress": 10,
-		"AbroadProgress": 100,
-		"WeeksPassed": 0,
-		"ExpectedWeeks": GameLogic.random.randi_range(2,6),
-		"ExpectedQuality": GameLogic.random.randi_range(30,90),
-		"Started": "-//-",
-		"Result": "NOT STARTED",
-	}
+	# var whatTarget = randi() % WorldData.Targets.size()
+	var desc = ""
+	if whatType == Type.MORE_INTEL:
+		desc = "Gather intel on " + WorldData.Organizations[againstOrg].Name
+	if source == 0:
+		GameLogic.AddEvent("Bureau started a new operation: " + theName)
+	else:
+		GameLogic.AddEvent("Government designated a new operation: " + theName)
+	GameLogic.Operations.append(
+		{
+			"Source": source,
+			"Name": theName,
+			"Type": whatType,
+			"GoalDescription": desc,
+			"Level": "Unclassified",  # level displayed in calls
+			"Target": againstOrg,
+			"AnalyticalOfficers": 0,
+			"OperationalOfficers": 0,
+			"Stage": Stage.NOT_STARTED,
+			"AbroadPlan": null,
+			"AbroadRateOfProgress": 10,
+			"AbroadProgress": 100,
+			"WeeksPassed": 0,
+			"ExpectedWeeks": GameLogic.random.randi_range(2,6),
+			"ExpectedQuality": GameLogic.random.randi_range(30,90),
+			"Started": "-//-",
+			"Result": "NOT STARTED",
+		}
+	)

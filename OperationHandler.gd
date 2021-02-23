@@ -9,26 +9,12 @@ func ProgressOperations():
 		if GameLogic.Operations[i].Stage == OperationGenerator.Stage.NOT_STARTED:
 			# looking for free officers
 			if GameLogic.OfficersInHQ > 0:
+				#GameLogic.Operations[i].Stage = OperationGenerator.Stage.FINDING_LOCATION
 				GameLogic.Operations[i].AnalyticalOfficers = GameLogic.OfficersInHQ
-				GameLogic.Operations[i].Stage = OperationGenerator.Stage.FINDING_LOCATION
-				var dateString = ""
-				if GameLogic.DateDay < 10: dateString += "0"
-				dateString += str(GameLogic.DateDay) + "/"
-				if GameLogic.DateMonth < 10: dateString += "0"
-				dateString += str(GameLogic.DateMonth) + "/" + str(GameLogic.DateYear)
-				GameLogic.Operations[i].Started = dateString
-				GameLogic.Operations[i].Result = "ONGOING"
-		# didn't use elif on purpose here: possible to find location under a week
-		###########################################################################
-		if GameLogic.Operations[i].Stage == OperationGenerator.Stage.FINDING_LOCATION:
-			# search progress
-			var which = GameLogic.Operations[i].Target
-			WorldData.Targets[which].LocationSecrecyProgress -= WorldData.Targets[which].LocationOpenness * GameLogic.Operations[i].AnalyticalOfficers
-			if WorldData.Targets[which].LocationSecrecyProgress <= 0:
-				WorldData.Targets[which].LocationIsKnown = true
 				GameLogic.Operations[i].Stage = OperationGenerator.Stage.PLANNING_OPERATION
-				GameLogic.AddEvent(GameLogic.Operations[i].Name + ": Officers found location of the target")
-		# but used elif on purpose here: one week break after finding location
+				GameLogic.Operations[i].Started = GameLogic.GiveDateWithYear()
+				GameLogic.Operations[i].Result = "ONGOING (PLANNING)"
+		#  used elif on purpose here: at least one week break after starting
 		###########################################################################
 		elif GameLogic.Operations[i].Stage == OperationGenerator.Stage.PLANNING_OPERATION and GameLogic.OfficersInHQ > 0:
 			# designing possible approaches, three plus waiting another week
@@ -44,25 +30,26 @@ func ProgressOperations():
 				var predictedLength = 3  # in weeks, randomize later, should affect quality
 				var usedOfficers = minOfficers
 				# finding methods to use in the operation
-				var noOfMethods = GameLogic.random.randi_range(1, len(WorldData.Targets[which].AvailableDMethods))
+				var noOfMethods = GameLogic.random.randi_range(1, len(WorldData.Methods[GameLogic.Operations[i].Type]))
 				var theMethods = []
 				var safetyCounter = 0
 				while len(theMethods) < noOfMethods and safetyCounter < noOfMethods*2:
 					safetyCounter += 1
-					var methodId = WorldData.Targets[which].AvailableDMethods[randi() % WorldData.Targets[which].AvailableDMethods.size()]
+					var methodId = randi() % WorldData.Methods[GameLogic.Operations[i].Type].size()
 					if methodId in theMethods:
 						continue  # avoid duplications
 					theMethods.append(methodId)
-					if WorldData.Methods[methodId].OfficersRequired > usedOfficers:
-						usedOfficers = WorldData.Methods[methodId].OfficersRequired  # adjust to methods
+					# adjust to methods
+					if WorldData.Methods[GameLogic.Operations[i].Type][methodId].OfficersRequired > usedOfficers:
+						usedOfficers = WorldData.Methods[GameLogic.Operations[i].Type][methodId].OfficersRequired
 				# adjusting number of officers
 				usedOfficers = GameLogic.random.randi_range(usedOfficers, maxOfficers)
 				# calculating cost and checking if it's possible
-				var singleOfficerCost = WorldData.Countries[WorldData.Targets[which].Country].LocalCost \
-					+ (WorldData.Countries[WorldData.Targets[which].Country].TravelCost / predictedLength / 2)
+				var singleOfficerCost = WorldData.Countries[WorldData.Organizations[which].Countries[0]].LocalCost \
+					+ (WorldData.Countries[WorldData.Organizations[which].Countries[0]].TravelCost / predictedLength / 2)
 				totalCost += singleOfficerCost * usedOfficers * predictedLength
 				for m in theMethods:
-					totalCost += WorldData.Methods[m].Cost * predictedLength
+					totalCost += WorldData.Methods[GameLogic.Operations[i].Type][m].Cost * predictedLength
 				if totalCost > GameLogic.FreeFundsWeekly()*predictedLength:
 					continue
 				if usedOfficers > GameLogic.OfficersInHQ:
@@ -72,20 +59,20 @@ func ProgressOperations():
 				# quality
 				var totalQuality = 0
 				for m in theMethods:
-					totalQuality += WorldData.Methods[m].Quality
-				totalQuality *= ((100-WorldData.Targets[GameLogic.Operations[i].Target].DiffOfObservation)/100.0)
+					totalQuality += WorldData.Methods[GameLogic.Operations[i].Type][m].Quality
+				#totalQuality *= ((100-WorldData.Targets[GameLogic.Operations[i].Target].DiffOfObservation)/100.0)
 				totalQuality *= (0.5+(GameLogic.StaffSkill/100.0))
 				var qualityDesc = "poor"
 				if totalQuality >= 90: qualityDesc = "great"
 				elif totalQuality >= 60: qualityDesc = "good"
 				elif totalQuality >= 40: qualityDesc = "medium"
-				elif totalQuality >= 10: qualityDesc = "weak"
+				elif totalQuality >= 10: qualityDesc = "low"
 				# risk
 				var totalRisk = 0
 				for m in theMethods:
-					totalRisk += WorldData.Methods[m].Risk
-				totalRisk += WorldData.Countries[WorldData.Targets[which].Country].Hostility/2
-				totalRisk *= (WorldData.Targets[GameLogic.Operations[i].Target].RiskOfCounterintelligence/100.0)
+					totalRisk += WorldData.Methods[GameLogic.Operations[i].Type][m].Risk
+				#totalRisk += WorldData.Countries[WorldData.Targets[which].Country].Hostility/2
+				#totalRisk *= (WorldData.Targets[GameLogic.Operations[i].Target].RiskOfCounterintelligence/100.0)
 				totalRisk *= (120.0-GameLogic.StaffExperience)/100.0
 				if GameLogic.StaffTrust < 50: totalRisk += (50.0-GameLogic.StaffTrust)/5.0
 				elif GameLogic.StaffTrust > 50: totalRisk -= (GameLogic.StaffTrust-50.0)/20.0
@@ -98,12 +85,11 @@ func ProgressOperations():
 				var theDescription = "€"+str(totalCost)+",000 | "+str(usedOfficers)+" officers | " \
 					+str(predictedLength)+" weeks | "+qualityDesc+" quality, "+riskDesc+" risk\n"
 				for m in theMethods:
-					theDescription += WorldData.Methods[m].Name+"\n"
+					theDescription += WorldData.Methods[GameLogic.Operations[i].Type][m].Name+"\n"
 				localPlans.append(
 					{
 						"OperationId": i,
-						"Country": WorldData.Countries[WorldData.Targets[which].Country].Name,
-						"Street": WorldData.Targets[which].LocationPrecise,
+						"Country": WorldData.Countries[WorldData.Organizations[which].Countries[0]].Name,
 						"Officers": usedOfficers,
 						"Cost": totalCost,
 						"Length": predictedLength,
@@ -129,7 +115,7 @@ func ProgressOperations():
 						"Show4": true,
 						"Text1": "",
 						"Text2": "",
-						"Text3": "",
+						"Text3": "Call Off Operation",
 						"Text4": "Understood",
 						"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
 						"Decision1Argument": null,
@@ -143,7 +129,7 @@ func ProgressOperations():
 				)
 			else:
 				var wholeContent = "Officers designed following ground operation plans\n" \
-					+ "to be executed in "+localPlans[0].Street+", "+localPlans[0].Country+".\n\n"
+					+ "to be executed in "+localPlans[0].Country+".\n\n"
 				var sh2 = true
 				var sh3 = true
 				if len(localPlans) == 1:
@@ -209,8 +195,9 @@ func ProgressOperations():
 					GameLogic.OfficersAbroad -= GameLogic.Operations[i].AbroadPlan.Officers
 					GameLogic.BudgetOngoingOperations -= GameLogic.Operations[i].AbroadPlan.Cost
 					GameLogic.Operations[i].AbroadPlan = null
+					GameLogic.Operations[i].Result = "ONGOING (PLANNING)"
 					# world taking notice of our failure
-					WorldData.Targets[GameLogic.Operations[i].Target].RiskOfCounterintelligence *= 2
+					#WorldData.Targets[GameLogic.Operations[i].Target].RiskOfCounterintelligence *= 2
 					GameLogic.StaffTrust -= 5
 					GameLogic.StaffExperience = GameLogic.StaffExperience*1.07
 				# base p=60/100
@@ -221,29 +208,43 @@ func ProgressOperations():
 			# operation finish
 			if GameLogic.Operations[i].AbroadProgress <= 0:
 				# operation finished
+				if GameLogic.Operations[i].Type == OperationGenerator.Type.MORE_INTEL:
+					WorldIntel.GatherOnOrg(
+						GameLogic.Operations[i].Target,
+						GameLogic.Operations[i].AbroadPlan.Quality,
+						GameLogic.GiveDateWithYear()
+					)
 				# debriefing variables
 				GameLogic.Operations[i].Stage = OperationGenerator.Stage.FINISHED
 				GameLogic.OfficersInHQ += GameLogic.Operations[i].AbroadPlan.Officers
 				GameLogic.OfficersAbroad -= GameLogic.Operations[i].AbroadPlan.Officers
 				GameLogic.BudgetOngoingOperations -= GameLogic.Operations[i].AbroadPlan.Cost
 				GameLogic.PursuedOperations -= 1
-				# debriefing government and effect on the user
-				var govFeedback = 0  # from -100 to 100, usually -20 to 20
-				var weekDiff = (0.0 + GameLogic.Operations[i].WeeksPassed - GameLogic.Operations[i].ExpectedWeeks) / GameLogic.Operations[i].ExpectedWeeks
-				govFeedback += weekDiff * 20  # -2 for being 10% late
+				# quality as the main outcome
 				var qualityDiff = (0.0 + GameLogic.Operations[i].AbroadPlan.Quality - GameLogic.Operations[i].ExpectedQuality) / GameLogic.Operations[i].ExpectedQuality
 				if qualityDiff > 2.0: qualityDiff = 2.0
-				govFeedback += qualityDiff * 10  # +1 for 10% better quality
-				if govFeedback > 0: govFeedback *= 0.5  # positive trust more difficult to gather
-				govFeedback = int(govFeedback)
-				GameLogic.Trust += govFeedback
-				var govFeedbackDesc = "negatively rated its execution.\nThe bureau lost "+str((-1)*govFeedback)+"% of trust."
-				GameLogic.Operations[i].Result = "COMPLETED, negative feedback"
-				if govFeedback > 0:
-					var budgetIncrease = GameLogic.BudgetFull*(0.01*govFeedback)
-					GameLogic.BudgetFull += budgetIncrease
-					govFeedbackDesc = "positively rated its execution.\nThe bureau gained "+str(govFeedback)+"% of trust. As a confirmation,\ngovernment increased bureau's budget by €"+str(int(budgetIncrease))+",000.\n"
-					GameLogic.Operations[i].Result = "SUCCESS, positive feedback"
+				var content = ""
+				# debriefing user and results of the intel
+				if GameLogic.Operations[i].Source == 0:
+					content = "Operation was sucessfully finished.\n"
+					content += "Intel gathered on " + WorldData.Organizations[GameLogic.Operations[i].Target].Name + ":\n" + WorldData.Organizations[GameLogic.Operations[i].Target].IntelDescription[0].substr(18)
+				# debriefing government and effect on the user
+				elif GameLogic.Operations[i].Source == 1:
+					var govFeedback = 0  # from -100 to 100, usually -20 to 20
+					var weekDiff = (0.0 + GameLogic.Operations[i].WeeksPassed - GameLogic.Operations[i].ExpectedWeeks) / GameLogic.Operations[i].ExpectedWeeks
+					govFeedback += weekDiff * 20  # -2 for being 10% late
+					govFeedback += qualityDiff * 10  # +1 for 10% better quality
+					if govFeedback > 0: govFeedback *= 0.5  # positive trust more difficult to gather
+					govFeedback = int(govFeedback)
+					GameLogic.Trust += govFeedback
+					var govFeedbackDesc = "negatively rated its execution.\nThe bureau lost "+str((-1)*govFeedback)+"% of trust."
+					GameLogic.Operations[i].Result = "COMPLETED, negative feedback"
+					if govFeedback > 0:
+						var budgetIncrease = GameLogic.BudgetFull*(0.01*govFeedback)
+						GameLogic.BudgetFull += budgetIncrease
+						govFeedbackDesc = "positively rated its execution.\nThe bureau gained "+str(govFeedback)+"% of trust. As a confirmation,\ngovernment increased bureau's budget by €"+str(int(budgetIncrease))+",000.\n"
+						GameLogic.Operations[i].Result = "SUCCESS, positive feedback"
+					content = "Operation was sucessfully finished.\nGovernment " + govFeedbackDesc
 				# debriefing user
 				GameLogic.AddEvent(GameLogic.Operations[i].Name + ": "+str(GameLogic.Operations[i].AbroadPlan.Officers)+" officer(s) returned to homeland")
 				GameLogic.AddEvent("Bureau finished operation "+GameLogic.Operations[i].Name)
@@ -252,8 +253,7 @@ func ProgressOperations():
 						"Header": "Important Information",
 						"Level": GameLogic.Operations[i].Level,
 						"Operation": GameLogic.Operations[i].Name,
-						"Content": "Operation was sucessfully finished.\n" \
-							+ "Government " + govFeedbackDesc,
+						"Content": content,
 						"Show1": false,
 						"Show2": false,
 						"Show3": false,
