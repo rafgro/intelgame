@@ -74,9 +74,11 @@ func NextWeek():
 	var doesItEndWithCall = false
 	# clearing u-tags in events
 	var i = 0
-	while i < len(BureauEvents):
+	while i < min(len(BureauEvents), 10):
 		if "[u]" in BureauEvents[i]:
 			BureauEvents[i] = BureauEvents[i].substr(3, len(BureauEvents[i])-7)
+		if "[u]" in WorldEvents[i]:
+			WorldEvents[i] = WorldEvents[i].substr(3, len(WorldEvents[i])-7)
 		i += 1
 	# moving seven days forward
 	DateDay += 7
@@ -150,6 +152,8 @@ func NextWeek():
 	# operations
 	var ifCall = OperationHandler.ProgressOperations()
 	if ifCall == true: doesItEndWithCall = true
+	# world changes
+	WorldData.WorldNextWeek(null)
 	# call to action
 	if doesItEndWithCall == true:
 		get_tree().change_scene("res://call.tscn")

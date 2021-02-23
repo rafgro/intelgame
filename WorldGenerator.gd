@@ -127,6 +127,24 @@ func NewGenerate():
 		WorldData.Countries[c].PoliticsStability = GameLogic.random.randi_range(10,90)
 		c += 1
 	############################################################################
+	# generating organizations
+	# governments
+	for i in range(1, len(WorldData.Countries)):
+		WorldData.Organizations.append(
+			{ "Type": WorldData.OrgType.GOVERNMENT, "Name": WorldData.Countries[i].Adjective + " Government", "Fixed": true, "Known": true, "Staff": WorldData.Countries[i].Size*300, "Budget": WorldData.Countries[i].Size*10000, "Counterintelligence": 60, "Countries": [i], "OpsAgainstHomeland": [], }
+		)
+	# few general terror orgs
+	for i in range(0,3):
+		var size = GameLogic.random.randi_range(5,100)
+		var places = []
+		for h in range(0, GameLogic.random.randi_range(1,4)):
+			var trying = GameLogic.random.randi_range(0,len(WorldData.Countries)-1)
+			if !(trying in places):
+				places.append(trying)
+		WorldData.Organizations.append(
+			{ "Type": WorldData.OrgType.GENERALTERROR, "Name": "Government", "Fixed": false, "Known": false, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-100,100), "Counterintelligence": GameLogic.random.randi_range(10,60), "Countries": places, "OpsAgainstHomeland": [], }
+		)
+	############################################################################
 	# simulating last few years
 	var pastDay = 1
 	var pastMonth = 1
