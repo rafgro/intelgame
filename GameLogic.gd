@@ -15,6 +15,7 @@ var OfficersInHQ = 3
 var OfficersAbroad = 0
 var PursuedOperations = 0
 var BureauEvents = []
+var WorldEvents = []
 # Budget screen
 var BudgetFull = 100  # in thousands
 var BudgetSalaries = 12
@@ -44,17 +45,30 @@ func AddEvent(text):
 	localDate += str(DateMonth)
 	BureauEvents.push_front("[u][b]"+localDate+"[/b] " + text + "[/u]")
 
+func AddWorldEvent(text, past):
+	if past == null:
+		var localDate = ""
+		if DateDay < 10: localDate += "0"
+		localDate += str(DateDay) + "/"
+		if DateMonth < 10: localDate += "0"
+		localDate += str(DateMonth) + "/" + str(DateYear)
+		WorldEvents.push_front("[u][b]"+localDate+"[/b] " + text + "[/u]")
+	else:
+		WorldEvents.push_front("[b]"+past+"[/b] " + text)
+
 func FreeFundsWeekly():
 	return (BudgetFull - (BudgetSalaries+BudgetOffice+BudgetRecruitment \
 		+BudgetUpskilling+BudgetSecurity+BudgetOngoingOperations)) / 4
 
 # first ever call: proper initialization of vars
 func _init():
+	random.randomize()
 	randomize()
 	AddEvent("The bureau has opened")
 
 func _ready():
 	WorldGenerator.Generate()
+	WorldGenerator.NewGenerate()
 
 func NextWeek():
 	var doesItEndWithCall = false
@@ -103,7 +117,7 @@ func NextWeek():
 	elif trustDiff < -2: trustDiff = -2
 	StaffTrust += trustDiff
 	# new operation given by the government
-	if DateDay == 8 or random.randi_range(1,15) == 5:
+	if DateDay == 8 or random.randi_range(1,20) == 5:
 		Operations.append(OperationGenerator.NewOperation())
 		AddEvent("Government designated a new operation: " + Operations[-1].Name)
 		CallManager.CallQueue.append(

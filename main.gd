@@ -20,6 +20,7 @@ func UpdateMainScreen():
 		+ str(GameLogic.OfficersAbroad) + " on the ground"
 	$M/R/COperations/Pursued.text = "Pursued operations: " + str(GameLogic.PursuedOperations)
 	$M/R/CEvents2/RichTextLabel.bbcode_text = PoolStringArray(GameLogic.BureauEvents).join("\n")
+	$M/R/CEvents4/RichTextLabel.bbcode_text = PoolStringArray(GameLogic.WorldEvents).join("\n")
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

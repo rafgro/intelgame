@@ -23,6 +23,8 @@ func Generate():
 			)
 
 func NewGenerate():
+	GameLogic.random.randomize()
+	randomize()
 	############################################################################
 	# divide countries into few blocks
 	var blockA = []
@@ -40,61 +42,47 @@ func NewGenerate():
 	blockB.shuffle()
 	blockC.shuffle()
 	# randomly relate blocks
-	var blockAtoB = GameLogic.random.randi_range(-70, 70)
-	var blockAtoC = GameLogic.random.randi_range(-70, 70)
-	var blockBtoC = GameLogic.random.randi_range(-70, 70)
+	var blockAtoB = GameLogic.random.randi_range(0, 1)
+	var blockAtoC = GameLogic.random.randi_range(0, 1)
+	var blockBtoC = GameLogic.random.randi_range(0, 1)
 	# translate block into individual relations
-	for b in blockA:
-		WorldData.Countries[b].Friends.append_array(blockA)
-		WorldData.Countries[b].Friends.remove(blockA.bsearch(b))  # not friending itself
-		for bb in blockB:
-			if (blockAtoB+GameLogic.random.randi_range(-20,20)) < -40:
-				WorldData.Countries[b].Foes.append(bb)
-				if bb == 0:
-					WorldData.Countries[b].Hostility = (-1)*blockAtoB+GameLogic.random.randi_range(-20,20)
-			elif (blockAtoB+GameLogic.random.randi_range(-20,20)) > 40:
-				WorldData.Countries[b].Friends.append(bb)
-		for cc in blockC:
-			if (blockAtoC+GameLogic.random.randi_range(-20,20)) < -40:
-				WorldData.Countries[b].Foes.append(cc)
-				if cc == 0:
-					WorldData.Countries[b].Hostility = (-1)*blockAtoC+GameLogic.random.randi_range(-20,20)
-			elif (blockAtoC+GameLogic.random.randi_range(-20,20)) > 40:
-				WorldData.Countries[b].Friends.append(cc)
-	for b in blockB:
-		WorldData.Countries[b].Friends.append_array(blockB)
-		WorldData.Countries[b].Friends.remove(blockB.bsearch(b))  # not friending itself
-		for bb in blockA:
-			if (blockAtoB+GameLogic.random.randi_range(-20,20)) < -40:
-				WorldData.Countries[b].Foes.append(bb)
-				if bb == 0:
-					WorldData.Countries[b].Hostility = (-1)*blockAtoB+GameLogic.random.randi_range(-20,20)
-			elif (blockAtoB+GameLogic.random.randi_range(-20,20)) > 40:
-				WorldData.Countries[b].Friends.append(bb)
-		for cc in blockC:
-			if (blockBtoC+GameLogic.random.randi_range(-20,20)) < -40:
-				WorldData.Countries[b].Foes.append(cc)
-				if cc == 0:
-					WorldData.Countries[b].Hostility = (-1)*blockBtoC+GameLogic.random.randi_range(-20,20)
-			elif (blockBtoC+GameLogic.random.randi_range(-20,20)) > 40:
-				WorldData.Countries[b].Friends.append(cc)
-	for b in blockC:
-		WorldData.Countries[b].Friends.append_array(blockC)
-		WorldData.Countries[b].Friends.remove(blockC.bsearch(b))  # not friending itself
-		for bb in blockA:
-			if (blockAtoC+GameLogic.random.randi_range(-20,20)) < -40:
-				WorldData.Countries[b].Foes.append(bb)
-				if bb == 0:
-					WorldData.Countries[b].Hostility = (-1)*blockAtoC+GameLogic.random.randi_range(-20,20)
-			elif (blockAtoC+GameLogic.random.randi_range(-20,20)) > 40:
-				WorldData.Countries[b].Friends.append(bb)
-		for cc in blockB:
-			if (blockBtoC+GameLogic.random.randi_range(-20,20)) < -40:
-				WorldData.Countries[b].Foes.append(cc)
-				if cc == 0:
-					WorldData.Countries[b].Hostility = (-1)*blockBtoC+GameLogic.random.randi_range(-20,20)
-			elif (blockBtoC+GameLogic.random.randi_range(-20,20)) > 40:
-				WorldData.Countries[b].Friends.append(cc)
+	for i in range(0,len(WorldData.Countries)):
+		WorldData.DiplomaticRelations.append(
+			[0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+		)
+	for a in blockA:
+		for b in blockB:
+			if blockAtoB <= 0:
+				WorldData.DiplomaticRelations[a][b] = GameLogic.random.randi_range(-5,-80)
+			elif blockAtoB > 0:
+				WorldData.DiplomaticRelations[a][b] = GameLogic.random.randi_range(5,80)
+		for b in blockC:
+			if blockAtoC <= 0:
+				WorldData.DiplomaticRelations[a][b] = GameLogic.random.randi_range(-5,-80)
+			elif blockAtoC > 0:
+				WorldData.DiplomaticRelations[a][b] = GameLogic.random.randi_range(5,80)
+	for a in blockB:
+		for b in blockA:
+			if blockAtoB <= 0:
+				WorldData.DiplomaticRelations[a][b] = GameLogic.random.randi_range(-5,-80)
+			elif blockAtoB > 0:
+				WorldData.DiplomaticRelations[a][b] = GameLogic.random.randi_range(5,80)
+		for b in blockC:
+			if blockBtoC <= 0:
+				WorldData.DiplomaticRelations[a][b] = GameLogic.random.randi_range(-5,-80)
+			elif blockBtoC > 0:
+				WorldData.DiplomaticRelations[a][b] = GameLogic.random.randi_range(5,80)
+	for a in blockC:
+		for b in blockA:
+			if blockAtoC <= 0:
+				WorldData.DiplomaticRelations[a][b] = GameLogic.random.randi_range(-5,-80)
+			elif blockAtoC > 0:
+				WorldData.DiplomaticRelations[a][b] = GameLogic.random.randi_range(5,80)
+		for b in blockB:
+			if blockBtoC <= 0:
+				WorldData.DiplomaticRelations[a][b] = GameLogic.random.randi_range(-5,-80)
+			elif blockBtoC > 0:
+				WorldData.DiplomaticRelations[a][b] = GameLogic.random.randi_range(5,80)
 	# each block usually has one aggressive leader, few satellite players, and lazier long tail
 	# i know, dry, but don't care about that right now
 	c = 0
@@ -108,6 +96,7 @@ func NewGenerate():
 		else:
 			WorldData.Countries[blockA[c]].PoliticsAggresion = GameLogic.random.randi_range(10,50)
 			WorldData.Countries[blockA[c]].PoliticsIntel = GameLogic.random.randi_range(5,50)
+		c += 1
 	c = 0
 	while c < len(blockB):
 		if c == 0:
@@ -119,6 +108,7 @@ func NewGenerate():
 		else:
 			WorldData.Countries[blockB[c]].PoliticsAggresion = GameLogic.random.randi_range(10,50)
 			WorldData.Countries[blockB[c]].PoliticsIntel = GameLogic.random.randi_range(5,50)
+		c += 1
 	c = 0
 	while c < len(blockC):
 		if c == 0:
@@ -130,5 +120,40 @@ func NewGenerate():
 		else:
 			WorldData.Countries[blockC[c]].PoliticsAggresion = GameLogic.random.randi_range(10,50)
 			WorldData.Countries[blockC[c]].PoliticsIntel = GameLogic.random.randi_range(5,50)
+		c += 1
+	# more general generators
+	c = 0
+	while c < len(WorldData.Countries):
+		WorldData.Countries[c].PoliticsStability = GameLogic.random.randi_range(10,90)
+		c += 1
 	############################################################################
+	# simulating last few years
+	var pastDay = 1
+	var pastMonth = 1
+	var pastYear = 2020
+	for i in range(1,55):
+		# moving seven days forward
+		pastDay += 7
+		if pastDay >= 28:
+			var maxNumber = 31  # max number of days in a month
+			if pastMonth == 2:
+				maxNumber = 28
+			elif pastMonth == 4 or pastMonth == 6 or pastMonth == 9 or pastMonth == 11:
+				maxNumber = 30
+			if pastDay > maxNumber:
+				pastDay -= maxNumber  # eg 35-31=4th
+				pastMonth += 1
+				if pastMonth == 13:
+					pastMonth = 1
+					pastYear += 1
+					if pastYear == 2021:
+						break  # finish of the simulation
+		# formatting date
+		var localDate = ""
+		if pastDay < 10: localDate += "0"
+		localDate += str(pastDay) + "/"
+		if pastMonth < 10: localDate += "0"
+		localDate += str(pastMonth) + "/" + str(pastYear)
+		# actual next week
+		WorldData.WorldNextWeek(localDate)
 

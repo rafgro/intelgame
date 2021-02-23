@@ -12,27 +12,29 @@ var Countries = [
 		"Size": 2, # population in millions
 		"ElectionPeriod": 52*4,  # almost-fixed weeks of governance
 		# generated below
-		"Friends": [],  # ids of friendly countries
-		"Foes": [],  # ids of hostile countries
 		"Hostility": 0,  # towards homeland, 0 to 100
 		"ElectionProgress": 52*4,  # counter to the next election
 		"PoliticsIntel": 50,  # attitude towards own intel agency, 0 to 100
 		"PoliticsAggression": 0,  # attitude towards other countries, 0 to 100
+		"PoliticsStability": 50,  # risk of wrong decisions or earlier elections, 0 to 100
 	},
-	{ "Name": "Ireland", "Adjective": "Irish", "TravelCost": 1, "LocalCost": 1, "IntelFriendliness": 90, "Size": 5, "ElectionPeriod": 52*4, "Friends": [], "Foes": [], "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, },
-	{ "Name": "United Kingdom", "Adjective": "English", "TravelCost": 1, "LocalCost": 2, "IntelFriendliness": 60, "Size": 67, "ElectionPeriod": 52*4, "Friends": [], "Foes": [], "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, },
-	{ "Name": "Belgium", "Adjective": "Belgian", "TravelCost": 1, "LocalCost": 2, "IntelFriendliness": 80, "Size": 11, "ElectionPeriod": 52*4, "Friends": [], "Foes": [], "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, },
-	{ "Name": "Germany", "Adjective": "German", "TravelCost": 1, "LocalCost": 2, "IntelFriendliness": 50, "Size": 83, "ElectionPeriod": 52*4, "Friends": [], "Foes": [], "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, },
-	{ "Name": "United States", "Adjective": "American", "TravelCost": 3, "LocalCost": 2, "IntelFriendliness": 40, "Size": 328, "ElectionPeriod": 52*4, "Friends": [], "Foes": [], "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, },
-	{ "Name": "Poland", "Adjective": "Polish", "TravelCost": 1, "LocalCost": 1, "IntelFriendliness": 70, "Size": 38, "ElectionPeriod": 52*4, "Friends": [], "Foes": [], "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, },
-	{ "Name": "France", "Adjective": "French", "TravelCost": 1, "LocalCost": 2, "IntelFriendliness": 40, "Size": 67, "ElectionPeriod": 52*4, "Friends": [], "Foes": [], "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, },
-	{ "Name": "Russia", "Adjective": "Russian", "TravelCost": 3, "LocalCost": 1, "IntelFriendliness": 30, "Size": 144, "ElectionPeriod": 52*10, "Friends": [], "Foes": [], "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, },
-	{ "Name": "China", "Adjective": "Chinese", "TravelCost": 5, "LocalCost": 2, "IntelFriendliness": 20, "Size": 1398, "ElectionPeriod": 52*20, "Friends": [], "Foes": [], "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, },
-	{ "Name": "Israel", "Adjective": "Israeli", "TravelCost": 3, "LocalCost": 2, "IntelFriendliness": 30, "Size": 9, "ElectionPeriod": 52*4, "Friends": [], "Foes": [], "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, },
-	{ "Name": "Turkey", "Adjective": "Turkish", "TravelCost": 2, "LocalCost": 1, "IntelFriendliness": 50, "Size": 84, "ElectionPeriod": 52*10, "Friends": [], "Foes": [], "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, },
-	{ "Name": "Iraq", "Adjective": "Iraqi", "TravelCost": 3, "LocalCost": 1, "IntelFriendliness": 40, "Size": 40, "ElectionPeriod": 52*4, "Friends": [], "Foes": [], "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, },
-	{ "Name": "Afghanistan", "Adjective": "Afghan", "TravelCost": 3, "LocalCost": 1, "IntelFriendliness": 60, "Size": 38, "ElectionPeriod": 52*4, "Friends": [], "Foes": [], "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, },
+	{ "Name": "Ireland", "Adjective": "Irish", "TravelCost": 1, "LocalCost": 1, "IntelFriendliness": 90, "Size": 5, "ElectionPeriod": 52*4, "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
+	{ "Name": "United Kingdom", "Adjective": "English", "TravelCost": 1, "LocalCost": 2, "IntelFriendliness": 60, "Size": 67, "ElectionPeriod": 52*4, "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
+	{ "Name": "Belgium", "Adjective": "Belgian", "TravelCost": 1, "LocalCost": 2, "IntelFriendliness": 80, "Size": 11, "ElectionPeriod": 52*4, "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
+	{ "Name": "Germany", "Adjective": "German", "TravelCost": 1, "LocalCost": 2, "IntelFriendliness": 50, "Size": 83, "ElectionPeriod": 52*4, "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
+	{ "Name": "United States", "Adjective": "American", "TravelCost": 3, "LocalCost": 2, "IntelFriendliness": 40, "Size": 328, "ElectionPeriod": 52*4, "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
+	{ "Name": "Poland", "Adjective": "Polish", "TravelCost": 1, "LocalCost": 1, "IntelFriendliness": 70, "Size": 38, "ElectionPeriod": 52*4, "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
+	{ "Name": "France", "Adjective": "French", "TravelCost": 1, "LocalCost": 2, "IntelFriendliness": 40, "Size": 67, "ElectionPeriod": 52*4, "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
+	{ "Name": "Russia", "Adjective": "Russian", "TravelCost": 3, "LocalCost": 1, "IntelFriendliness": 30, "Size": 144, "ElectionPeriod": 52*10, "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(50*5,50*10), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
+	{ "Name": "China", "Adjective": "Chinese", "TravelCost": 5, "LocalCost": 2, "IntelFriendliness": 20, "Size": 1398, "ElectionPeriod": 52*20, "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(50*10,50*20), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
+	{ "Name": "Israel", "Adjective": "Israeli", "TravelCost": 3, "LocalCost": 2, "IntelFriendliness": 30, "Size": 9, "ElectionPeriod": 52*4, "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
+	{ "Name": "Turkey", "Adjective": "Turkish", "TravelCost": 2, "LocalCost": 1, "IntelFriendliness": 50, "Size": 84, "ElectionPeriod": 52*10, "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(1,50*10), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
+	{ "Name": "Iraq", "Adjective": "Iraqi", "TravelCost": 3, "LocalCost": 1, "IntelFriendliness": 40, "Size": 40, "ElectionPeriod": 52*4, "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
+	{ "Name": "Afghanistan", "Adjective": "Afghan", "TravelCost": 3, "LocalCost": 1, "IntelFriendliness": 60, "Size": 38, "ElectionPeriod": 52*4, "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
 ]
+
+# Intercountry relations, 2d array
+var DiplomaticRelations = []
 
 enum TargetType {
 	PLACE,
@@ -111,3 +113,36 @@ var Adversaries = [
 ]
 
 var Level0Places = ["Embassy", "Institute", "Palace"]
+
+# Next week function like in game logic
+func WorldNextWeek(past):
+	# dealing with government stability
+	for c in range(0, len(Countries)):
+		var choice = GameLogic.random.randi_range(0,70)
+		if choice > Countries[c].PoliticsStability and GameLogic.random.randi_range(0,20) == 2:
+			GameLogic.AddWorldEvent("Scandal shaked government in " + Countries[c].Name, past)
+			Countries[c].PoliticsStability -= GameLogic.random.randi_range(5,15)
+		if Countries[c].PoliticsStability < 20:
+			choice = GameLogic.random.randi_range(0,20)
+			if choice > Countries[c].PoliticsStability and GameLogic.random.randi_range(0,10) == 1:
+				GameLogic.AddWorldEvent("Government dissoluted in " + Countries[c].Name, past)
+				Countries[c].ElectionProgress = 0
+	# progressing to elections
+	for c in range(0, len(Countries)):
+		Countries[c].ElectionProgress -= 1
+		if Countries[c].ElectionProgress <= 0:
+			# election
+			var won = GameLogic.random.randi_range(29,55)
+			if GameLogic.random.randi_range(0,1) == 0:
+				GameLogic.AddWorldEvent("Elections in " + Countries[c].Name + ": Incumbent won, achieving "+str(won)+"%", past)
+				Countries[c].ElectionProgress = Countries[c].ElectionPeriod
+				Countries[c].PoliticsAggression += GameLogic.random.randi_range(-5,5)
+				Countries[c].PoliticsStability += GameLogic.random.randi_range(10,won)
+			else:
+				GameLogic.AddWorldEvent("Elections in " + Countries[c].Name + ": New government formed, achieving "+str(won)+"%", past)
+				Countries[c].ElectionProgress = Countries[c].ElectionPeriod
+				Countries[c].PoliticsIntel = GameLogic.random.randi_range(10,90)
+				Countries[c].PoliticsAggression += GameLogic.random.randi_range(-15,15)
+				Countries[c].PoliticsStability += GameLogic.random.randi_range(won,90)
+				for d in range(0, len(Countries)):
+					DiplomaticRelations[c][d] += GameLogic.random.randi_range(-10,10)
