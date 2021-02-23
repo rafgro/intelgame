@@ -127,12 +127,13 @@ func NewOperation():
 	var whichName = randi() % PossibleNames.size()
 	var theName = PossibleNames[whichName]
 	PossibleNames.remove(whichName)  # to avoid using the same name again
+	var whatTarget = randi() % WorldData.Targets.size()
 	return {
 		"Name": theName,
 		"Type": Type.PLACE_OBSERVATION,
-		"GoalDescription": "Gather intel on " + WorldData.Targets[0].Name,
+		"GoalDescription": "Gather intel on " + WorldData.Targets[whatTarget].Name,
 		"Level": "Unclassified",  # level displayed in calls
-		"Target": 0,  # id from WorldData.Targets, it contains location
+		"Target": whatTarget,  # id from WorldData.Targets, it contains location
 		"AnalyticalOfficers": 0,
 		"OperationalOfficers": 0,
 		"Stage": Stage.NOT_STARTED,
@@ -140,8 +141,8 @@ func NewOperation():
 		"AbroadRateOfProgress": 10,
 		"AbroadProgress": 100,
 		"WeeksPassed": 0,
-		"ExpectedWeeks": 2+3,
-		"ExpectedQuality": 20,
+		"ExpectedWeeks": GameLogic.random.randi_range(2,6),
+		"ExpectedQuality": GameLogic.random.randi_range(30,90),
 		"Started": "-//-",
 		"Result": "NOT STARTED",
 	}

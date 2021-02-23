@@ -30,6 +30,7 @@ GameLogic="*res://GameLogic.gd"
 CallManager="*res://CallManager.gd"
 WorldData="*res://WorldData.gd"
 OperationGenerator="*res://OperationGenerator.gd"
+WorldGenerator="*res://WorldGenerator.gd"
 
 [display]
 

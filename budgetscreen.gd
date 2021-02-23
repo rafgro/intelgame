@@ -6,7 +6,7 @@ func CalculateCurrentBudget():
 		+GameLogic.BudgetRecruitment+GameLogic.BudgetUpskilling \
 		+GameLogic.BudgetSecurity+GameLogic.BudgetOngoingOperations) / GameLogic.BudgetFull)
 	$M/R/MonthlyBudget.text = "Monthly budget: €" + str(GameLogic.BudgetFull) \
-		+ ",000 (" + str(spent) + "% spent)"
+		+ ",000 (" + str(int(spent)) + "% spent)"
 	return spent
 
 func _ready():

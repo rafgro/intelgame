@@ -6,13 +6,33 @@ var Countries = [
 		"Name": "Homeland",
 		"IsEmbassyAvailable": true,
 		"TravelCost": 0,  # cost of getting there for one person
-		"LocalCost": 0  # weekly base cost of one person operation
+		"LocalCost": 0,  # weekly base cost of one person operation
+		"Hostility": 0,  # 0 to 100
+		"IntelFriendliness": 100,  # 0 to 100
 	},
 	{
 		"Name": "Ireland",
 		"IsEmbassyAvailable": true,
 		"TravelCost": 2,  # cost of getting there for one person
-		"LocalCost": 1  # weekly base cost of one person operation
+		"LocalCost": 1,  # weekly base cost of one person operation
+		"Hostility": 5,  # 0 to 100
+		"IntelFriendliness": 90,  # 0 to 100
+	},
+	{
+		"Name": "United Kingdom",
+		"IsEmbassyAvailable": true,
+		"TravelCost": 3,  # cost of getting there for one person
+		"LocalCost": 2,  # weekly base cost of one person operation
+		"Hostility": 10,  # 0 to 100
+		"IntelFriendliness": 60,  # 0 to 100
+	},
+	{
+		"Name": "Belgium",
+		"IsEmbassyAvailable": true,
+		"TravelCost": 2,  # cost of getting there for one person
+		"LocalCost": 2,  # weekly base cost of one person operation
+		"Hostility": 5,  # 0 to 100
+		"IntelFriendliness": 90,  # 0 to 100
 	}
 ]
 
@@ -53,7 +73,7 @@ var Methods = [
 	}
 ]
 
-# Generated targets, usually attached to a specific country, but some can move
+# Generated targets, first filled in to note an example
 var Targets = [
 	{
 		"Type": TargetType.PLACE,
@@ -69,3 +89,27 @@ var Targets = [
 		"AvailableDMethods": [0,1,2,3],  # ids from Methods
 	}
 ]
+
+# Generated adversaries, first filled in to note an example
+var Adversaries = [
+	{
+		"Level": 0,  # 0 country, think about other later
+		"Adjective": "Russian",  # used in names
+		"Counterintelligence": 95,  # from 0 (absent) to 100 (cia)
+		"Hostility": 70,  # from 0 (friend) to 100 (foe)
+	},
+	{
+		"Level": 0,  # 0 country, think about other later
+		"Adjective": "Chinese",  # used in names
+		"Counterintelligence": 85,  # from 0 (absent) to 100 (cia)
+		"Hostility": 80,  # from 0 (friend) to 100 (foe)
+	},
+	{
+		"Level": 0,  # 0 country, think about other later
+		"Adjective": "American",  # used in names
+		"Counterintelligence": 100,  # from 0 (absent) to 100 (cia)
+		"Hostility": 30,  # from 0 (friend) to 100 (foe)
+	}
+]
+
+var Level0Places = ["Embassy", "Institute", "Palace"]

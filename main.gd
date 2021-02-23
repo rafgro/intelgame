@@ -17,7 +17,7 @@ func UpdateMainScreen():
 	$M/R/CTrust/TrustPercent.value = GameLogic.Trust
 	$M/R/COfficer/Active.text = "Active officers: " + str(GameLogic.ActiveOfficers)
 	$M/R/COfficer/HQAbroad.text = str(GameLogic.OfficersInHQ) + " in HQ, " \
-		+ str(GameLogic.OfficersAbroad) + " abroad"
+		+ str(GameLogic.OfficersAbroad) + " on the ground"
 	$M/R/COperations/Pursued.text = "Pursued operations: " + str(GameLogic.PursuedOperations)
 	$M/R/CEvents2/RichTextLabel.bbcode_text = PoolStringArray(GameLogic.BureauEvents).join("\n")
 
