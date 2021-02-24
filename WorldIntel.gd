@@ -133,3 +133,49 @@ func GatherOnOrg(o, quality, date):
 		if roundedBudget == "€0": roundedBudget = "less than €1"
 		var roundedCounter = WorldData.Organizations[o].Counterintelligence
 		WorldData.Organizations[o].IntelDescription.push_front(desc + antihomeland + ", " + desc1 + roundedStaff + " members, budget of " + roundedBudget + " millions monthly, " + str(roundedCounter) + "/100 counterintelligence measures")
+
+# Gathering intelligence information about organizations
+func RecruitInOrg(o, quality, date):
+	var desc = "[b]"+date+"[/b] "
+	# difficulty is mainly determined by counterintelligence measures
+	# this is compared against quality of operation and previous intel
+	var counterHere = WorldData.Organizations[o].Counterintelligence + GameLogic.random.randi_range(-15,15)
+	var approach = WorldData.Organizations[o].IntelValue + quality
+	# pool of possible targets is also important
+	if WorldData.Organizations[o].IntelIdentified < 5: approach *= 0.3
+	elif WorldData.Organizations[o].IntelIdentified < 10: approach *= 0.5
+	elif WorldData.Organizations[o].IntelIdentified < 20: approach *= 0.6
+	elif WorldData.Organizations[o].IntelIdentified < 50: approach *= 0.8
+	elif WorldData.Organizations[o].IntelIdentified < 100: approach *= 1.0
+	elif WorldData.Organizations[o].IntelIdentified < 200: approach *= 1.1
+	else: approach *= 1.2
+	# final outcome
+	if approach < counterHere:
+		# failure
+		WorldData.Organizations[o].IntelValue += 2
+		return 0
+	else:
+		# success
+		var levelOfSuccess = quality
+		# one of how many..
+		if WorldData.Organizations[o].Staff < 5: levelOfSuccess *= 3
+		elif WorldData.Organizations[o].Staff < 10: levelOfSuccess *= 2
+		elif WorldData.Organizations[o].Staff < 30: levelOfSuccess *= 1.5
+		elif WorldData.Organizations[o].Staff < 100: levelOfSuccess *= 1.2
+		elif WorldData.Organizations[o].Staff < 1000: levelOfSuccess *= 1.0
+		elif WorldData.Organizations[o].Staff < 5000: levelOfSuccess *= 0.8
+		else: levelOfSuccess *= 0.6
+		if levelOfSuccess > 100: levelOfSuccess = 100
+		# noting source in org data
+		WorldData.Organizations[o].IntelSources.append(
+			{
+				"Level": levelOfSuccess,
+				"Trust": GameLogic.random.randi_range(5,25),
+			}
+		)
+		var wordLevel = "low"
+		if levelOfSuccess > 70: wordLevel = "high"
+		elif levelOfSuccess > 30: wordLevel = "medium"
+		WorldData.Organizations[o].IntelDescription.push_front(desc + " a new "+wordLevel+"-level source acquired")
+		# returning for user notification
+		return levelOfSuccess

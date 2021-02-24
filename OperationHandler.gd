@@ -35,31 +35,34 @@ func ProgressOperations():
 				j += 1  # in the beginning to allow early continue commands
 				var totalCost = 0
 				var predictedLength = 3+GameLogic.random.randi_range(-2,2)  # in weeks
+				if GameLogic.Operations[i].Type == OperationGenerator.Type.RECRUIT_SOURCE:
+					predictedLength *= 2
 				var usedOfficers = minOfficers
 				# finding methods to use in the operation
-				var noOfMethods = GameLogic.random.randi_range(1, len(WorldData.Methods[GameLogic.Operations[i].Type]))
+				var mt = GameLogic.Operations[i].Type
+				var noOfMethods = GameLogic.random.randi_range(1, len(WorldData.Methods[mt]))
 				var theMethods = []
 				var safetyCounter = 0
 				var countUnavailable = 0
 				var countMinIntel = 0
 				while len(theMethods) < noOfMethods and safetyCounter < noOfMethods*4:
 					safetyCounter += 1
-					var methodId = randi() % WorldData.Methods[GameLogic.Operations[i].Type].size()
+					var methodId = randi() % WorldData.Methods[mt].size()
 					# avoid duplications
 					if methodId in theMethods:
 						continue
 					# do not use unavailable methods
-					if WorldData.Methods[GameLogic.Operations[i].Type][methodId].Available == false:
+					if WorldData.Methods[mt][methodId].Available == false:
 						countUnavailable += 1
 						continue
 					# do not use methods not applicable here
-					if WorldData.Organizations[which].IntelValue < WorldData.Methods[GameLogic.Operations[i].Type][methodId].MinimalIntel:
+					if WorldData.Organizations[which].IntelValue < WorldData.Methods[mt][methodId].MinimalIntel:
 						countMinIntel += 1
 						continue
 					theMethods.append(methodId)
 					# adjust to methods
-					if WorldData.Methods[GameLogic.Operations[i].Type][methodId].OfficersRequired > usedOfficers:
-						usedOfficers = WorldData.Methods[GameLogic.Operations[i].Type][methodId].OfficersRequired
+					if WorldData.Methods[mt][methodId].OfficersRequired > usedOfficers:
+						usedOfficers = WorldData.Methods[mt][methodId].OfficersRequired
 				# no methods
 				if len(theMethods) == 0:
 					if countUnavailable > noOfMethods*2:  # over half of failures
@@ -82,7 +85,6 @@ func ProgressOperations():
 					noPlanReasonStaff += 1
 					continue
 				# calculating total operation parameters: clash of location and methods
-				# in the future also modify it by time
 				# quality
 				var whichCountry = WorldData.Organizations[GameLogic.Operations[i].Target].Countries[0]
 				var totalQuality = 0
@@ -117,6 +119,8 @@ func ProgressOperations():
 					+str(predictedLength)+" weeks | "+qualityDesc+" quality, "+riskDesc+" risk\n"
 				for m in theMethods:
 					theDescription += WorldData.Methods[GameLogic.Operations[i].Type][m].Name+"\n"
+				if GameLogic.Operations[i].Type == OperationGenerator.Type.RECRUIT_SOURCE:
+					theDescription += "approach and recruit selected asset\n"
 				localPlans.append(
 					{
 						"OperationId": i,
@@ -169,7 +173,7 @@ func ProgressOperations():
 					}
 				)
 			else:
-				var wholeContent = "Officers designed following ground operation plans\n" \
+				var wholeContent = "Officers designed following ground operation plans " \
 					+ "to be executed in "+localPlans[0].Country+".\n\n"
 				var sh2 = true
 				var sh3 = true
@@ -228,7 +232,7 @@ func ProgressOperations():
 				#if whatHappened <= 20:
 				#	pass  # probably something like catching or killing an officer
 				# base p=30/100
-				if whatHappened <= 20+30:
+				if whatHappened <= 30:
 					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": officers on the ground were caught and fled to homeland")
 					# internal debriefing
 					GameLogic.Operations[i].Stage = OperationGenerator.Stage.PLANNING_OPERATION
@@ -243,20 +247,20 @@ func ProgressOperations():
 					GameLogic.StaffExperience = GameLogic.StaffExperience*1.07
 					GameLogic.Trust -=5
 					WorldData.DiplomaticRelations[0][WorldData.Organizations[GameLogic.Operations[i].Target].Countries[0]] -= 5
-				# base p=60/100
+				# base p=70/100
 				else:
 					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": counterintelligence slowed down ground operation")
 					GameLogic.StaffSkill = GameLogic.StaffSkill*1.01
 					GameLogic.StaffExperience = GameLogic.StaffExperience*1.02
-			# operation finish
-			if GameLogic.Operations[i].AbroadProgress <= 0:
-				# operation finished
-				if GameLogic.Operations[i].Type == OperationGenerator.Type.MORE_INTEL:
-					WorldIntel.GatherOnOrg(
-						GameLogic.Operations[i].Target,
-						GameLogic.Operations[i].AbroadPlan.Quality,
-						GameLogic.GiveDateWithYear()
-					)
+			####################################################################
+			# operation finish: MORE_INTEL type
+			if GameLogic.Operations[i].AbroadProgress <= 0 and GameLogic.Operations[i].Type == OperationGenerator.Type.MORE_INTEL:
+				# operation finishes with intel gathering
+				WorldIntel.GatherOnOrg(
+					GameLogic.Operations[i].Target,
+					GameLogic.Operations[i].AbroadPlan.Quality,
+					GameLogic.GiveDateWithYear()
+				)
 				# debriefing variables
 				GameLogic.Operations[i].Stage = OperationGenerator.Stage.FINISHED
 				GameLogic.OfficersInHQ += GameLogic.Operations[i].AbroadPlan.Officers
@@ -269,7 +273,7 @@ func ProgressOperations():
 				var content = ""
 				# debriefing user and results of the intel
 				if GameLogic.Operations[i].Source == 0:
-					content = "Operation was sucessfully finished. "
+					content = "Operation was sucessfully executed. "
 					content += "Intel gathered on " + WorldData.Organizations[GameLogic.Operations[i].Target].Name + ":\n" + WorldData.Organizations[GameLogic.Operations[i].Target].IntelDescription[0].substr(18)
 					GameLogic.Operations[i].Result = "SUCCESS"
 					GameLogic.Trust += qualityDiff*2
@@ -322,5 +326,87 @@ func ProgressOperations():
 				GameLogic.StaffExperience += GameLogic.Operations[i].AbroadPlan.Officers
 				GameLogic.StaffSkill += qualityDiff
 				GameLogic.StaffTrust = GameLogic.StaffTrust*1.1
+			####################################################################
+			# operation finish: RECRUIT_SOURCE type
+			elif GameLogic.Operations[i].AbroadProgress <= 0 and GameLogic.Operations[i].Type == OperationGenerator.Type.RECRUIT_SOURCE:
+				# don't DRY here: later it will be evolved into a different, call-based code!
+				# operation finishes with success or failure now
+				var sourceLevel = WorldIntel.RecruitInOrg(
+					GameLogic.Operations[i].Target,
+					GameLogic.Operations[i].AbroadPlan.Quality,
+					GameLogic.GiveDateWithYear()
+				)  # where 0 means no source
+				# debriefing variables
+				GameLogic.Operations[i].Stage = OperationGenerator.Stage.FINISHED
+				GameLogic.OfficersInHQ += GameLogic.Operations[i].AbroadPlan.Officers
+				GameLogic.OfficersAbroad -= GameLogic.Operations[i].AbroadPlan.Officers
+				GameLogic.BudgetOngoingOperations -= GameLogic.Operations[i].AbroadPlan.Cost
+				GameLogic.PursuedOperations -= 1
+				# debriefing user and results of the intel
+				var difficulty = WorldData.Organizations[GameLogic.Operations[i].Target].Counterintelligence
+				var content = ""
+				if GameLogic.Operations[i].Source == 0:
+					if sourceLevel == 0:
+						content = "Operation failed. Officers gathered some intel on " + WorldData.Organizations[GameLogic.Operations[i].Target].Name + ", but they did not recruit a source in or near the organization.\n"
+						GameLogic.Operations[i].Result = "FAILURE"
+						GameLogic.Trust *= 0.98
+						GameLogic.StaffSkill += 2
+						GameLogic.StaffTrust = GameLogic.StaffTrust*0.95
+					else:
+						var wordLevel = "low"
+						if sourceLevel > 70: wordLevel = "high"
+						elif sourceLevel > 30: wordLevel = "medium"
+						content = "Operation was successfully executed. A new, " +wordLevel+ "-level source in " + WorldData.Organizations[GameLogic.Operations[i].Target].Name + " will regularly provide new intel.\n"
+						GameLogic.Operations[i].Result = "Success"
+						GameLogic.Trust *= 1.0 + difficulty*0.0025
+						GameLogic.StaffSkill += GameLogic.random.randi_range(3,6)
+						GameLogic.StaffTrust = GameLogic.StaffTrust*(1.05+difficulty*0.0025)
+				# debriefing government and effect on the user
+				elif GameLogic.Operations[i].Source == 1:
+					var govFeedback = sourceLevel*(1.0+(difficulty*0.05))
+					if sourceLevel == 0:
+						govFeedback = GameLogic.random.randi_range(-40,-10)*(1.0-(difficulty*0.05))
+					govFeedback = int(govFeedback)
+					GameLogic.Trust += govFeedback
+					var govFeedbackDesc = "Officers failed at acquiring a new source in an organization indicated by the government. Bureau lost "+str((-1)*govFeedback)+"% of trust."
+					GameLogic.Operations[i].Result = "COMPLETED, negative feedback"
+					if govFeedback > 0:
+						var budgetIncrease = GameLogic.BudgetFull*(0.01*govFeedback)
+						GameLogic.BudgetFull += budgetIncrease
+						govFeedbackDesc = "Officers acquired a new source in an organization indicated by the government. Bureau gained "+str(govFeedback)+"% of trust. As a confirmation, government increases bureau's budget by €"+str(int(budgetIncrease))+",000.\n"
+						GameLogic.Operations[i].Result = "SUCCESS, positive feedback"
+					content = "Operation has been finished. " + govFeedbackDesc
+				# debriefing user
+				if sourceLevel > 0:
+					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": bureau acquired a new source")
+				GameLogic.AddEvent(GameLogic.Operations[i].Name + ": "+str(GameLogic.Operations[i].AbroadPlan.Officers)+" officer(s) returned to homeland")
+				GameLogic.AddEvent("Bureau finished operation "+GameLogic.Operations[i].Name)
+				CallManager.CallQueue.append(
+					{
+						"Header": "Important Information",
+						"Level": GameLogic.Operations[i].Level,
+						"Operation": GameLogic.Operations[i].Name  + "\nagainst " + WorldData.Organizations[GameLogic.Operations[i].Target].Name,
+						"Content": content,
+						"Show1": false,
+						"Show2": false,
+						"Show3": false,
+						"Show4": true,
+						"Text1": "",
+						"Text2": "",
+						"Text3": "",
+						"Text4": "Understood",
+						"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision1Argument": null,
+						"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision2Argument": null,
+						"Decision3Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision3Argument": null,
+						"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision4Argument": null,
+					}
+				)
+				doesItEndWithCall = true
+				# internal debriefing
+				GameLogic.StaffExperience += GameLogic.Operations[i].AbroadPlan.Officers
 		i += 1
 	return doesItEndWithCall

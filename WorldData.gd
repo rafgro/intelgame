@@ -77,8 +77,10 @@ class AnOrganization:
 	var OpsAgainstHomeland = []  # future possibility
 	var IntelDescription = []  # just for user display, for many authomatically filled
 	var IntelDescType = ""  # just for user display, showed over list of gathered intels
-	var IntelIdentified = 0  # number of identified members for possible recruitment
+	#var IntelIdentified = 0  # number of identified members for possible recruitment
+	var IntelIdentified = 3  # DEBUG
 	var IntelValue = 0  # -100 (long search) to 100 (own), determines available methods
+	var IntelSources = []  # arr of dicts {"Level","Trust"}
 	
 	func _init(adictionary):
 		Type = adictionary.Type
@@ -153,8 +155,8 @@ var Methods = [
 	],
 	# RECRUIT_SOURCE methods
 	[
-		AMethod.new({ "Name": "basic observation of potential assets", "Cost": 4, "Quality": 5, "Risk": 15, "OfficersRequired": 2, "MinimalSkill": 0, "Available": false, "MinimalIntel": 5, }),
-		AMethod.new({ "Name": "background check", "Cost": 6, "Quality": 15, "Risk": 25, "OfficersRequired": 3, "MinimalSkill": 10, "Available": false, "MinimalIntel": 10, }),
+		AMethod.new({ "Name": "basic observation of potential assets", "Cost": 4, "Quality": 10, "Risk": 15, "OfficersRequired": 2, "MinimalSkill": 0, "Available": false, "MinimalIntel": 5, }),
+		AMethod.new({ "Name": "background check", "Cost": 6, "Quality": 20, "Risk": 25, "OfficersRequired": 3, "MinimalSkill": 10, "Available": false, "MinimalIntel": 10, }),
 		AMethod.new({ "Name": "arrange natural meetings with potential assets", "Cost": 10, "Quality": 30, "Risk": 40, "OfficersRequired": 2, "MinimalSkill": 15, "Available": false, "MinimalIntel": 15, }),
 		AMethod.new({ "Name": "collect blackmail material", "Cost": 12, "Quality": 60, "Risk": 40, "OfficersRequired": 8, "MinimalSkill": 35, "Available": false, "MinimalIntel": 25, }),
 		AMethod.new({ "Name": "construct network of close contacts", "Cost": 15, "Quality": 50, "Risk": 45, "OfficersRequired": 6, "MinimalSkill": 45, "Available": false, "MinimalIntel": 30, }),

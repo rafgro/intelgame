@@ -120,25 +120,32 @@ enum Stage {
 }
 
 func NewOperation(source, againstOrg, whatType):
+	GameLogic.PursuedOperations += 1
+	# name
 	var whichName = randi() % PossibleNames.size()
 	var theName = PossibleNames[whichName]
 	PossibleNames.remove(whichName)  # to avoid using the same name again
-	# var whatTarget = randi() % WorldData.Targets.size()
-	GameLogic.PursuedOperations += 1
+	# type
+	var alevel = "Confidential"
 	var desc = ""
 	if whatType == Type.MORE_INTEL:
 		desc = "Gather intel on " + WorldData.Organizations[againstOrg].Name
+	elif whatType == Type.RECRUIT_SOURCE:
+		desc = "Recruit source in " + WorldData.Organizations[againstOrg].Name
+		alevel = "Secret"
+	# local communicate
 	if source == 0:
 		GameLogic.AddEvent("Bureau started a new operation: " + theName)
 	else:
 		GameLogic.AddEvent("Government designated a new operation: " + theName)
+	# actual operation addition
 	GameLogic.Operations.append(
 		{
 			"Source": source,
 			"Name": theName,
 			"Type": whatType,
 			"GoalDescription": desc,
-			"Level": "Unclassified",  # level displayed in calls
+			"Level": alevel,  # level displayed in calls
 			"Target": againstOrg,
 			"AnalyticalOfficers": 0,
 			"OperationalOfficers": 0,
@@ -148,7 +155,7 @@ func NewOperation(source, againstOrg, whatType):
 			"AbroadProgress": 100,
 			"WeeksPassed": 0,
 			"ExpectedWeeks": GameLogic.random.randi_range(2,6),
-			"ExpectedQuality": GameLogic.random.randi_range(30,90),
+			"ExpectedQuality": GameLogic.random.randi_range(20,90),
 			"Started": "-//-",
 			"Result": "NOT STARTED",
 		}
