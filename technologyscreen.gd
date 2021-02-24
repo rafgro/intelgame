@@ -7,6 +7,7 @@ func _ready():
 		for m in range(0,len(WorldData.Methods[t])):
 			var desc = ""
 			if t == 0: desc += "intel: "
+			elif t == 1: desc += "recruitment: "
 			desc += WorldData.Methods[t][m].Name
 			if WorldData.Methods[t][m].Available == false:
 				desc += " (unavailable)"

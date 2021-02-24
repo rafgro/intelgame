@@ -124,6 +124,7 @@ func NewOperation(source, againstOrg, whatType):
 	var theName = PossibleNames[whichName]
 	PossibleNames.remove(whichName)  # to avoid using the same name again
 	# var whatTarget = randi() % WorldData.Targets.size()
+	GameLogic.PursuedOperations += 1
 	var desc = ""
 	if whatType == Type.MORE_INTEL:
 		desc = "Gather intel on " + WorldData.Organizations[againstOrg].Name

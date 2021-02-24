@@ -88,37 +88,37 @@ func NewGenerate():
 	c = 0
 	while c < len(blockA):
 		if c == 0:
-			WorldData.Countries[blockA[c]].PoliticsAggresion = GameLogic.random.randi_range(60,90)
+			WorldData.Countries[blockA[c]].PoliticsAggression = GameLogic.random.randi_range(60,90)
 			WorldData.Countries[blockA[c]].PoliticsIntel = GameLogic.random.randi_range(60,90)
 		elif c <= 1:
-			WorldData.Countries[blockA[c]].PoliticsAggresion = GameLogic.random.randi_range(40,60)
+			WorldData.Countries[blockA[c]].PoliticsAggression = GameLogic.random.randi_range(40,60)
 			WorldData.Countries[blockA[c]].PoliticsIntel = GameLogic.random.randi_range(40,60)
 		else:
-			WorldData.Countries[blockA[c]].PoliticsAggresion = GameLogic.random.randi_range(10,50)
+			WorldData.Countries[blockA[c]].PoliticsAggression = GameLogic.random.randi_range(10,50)
 			WorldData.Countries[blockA[c]].PoliticsIntel = GameLogic.random.randi_range(5,50)
 		c += 1
 	c = 0
 	while c < len(blockB):
 		if c == 0:
-			WorldData.Countries[blockB[c]].PoliticsAggresion = GameLogic.random.randi_range(60,90)
+			WorldData.Countries[blockB[c]].PoliticsAggression = GameLogic.random.randi_range(60,90)
 			WorldData.Countries[blockB[c]].PoliticsIntel = GameLogic.random.randi_range(60,90)
 		elif c <= 1:
-			WorldData.Countries[blockB[c]].PoliticsAggresion = GameLogic.random.randi_range(40,60)
+			WorldData.Countries[blockB[c]].PoliticsAggression = GameLogic.random.randi_range(40,60)
 			WorldData.Countries[blockB[c]].PoliticsIntel = GameLogic.random.randi_range(40,60)
 		else:
-			WorldData.Countries[blockB[c]].PoliticsAggresion = GameLogic.random.randi_range(10,50)
+			WorldData.Countries[blockB[c]].PoliticsAggression = GameLogic.random.randi_range(10,50)
 			WorldData.Countries[blockB[c]].PoliticsIntel = GameLogic.random.randi_range(5,50)
 		c += 1
 	c = 0
 	while c < len(blockC):
 		if c == 0:
-			WorldData.Countries[blockC[c]].PoliticsAggresion = GameLogic.random.randi_range(60,90)
+			WorldData.Countries[blockC[c]].PoliticsAggression = GameLogic.random.randi_range(60,90)
 			WorldData.Countries[blockC[c]].PoliticsIntel = GameLogic.random.randi_range(60,90)
 		elif c <= 1:
-			WorldData.Countries[blockC[c]].PoliticsAggresion = GameLogic.random.randi_range(40,60)
+			WorldData.Countries[blockC[c]].PoliticsAggression = GameLogic.random.randi_range(40,60)
 			WorldData.Countries[blockC[c]].PoliticsIntel = GameLogic.random.randi_range(40,60)
 		else:
-			WorldData.Countries[blockC[c]].PoliticsAggresion = GameLogic.random.randi_range(10,50)
+			WorldData.Countries[blockC[c]].PoliticsAggression = GameLogic.random.randi_range(10,50)
 			WorldData.Countries[blockC[c]].PoliticsIntel = GameLogic.random.randi_range(5,50)
 		c += 1
 	# more general generators
@@ -131,10 +131,10 @@ func NewGenerate():
 	# governments
 	for i in range(1, len(WorldData.Countries)):
 		WorldData.Organizations.append(
-			{ "Type": WorldData.OrgType.GOVERNMENT, "Name": WorldData.Countries[i].Adjective + " Government", "Fixed": true, "Known": true, "Staff": WorldData.Countries[i].Size*300, "Budget": WorldData.Countries[i].Size*10000, "Counterintelligence": 60, "Countries": [i], "OpsAgainstHomeland": [], "IntelDescription": [], "IntelValue": 10, }
+			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.GOVERNMENT, "Name": WorldData.Countries[i].Adjective + " Government", "Fixed": true, "Known": true, "Staff": WorldData.Countries[i].Size*300, "Budget": WorldData.Countries[i].Size*10000, "Counterintelligence": GameLogic.random.randi_range(45,65), "Countries": [i], "IntelValue": 10, })
 		)
 	# few general terror orgs
-	for i in range(0,3):
+	for i in range(0,4):
 		var size = GameLogic.random.randi_range(5,100)
 		var places = []
 		for h in range(0, GameLogic.random.randi_range(1,4)):
@@ -142,7 +142,7 @@ func NewGenerate():
 			if !(trying in places):
 				places.append(trying)
 		WorldData.Organizations.append(
-			{ "Type": WorldData.OrgType.GENERALTERROR, "Name": GenerateHostileName(), "Fixed": false, "Known": true, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-100,100), "Counterintelligence": GameLogic.random.randi_range(10,60), "Countries": places, "OpsAgainstHomeland": [], "IntelDescription": [], "IntelValue": 0, }
+			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.GENERALTERROR, "Name": GenerateHostileName(), "Fixed": false, "Known": true, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-100,100), "Counterintelligence": GameLogic.random.randi_range(10,60), "Countries": places, "IntelValue": GameLogic.random.randi_range(-50,10), })
 		)
 	############################################################################
 	# filling in some organizatiions

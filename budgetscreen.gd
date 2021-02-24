@@ -16,10 +16,10 @@ func _ready():
 		+ " - €" + str(GameLogic.BudgetOffice) + ",000 office maintenance\n\n" \
 		+ "Ongoing abroad operations\n - €" + str(GameLogic.BudgetOngoingOperations) \
 		+ ",000 travel, maintenance, technology"
-	$M/R/CRecruit/RecruitBudget.text = "Recruit officers: €" + str(GameLogic.BudgetRecruitment) + ",000"
+	$M/R/CRecruit/RecruitBudget.text = "Hiring new officers: €" + str(GameLogic.BudgetRecruitment) + ",000"
 	$M/R/CRecruit/RecruitSlider.max_value = GameLogic.BudgetFull-(GameLogic.BudgetSalaries+GameLogic.BudgetOffice)
 	$M/R/CRecruit/RecruitSlider.value = GameLogic.BudgetRecruitment
-	$M/R/CUpskill/UpskillBudget.text = "Upskill staff: €" + str(GameLogic.BudgetUpskilling) + ",000"
+	$M/R/CUpskill/UpskillBudget.text = "Upskilling staff: €" + str(GameLogic.BudgetUpskilling) + ",000"
 	$M/R/CUpskill/UpskillSlider.max_value = GameLogic.BudgetFull-(GameLogic.BudgetSalaries+GameLogic.BudgetOffice)
 	$M/R/CUpskill/UpskillSlider.value = GameLogic.BudgetUpskilling
 	$M/R/COffice/OfficeBudget.text = "Office security: €" + str(GameLogic.BudgetSecurity) + ",000"

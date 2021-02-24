@@ -14,7 +14,6 @@ func ProgressOperations():
 				GameLogic.Operations[i].Stage = OperationGenerator.Stage.PLANNING_OPERATION
 				GameLogic.Operations[i].Started = GameLogic.GiveDateWithYear()
 				GameLogic.Operations[i].Result = "ONGOING (PLANNING)"
-				GameLogic.PursuedOperations += 1
 		#  used elif on purpose here: at least one week break after starting
 		###########################################################################
 		elif GameLogic.Operations[i].Stage == OperationGenerator.Stage.PLANNING_OPERATION and GameLogic.OfficersInHQ > 0:

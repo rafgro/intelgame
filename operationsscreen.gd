@@ -21,7 +21,9 @@ func _on_ItemList_item_selected(index):
 		desc += GameLogic.Operations[index].AbroadPlan.Description
 	desc += "Result: " + GameLogic.Operations[index].Result
 	lastSelected = index
-	if GameLogic.Operations[index].Stage != OperationGenerator.Stage.FINISHED or GameLogic.Operations[index].Stage != OperationGenerator.Stage.CALLED_OFF:
+	if GameLogic.Operations[index].Stage == OperationGenerator.Stage.FINISHED or GameLogic.Operations[index].Stage == OperationGenerator.Stage.CALLED_OFF:
+		$M/R/CReturn/CallOff.disabled = true
+	else:
 		$M/R/CReturn/CallOff.disabled = false
 	$M/R/ItemDetails.text = desc
 
