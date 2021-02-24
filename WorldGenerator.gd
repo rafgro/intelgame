@@ -133,6 +133,7 @@ func NewGenerate():
 		WorldData.Organizations.append(
 			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.GOVERNMENT, "Name": WorldData.Countries[i].Adjective + " Government", "Fixed": true, "Known": true, "Staff": WorldData.Countries[i].Size*300, "Budget": WorldData.Countries[i].Size*10000, "Counterintelligence": GameLogic.random.randi_range(45,65), "Countries": [i], "IntelValue": 10, })
 		)
+		WorldData.Organizations[-1].IntelIdentified = GameLogic.random.randi_range(20,100)  # officials
 	# few general terror orgs
 	for i in range(0,4):
 		var size = GameLogic.random.randi_range(5,100)

@@ -9,7 +9,7 @@ func _ready():
 	mapOfCountries.clear()
 	$M/R/Countries.clear()
 	var descs = []
-	for c in range(0, len(WorldData.Countries)):
+	for c in range(1, len(WorldData.Countries)):
 		var desc = WorldData.Countries[c].Name
 		if WorldData.DiplomaticRelations[0][c] < -30:
 			desc += " (hostile country)"
@@ -45,7 +45,8 @@ func _on_Organizations_item_selected(index):
 		if len(WorldData.Organizations[o].IntelDescription) == 0:
 			desc += "No intel gathered."
 		else:
-			desc += PoolStringArray(WorldData.Organizations[o].IntelDescription).join("\n")
+			desc += WorldData.Organizations[o].IntelDescType + " | " + str(WorldData.Organizations[o].IntelIdentified) + " identified members"
+			desc += "\n" + PoolStringArray(WorldData.Organizations[o].IntelDescription).join("\n")
 		$M/R/Details.bbcode_text = desc
 		$M/R/H/Gather.disabled = false
 
@@ -59,3 +60,6 @@ func _on_Gather_pressed():
 			GameLogic.Operations[-1].Started = GameLogic.GiveDateWithYear()
 			GameLogic.Operations[-1].Result = "ONGOING (PLANNING)"
 		get_tree().change_scene("res://main.tscn")
+
+func _on_Recruit_pressed():
+	pass # Replace with function body.

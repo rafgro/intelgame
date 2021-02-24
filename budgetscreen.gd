@@ -36,7 +36,7 @@ func _on_RecruitSlider_value_changed(value):
 		GameLogic.BudgetRecruitment = value - (GameLogic.BudgetFull*(spent-100)*0.01)
 	CalculateCurrentBudget()
 	$M/R/CRecruit/RecruitSlider.value = int(GameLogic.BudgetRecruitment)
-	$M/R/CRecruit/RecruitBudget.text = "Recruit officers: €" + str(GameLogic.BudgetRecruitment) + ",000"
+	$M/R/CRecruit/RecruitBudget.text = "Hiring new officers: €" + str(GameLogic.BudgetRecruitment) + ",000"
 
 func _on_UpskillSlider_value_changed(value):
 	GameLogic.BudgetUpskilling = value
@@ -45,7 +45,7 @@ func _on_UpskillSlider_value_changed(value):
 		GameLogic.BudgetUpskilling = value - (GameLogic.BudgetFull*(spent-100)*0.01)
 	CalculateCurrentBudget()
 	$M/R/CUpskill/UpskillSlider.value = int(GameLogic.BudgetUpskilling)
-	$M/R/CUpskill/UpskillBudget.text = "Upskill staff: €" + str(GameLogic.BudgetUpskilling) + ",000"
+	$M/R/CUpskill/UpskillBudget.text = "Upskilling staff: €" + str(GameLogic.BudgetUpskilling) + ",000"
 
 func _on_OfficeSlider_value_changed(value):
 	GameLogic.BudgetSecurity = value

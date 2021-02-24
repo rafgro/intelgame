@@ -269,9 +269,10 @@ func ProgressOperations():
 				var content = ""
 				# debriefing user and results of the intel
 				if GameLogic.Operations[i].Source == 0:
-					content = "Operation was sucessfully finished.\n"
+					content = "Operation was sucessfully finished. "
 					content += "Intel gathered on " + WorldData.Organizations[GameLogic.Operations[i].Target].Name + ":\n" + WorldData.Organizations[GameLogic.Operations[i].Target].IntelDescription[0].substr(18)
 					GameLogic.Operations[i].Result = "SUCCESS"
+					GameLogic.Trust += qualityDiff*2
 				# debriefing government and effect on the user
 				elif GameLogic.Operations[i].Source == 1:
 					var govFeedback = 0  # from -100 to 100, usually -20 to 20
