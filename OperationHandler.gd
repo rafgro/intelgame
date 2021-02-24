@@ -25,6 +25,12 @@ func ProgressOperations():
 			var minOfficers = 1
 			var maxOfficers = GameLogic.OfficersInHQ
 			var localPlans = []
+			# tracing reasons for lack of any plan
+			var noPlanReasonTradecraft = 0
+			var noPlanReasonMinIntel = 0
+			var noPlanReasonCost = 0
+			var noPlanReasonStaff = 0
+			# actual method planning
 			var j = 0
 			while j < 6:  # six tries but will present only first three
 				j += 1  # in the beginning to allow early continue commands
@@ -35,6 +41,8 @@ func ProgressOperations():
 				var noOfMethods = GameLogic.random.randi_range(1, len(WorldData.Methods[GameLogic.Operations[i].Type]))
 				var theMethods = []
 				var safetyCounter = 0
+				var countUnavailable = 0
+				var countMinIntel = 0
 				while len(theMethods) < noOfMethods and safetyCounter < noOfMethods*4:
 					safetyCounter += 1
 					var methodId = randi() % WorldData.Methods[GameLogic.Operations[i].Type].size()
@@ -43,9 +51,11 @@ func ProgressOperations():
 						continue
 					# do not use unavailable methods
 					if WorldData.Methods[GameLogic.Operations[i].Type][methodId].Available == false:
+						countUnavailable += 1
 						continue
 					# do not use methods not applicable here
 					if WorldData.Organizations[which].IntelValue < WorldData.Methods[GameLogic.Operations[i].Type][methodId].MinimalIntel:
+						countMinIntel += 1
 						continue
 					theMethods.append(methodId)
 					# adjust to methods
@@ -53,6 +63,10 @@ func ProgressOperations():
 						usedOfficers = WorldData.Methods[GameLogic.Operations[i].Type][methodId].OfficersRequired
 				# no methods
 				if len(theMethods) == 0:
+					if countUnavailable > noOfMethods*2:  # over half of failures
+						noPlanReasonTradecraft += 1
+					if countMinIntel > noOfMethods*2:  # over half of failures
+						noPlanReasonMinIntel += 1
 					continue
 				# adjusting number of officers
 				usedOfficers = GameLogic.random.randi_range(usedOfficers, maxOfficers)
@@ -63,8 +77,10 @@ func ProgressOperations():
 				for m in theMethods:
 					totalCost += WorldData.Methods[GameLogic.Operations[i].Type][m].Cost * predictedLength
 				if totalCost > GameLogic.FreeFundsWeekly()*predictedLength:
+					noPlanReasonCost += 1
 					continue
 				if usedOfficers > GameLogic.OfficersInHQ:
+					noPlanReasonStaff += 1
 					continue
 				# calculating total operation parameters: clash of location and methods
 				# in the future also modify it by time
@@ -116,6 +132,17 @@ func ProgressOperations():
 					}
 				)
 			if len(localPlans) == 0:
+				var noPlanReasonsArr = []
+				if noPlanReasonMinIntel > 1: noPlanReasonsArr.append("intel about " + WorldData.Organizations[GameLogic.Operations[i].Target].Name)
+				if noPlanReasonStaff > 1: noPlanReasonsArr.append("human resources")
+				if noPlanReasonCost > 1: noPlanReasonsArr.append("financial resources")
+				if noPlanReasonTradecraft > 1: noPlanReasonsArr.append("tradecraft skills")
+				if len(noPlanReasonsArr) == 0: noPlanReasonsArr.append("resources")
+				var noPlanReasons = ""
+				if len(noPlanReasonsArr) > 1:
+					noPlanReasons = PoolStringArray(noPlanReasonsArr.slice(0,len(noPlanReasonsArr)-1)).join(", ") + ", and " + noPlanReasonsArr[-1] + " to approach this target. "
+				else:
+					noPlanReasons = noPlanReasonsArr[0] + " to approach this target."
 				CallManager.CallQueue.append(
 					{
 						"Header": "Important Information",
@@ -123,7 +150,7 @@ func ProgressOperations():
 						"Operation": GameLogic.Operations[i].Name + "\nagainst " + WorldData.Organizations[GameLogic.Operations[i].Target].Name,
 						"Content": "Officers tried to design a plan for ground operation. " \
 								 + "However, given current staff and budget, they could not " \
-								 + "create any realistic plans.",
+								 + "create any realistic plans. The bureau lacks " + noPlanReasons,
 						"Show1": false,
 						"Show2": false,
 						"Show3": true,
@@ -131,7 +158,7 @@ func ProgressOperations():
 						"Text1": "",
 						"Text2": "",
 						"Text3": "Call off operation",
-						"Text4": "Understood",
+						"Text4": "Try again in the next week",
 						"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
 						"Decision1Argument": null,
 						"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
