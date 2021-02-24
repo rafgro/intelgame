@@ -1,10 +1,14 @@
 extends Panel
 
+var lastSelected = -1
+
 func _ready():
 	for g in GameLogic.Operations:
 		var desc = g.Started + " " + g.Name
 		if g.Stage == OperationGenerator.Stage.FINISHED:
 			desc += " (finished)"
+		elif g.Stage == OperationGenerator.Stage.CALLED_OFF:
+			desc += " (called off)"
 		$M/R/ItemList.add_item(desc)
 
 func _on_Return_pressed():
@@ -16,4 +20,12 @@ func _on_ItemList_item_selected(index):
 	if GameLogic.Operations[index].AbroadPlan != null:
 		desc += GameLogic.Operations[index].AbroadPlan.Description
 	desc += "Result: " + GameLogic.Operations[index].Result
+	lastSelected = index
+	if GameLogic.Operations[index].Stage != OperationGenerator.Stage.FINISHED or GameLogic.Operations[index].Stage != OperationGenerator.Stage.CALLED_OFF:
+		$M/R/CReturn/CallOff.disabled = false
 	$M/R/ItemDetails.text = desc
+
+func _on_CallOff_pressed():
+	if lastSelected != -1:
+		GameLogic.ImplementCallOff(lastSelected)
+		get_tree().change_scene("res://main.tscn")

@@ -96,7 +96,7 @@ margin_bottom = 256.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
-text = "Average traits:"
+text = "Average traits"
 
 [node name="Empty7" type="Label" parent="M/R"]
 margin_top = 260.0

@@ -233,14 +233,14 @@ size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 2 )
 text = "Operations"
 
-[node name="Technology" type="Button" parent="M/R/Buttons2"]
+[node name="Craft" type="Button" parent="M/R/Buttons2"]
 margin_left = 466.0
 margin_right = 680.0
 margin_bottom = 120.0
 rect_min_size = Vector2( 200, 120 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 2 )
-text = "Technology"
+text = "Craft"
 
 [node name="Label" type="Label" parent="M/R"]
 margin_top = 871.0
@@ -315,5 +315,5 @@ text = "Next Week"
 [connection signal="pressed" from="M/R/Buttons/Government" to="." method="_on_Government_pressed"]
 [connection signal="pressed" from="M/R/Buttons2/GatheredIntel" to="." method="_on_GatheredIntel_pressed"]
 [connection signal="pressed" from="M/R/Buttons2/Operations" to="." method="_on_Operations_pressed"]
-[connection signal="pressed" from="M/R/Buttons2/Technology" to="." method="_on_Technology_pressed"]
+[connection signal="pressed" from="M/R/Buttons2/Craft" to="." method="_on_Craft_pressed"]
 [connection signal="pressed" from="M/R/Buttons3/NextWeek" to="." method="_on_NextWeek_pressed"]

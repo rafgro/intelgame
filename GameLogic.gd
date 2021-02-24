@@ -66,6 +66,10 @@ func FreeFundsWeekly():
 	return (BudgetFull - (BudgetSalaries+BudgetOffice+BudgetRecruitment \
 		+BudgetUpskilling+BudgetSecurity+BudgetOngoingOperations)) / 4
 
+func FreeFundsWeeklyWithoutOngoing():
+	return (BudgetFull - (BudgetSalaries+BudgetOffice+BudgetRecruitment \
+		+BudgetUpskilling+BudgetSecurity)) / 4
+
 # first ever call: proper initialization of vars
 func _init():
 	random.randomize()
@@ -73,7 +77,18 @@ func _init():
 	AddEvent("The bureau has opened")
 
 func _ready():
+	# past and current world situation
 	WorldGenerator.NewGenerate()
+	# initial craft availabililty
+	for t in range(0, len(WorldData.Methods)):
+		for m in range(0, len(WorldData.Methods[t])):
+			if WorldData.Methods[t][m].Available == false:
+				if FreeFundsWeeklyWithoutOngoing() < WorldData.Methods[t][m].Cost:
+					continue
+				if ActiveOfficers < WorldData.Methods[t][m].OfficersRequired:
+					continue
+				# change from false to criterions fulfilled
+				WorldData.Methods[t][m].Available = true
 
 func NextWeek():
 	var doesItEndWithCall = false
@@ -123,6 +138,17 @@ func NextWeek():
 	if trustDiff > 1: trustDiff = 1
 	elif trustDiff < -2: trustDiff = -2
 	StaffTrust += trustDiff
+	# craft availability changes
+	for t in range(0, len(WorldData.Methods)):
+		for m in range(0, len(WorldData.Methods[t])):
+			if WorldData.Methods[t][m].Available == false:
+				if FreeFundsWeeklyWithoutOngoing() < WorldData.Methods[t][m].Cost:
+					continue
+				if ActiveOfficers < WorldData.Methods[t][m].OfficersRequired:
+					continue
+				# change from false to criterions fulfilled
+				WorldData.Methods[t][m].Available = true
+				AddEvent("New craft is available: " + WorldData.Methods[t][m].Name)
 	# new operation given by the government
 	"""
 	if DateDay == 8 or random.randi_range(1,20) == 5:
@@ -180,6 +206,19 @@ func ImplementAbroad(thePlan):
 	Operations[thePlan.OperationId].OperationalOfficers += thePlan.Officers
 	# moving budget
 	BudgetOngoingOperations += thePlan.Cost
+
+func ImplementCallOff(i):
+	Operations[i].Stage = OperationGenerator.Stage.CALLED_OFF
+	Operations[i].Result = "CALLED OFF"
+	if Operations[i].AbroadPlan != null:
+		OfficersInHQ += Operations[i].AbroadPlan.Officers
+		OfficersAbroad -= Operations[i].AbroadPlan.Officers
+		BudgetOngoingOperations -= Operations[i].AbroadPlan.Cost
+		AddEvent(Operations[i].Name + ": "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned to homeland")
+	PursuedOperations -= 1
+	if Operations[i].Source == 1:
+		Trust = Trust*0.5  # loss of trust if calling off gov op
+	AddEvent("Bureau called off operation "+GameLogic.Operations[i].Name)
 
 func EmptyFunc(anyArgument):
 	pass  # nothing happens

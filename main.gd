@@ -43,5 +43,5 @@ func _on_GatheredIntel_pressed():
 func _on_Operations_pressed():
 	get_tree().change_scene("res://operations.tscn")
 
-func _on_Technology_pressed():
-	get_tree().change_scene("res://technology.tscn")
+func _on_Craft_pressed():
+	get_tree().change_scene("res://craft.tscn")

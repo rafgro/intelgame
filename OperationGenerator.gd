@@ -116,6 +116,7 @@ enum Stage {
 	PLANNING_OPERATION,
 	ABROAD_OPERATION,
 	FINISHED,
+	CALLED_OFF,
 }
 
 func NewOperation(source, againstOrg, whatType):

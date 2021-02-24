@@ -118,7 +118,16 @@ margin_top = 508.0
 margin_right = 680.0
 margin_bottom = 628.0
 
+[node name="CallOff" type="Button" parent="M/R/CReturn"]
+margin_right = 210.0
+margin_bottom = 120.0
+rect_min_size = Vector2( 210, 120 )
+custom_fonts/font = ExtResource( 1 )
+disabled = true
+text = "Call Off"
+
 [node name="Label" type="Label" parent="M/R/CReturn"]
+margin_left = 214.0
 margin_top = 53.0
 margin_right = 466.0
 margin_bottom = 67.0
@@ -133,4 +142,5 @@ size_flags_horizontal = 0
 custom_fonts/font = ExtResource( 1 )
 text = "Return"
 [connection signal="item_selected" from="M/R/ItemList" to="." method="_on_ItemList_item_selected"]
+[connection signal="pressed" from="M/R/CReturn/CallOff" to="." method="_on_CallOff_pressed"]
 [connection signal="pressed" from="M/R/CReturn/Return" to="." method="_on_Return_pressed"]

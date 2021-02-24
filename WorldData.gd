@@ -12,25 +12,24 @@ var Countries = [
 		"Size": 2, # population in millions
 		"ElectionPeriod": 52*4,  # almost-fixed weeks of governance
 		# generated below
-		"Hostility": 0,  # towards homeland, 0 to 100
 		"ElectionProgress": 52*4,  # counter to the next election
 		"PoliticsIntel": 50,  # attitude towards own intel agency, 0 to 100
 		"PoliticsAggression": 0,  # attitude towards other countries, 0 to 100
 		"PoliticsStability": 50,  # risk of wrong decisions or earlier elections, 0 to 100
 	},
-	{ "Name": "Ireland", "Adjective": "Irish", "TravelCost": 1, "LocalCost": 1, "IntelFriendliness": 90, "Size": 5, "ElectionPeriod": 52*4, "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
-	{ "Name": "United Kingdom", "Adjective": "English", "TravelCost": 1, "LocalCost": 2, "IntelFriendliness": 60, "Size": 67, "ElectionPeriod": 52*4, "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
-	{ "Name": "Belgium", "Adjective": "Belgian", "TravelCost": 1, "LocalCost": 2, "IntelFriendliness": 80, "Size": 11, "ElectionPeriod": 52*4, "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
-	{ "Name": "Germany", "Adjective": "German", "TravelCost": 1, "LocalCost": 2, "IntelFriendliness": 50, "Size": 83, "ElectionPeriod": 52*4, "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
-	{ "Name": "United States", "Adjective": "American", "TravelCost": 3, "LocalCost": 2, "IntelFriendliness": 40, "Size": 328, "ElectionPeriod": 52*4, "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
-	{ "Name": "Poland", "Adjective": "Polish", "TravelCost": 1, "LocalCost": 1, "IntelFriendliness": 70, "Size": 38, "ElectionPeriod": 52*4, "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
-	{ "Name": "France", "Adjective": "French", "TravelCost": 1, "LocalCost": 2, "IntelFriendliness": 40, "Size": 67, "ElectionPeriod": 52*4, "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
-	{ "Name": "Russia", "Adjective": "Russian", "TravelCost": 3, "LocalCost": 1, "IntelFriendliness": 30, "Size": 144, "ElectionPeriod": 52*10, "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(50*5,50*10), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
-	{ "Name": "China", "Adjective": "Chinese", "TravelCost": 5, "LocalCost": 2, "IntelFriendliness": 20, "Size": 1398, "ElectionPeriod": 52*20, "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(50*10,50*20), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
-	{ "Name": "Israel", "Adjective": "Israeli", "TravelCost": 3, "LocalCost": 2, "IntelFriendliness": 30, "Size": 9, "ElectionPeriod": 52*4, "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
-	{ "Name": "Turkey", "Adjective": "Turkish", "TravelCost": 2, "LocalCost": 1, "IntelFriendliness": 50, "Size": 84, "ElectionPeriod": 52*10, "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(1,50*10), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
-	{ "Name": "Iraq", "Adjective": "Iraqi", "TravelCost": 3, "LocalCost": 1, "IntelFriendliness": 40, "Size": 40, "ElectionPeriod": 52*4, "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
-	{ "Name": "Afghanistan", "Adjective": "Afghan", "TravelCost": 3, "LocalCost": 1, "IntelFriendliness": 60, "Size": 38, "ElectionPeriod": 52*4, "Hostility": 0,  "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
+	{ "Name": "Ireland", "Adjective": "Irish", "TravelCost": 1, "LocalCost": 1, "IntelFriendliness": 90, "Size": 5, "ElectionPeriod": 52*4, "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
+	{ "Name": "United Kingdom", "Adjective": "English", "TravelCost": 1, "LocalCost": 2, "IntelFriendliness": 60, "Size": 67, "ElectionPeriod": 52*4, "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
+	{ "Name": "Belgium", "Adjective": "Belgian", "TravelCost": 1, "LocalCost": 2, "IntelFriendliness": 80, "Size": 11, "ElectionPeriod": 52*4,  "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
+	{ "Name": "Germany", "Adjective": "German", "TravelCost": 1, "LocalCost": 2, "IntelFriendliness": 50, "Size": 83, "ElectionPeriod": 52*4, "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
+	{ "Name": "United States", "Adjective": "American", "TravelCost": 3, "LocalCost": 2, "IntelFriendliness": 40, "Size": 328, "ElectionPeriod": 52*4, "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
+	{ "Name": "Poland", "Adjective": "Polish", "TravelCost": 1, "LocalCost": 1, "IntelFriendliness": 70, "Size": 38, "ElectionPeriod": 52*4, "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
+	{ "Name": "France", "Adjective": "French", "TravelCost": 1, "LocalCost": 2, "IntelFriendliness": 40, "Size": 67, "ElectionPeriod": 52*4, "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
+	{ "Name": "Russia", "Adjective": "Russian", "TravelCost": 3, "LocalCost": 1, "IntelFriendliness": 30, "Size": 144, "ElectionPeriod": 52*10, "ElectionProgress": GameLogic.random.randi_range(50*5,50*10), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
+	{ "Name": "China", "Adjective": "Chinese", "TravelCost": 5, "LocalCost": 2, "IntelFriendliness": 20, "Size": 1398, "ElectionPeriod": 52*20, "ElectionProgress": GameLogic.random.randi_range(50*10,50*20), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
+	{ "Name": "Israel", "Adjective": "Israeli", "TravelCost": 3, "LocalCost": 2, "IntelFriendliness": 30, "Size": 9, "ElectionPeriod": 52*4, "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
+	{ "Name": "Turkey", "Adjective": "Turkish", "TravelCost": 2, "LocalCost": 1, "IntelFriendliness": 50, "Size": 84, "ElectionPeriod": 52*10, "ElectionProgress": GameLogic.random.randi_range(1,50*10), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
+	{ "Name": "Iraq", "Adjective": "Iraqi", "TravelCost": 3, "LocalCost": 1, "IntelFriendliness": 40, "Size": 40, "ElectionPeriod": 52*4, "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
+	{ "Name": "Afghanistan", "Adjective": "Afghan", "TravelCost": 3, "LocalCost": 1, "IntelFriendliness": 60, "Size": 38, "ElectionPeriod": 52*4, "ElectionProgress": GameLogic.random.randi_range(1,50*4), "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, },
 ]
 
 # Intercountry relations, 2d array
@@ -79,14 +78,16 @@ var Methods = [
 	[
 		{
 			"Name": "street observation on foot",
-			"Cost": 0,  # weekly
+			"Cost": 1,  # weekly
 			"Quality": 10,  # from 0 (useless) to 100 (perfect theft)
 			"Risk": 40,  # from 0 (hacking) to 100 (shooting), given well working counterintelligence
 			"OfficersRequired": 1,  # how many must be involved in operation
+			"Available": false,  # automatically controlled and set by the game
 		},
-		{ "Name": "street observation by car", "Cost": 1, "Quality": 15, "Risk": 20, "OfficersRequired": 2, },
-		{ "Name": "rent house for observation", "Cost": 10, "Quality": 30, "Risk": 5, "OfficersRequired": 2, },
-		{ "Name": "install and operate hidden cameras", "Cost": 2, "Quality": 30, "Risk": 20, "OfficersRequired": 1, },
+		{ "Name": "street observation by car", "Cost": 2, "Quality": 15, "Risk": 20, "OfficersRequired": 2, "Available": false, },
+		{ "Name": "rent house for observation", "Cost": 20, "Quality": 40, "Risk": 5, "OfficersRequired": 2, "Available": false, },
+		{ "Name": "install and operate hidden cameras", "Cost": 5, "Quality": 30, "Risk": 20, "OfficersRequired": 1, "Available": false, },
+		{ "Name": "attempt physical breach", "Cost": 20, "Quality": 70, "Risk": 60, "OfficersRequired": 5, "Available": false, },
 	]
 ]
 

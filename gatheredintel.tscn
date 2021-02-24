@@ -100,7 +100,7 @@ margin_bottom = 416.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
-text = "Organizations detected in selected country:"
+text = "Organizations detected in this country:"
 
 [node name="Organizations" type="ItemList" parent="M/R"]
 margin_top = 420.0

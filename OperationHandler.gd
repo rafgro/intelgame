@@ -33,11 +33,13 @@ func ProgressOperations():
 				var noOfMethods = GameLogic.random.randi_range(1, len(WorldData.Methods[GameLogic.Operations[i].Type]))
 				var theMethods = []
 				var safetyCounter = 0
-				while len(theMethods) < noOfMethods and safetyCounter < noOfMethods*2:
+				while len(theMethods) < noOfMethods and safetyCounter < noOfMethods*4:
 					safetyCounter += 1
 					var methodId = randi() % WorldData.Methods[GameLogic.Operations[i].Type].size()
 					if methodId in theMethods:
 						continue  # avoid duplications
+					if WorldData.Methods[GameLogic.Operations[i].Type][methodId].Available == false:
+						continue
 					theMethods.append(methodId)
 					# adjust to methods
 					if WorldData.Methods[GameLogic.Operations[i].Type][methodId].OfficersRequired > usedOfficers:
@@ -57,10 +59,11 @@ func ProgressOperations():
 				# calculating total operation parameters: clash of location and methods
 				# in the future also modify it by time
 				# quality
+				var whichCountry = WorldData.Organizations[GameLogic.Operations[i].Target].Countries[0]
 				var totalQuality = 0
 				for m in theMethods:
 					totalQuality += WorldData.Methods[GameLogic.Operations[i].Type][m].Quality
-				#totalQuality *= ((100-WorldData.Targets[GameLogic.Operations[i].Target].DiffOfObservation)/100.0)
+				totalQuality *= ((WorldData.Countries[whichCountry].IntelFriendliness)/100.0)
 				totalQuality *= (0.5+(GameLogic.StaffSkill/100.0))
 				var qualityDesc = "poor"
 				if totalQuality >= 90: qualityDesc = "great"
@@ -71,8 +74,9 @@ func ProgressOperations():
 				var totalRisk = 0
 				for m in theMethods:
 					totalRisk += WorldData.Methods[GameLogic.Operations[i].Type][m].Risk
-				#totalRisk += WorldData.Countries[WorldData.Targets[which].Country].Hostility/2
-				#totalRisk *= (WorldData.Targets[GameLogic.Operations[i].Target].RiskOfCounterintelligence/100.0)
+				#totalRisk += WorldData.Countries[whichCountry].Hostility/2
+				totalRisk += (-1)*WorldData.DiplomaticRelations[0][whichCountry]/2
+				totalRisk *= (WorldData.Organizations[which].Counterintelligence/100.0)
 				totalRisk *= (120.0-GameLogic.StaffExperience)/100.0
 				if GameLogic.StaffTrust < 50: totalRisk += (50.0-GameLogic.StaffTrust)/5.0
 				elif GameLogic.StaffTrust > 50: totalRisk -= (GameLogic.StaffTrust-50.0)/20.0
@@ -111,18 +115,18 @@ func ProgressOperations():
 								 + "create any realistic plans.",
 						"Show1": false,
 						"Show2": false,
-						"Show3": false,
+						"Show3": true,
 						"Show4": true,
 						"Text1": "",
 						"Text2": "",
-						"Text3": "Call Off Operation",
+						"Text3": "Call off operation",
 						"Text4": "Understood",
 						"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
 						"Decision1Argument": null,
 						"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
 						"Decision2Argument": null,
-						"Decision3Callback": funcref(GameLogic, "EmptyFunc"),
-						"Decision3Argument": null,
+						"Decision3Callback": funcref(GameLogic, "ImplementCallOff"),
+						"Decision3Argument": i,
 						"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 						"Decision4Argument": null,
 					}
@@ -146,7 +150,7 @@ func ProgressOperations():
 				else:
 					wholeContent += "[b]Plan A[/b]\n" + localPlans[0].Description+"\n[b]Plan B[/b]\n" \
 						+ localPlans[1].Description+"\n[b]Plan C[/b]\n"+localPlans[2].Description+"\n"
-				wholeContent += "\n\nChoose appropriate plan or wait for new plans."
+				wholeContent += "Choose appropriate plan or wait for new plans."
 				# setting the call for player
 				CallManager.CallQueue.append(
 					{
@@ -184,10 +188,10 @@ func ProgressOperations():
 				# many shades of _something went wrong_
 				var whatHappened = GameLogic.random.randi_range(0, 100)
 				# base p=10/100
-				if whatHappened <= 20:
-					pass  # probably something like catching or killing an officer
+				#if whatHappened <= 20:
+				#	pass  # probably something like catching or killing an officer
 				# base p=30/100
-				elif whatHappened <= 20+30:
+				if whatHappened <= 20+30:
 					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": officers on the ground were caught and fled to homeland")
 					# internal debriefing
 					GameLogic.Operations[i].Stage = OperationGenerator.Stage.PLANNING_OPERATION
@@ -197,9 +201,11 @@ func ProgressOperations():
 					GameLogic.Operations[i].AbroadPlan = null
 					GameLogic.Operations[i].Result = "ONGOING (PLANNING)"
 					# world taking notice of our failure
-					#WorldData.Targets[GameLogic.Operations[i].Target].RiskOfCounterintelligence *= 2
+					WorldData.Organizations[GameLogic.Operations[i].Target].Counterintelligence *= 1.05
 					GameLogic.StaffTrust -= 5
 					GameLogic.StaffExperience = GameLogic.StaffExperience*1.07
+					GameLogic.Trust -=5
+					WorldData.DiplomaticRelations[0][WorldData.Organizations[GameLogic.Operations[i].Target].Countries[0]] -= 5
 				# base p=60/100
 				else:
 					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": counterintelligence slowed down ground operation")
@@ -228,6 +234,7 @@ func ProgressOperations():
 				if GameLogic.Operations[i].Source == 0:
 					content = "Operation was sucessfully finished.\n"
 					content += "Intel gathered on " + WorldData.Organizations[GameLogic.Operations[i].Target].Name + ":\n" + WorldData.Organizations[GameLogic.Operations[i].Target].IntelDescription[0].substr(18)
+					GameLogic.Operations[i].Result = "SUCCESS"
 				# debriefing government and effect on the user
 				elif GameLogic.Operations[i].Source == 1:
 					var govFeedback = 0  # from -100 to 100, usually -20 to 20
