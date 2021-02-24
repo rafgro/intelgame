@@ -131,7 +131,7 @@ func NewGenerate():
 	# governments
 	for i in range(1, len(WorldData.Countries)):
 		WorldData.Organizations.append(
-			{ "Type": WorldData.OrgType.GOVERNMENT, "Name": WorldData.Countries[i].Adjective + " Government", "Fixed": true, "Known": true, "Staff": WorldData.Countries[i].Size*300, "Budget": WorldData.Countries[i].Size*10000, "Counterintelligence": 60, "Countries": [i], "OpsAgainstHomeland": [], "IntelDescription": [], }
+			{ "Type": WorldData.OrgType.GOVERNMENT, "Name": WorldData.Countries[i].Adjective + " Government", "Fixed": true, "Known": true, "Staff": WorldData.Countries[i].Size*300, "Budget": WorldData.Countries[i].Size*10000, "Counterintelligence": 60, "Countries": [i], "OpsAgainstHomeland": [], "IntelDescription": [], "IntelValue": 10, }
 		)
 	# few general terror orgs
 	for i in range(0,3):
@@ -142,7 +142,7 @@ func NewGenerate():
 			if !(trying in places):
 				places.append(trying)
 		WorldData.Organizations.append(
-			{ "Type": WorldData.OrgType.GENERALTERROR, "Name": GenerateHostileName(), "Fixed": false, "Known": false, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-100,100), "Counterintelligence": GameLogic.random.randi_range(10,60), "Countries": places, "OpsAgainstHomeland": [], "IntelDescription": [], }
+			{ "Type": WorldData.OrgType.GENERALTERROR, "Name": GenerateHostileName(), "Fixed": false, "Known": false, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-100,100), "Counterintelligence": GameLogic.random.randi_range(10,60), "Countries": places, "OpsAgainstHomeland": [], "IntelDescription": [], "IntelValue": 0, }
 		)
 	############################################################################
 	# filling in some organizatiions

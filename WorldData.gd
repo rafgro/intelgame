@@ -58,18 +58,19 @@ var Organizations = [
 		# generated and/or frequently modified
 		"OpsAgainstHomeland": [],  # future possibility
 		"IntelDescription": [],  # just for user display, for many authomatically filled
+		"IntelValue": 5,  # 0 (unknown location) to 100 (own), determines available methods
 	},
-	{ "Type": OrgType.INTEL, "Name": "BND", "Fixed": true, "Known": true, "Staff": 6500, "Budget": 85000, "Counterintelligence": 80, "Countries": [4], "OpsAgainstHomeland": [], "IntelDescription": [], },
-	{ "Type": OrgType.INTEL, "Name": "CIA", "Fixed": true, "Known": true, "Staff": 22000, "Budget": 1250000, "Counterintelligence": 85, "Countries": [5], "OpsAgainstHomeland": [], "IntelDescription": [], },
-	{ "Type": OrgType.INTEL, "Name": "AW (Agencja Wywiadu)", "Fixed": true, "Known": true, "Staff": 1000, "Budget": 20800, "Counterintelligence": 70, "Countries": [6], "OpsAgainstHomeland": [], "IntelDescription": [], },
-	{ "Type": OrgType.INTEL, "Name": "DGSE", "Fixed": true, "Known": true, "Staff": 6100, "Budget": 42000, "Counterintelligence": 85, "Countries": [7], "OpsAgainstHomeland": [], "IntelDescription": [], },
-	{ "Type": OrgType.INTEL, "Name": "ФСБ (FSB)", "Fixed": true, "Known": true, "Staff": 66200, "Budget": 1000000, "Counterintelligence": 85, "Countries": [8], "OpsAgainstHomeland": [], "IntelDescription": [], },
-	{ "Type": OrgType.INTEL, "Name": "Guoanbu", "Fixed": true, "Known": true, "Staff": 100000, "Budget": 2000000, "Counterintelligence": 95, "Countries": [9], "OpsAgainstHomeland": [], "IntelDescription": [], },
-	{ "Type": OrgType.INTEL, "Name": "Mossad", "Fixed": true, "Known": true, "Staff": 7000, "Budget": 228000, "Counterintelligence": 95, "Countries": [10], "OpsAgainstHomeland": [], "IntelDescription": [], },
-	{ "Type": OrgType.INTEL, "Name": "MIT (Milli Istihbarat Teskilati)", "Fixed": true, "Known": true, "Staff": 8000, "Budget": 180000, "Counterintelligence": 90, "Countries": [11], "OpsAgainstHomeland": [], "IntelDescription": [], },
-	{ "Type": OrgType.INTEL, "Name": "Mukhabarat", "Fixed": true, "Known": true, "Staff": 4000, "Budget": 20000, "Counterintelligence": 75, "Countries": [12], "OpsAgainstHomeland": [], "IntelDescription": [], },
-	{ "Type": OrgType.INTEL, "Name": "NDS", "Fixed": true, "Known": true, "Staff": 3000, "Budget": 10000, "Counterintelligence": 70, "Countries": [13], "OpsAgainstHomeland": [], "IntelDescription": [], },
-	{ "Type": OrgType.GENERALTERROR, "Name": "Al-Qaeda", "Fixed": false, "Known": true, "Staff": 45000, "Budget": 25000, "Counterintelligence": 60, "Countries": [12,13], "OpsAgainstHomeland": [], "IntelDescription": [], }
+	{ "Type": OrgType.INTEL, "Name": "BND", "Fixed": true, "Known": true, "Staff": 6500, "Budget": 85000, "Counterintelligence": 80, "Countries": [4], "OpsAgainstHomeland": [], "IntelDescription": [], "IntelValue": 5, },
+	{ "Type": OrgType.INTEL, "Name": "CIA", "Fixed": true, "Known": true, "Staff": 22000, "Budget": 1250000, "Counterintelligence": 85, "Countries": [5], "OpsAgainstHomeland": [], "IntelDescription": [], "IntelValue": 5, },
+	{ "Type": OrgType.INTEL, "Name": "AW (Agencja Wywiadu)", "Fixed": true, "Known": true, "Staff": 1000, "Budget": 20800, "Counterintelligence": 70, "Countries": [6], "OpsAgainstHomeland": [], "IntelDescription": [], "IntelValue": 5, },
+	{ "Type": OrgType.INTEL, "Name": "DGSE", "Fixed": true, "Known": true, "Staff": 6100, "Budget": 42000, "Counterintelligence": 85, "Countries": [7], "OpsAgainstHomeland": [], "IntelDescription": [], "IntelValue": 5, },
+	{ "Type": OrgType.INTEL, "Name": "ФСБ (FSB)", "Fixed": true, "Known": true, "Staff": 66200, "Budget": 1000000, "Counterintelligence": 85, "Countries": [8], "OpsAgainstHomeland": [], "IntelDescription": [], "IntelValue": 5, },
+	{ "Type": OrgType.INTEL, "Name": "Guoanbu", "Fixed": true, "Known": true, "Staff": 100000, "Budget": 2000000, "Counterintelligence": 95, "Countries": [9], "OpsAgainstHomeland": [], "IntelDescription": [], "IntelValue": 5, },
+	{ "Type": OrgType.INTEL, "Name": "Mossad", "Fixed": true, "Known": true, "Staff": 7000, "Budget": 228000, "Counterintelligence": 95, "Countries": [10], "OpsAgainstHomeland": [], "IntelDescription": [], "IntelValue": 5, },
+	{ "Type": OrgType.INTEL, "Name": "MIT (Milli Istihbarat Teskilati)", "Fixed": true, "Known": true, "Staff": 8000, "Budget": 180000, "Counterintelligence": 90, "Countries": [11], "OpsAgainstHomeland": [], "IntelDescription": [], "IntelValue": 5, },
+	{ "Type": OrgType.INTEL, "Name": "Mukhabarat", "Fixed": true, "Known": true, "Staff": 4000, "Budget": 20000, "Counterintelligence": 75, "Countries": [12], "OpsAgainstHomeland": [], "IntelDescription": [], "IntelValue": 5, },
+	{ "Type": OrgType.INTEL, "Name": "NDS", "Fixed": true, "Known": true, "Staff": 3000, "Budget": 10000, "Counterintelligence": 70, "Countries": [13], "OpsAgainstHomeland": [], "IntelDescription": [], "IntelValue": 5, },
+	{ "Type": OrgType.GENERALTERROR, "Name": "Al-Qaeda", "Fixed": false, "Known": true, "Staff": 45000, "Budget": 25000, "Counterintelligence": 60, "Countries": [12,13], "OpsAgainstHomeland": [], "IntelDescription": [], "IntelValue": 0, }
 ]
 
 # Methods on the ground
@@ -82,12 +83,15 @@ var Methods = [
 			"Quality": 10,  # from 0 (useless) to 100 (perfect theft)
 			"Risk": 40,  # from 0 (hacking) to 100 (shooting), given well working counterintelligence
 			"OfficersRequired": 1,  # how many must be involved in operation
+			"MinimalSkill": 0,  # minimal average skill to permit this method
 			"Available": false,  # automatically controlled and set by the game
+			"MinimalIntel": 2,  # minimal intel level about a target to use this method
 		},
-		{ "Name": "street observation by car", "Cost": 2, "Quality": 15, "Risk": 20, "OfficersRequired": 2, "Available": false, },
-		{ "Name": "rent house for observation", "Cost": 20, "Quality": 40, "Risk": 5, "OfficersRequired": 2, "Available": false, },
-		{ "Name": "install and operate hidden cameras", "Cost": 5, "Quality": 30, "Risk": 20, "OfficersRequired": 1, "Available": false, },
-		{ "Name": "attempt physical breach", "Cost": 20, "Quality": 70, "Risk": 60, "OfficersRequired": 5, "Available": false, },
+		{ "Name": "street observation by car", "Cost": 2, "Quality": 15, "Risk": 20, "OfficersRequired": 2, "MinimalSkill": 0, "Available": false, "MinimalIntel": 2, },
+		{ "Name": "install and operate hidden cameras", "Cost": 5, "Quality": 30, "Risk": 20, "OfficersRequired": 1, "MinimalSkill": 11, "Available": false, "MinimalIntel": 7, },
+		{ "Name": "rent house for observation", "Cost": 20, "Quality": 40, "Risk": 5, "OfficersRequired": 2, "MinimalSkill": 5, "Available": false, "MinimalIntel": 4, },
+		{ "Name": "attempt physical breach", "Cost": 20, "Quality": 60, "Risk": 60, "OfficersRequired": 5, "MinimalSkill": 25, "Available": false, "MinimalIntel": 50, },
+		{ "Name": "attempt electronic breach", "Cost": 40, "Quality": 80, "Risk": 10, "OfficersRequired": 4, "MinimalSkill": 40, "Available": false, "MinimalIntel": 5, },
 	]
 ]
 
@@ -170,3 +174,7 @@ func WorldNextWeek(past):
 		if theSum > 0: message += "governments issued a joint statement"
 		else: message += "governments could not reach consensus"
 		GameLogic.AddWorldEvent(message, past)
+	# organization proceedings
+	for w in range(0,len(Organizations)):
+		# intel decay
+		Organizations[w].IntelValue *= 0.99  # ~4%/month, ~40%/year

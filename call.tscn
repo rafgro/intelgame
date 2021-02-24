@@ -102,6 +102,7 @@ rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 text = "Operation ."
+align = 2
 
 [node name="Empty2" type="Label" parent="M/R"]
 margin_top = 132.0

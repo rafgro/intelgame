@@ -87,6 +87,8 @@ func _ready():
 					continue
 				if ActiveOfficers < WorldData.Methods[t][m].OfficersRequired:
 					continue
+				if StaffSkill < WorldData.Methods[t][m].MinimalSkill:
+					continue
 				# change from false to criterions fulfilled
 				WorldData.Methods[t][m].Available = true
 
@@ -145,6 +147,8 @@ func NextWeek():
 				if FreeFundsWeeklyWithoutOngoing() < WorldData.Methods[t][m].Cost:
 					continue
 				if ActiveOfficers < WorldData.Methods[t][m].OfficersRequired:
+					continue
+				if StaffSkill < WorldData.Methods[t][m].MinimalSkill:
 					continue
 				# change from false to criterions fulfilled
 				WorldData.Methods[t][m].Available = true

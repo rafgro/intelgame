@@ -4,6 +4,12 @@ extends Node
 func GatherOnOrg(o, quality, date):
 	var desc = "[b]"+date+"[/b] "
 	if WorldData.Organizations[o].Type == WorldData.OrgType.INTEL:
+		# continuous intel value
+		if quality > WorldData.Organizations[o].IntelValue:
+			WorldData.Organizations[o].IntelValue += quality*0.5
+		else:
+			WorldData.Organizations[o].IntelValue += 1
+		# discrete intel descriptions
 		if quality >= 0 and quality < 10:
 			if WorldData.Organizations[o].Staff < 5000: desc += "small number of officers"
 			elif WorldData.Organizations[o].Staff < 15000: desc += "medium number of officers"

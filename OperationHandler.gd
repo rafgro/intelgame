@@ -36,9 +36,14 @@ func ProgressOperations():
 				while len(theMethods) < noOfMethods and safetyCounter < noOfMethods*4:
 					safetyCounter += 1
 					var methodId = randi() % WorldData.Methods[GameLogic.Operations[i].Type].size()
+					# avoid duplications
 					if methodId in theMethods:
-						continue  # avoid duplications
+						continue
+					# do not use unavailable methods
 					if WorldData.Methods[GameLogic.Operations[i].Type][methodId].Available == false:
+						continue
+					# do not use methods not applicable here
+					if WorldData.Organizations[which].IntelValue < WorldData.Methods[GameLogic.Operations[i].Type][methodId].MinimalIntel:
 						continue
 					theMethods.append(methodId)
 					# adjust to methods
@@ -109,9 +114,9 @@ func ProgressOperations():
 					{
 						"Header": "Important Information",
 						"Level": GameLogic.Operations[i].Level,
-						"Operation": GameLogic.Operations[i].Name,
-						"Content": "Officers tried to design a plan for ground operation.\n" \
-								 + "However, given current staff and budget, they could not\n" \
+						"Operation": GameLogic.Operations[i].Name + "\nagainst " + WorldData.Organizations[GameLogic.Operations[i].Target].Name,
+						"Content": "Officers tried to design a plan for ground operation. " \
+								 + "However, given current staff and budget, they could not " \
 								 + "create any realistic plans.",
 						"Show1": false,
 						"Show2": false,
@@ -156,7 +161,7 @@ func ProgressOperations():
 					{
 						"Header": "Urgent Decision",
 						"Level": GameLogic.Operations[i].Level,
-						"Operation": GameLogic.Operations[i].Name,
+						"Operation": GameLogic.Operations[i].Name + "\nagainst " + WorldData.Organizations[GameLogic.Operations[i].Target].Name,
 						"Content": wholeContent,
 						"Show1": true,
 						"Show2": sh2,
@@ -259,7 +264,7 @@ func ProgressOperations():
 					{
 						"Header": "Important Information",
 						"Level": GameLogic.Operations[i].Level,
-						"Operation": GameLogic.Operations[i].Name,
+						"Operation": GameLogic.Operations[i].Name  + "\nagainst " + WorldData.Organizations[GameLogic.Operations[i].Target].Name,
 						"Content": content,
 						"Show1": false,
 						"Show2": false,
