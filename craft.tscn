@@ -44,9 +44,9 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="HBoxContainer" type="HBoxContainer" parent="M/R/CHeader/CenterContainer"]
-margin_left = 291.0
+margin_left = 264.0
 margin_top = 20.0
-margin_right = 388.0
+margin_right = 416.0
 margin_bottom = 60.0
 custom_constants/separation = 10
 
@@ -59,10 +59,10 @@ texture = ExtResource( 2 )
 [node name="Label" type="Label" parent="M/R/CHeader/CenterContainer/HBoxContainer"]
 margin_left = 48.0
 margin_top = 4.0
-margin_right = 97.0
+margin_right = 152.0
 margin_bottom = 35.0
 custom_fonts/font = ExtResource( 1 )
-text = "Craft"
+text = "Tradecraft"
 
 [node name="Empty5" type="Label" parent="M/R"]
 margin_top = 84.0

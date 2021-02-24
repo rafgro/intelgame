@@ -197,7 +197,6 @@ func NextWeek():
 
 func ImplementAbroad(thePlan):
 	AddEvent(Operations[thePlan.OperationId].Name + ": "+str(thePlan.Officers)+" officer(s) departed to "+thePlan.Country)
-	PursuedOperations += 1
 	# operation update
 	Operations[thePlan.OperationId].Stage = OperationGenerator.Stage.ABROAD_OPERATION
 	Operations[thePlan.OperationId].AbroadPlan = thePlan

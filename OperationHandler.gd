@@ -14,6 +14,7 @@ func ProgressOperations():
 				GameLogic.Operations[i].Stage = OperationGenerator.Stage.PLANNING_OPERATION
 				GameLogic.Operations[i].Started = GameLogic.GiveDateWithYear()
 				GameLogic.Operations[i].Result = "ONGOING (PLANNING)"
+				GameLogic.PursuedOperations += 1
 		#  used elif on purpose here: at least one week break after starting
 		###########################################################################
 		elif GameLogic.Operations[i].Stage == OperationGenerator.Stage.PLANNING_OPERATION and GameLogic.OfficersInHQ > 0:
@@ -26,8 +27,9 @@ func ProgressOperations():
 			var localPlans = []
 			var j = 0
 			while j < 6:  # six tries but will present only first three
+				j += 1  # in the beginning to allow early continue commands
 				var totalCost = 0
-				var predictedLength = 3  # in weeks, randomize later, should affect quality
+				var predictedLength = 3+GameLogic.random.randi_range(-2,2)  # in weeks
 				var usedOfficers = minOfficers
 				# finding methods to use in the operation
 				var noOfMethods = GameLogic.random.randi_range(1, len(WorldData.Methods[GameLogic.Operations[i].Type]))
@@ -49,6 +51,9 @@ func ProgressOperations():
 					# adjust to methods
 					if WorldData.Methods[GameLogic.Operations[i].Type][methodId].OfficersRequired > usedOfficers:
 						usedOfficers = WorldData.Methods[GameLogic.Operations[i].Type][methodId].OfficersRequired
+				# no methods
+				if len(theMethods) == 0:
+					continue
 				# adjusting number of officers
 				usedOfficers = GameLogic.random.randi_range(usedOfficers, maxOfficers)
 				# calculating cost and checking if it's possible
@@ -70,6 +75,7 @@ func ProgressOperations():
 					totalQuality += WorldData.Methods[GameLogic.Operations[i].Type][m].Quality
 				totalQuality *= ((WorldData.Countries[whichCountry].IntelFriendliness)/100.0)
 				totalQuality *= (0.5+(GameLogic.StaffSkill/100.0))
+				totalQuality *= 0.8+(predictedLength*0.5*0.2)  # 2->4w = 1.0->1.2
 				var qualityDesc = "poor"
 				if totalQuality >= 90: qualityDesc = "great"
 				elif totalQuality >= 60: qualityDesc = "good"
@@ -83,6 +89,7 @@ func ProgressOperations():
 				totalRisk += (-1)*WorldData.DiplomaticRelations[0][whichCountry]/2
 				totalRisk *= (WorldData.Organizations[which].Counterintelligence/100.0)
 				totalRisk *= (120.0-GameLogic.StaffExperience)/100.0
+				totalRisk *= 0.8+(predictedLength*0.5*0.2)  # 2->4w = 1.0->1.2
 				if GameLogic.StaffTrust < 50: totalRisk += (50.0-GameLogic.StaffTrust)/5.0
 				elif GameLogic.StaffTrust > 50: totalRisk -= (GameLogic.StaffTrust-50.0)/20.0
 				var riskDesc = "no"
@@ -108,7 +115,6 @@ func ProgressOperations():
 						"Description": theDescription,
 					}
 				)
-				j += 1
 			if len(localPlans) == 0:
 				CallManager.CallQueue.append(
 					{

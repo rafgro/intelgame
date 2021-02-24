@@ -142,12 +142,13 @@ func NewGenerate():
 			if !(trying in places):
 				places.append(trying)
 		WorldData.Organizations.append(
-			{ "Type": WorldData.OrgType.GENERALTERROR, "Name": GenerateHostileName(), "Fixed": false, "Known": false, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-100,100), "Counterintelligence": GameLogic.random.randi_range(10,60), "Countries": places, "OpsAgainstHomeland": [], "IntelDescription": [], "IntelValue": 0, }
+			{ "Type": WorldData.OrgType.GENERALTERROR, "Name": GenerateHostileName(), "Fixed": false, "Known": true, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-100,100), "Counterintelligence": GameLogic.random.randi_range(10,60), "Countries": places, "OpsAgainstHomeland": [], "IntelDescription": [], "IntelValue": 0, }
 		)
 	############################################################################
 	# filling in some organizatiions
 	for o in range(0, len(WorldData.Organizations)):
-		WorldIntel.GatherOnOrg(o, 0, "01/01/2021")
+		if WorldData.Organizations[o].Type == WorldData.OrgType.INTEL:
+			WorldIntel.GatherOnOrg(o, 0, "01/01/2021")
 	############################################################################
 	# simulating last few years
 	var pastDay = 1
