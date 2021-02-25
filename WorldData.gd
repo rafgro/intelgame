@@ -13,6 +13,7 @@ class ACountry:
 	var PoliticsIntel = 50  # attitude towards own intel agency, 0 to 100
 	var PoliticsAggression = 0  # attitude towards other countries, 0 to 100
 	var PoliticsStability = 50  # risk of wrong decisions or earlier elections, 0 to 100
+	var Expelled = 0  # how many officers are persona non grata
 	
 	func _init(aDictionary):
 		Name = aDictionary.Name

@@ -93,6 +93,7 @@ func _ready():
 				WorldData.Methods[t][m].Available = true
 
 func NextWeek():
+	############################################################################
 	var doesItEndWithCall = false
 	# clearing u-tags in events
 	var i = 0
@@ -118,7 +119,7 @@ func NextWeek():
 				DateMonth = 1
 				DateYear += 1
 	# budget-based staff changes
-	# recruitment
+	# hiring
 	RecruitProgress += BudgetRecruitment / 4 / NewOfficerCost
 	if RecruitProgress >= 1.0:
 		# currently always plus one, sort of weekly onboarding limit
@@ -140,6 +141,7 @@ func NextWeek():
 	if trustDiff > 1: trustDiff = 1
 	elif trustDiff < -2: trustDiff = -2
 	StaffTrust += trustDiff
+	############################################################################
 	# craft availability changes
 	for t in range(0, len(WorldData.Methods)):
 		for m in range(0, len(WorldData.Methods[t])):
@@ -153,12 +155,15 @@ func NextWeek():
 				# change from false to criterions fulfilled
 				WorldData.Methods[t][m].Available = true
 				AddEvent("New craft is available: " + WorldData.Methods[t][m].Name)
+	############################################################################
 	# operations
 	var ifCall = OperationHandler.ProgressOperations()
 	if ifCall == true: doesItEndWithCall = true
+	############################################################################
 	# world changes
 	ifCall = WorldData.WorldNextWeek(null)
 	if ifCall == true: doesItEndWithCall = true
+	############################################################################
 	# eventual government assigned operations
 	if random.randi_range(1,10) == 6:  # one every ~3 months
 		# choosing organization
@@ -205,6 +210,51 @@ func NextWeek():
 				}
 			)
 			doesItEndWithCall = true
+	############################################################################
+	# walk-ins or whistleblowers
+	if random.randi_range(1,25) == 17:  # one every ~6 months
+		var whichOrg = random.randi_range(0, len(WorldData.Organizations)-1)
+		var quality = random.randi_range(-65,65)
+		var content = "A source, claiming to be close to " + WorldData.Organizations[whichOrg].Name + " walked in into one our embassies. "
+		if WorldData.Organizations[whichOrg].IntelValue < 20 or WorldData.Organizations[whichOrg].IntelIdentified < 1:
+			content += "Due to lack of intelligence about the organization, officers cannot verify this story. "
+		else:
+			var pOfDetecting = StaffSkill*2
+			if random.randi_range(0,100) > pOfDetecting:
+				# not detected
+				if random.randi_range(1,2) == 2:
+					content += "Officers verified this story as probably unreliable."
+				else: content += "Officers verified this story as probably credible."
+			else:
+				# detected
+				if quality < 0: content += "Officers verified this story as probably unreliable."
+				else: content += "Officers verified this story as probably credible."
+		CallManager.CallQueue.append(
+			{
+				"Header": "Urgent Decision",
+				"Level": "Secret",
+				"Operation": "",
+				"Content": content,
+				"Show1": false,
+				"Show2": false,
+				"Show3": true,
+				"Show4": true,
+				"Text1": "Interrogate",
+				"Text2": "",
+				"Text3": "Reject intel",
+				"Text4": "Accept intel",
+				"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
+				"Decision1Argument": null,
+				"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
+				"Decision2Argument": null,
+				"Decision3Callback": funcref(GameLogic, "ImplementWalkin"),
+				"Decision3Argument": {"Choice":1},
+				"Decision4Callback": funcref(GameLogic, "ImplementWalkin"),
+				"Decision4Argument": {"Choice":2,"Content":content,"Whichorg":whichOrg,"Quality":quality},
+			}
+		)
+		doesItEndWithCall = true
+	############################################################################
 	# call to action
 	if doesItEndWithCall == true:
 		get_tree().change_scene("res://call.tscn")
@@ -270,6 +320,7 @@ func ImplementOfficerRescue(adictionary):
 		StaffTrust *= 1.08
 		StaffSkill *= 1.01
 		StaffExperience *= 1.03
+		WorldData.Countries[WorldData.Organizations[Operations[i].Target].Countries[0]].Expelled += Operations[i].AbroadPlan.Officers
 		# todo: expelling mechanism
 	# "denying affiliation will result in officer imprisonment and their de facto loss, affecting internal trust, but not affecting any external instituions"
 	elif adictionary.Choice == 3:
@@ -320,6 +371,41 @@ func ImplementOfficerRescue(adictionary):
 				"Decision4Argument": null,
 			}
 		)
+
+func ImplementWalkin(adict):
+	# reject
+	if adict.Choice == 1:
+		pass
+	# accept
+	elif adict.Choice == 2:
+		var content = adict.Content
+		WorldIntel.GatherOnOrg(adict.Whichorg, adict.Quality, GiveDateWithYear())
+		content += "\n\nProvided intel:\n" + WorldData.Organizations[adict.Whichorg].IntelDescription[0].substr(18)
+		CallManager.CallQueue.append(
+			{
+				"Header": "Urgent Decision",
+				"Level": "Secret",
+				"Operation": "",
+				"Content": content,
+				"Show1": false,
+				"Show2": false,
+				"Show3": false,
+				"Show4": true,
+				"Text1": "",
+				"Text2": "",
+				"Text3": "",
+				"Text4": "Understood",
+				"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
+				"Decision1Argument": null,
+				"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
+				"Decision2Argument": null,
+				"Decision3Callback": funcref(GameLogic, "EmptyFunc"),
+				"Decision3Argument": null,
+				"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
+				"Decision4Argument": null,
+			}
+		)
+		
 
 func EmptyFunc(anyArgument):
 	pass  # nothing happens

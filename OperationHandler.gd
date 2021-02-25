@@ -81,7 +81,8 @@ func ProgressOperations():
 				if totalCost > GameLogic.FreeFundsWeekly()*predictedLength:
 					noPlanReasonCost += 1
 					continue
-				if usedOfficers > GameLogic.OfficersInHQ:
+				var expelled = WorldData.Countries[WorldData.Organizations[which].Countries[0]].Expelled
+				if usedOfficers > (GameLogic.OfficersInHQ-expelled):
 					noPlanReasonStaff += 1
 					continue
 				# calculating total operation parameters: clash of location and methods
@@ -240,7 +241,7 @@ func ProgressOperations():
 								"Header": "Urgent Decision",
 								"Level": GameLogic.Operations[i].Level,
 								"Operation": GameLogic.Operations[i].Name + "\nagainst " + WorldData.Organizations[GameLogic.Operations[i].Target].Name,
-								"Content": str(GameLogic.Operations[i].AbroadPlan.Officers) + " officers executing the action were arrested by " + WorldData.Countries[WorldData.Organizations[which].Countries[0]].Adjective + " authorities. Decide on appropriate reaction. Possibilities:\n- engaging government will return officers, but significantly decrease government's trust\n- expelling will happen between intelligence services only, but these officers will never be allowed to enter this country again\n- denying affiliation will result in officer imprisonment and their de facto loss, affecting internal trust, but not affecting any external instituions\n- bribing can return officers intact, but often does not succeed and instead lead to large diplomatic scandal",
+								"Content": str(GameLogic.Operations[i].AbroadPlan.Officers) + " officers executing the action were arrested by " + WorldData.Countries[WorldData.Organizations[which].Countries[0]].Adjective + " authorities. Decide on appropriate reaction.\n\nPossibilities:\n- engaging government will return officers, but significantly decrease government's trust\n- expelling will happen between intelligence services only, but these officers will never be allowed to enter this country again\n- denying affiliation will result in officer imprisonment and their de facto loss, affecting internal trust, but not affecting any external instituions\n- bribing can return officers intact, but often does not succeed and instead lead to large diplomatic scandal",
 								"Show1": true,
 								"Show2": true,
 								"Show3": true,

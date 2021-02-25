@@ -2,12 +2,36 @@ extends Node
 
 # Gathering intelligence information about organizations
 func GatherOnOrg(o, quality, date):
+	var credible = true
+	var backup = null
+	if quality < 0:
+		credible = false
+		quality *= (-1)
+		# deception trick: temporarily change organization values, then back them up
+		backup = {
+			"Staff": WorldData.Organizations[o].Staff,
+			"Budget": WorldData.Organizations[o].Budget,
+			"Counterintelligence": WorldData.Organizations[o].Counterintelligence,
+			"Type": WorldData.Organizations[o].Type,
+			"OpsAgainstHomeland": WorldData.Organizations[o].OpsAgainstHomeland.duplicate(true),
+		}
+		WorldData.Organizations[o].Staff *= (1.0+GameLogic.random.randi_range(-1,1)*0.1)
+		WorldData.Organizations[o].Budget *= (1.0+GameLogic.random.randi_range(-1,1)*0.1)
+		WorldData.Organizations[o].Counterintelligence *= (1.0+GameLogic.random.randi_range(-1,1)*0.1)
+		if WorldData.Organizations[o].Type != WorldData.OrgType.GOVERNMENT and WorldData.Organizations[o].Type != WorldData.OrgType.INTEL:
+			# do not change type of obvious organizations
+			pass  # todo in the future, eg criminal showed as noncriminal
+		if GameLogic.random.randi_range(1,2) == 2:
+			WorldData.Organizations[o].OpsAgainstHomeland = []
+		else:
+			WorldData.Organizations[o].OpsAgainstHomeland = ['anything']
 	var desc = "[b]"+date+"[/b] "
 	# continuous intel value
 	var noOfIdentified = 0
 	if quality > WorldData.Organizations[o].IntelValue:
 		# general intel value
 		WorldData.Organizations[o].IntelValue += quality*0.5
+		if credible == false: WorldData.Organizations[o].IntelValue -= quality
 		# individual members identified
 		var infFactor = 0.001*quality  # eg, 30->0.03
 		var newIdentified = int(WorldData.Organizations[o].Staff*1.0*infFactor)
@@ -133,6 +157,13 @@ func GatherOnOrg(o, quality, date):
 		if roundedBudget == "€0": roundedBudget = "less than €1"
 		var roundedCounter = WorldData.Organizations[o].Counterintelligence
 		WorldData.Organizations[o].IntelDescription.push_front(desc + antihomeland + ", " + desc1 + roundedStaff + " members, budget of " + roundedBudget + " millions monthly, " + str(roundedCounter) + "/100 counterintelligence measures")
+	# backing up after deception
+	if credible == false:
+		WorldData.Organizations[o].Staff = backup.Staff
+		WorldData.Organizations[o].Budget = backup.Budget
+		WorldData.Organizations[o].Counterintelligence = backup.Counterintelligence
+		WorldData.Organizations[o].Type = backup.Type
+		WorldData.Organizations[o].OpsAgainstHomeland = backup.OpsAgainstHomeland.duplicate(true)
 
 # Gathering intelligence information about organizations
 func RecruitInOrg(o, quality, date):
