@@ -131,7 +131,7 @@ func NewGenerate():
 	# governments
 	for i in range(1, len(WorldData.Countries)):
 		WorldData.Organizations.append(
-			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.GOVERNMENT, "Name": WorldData.Countries[i].Adjective + " Government", "Fixed": true, "Known": true, "Staff": WorldData.Countries[i].Size*300, "Budget": WorldData.Countries[i].Size*10000, "Counterintelligence": GameLogic.random.randi_range(45,65), "Countries": [i], "IntelValue": 10, })
+			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.GOVERNMENT, "Name": WorldData.Countries[i].Adjective + " Government", "Fixed": true, "Known": true, "Staff": WorldData.Countries[i].Size*300, "Budget": WorldData.Countries[i].Size*10000, "Counterintelligence": GameLogic.random.randi_range(45,65), "Aggression": GameLogic.random.randi_range(20,55), "Countries": [i], "IntelValue": 10, })
 		)
 		WorldData.Organizations[-1].IntelIdentified = GameLogic.random.randi_range(20,100)  # officials
 	# few general terror orgs
@@ -143,7 +143,7 @@ func NewGenerate():
 			if !(trying in places):
 				places.append(trying)
 		WorldData.Organizations.append(
-			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.GENERALTERROR, "Name": GenerateHostileName(), "Fixed": false, "Known": true, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-100,100), "Counterintelligence": GameLogic.random.randi_range(10,60), "Countries": places, "IntelValue": GameLogic.random.randi_range(-50,10), })
+			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.GENERALTERROR, "Name": GenerateHostileName(), "Fixed": false, "Known": true, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-100,100), "Counterintelligence": GameLogic.random.randi_range(10,60), "Aggression": GameLogic.random.randi_range(30,95), "Countries": places, "IntelValue": GameLogic.random.randi_range(-50,10), })
 		)
 	############################################################################
 	# filling in some organizatiions

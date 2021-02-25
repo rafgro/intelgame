@@ -210,6 +210,9 @@ func NextWeek():
 		get_tree().change_scene("res://call.tscn")
 	# finish
 
+
+# Below: callbacks called after decision screen
+
 func ImplementAbroad(thePlan):
 	AddEvent(Operations[thePlan.OperationId].Name + ": "+str(thePlan.Officers)+" officer(s) departed to "+thePlan.Country)
 	# operation update
@@ -240,6 +243,83 @@ func ImplementCallOff(i):
 	if Operations[i].Source == 1:
 		Trust = Trust*0.5  # huge loss of trust if calling off gov op
 	AddEvent("Bureau called off operation "+GameLogic.Operations[i].Name)
+
+func ImplementOfficerRescue(adictionary):
+	var i = adictionary.Operation
+	# debriefing variables
+	PursuedOperations -= 1
+	Operations[i].Stage = OperationGenerator.Stage.FAILED
+	Operations[i].Result = "FAILED, " + str(GameLogic.Operations[i].AbroadPlan.Officers) + " officers arrested"
+	OfficersAbroad -= Operations[i].AbroadPlan.Officers
+	BudgetOngoingOperations -= Operations[i].AbroadPlan.Cost
+	# choice-based changes
+	# "engaging government will return officers, but significantly decrease government's trust"
+	if adictionary.Choice == 1:
+		AddEvent(Operations[i].Name + ": "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned to homeland after being arrested")
+		OfficersInHQ += Operations[i].AbroadPlan.Officers
+		StaffTrust *= 1.1
+		StaffSkill *= 1.01
+		StaffExperience *= 1.03
+		Trust *= 0.6
+		WorldData.DiplomaticRelations[0][WorldData.Organizations[Operations[i].Target].Countries[0]] -= random.randi_range(5,15)
+		WorldData.DiplomaticRelations[WorldData.Organizations[Operations[i].Target].Countries[0]][0] -= GameLogic.random.randi_range(5,15)
+	# "expelling will happen between intelligence services only, but these officers will never be allowed to enter this country again"
+	elif adictionary.Choice == 2:
+		AddEvent(Operations[i].Name + ": "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned to homeland after being arrested")
+		OfficersInHQ += Operations[i].AbroadPlan.Officers
+		StaffTrust *= 1.08
+		StaffSkill *= 1.01
+		StaffExperience *= 1.03
+		# todo: expelling mechanism
+	# "denying affiliation will result in officer imprisonment and their de facto loss, affecting internal trust, but not affecting any external instituions"
+	elif adictionary.Choice == 3:
+		ActiveOfficers -= Operations[i].AbroadPlan.Officers
+		AddEvent(Operations[i].Name + ": "+str(Operations[i].AbroadPlan.Officers)+" officer(s) arrested and imprisoned for many years")
+		StaffTrust *= 0.4
+		StaffSkill *= 0.8
+		StaffExperience *= 0.8
+	# "bribing can return officers intact, but often does not succeed and instead lead to large diplomatic scandal"
+	else:
+		AddEvent(Operations[i].Name + ": "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned to homeland after being arrested")
+		OfficersInHQ += Operations[i].AbroadPlan.Officers
+		StaffTrust *= 1.09
+		StaffSkill *= 1.02
+		StaffExperience *= 1.02
+		var content = ""
+		if random.randi_range(1,2) == 1:
+			# successful
+			content = "Bribing was successful. "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned to Homeland."
+		else:
+			# unsuccessful
+			content = "Bribing failed. Government officials of Homeland and " + WorldData.Countries[WorldData.Organizations[Operations[i].Target].Countries[0]].Name + " learned about the situation. "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned, but bureau lost " + str(int(Trust*0.6)) + "% of trust."
+			Trust *= 0.4
+			WorldData.DiplomaticRelations[0][WorldData.Organizations[Operations[i].Target].Countries[0]] -= random.randi_range(5,15)
+			WorldData.DiplomaticRelations[WorldData.Organizations[Operations[i].Target].Countries[0]][0] -= GameLogic.random.randi_range(5,15)
+		# user debriefing
+		CallManager.CallQueue.append(
+			{
+				"Header": "Important Information",
+				"Level": GameLogic.Operations[i].Level,
+				"Operation": GameLogic.Operations[i].Name  + "\nagainst " + WorldData.Organizations[GameLogic.Operations[i].Target].Name,
+				"Content": content,
+				"Show1": false,
+				"Show2": false,
+				"Show3": false,
+				"Show4": true,
+				"Text1": "",
+				"Text2": "",
+				"Text3": "",
+				"Text4": "Understood",
+				"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
+				"Decision1Argument": null,
+				"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
+				"Decision2Argument": null,
+				"Decision3Callback": funcref(GameLogic, "EmptyFunc"),
+				"Decision3Argument": null,
+				"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
+				"Decision4Argument": null,
+			}
+		)
 
 func EmptyFunc(anyArgument):
 	pass  # nothing happens

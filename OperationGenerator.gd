@@ -117,6 +117,7 @@ enum Stage {
 	ABROAD_OPERATION,
 	FINISHED,
 	CALLED_OFF,
+	FAILED,
 }
 
 func NewOperation(source, againstOrg, whatType):

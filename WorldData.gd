@@ -72,6 +72,7 @@ class AnOrganization:
 	var Staff = 0  # number of human members
 	var Budget = 0  # monthly in thousands
 	var Counterintelligence = 0  # from 0 (get in from the street) to 100 (impossible to infiltrate)
+	var Aggression = 0  # from 0 (university) to 100 (isis), when officers caught or ops performed
 	var Countries = null  # ids of host countries
 	# generated and/or frequently modified
 	var OpsAgainstHomeland = []  # future possibility
@@ -90,6 +91,7 @@ class AnOrganization:
 		Staff = adictionary.Staff
 		Budget = adictionary.Budget
 		Counterintelligence = adictionary.Counterintelligence
+		Aggression = adictionary.Aggression
 		Countries = adictionary.Countries.duplicate(true)
 		IntelValue = adictionary.IntelValue
 
@@ -102,20 +104,21 @@ var Organizations = [
 		"Staff": 4400,  # number of human members
 		"Budget": 260000,  # monthly in thousands
 		"Counterintelligence": 90,  # from 0 (get in from the street) to 100 (impossible to infiltrate)
+		"Aggression": 65,
 		"Countries": [2],  # ids of host countries
 		"IntelValue": 5,  # -100 (long search) to 100 (own), determines available methods
 	}),
-	AnOrganization.new({ "Type": OrgType.INTEL, "Name": "BND", "Fixed": true, "Known": true, "Staff": 6500, "Budget": 85000, "Counterintelligence": 80, "Countries": [4], "IntelValue": 5, }),
-	AnOrganization.new({ "Type": OrgType.INTEL, "Name": "CIA", "Fixed": true, "Known": true, "Staff": 22000, "Budget": 1250000, "Counterintelligence": 85, "Countries": [5], "IntelValue": 5, }),
-	AnOrganization.new({ "Type": OrgType.INTEL, "Name": "AW (Agencja Wywiadu)", "Fixed": true, "Known": true, "Staff": 1000, "Budget": 20800, "Counterintelligence": 70, "Countries": [6], "IntelValue": 5, }),
-	AnOrganization.new({ "Type": OrgType.INTEL, "Name": "DGSE", "Fixed": true, "Known": true, "Staff": 6100, "Budget": 42000, "Counterintelligence": 85, "Countries": [7], "IntelValue": 5, }),
-	AnOrganization.new({ "Type": OrgType.INTEL, "Name": "ФСБ (FSB)", "Fixed": true, "Known": true, "Staff": 66200, "Budget": 1000000, "Counterintelligence": 85, "Countries": [8], "IntelValue": 5, }),
-	AnOrganization.new({ "Type": OrgType.INTEL, "Name": "Guoanbu", "Fixed": true, "Known": true, "Staff": 100000, "Budget": 2000000, "Counterintelligence": 95, "Countries": [9],  "IntelValue": 5, }),
-	AnOrganization.new({ "Type": OrgType.INTEL, "Name": "Mossad", "Fixed": true, "Known": true, "Staff": 7000, "Budget": 228000, "Counterintelligence": 95, "Countries": [10], "IntelValue": 5, }),
-	AnOrganization.new({ "Type": OrgType.INTEL, "Name": "MIT (Milli Istihbarat Teskilati)", "Fixed": true, "Known": true, "Staff": 8000, "Budget": 180000, "Counterintelligence": 90, "Countries": [11], "IntelValue": 5, }),
-	AnOrganization.new({ "Type": OrgType.INTEL, "Name": "Mukhabarat", "Fixed": true, "Known": true, "Staff": 4000, "Budget": 20000, "Counterintelligence": 75, "Countries": [12], "IntelValue": 5, }),
-	AnOrganization.new({ "Type": OrgType.INTEL, "Name": "NDS", "Fixed": true, "Known": true, "Staff": 3000, "Budget": 10000, "Counterintelligence": 70, "Countries": [13], "IntelValue": 5, }),
-	AnOrganization.new({ "Type": OrgType.GENERALTERROR, "Name": "Al-Qaeda", "Fixed": false, "Known": true, "Staff": 45000, "Budget": 25000, "Counterintelligence": 60, "Countries": [12,13], "IntelValue": 0, }),
+	AnOrganization.new({ "Type": OrgType.INTEL, "Name": "BND", "Fixed": true, "Known": true, "Staff": 6500, "Budget": 85000, "Counterintelligence": 80, "Aggression": 70, "Countries": [4], "IntelValue": 5, }),
+	AnOrganization.new({ "Type": OrgType.INTEL, "Name": "CIA", "Fixed": true, "Known": true, "Staff": 22000, "Budget": 1250000, "Counterintelligence": 85, "Aggression": 75, "Countries": [5], "IntelValue": 5, }),
+	AnOrganization.new({ "Type": OrgType.INTEL, "Name": "AW (Agencja Wywiadu)", "Fixed": true, "Known": true, "Staff": 1000, "Budget": 20800, "Counterintelligence": 70, "Aggression": 70, "Countries": [6], "IntelValue": 5, }),
+	AnOrganization.new({ "Type": OrgType.INTEL, "Name": "DGSE", "Fixed": true, "Known": true, "Staff": 6100, "Budget": 42000, "Counterintelligence": 85, "Aggression": 75, "Countries": [7], "IntelValue": 5, }),
+	AnOrganization.new({ "Type": OrgType.INTEL, "Name": "ФСБ (FSB)", "Fixed": true, "Known": true, "Staff": 66200, "Budget": 1000000, "Counterintelligence": 85, "Aggression": 80, "Countries": [8], "IntelValue": 5, }),
+	AnOrganization.new({ "Type": OrgType.INTEL, "Name": "Guoanbu", "Fixed": true, "Known": true, "Staff": 100000, "Budget": 2000000, "Counterintelligence": 95, "Aggression": 80, "Countries": [9],  "IntelValue": 5, }),
+	AnOrganization.new({ "Type": OrgType.INTEL, "Name": "Mossad", "Fixed": true, "Known": true, "Staff": 7000, "Budget": 228000, "Counterintelligence": 95, "Aggression": 85, "Countries": [10], "IntelValue": 5, }),
+	AnOrganization.new({ "Type": OrgType.INTEL, "Name": "MIT (Milli Istihbarat Teskilati)", "Fixed": true, "Known": true, "Staff": 8000, "Budget": 180000, "Counterintelligence": 90, "Aggression": 80, "Countries": [11], "IntelValue": 5, }),
+	AnOrganization.new({ "Type": OrgType.INTEL, "Name": "Mukhabarat", "Fixed": true, "Known": true, "Staff": 4000, "Budget": 20000, "Counterintelligence": 75, "Aggression": 80, "Countries": [12], "IntelValue": 5, }),
+	AnOrganization.new({ "Type": OrgType.INTEL, "Name": "NDS", "Fixed": true, "Known": true, "Staff": 3000, "Budget": 10000, "Counterintelligence": 70, "Aggression": 70, "Countries": [13], "IntelValue": 5, }),
+	AnOrganization.new({ "Type": OrgType.GENERALTERROR, "Name": "Al-Qaeda", "Fixed": false, "Known": true, "Staff": 45000, "Budget": 25000, "Counterintelligence": 60, "Aggression": 90, "Countries": [12,13], "IntelValue": 0, }),
 ]
 
 class AMethod:

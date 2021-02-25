@@ -5,10 +5,8 @@ var lastSelected = -1
 func _ready():
 	for g in GameLogic.Operations:
 		var desc = g.Started + " " + g.Name
-		if g.Stage == OperationGenerator.Stage.FINISHED:
-			desc += " (finished)"
-		elif g.Stage == OperationGenerator.Stage.CALLED_OFF:
-			desc += " (called off)"
+		if g.Stage != OperationGenerator.Stage.FINISHED and g.Stage != OperationGenerator.Stage.CALLED_OFF and g.Stage != OperationGenerator.Stage.FAILED:
+			desc += " (ongoing)"
 		$M/R/ItemList.add_item(desc)
 
 func _on_Return_pressed():
@@ -21,7 +19,7 @@ func _on_ItemList_item_selected(index):
 		desc += GameLogic.Operations[index].AbroadPlan.Description
 	desc += "Result: " + GameLogic.Operations[index].Result
 	lastSelected = index
-	if GameLogic.Operations[index].Stage == OperationGenerator.Stage.FINISHED or GameLogic.Operations[index].Stage == OperationGenerator.Stage.CALLED_OFF:
+	if GameLogic.Operations[index].Stage == OperationGenerator.Stage.FINISHED or GameLogic.Operations[index].Stage == OperationGenerator.Stage.CALLED_OFF or GameLogic.Operations[index].Stage == OperationGenerator.Stage.FAILED:
 		$M/R/CReturn/CallOff.disabled = true
 	else:
 		$M/R/CReturn/CallOff.disabled = false
