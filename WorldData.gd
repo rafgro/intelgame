@@ -203,7 +203,7 @@ func WorldNextWeek(past):
 					elif Countries[c].PoliticsIntel > 30: newApproach = "neutral"
 					eventualDesc = "New government formed, achieving "+str(won)+"%. Its approach towards intelligence services can be described as " + newApproach + ". " + eventualIncrease
 			# notifying user if that's homeland
-			if c == 0:
+			if c == 0 and past == null:
 				CallManager.CallQueue.append(
 					{
 						"Header": "Important Information",
@@ -231,9 +231,9 @@ func WorldNextWeek(past):
 	# dealing with country stats government stability
 	for c in range(0, len(Countries)):
 		# parameter fluctations
-		if GameLogic.random.randi_group(1,4) == 2:  # ~one per month
-			Countries[c].Size *= (1.0+GameLogic.random.randi_group(-1,1)*0.01)
-			Countries[c].IntelFriendliness += GameLogic.random.randi_group(-1,1)
+		if GameLogic.random.randi_range(1,4) == 2:  # ~one per month
+			Countries[c].Size *= (1.0+GameLogic.random.randi_range(-1,1)*0.01)
+			Countries[c].IntelFriendliness += GameLogic.random.randi_range(-1,1)
 		# stability
 		var choice = GameLogic.random.randi_range(0,70)
 		if Countries[c].PoliticsStability < 20:
@@ -292,12 +292,12 @@ func WorldNextWeek(past):
 		# intel decay
 		Organizations[w].IntelValue *= 0.99  # ~4%/month, ~40%/year
 		# staff and budget changes
-		if GameLogic.random.randi_group(1,4) == 2:  # ~one per month
-			Organizations[w].Budget *= (1.0+GameLogic.random.randi_group(-1,1)*0.01)
+		if GameLogic.random.randi_range(1,4) == 2:  # ~one per month
+			Organizations[w].Budget *= (1.0+GameLogic.random.randi_range(-1,1)*0.01)
 			if Organizations[w].Staff > 100:  # large orgs
-				Organizations[w].Staff *= (1.0+GameLogic.random.randi_group(-1,1)*0.01)
+				Organizations[w].Staff *= (1.0+GameLogic.random.randi_range(-1,1)*0.01)
 			else:  # small orgs
-				Organizations[w].Staff += GameLogic.random.randi_group(-1,1)
+				Organizations[w].Staff += GameLogic.random.randi_range(-1,1)
 		# sources
 		if len(Organizations[w].IntelSources) > 0:
 			# modifying every source

@@ -153,44 +153,58 @@ func NextWeek():
 				# change from false to criterions fulfilled
 				WorldData.Methods[t][m].Available = true
 				AddEvent("New craft is available: " + WorldData.Methods[t][m].Name)
-	# new operation given by the government
-	"""
-	if DateDay == 8 or random.randi_range(1,20) == 5:
-		OperationGenerator.NewOperation()
-		CallManager.CallQueue.append(
-			{
-				"Header": "Important Information",
-				"Level": Operations[-1].Level,
-				"Operation": Operations[-1].Name,
-				"Content": "Government designated a new operation. Goal:\n"
-					+ Operations[-1].GoalDescription + ".\n"
-					+ "Find the target, execute operation, return with results.",
-				"Show1": false,
-				"Show2": false,
-				"Show3": false,
-				"Show4": true,
-				"Text1": "",
-				"Text2": "",
-				"Text3": "",
-				"Text4": "Understood",
-				"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
-				"Decision1Argument": null,
-				"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
-				"Decision2Argument": null,
-				"Decision3Callback": funcref(GameLogic, "EmptyFunc"),
-				"Decision3Argument": null,
-				"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
-				"Decision4Argument": null,
-			}
-		)
-		doesItEndWithCall = true
-	"""
 	# operations
 	var ifCall = OperationHandler.ProgressOperations()
 	if ifCall == true: doesItEndWithCall = true
 	# world changes
 	ifCall = WorldData.WorldNextWeek(null)
 	if ifCall == true: doesItEndWithCall = true
+	# eventual government assigned operations
+	if random.randi_range(1,10) == 6:  # one every ~3 months
+		# choosing organization
+		var whichOrg = -1
+		for f in range(0,5):  # max five attempts
+			var check = random.randi_range(0, len(WorldData.Organizations)-1)
+			if WorldData.Organizations[check].Type == WorldData.OrgType.GOVERNMENT:
+				whichOrg = check
+				break
+		# assigning the operation
+		if whichOrg != -1:
+			var opType = OperationGenerator.Type.MORE_INTEL
+			if WorldData.Organizations[whichOrg].IntelIdentified > 0 and random.randi_range(1,5) == 2:
+				opType = OperationGenerator.Type.RECRUIT_SOURCE
+			OperationGenerator.NewOperation(1, whichOrg, opType)
+			# if possible, start fast
+			if GameLogic.OfficersInHQ > 0:
+				GameLogic.Operations[-1].AnalyticalOfficers = GameLogic.OfficersInHQ
+				GameLogic.Operations[-1].Stage = OperationGenerator.Stage.PLANNING_OPERATION
+				GameLogic.Operations[-1].Started = GameLogic.GiveDateWithYear()
+				GameLogic.Operations[-1].Result = "ONGOING (PLANNING)"
+			CallManager.CallQueue.append(
+				{
+					"Header": "Important Information",
+					"Level": GameLogic.Operations[-1].Level,
+					"Operation": GameLogic.Operations[-1].Name  + "\nagainst " + WorldData.Organizations[GameLogic.Operations[-1].Target].Name,
+					"Content": "Homeland government designated a new operation.\n\nGoal:\n" + GameLogic.Operations[-1].GoalDescription,
+					"Show1": false,
+					"Show2": false,
+					"Show3": false,
+					"Show4": true,
+					"Text1": "",
+					"Text2": "",
+					"Text3": "",
+					"Text4": "Understood",
+					"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
+					"Decision1Argument": null,
+					"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
+					"Decision2Argument": null,
+					"Decision3Callback": funcref(GameLogic, "EmptyFunc"),
+					"Decision3Argument": null,
+					"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
+					"Decision4Argument": null,
+				}
+			)
+			doesItEndWithCall = true
 	# call to action
 	if doesItEndWithCall == true:
 		get_tree().change_scene("res://call.tscn")
@@ -210,6 +224,9 @@ func ImplementAbroad(thePlan):
 	Operations[thePlan.OperationId].OperationalOfficers += thePlan.Officers
 	# moving budget
 	BudgetOngoingOperations += thePlan.Cost
+	# debug
+	print('DEBUG:')
+	print(Operations[thePlan.OperationId].AbroadPlan)
 
 func ImplementCallOff(i):
 	Operations[i].Stage = OperationGenerator.Stage.CALLED_OFF
@@ -221,7 +238,7 @@ func ImplementCallOff(i):
 		AddEvent(Operations[i].Name + ": "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned to homeland")
 	PursuedOperations -= 1
 	if Operations[i].Source == 1:
-		Trust = Trust*0.5  # loss of trust if calling off gov op
+		Trust = Trust*0.5  # huge loss of trust if calling off gov op
 	AddEvent("Bureau called off operation "+GameLogic.Operations[i].Name)
 
 func EmptyFunc(anyArgument):
