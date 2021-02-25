@@ -231,7 +231,6 @@ func ProgressOperations():
 				var whatHappened = GameLogic.random.randi_range(0, 100)
 				# base p=10/100: arrest or shooting
 				if whatHappened <= 10:
-					#if WorldData.Countries[WorldData.Organizations[GameLogic.Operations[i].Target]]
 					var which = GameLogic.Operations[i].Target
 					# arrest if against gov/intel and aggression*risk permits
 					if (WorldData.Organizations[which].Type == WorldData.OrgType.GOVERNMENT or WorldData.Organizations[which].Type == WorldData.OrgType.INTEL) and (WorldData.Organizations[which].Aggression < GameLogic.random.randi_range(70,90)) and (GameLogic.Operations[i].AbroadPlan.Risk < GameLogic.random.randi_range(50,75)):
@@ -261,6 +260,9 @@ func ProgressOperations():
 							}
 						)
 						doesItEndWithCall = true
+						# also, if this was gov op, then we loose trust
+						if GameLogic.Operations[i].Source == 1:
+							GameLogic.Trust -= GameLogic.random.randi_range(5,15)
 					# otherwise, killed
 					else:
 						# debriefing variables
@@ -307,6 +309,9 @@ func ProgressOperations():
 							}
 						)
 						doesItEndWithCall = true
+						# also, if this was gov op, then we loose trust
+						if GameLogic.Operations[i].Source == 1:
+							GameLogic.Trust -= GameLogic.random.randi_range(5,15)
 				# base p=20/100: escape
 				elif whatHappened <= 30:
 					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": officers were almost caught and had to flee to homeland")
@@ -356,12 +361,12 @@ func ProgressOperations():
 					GameLogic.Operations[i].Result = "SUCCESS"
 					if (WorldData.Countries[0].PoliticsIntel+GameLogic.random.randi_range(-15,15)) > 50:
 						# increasing after own operation only if government cares
-						GameLogic.Trust += qualityDiff*2
+						GameLogic.Trust += 1
 				# debriefing government and effect on the user
 				elif GameLogic.Operations[i].Source == 1:
 					var govFeedback = 0  # from -100 to 100, usually -20 to 20
 					var weekDiff = (0.0 + GameLogic.Operations[i].WeeksPassed - GameLogic.Operations[i].ExpectedWeeks) / GameLogic.Operations[i].ExpectedWeeks
-					govFeedback += weekDiff * 20  # -2 for being 10% late
+					govFeedback += weekDiff * 10  # -1 for being 10% late
 					govFeedback += qualityDiff * 10  # +1 for 10% better quality
 					if govFeedback > 0: govFeedback *= WorldData.Countries[0].PoliticsIntel*0.01
 					if govFeedback > 10: govFeedback = GameLogic.random.randi_range(8,12)
@@ -370,10 +375,11 @@ func ProgressOperations():
 					var govFeedbackDesc = "negatively rated its execution. Bureau lost "+str((-1)*govFeedback)+"% of trust."
 					GameLogic.Operations[i].Result = "COMPLETED, negative feedback"
 					if govFeedback > 0:
-						var budgetIncrease = GameLogic.BudgetFull*(0.01*govFeedback)
+						var budgetIncrease = GameLogic.BudgetFull*(0.01*GameLogic.Trust*0.5)
 						GameLogic.BudgetFull += budgetIncrease
 						govFeedbackDesc = "positively rated its execution. Bureau gained "+str(govFeedback)+"% of trust. As a confirmation, government increases bureau's budget by €"+str(int(budgetIncrease))+",000.\n"
 						GameLogic.Operations[i].Result = "SUCCESS, positive feedback"
+						GameLogic.AddEvent("Government increased budget by €"+str(budgetIncrease)+"k")
 					content = "Government-designated operation was sucessfully executed. Homeland " + govFeedbackDesc
 				# debriefing user
 				GameLogic.AddEvent(GameLogic.Operations[i].Name + ": "+str(GameLogic.Operations[i].AbroadPlan.Officers)+" officer(s) returned to homeland")
@@ -417,6 +423,13 @@ func ProgressOperations():
 					GameLogic.Operations[i].AbroadPlan.Quality,
 					GameLogic.GiveDateWithYear()
 				)  # where 0 means no source
+				# ensuring elementary intel if there isn't any
+				if len(WorldData.Organizations[GameLogic.Operations[i].Target].IntelDescription) == 0:
+					WorldIntel.GatherOnOrg(
+						GameLogic.Operations[i].Target,
+						GameLogic.Operations[i].AbroadPlan.Quality,
+						GameLogic.GiveDateWithYear()
+					)
 				# debriefing variables
 				GameLogic.Operations[i].Stage = OperationGenerator.Stage.FINISHED
 				GameLogic.OfficersInHQ += GameLogic.Operations[i].AbroadPlan.Officers
@@ -445,7 +458,7 @@ func ProgressOperations():
 						GameLogic.StaffTrust = GameLogic.StaffTrust*(1.05+difficulty*0.0025)
 						if (WorldData.Countries[0].PoliticsIntel+GameLogic.random.randi_range(-15,15)) > 50:
 							# increasing after own operation only if government cares
-							GameLogic.Trust *= 1.0 + difficulty*0.0025
+							GameLogic.Trust += 1
 				# debriefing government and effect on the user
 				elif GameLogic.Operations[i].Source == 1:
 					var govFeedback = sourceLevel*(1.0+(difficulty*0.05))
@@ -457,11 +470,12 @@ func ProgressOperations():
 					GameLogic.Trust += govFeedback
 					var govFeedbackDesc = "Officers failed at acquiring a new source in an organization indicated by the government. Bureau lost "+str((-1)*govFeedback)+"% of trust."
 					GameLogic.Operations[i].Result = "COMPLETED, negative feedback"
-					if govFeedback > 0:
-						var budgetIncrease = GameLogic.BudgetFull*(0.01*govFeedback)
+					if sourceLevel != 0:
+						var budgetIncrease = GameLogic.BudgetFull*(0.01*GameLogic.Trust*0.5)
 						GameLogic.BudgetFull += budgetIncrease
 						govFeedbackDesc = "Officers acquired a new source in an organization indicated by the government. Bureau gained "+str(govFeedback)+"% of trust. As a confirmation, government increases bureau's budget by €"+str(int(budgetIncrease))+",000.\n"
 						GameLogic.Operations[i].Result = "SUCCESS, positive feedback"
+						GameLogic.AddEvent("Government increased budget by €"+str(budgetIncrease)+"k")
 					content = "Operation has been finished. " + govFeedbackDesc
 				# debriefing user
 				if sourceLevel > 0:

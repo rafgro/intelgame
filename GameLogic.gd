@@ -32,6 +32,8 @@ var StaffTrust = 50  # 0 to 100
 var Operations = []  # array of operation dictionaries
 # Internal logic variables, always describe them
 var RecruitProgress = 0.0  # when reaches 1, a new officer arrives
+var PreviousTrust = Trust  # trust from previous week, to write down the next variable
+var TrustChangeDesc = ""  # ^
 # Sort of constants but also internal, always describe them
 var NewOfficerCost = 80  # thousands needed to spend on a new officer
 var SkillMaintenanceCost = 1  # thousands needed to maintain skills for an officer
@@ -89,12 +91,16 @@ func _ready():
 					continue
 				if StaffSkill < WorldData.Methods[t][m].MinimalSkill:
 					continue
+				if Trust < WorldData.Methods[t][m].MinimalTrust:
+					continue
 				# change from false to criterions fulfilled
 				WorldData.Methods[t][m].Available = true
 
 func NextWeek():
 	############################################################################
 	var doesItEndWithCall = false
+	PreviousTrust = Trust
+	TrustChangeDesc = ""
 	# clearing u-tags in events
 	var i = 0
 	while i < min(len(BureauEvents), 10):
@@ -118,6 +124,10 @@ func NextWeek():
 			if DateMonth == 13:
 				DateMonth = 1
 				DateYear += 1
+				# new-year budget increase
+				var budgetIncrease = GameLogic.BudgetFull*(0.01*GameLogic.Trust)
+				BudgetFull += budgetIncrease
+				AddEvent("New year budget increase: +€"+str(int(budgetIncrease))+"k")
 	# budget-based staff changes
 	# hiring
 	RecruitProgress += BudgetRecruitment / 4 / NewOfficerCost
@@ -151,6 +161,8 @@ func NextWeek():
 				if ActiveOfficers < WorldData.Methods[t][m].OfficersRequired:
 					continue
 				if StaffSkill < WorldData.Methods[t][m].MinimalSkill:
+					continue
+				if Trust < WorldData.Methods[t][m].MinimalTrust:
 					continue
 				# change from false to criterions fulfilled
 				WorldData.Methods[t][m].Available = true
@@ -212,7 +224,7 @@ func NextWeek():
 			doesItEndWithCall = true
 	############################################################################
 	# walk-ins or whistleblowers
-	if random.randi_range(1,25) == 17:  # one every ~6 months
+	if random.randi_range(1,50) == 17:  # one every ~6 months
 		var whichOrg = random.randi_range(0, len(WorldData.Organizations)-1)
 		var quality = random.randi_range(-65,65)
 		var content = "A source, claiming to be close to " + WorldData.Organizations[whichOrg].Name + " walked in into one our embassies. "
@@ -233,7 +245,7 @@ func NextWeek():
 			{
 				"Header": "Urgent Decision",
 				"Level": "Secret",
-				"Operation": "",
+				"Operation": "-//-",
 				"Content": content,
 				"Show1": false,
 				"Show2": false,
@@ -255,6 +267,12 @@ func NextWeek():
 		)
 		doesItEndWithCall = true
 	############################################################################
+	# final variable maintenance
+	if int(Trust-PreviousTrust) != 0:  # against zero to avoid reporting -0 for -0.235
+		if Trust > PreviousTrust: TrustChangeDesc = "+" + str(int(Trust-PreviousTrust))
+		else: TrustChangeDesc = str(int(Trust-PreviousTrust))
+		TrustChangeDesc += "% change of government trust"
+	############################################################################
 	# call to action
 	if doesItEndWithCall == true:
 		get_tree().change_scene("res://call.tscn")
@@ -264,22 +282,24 @@ func NextWeek():
 # Below: callbacks called after decision screen
 
 func ImplementAbroad(thePlan):
-	AddEvent(Operations[thePlan.OperationId].Name + ": "+str(thePlan.Officers)+" officer(s) departed to "+thePlan.Country)
-	# operation update
-	Operations[thePlan.OperationId].Stage = OperationGenerator.Stage.ABROAD_OPERATION
-	Operations[thePlan.OperationId].AbroadPlan = thePlan
-	Operations[thePlan.OperationId].AbroadRateOfProgress = 99.0/thePlan.Length
-	Operations[thePlan.OperationId].Result = "ONGOING (GROUND)"
-	# moving officers
-	OfficersInHQ -= thePlan.Officers
-	OfficersAbroad += thePlan.Officers
-	Operations[thePlan.OperationId].AnalyticalOfficers -= thePlan.Officers
-	Operations[thePlan.OperationId].OperationalOfficers += thePlan.Officers
-	# moving budget
-	BudgetOngoingOperations += thePlan.Cost
-	# debug
-	print('DEBUG:')
-	print(Operations[thePlan.OperationId].AbroadPlan)
+	# in the meantime, situation could change, so we need to be sure about numbers
+	if OfficersInHQ >= thePlan.Officers:
+		AddEvent(Operations[thePlan.OperationId].Name + ": "+str(thePlan.Officers)+" officer(s) departed to "+thePlan.Country)
+		# operation update
+		Operations[thePlan.OperationId].Stage = OperationGenerator.Stage.ABROAD_OPERATION
+		Operations[thePlan.OperationId].AbroadPlan = thePlan
+		Operations[thePlan.OperationId].AbroadRateOfProgress = 99.0/thePlan.Length
+		Operations[thePlan.OperationId].Result = "ONGOING (GROUND)"
+		# moving officers
+		OfficersInHQ -= thePlan.Officers
+		OfficersAbroad += thePlan.Officers
+		Operations[thePlan.OperationId].AnalyticalOfficers -= thePlan.Officers
+		Operations[thePlan.OperationId].OperationalOfficers += thePlan.Officers
+		# moving budget
+		BudgetOngoingOperations += thePlan.Cost
+		# debug
+		print('DEBUG:')
+		print(Operations[thePlan.OperationId].AbroadPlan)
 
 func ImplementCallOff(i):
 	Operations[i].Stage = OperationGenerator.Stage.CALLED_OFF
@@ -385,7 +405,7 @@ func ImplementWalkin(adict):
 			{
 				"Header": "Urgent Decision",
 				"Level": "Secret",
-				"Operation": "",
+				"Operation": "-//-",
 				"Content": content,
 				"Show1": false,
 				"Show2": false,

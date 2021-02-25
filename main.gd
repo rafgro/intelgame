@@ -9,6 +9,7 @@ func UpdateMainScreen():
 	# date formatting
 	$M/R/CDate/Date.text = GameLogic.GiveDateWithYear()
 	# other
+	$M/R/CDate/C/TrustChange.text = GameLogic.TrustChangeDesc
 	$M/R/CTrust/TrustPercent.value = GameLogic.Trust
 	$M/R/COfficer/Active.text = "Active officers: " + str(GameLogic.ActiveOfficers)
 	$M/R/COfficer/HQAbroad.text = str(GameLogic.OfficersInHQ) + " in HQ, " \

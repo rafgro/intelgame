@@ -131,6 +131,7 @@ class AMethod:
 	var MinimalSkill = 0  # minimal average skill to permit this method
 	var Available = false  # automatically controlled and set by the game
 	var MinimalIntel = 0  # minimal intel level about a target to use this method
+	var MinimalTrust = 0  # minimal government trust level to use this method
 	
 	func _init(aDictionary):
 		Name = aDictionary.Name
@@ -141,36 +142,39 @@ class AMethod:
 		MinimalSkill = aDictionary.MinimalSkill
 		Available = aDictionary.Available
 		MinimalIntel = aDictionary.MinimalIntel
+		MinimalTrust = aDictionary.MinimalTrust
 
 # Methods on the ground
 # 2D array: first row for MORE_INTEL, second row for RECRUIT_SOURCE etc
 var Methods = [
 	# MORE_INTEL methods
 	[
-		AMethod.new({ "Name": "general surveillance", "Cost": 2, "Quality": 5, "Risk": 5, "OfficersRequired": 1, "MinimalSkill": 0, "Available": false, "MinimalIntel": -100, }),
-		AMethod.new({ "Name": "street observation on foot", "Cost": 1, "Quality": 10, "Risk": 40, "OfficersRequired": 1, "MinimalSkill": 0, "Available": false, "MinimalIntel": 2, }),
-		AMethod.new({ "Name": "street observation by car", "Cost": 2, "Quality": 15, "Risk": 20, "OfficersRequired": 2, "MinimalSkill": 0, "Available": false, "MinimalIntel": 2, }),
-		AMethod.new({ "Name": "install and operate external cameras", "Cost": 5, "Quality": 30, "Risk": 20, "OfficersRequired": 1, "MinimalSkill": 11, "Available": false, "MinimalIntel": 8, }),
-		AMethod.new({ "Name": "rent house for observation", "Cost": 20, "Quality": 40, "Risk": 5, "OfficersRequired": 2, "MinimalSkill": 5, "Available": false, "MinimalIntel": 5, }),
-		AMethod.new({ "Name": "attempt physical breach", "Cost": 20, "Quality": 65, "Risk": 65, "OfficersRequired": 5, "MinimalSkill": 25, "Available": false, "MinimalIntel": 50, }),
-		AMethod.new({ "Name": "eavesdropping", "Cost": 60, "Quality": 80, "Risk": 10, "OfficersRequired": 4, "MinimalSkill": 40, "Available": false, "MinimalIntel": 5, }),
-		AMethod.new({ "Name": "pose as undercover local company", "Cost": 100, "Quality": 55, "Risk": 20, "OfficersRequired": 8, "MinimalSkill": 40, "Available": false, "MinimalIntel": -50, }),
-		AMethod.new({ "Name": "pose as undercover government organization", "Cost": 300, "Quality": 70, "Risk": 20, "OfficersRequired": 16, "MinimalSkill": 50, "Available": false, "MinimalIntel": -100, }),
+		AMethod.new({ "Name": "general surveillance", "Cost": 2, "Quality": 5, "Risk": 5, "OfficersRequired": 1, "MinimalSkill": 0, "Available": false, "MinimalIntel": -100, "MinimalTrust": 0, }),
+		AMethod.new({ "Name": "street observation on foot", "Cost": 1, "Quality": 10, "Risk": 40, "OfficersRequired": 1, "MinimalSkill": 0, "Available": false, "MinimalIntel": 2, "MinimalTrust": 0, }),
+		AMethod.new({ "Name": "street observation by car", "Cost": 2, "Quality": 15, "Risk": 20, "OfficersRequired": 2, "MinimalSkill": 0, "Available": false, "MinimalIntel": 2, "MinimalTrust": 0, }),
+		AMethod.new({ "Name": "install and operate external cameras", "Cost": 5, "Quality": 30, "Risk": 20, "OfficersRequired": 1, "MinimalSkill": 11, "Available": false, "MinimalIntel": 8, "MinimalTrust": 0, }),
+		AMethod.new({ "Name": "rent house for observation", "Cost": 20, "Quality": 40, "Risk": 5, "OfficersRequired": 2, "MinimalSkill": 5, "Available": false, "MinimalIntel": 5, "MinimalTrust": 0, }),
+		AMethod.new({ "Name": "attempt physical breach", "Cost": 20, "Quality": 65, "Risk": 65, "OfficersRequired": 5, "MinimalSkill": 25, "Available": false, "MinimalIntel": 50, "MinimalTrust": 30, }),
+		AMethod.new({ "Name": "eavesdropping", "Cost": 60, "Quality": 80, "Risk": 10, "OfficersRequired": 4, "MinimalSkill": 40, "Available": false, "MinimalIntel": 5, "MinimalTrust": 30, }),
+		AMethod.new({ "Name": "pose as undercover local company", "Cost": 100, "Quality": 55, "Risk": 20, "OfficersRequired": 8, "MinimalSkill": 40, "Available": false, "MinimalIntel": -50, "MinimalTrust": 40, }),
+		AMethod.new({ "Name": "pose as undercover government organization", "Cost": 300, "Quality": 70, "Risk": 20, "OfficersRequired": 16, "MinimalSkill": 50, "Available": false, "MinimalIntel": -100, "MinimalTrust": 75, }),
 	],
 	# RECRUIT_SOURCE methods
 	[
-		AMethod.new({ "Name": "basic observation of potential assets", "Cost": 4, "Quality": 10, "Risk": 15, "OfficersRequired": 2, "MinimalSkill": 0, "Available": false, "MinimalIntel": 5, }),
-		AMethod.new({ "Name": "background check", "Cost": 6, "Quality": 20, "Risk": 25, "OfficersRequired": 3, "MinimalSkill": 10, "Available": false, "MinimalIntel": 10, }),
-		AMethod.new({ "Name": "arrange natural meetings with potential assets", "Cost": 10, "Quality": 30, "Risk": 40, "OfficersRequired": 2, "MinimalSkill": 15, "Available": false, "MinimalIntel": 15, }),
-		AMethod.new({ "Name": "collect blackmail material", "Cost": 12, "Quality": 60, "Risk": 40, "OfficersRequired": 8, "MinimalSkill": 35, "Available": false, "MinimalIntel": 25, }),
-		AMethod.new({ "Name": "construct network of close contacts", "Cost": 15, "Quality": 50, "Risk": 45, "OfficersRequired": 6, "MinimalSkill": 45, "Available": false, "MinimalIntel": 30, }),
-		AMethod.new({ "Name": "identify potential defectors", "Cost": 25, "Quality": 80, "Risk": 55, "OfficersRequired": 12, "MinimalSkill": 55, "Available": false, "MinimalIntel": 45, }),
+		AMethod.new({ "Name": "basic observation of potential assets", "Cost": 4, "Quality": 10, "Risk": 15, "OfficersRequired": 2, "MinimalSkill": 0, "Available": false, "MinimalIntel": 5, "MinimalTrust": 0, }),
+		AMethod.new({ "Name": "background check", "Cost": 6, "Quality": 20, "Risk": 25, "OfficersRequired": 3, "MinimalSkill": 10, "Available": false, "MinimalIntel": 10, "MinimalTrust": 0, }),
+		AMethod.new({ "Name": "arrange natural meetings with potential assets", "Cost": 10, "Quality": 30, "Risk": 40, "OfficersRequired": 2, "MinimalSkill": 15, "Available": false, "MinimalIntel": 15, "MinimalTrust": 0, }),
+		AMethod.new({ "Name": "collect blackmail material", "Cost": 12, "Quality": 60, "Risk": 40, "OfficersRequired": 8, "MinimalSkill": 35, "Available": false, "MinimalIntel": 25, "MinimalTrust": 0, }),
+		AMethod.new({ "Name": "construct network of close contacts", "Cost": 15, "Quality": 50, "Risk": 45, "OfficersRequired": 6, "MinimalSkill": 45, "Available": false, "MinimalIntel": 30, "MinimalTrust": 0, }),
+		AMethod.new({ "Name": "identify potential defectors", "Cost": 25, "Quality": 80, "Risk": 55, "OfficersRequired": 12, "MinimalSkill": 55, "Available": false, "MinimalIntel": 45, "MinimalTrust": 0, }),
 	]
 ]
 
 # <countryA> phrase <countryB>
-var DiplomaticPhrasesPositive = ["'s officials visited ", " signed a treaty with "]
+var DiplomaticPhrasesPositive = ["'s officials visited ", " expressed will to improve relations with "]
+var DiplomaticPhrasesVeryPositive = [" signed a treaty with ", " held joint military exercise with ", " formed bilateral committee "]
 var DiplomaticPhrasesNegative = [" condemned actions of ", " withdraw from a treaty with ", " expressed concern about changes in "]
+var DiplomaticPhrasesVeryNegative = [" refused to meet with officials of ", " expelled some citizens of ", " attributed destabilization of the region to ", "'s military officials threatened "]
 
 # Next week function like in game logic
 func WorldNextWeek(past):
@@ -243,10 +247,13 @@ func WorldNextWeek(past):
 		if Countries[c].PoliticsStability < 20:
 			choice = GameLogic.random.randi_range(0,20)
 			if choice > Countries[c].PoliticsStability and GameLogic.random.randi_range(0,10) == 1:
-				GameLogic.AddWorldEvent("Government dissoluted in " + Countries[c].Name, past)
+				GameLogic.AddWorldEvent("Government resigned in " + Countries[c].Name, past)
 				Countries[c].ElectionProgress = 0
 		elif choice > Countries[c].PoliticsStability and GameLogic.random.randi_range(0,20) == 2:
-			GameLogic.AddWorldEvent("Scandal affected government in " + Countries[c].Name, past)
+			if GameLogic.random.randi_range(1,3) == 2:
+				GameLogic.AddWorldEvent("Protests against government in " + Countries[c].Name, past)
+			else:
+				GameLogic.AddWorldEvent("Internal tensions affected government in " + Countries[c].Name, past)
 			Countries[c].PoliticsStability -= GameLogic.random.randi_range(5,15)
 	# individual diplomatic events
 	for c in range(0, len(Countries)):
@@ -259,10 +266,14 @@ func WorldNextWeek(past):
 				change = GameLogic.random.randi_range((DiplomaticRelations[c][affected]-30.0)/4, (DiplomaticRelations[c][affected]+30.0)/4)
 			DiplomaticRelations[c][affected] += change
 			if GameLogic.random.randi_range(0,20) == 7:  # publicly known
-				if change < 0:
+				if change < 0 and DiplomaticRelations[c][affected] > -30:
 					GameLogic.AddWorldEvent(Countries[c].Name + DiplomaticPhrasesNegative[randi() % DiplomaticPhrasesNegative.size()] + Countries[affected].Name, past)
-				elif change > 0:
+				elif change < 0 and DiplomaticRelations[c][affected] <= -30:
+					GameLogic.AddWorldEvent(Countries[c].Name + DiplomaticPhrasesVeryNegative[randi() % DiplomaticPhrasesNegative.size()] + Countries[affected].Name, past)
+				elif change > 0 and DiplomaticRelations[c][affected] < 30:
 					GameLogic.AddWorldEvent(Countries[c].Name + DiplomaticPhrasesPositive[randi() % DiplomaticPhrasesPositive.size()] + Countries[affected].Name, past)
+				elif change > 0 and DiplomaticRelations[c][affected] >= 30:
+					GameLogic.AddWorldEvent(Countries[c].Name + DiplomaticPhrasesVeryPositive[randi() % DiplomaticPhrasesPositive.size()] + Countries[affected].Name, past)
 	# country summits
 	if GameLogic.random.randi_range(0,20) == 12:
 		# getting participants

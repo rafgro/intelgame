@@ -48,10 +48,16 @@ margin_right = 680.0
 margin_bottom = 31.0
 size_flags_horizontal = 3
 
-[node name="CenterContainer" type="CenterContainer" parent="M/R/CDate"]
+[node name="C" type="MarginContainer" parent="M/R/CDate"]
 margin_right = 564.0
 margin_bottom = 31.0
 size_flags_horizontal = 3
+
+[node name="TrustChange" type="Label" parent="M/R/CDate/C"]
+margin_right = 564.0
+margin_bottom = 31.0
+custom_fonts/font = ExtResource( 2 )
+text = "-3% trust"
 
 [node name="Date" type="Label" parent="M/R/CDate"]
 margin_left = 568.0
