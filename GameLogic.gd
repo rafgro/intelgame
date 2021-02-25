@@ -189,7 +189,8 @@ func NextWeek():
 	var ifCall = OperationHandler.ProgressOperations()
 	if ifCall == true: doesItEndWithCall = true
 	# world changes
-	WorldData.WorldNextWeek(null)
+	ifCall = WorldData.WorldNextWeek(null)
+	if ifCall == true: doesItEndWithCall = true
 	# call to action
 	if doesItEndWithCall == true:
 		get_tree().change_scene("res://call.tscn")

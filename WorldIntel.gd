@@ -139,7 +139,7 @@ func RecruitInOrg(o, quality, date):
 	var desc = "[b]"+date+"[/b] "
 	# difficulty is mainly determined by counterintelligence measures
 	# this is compared against quality of operation and previous intel
-	var counterHere = WorldData.Organizations[o].Counterintelligence + GameLogic.random.randi_range(-15,15)
+	var counterHere = WorldData.Organizations[o].Counterintelligence + GameLogic.random.randi_range(-25,10)
 	var approach = WorldData.Organizations[o].IntelValue + quality
 	# pool of possible targets is also important
 	if WorldData.Organizations[o].IntelIdentified < 5: approach *= 0.3

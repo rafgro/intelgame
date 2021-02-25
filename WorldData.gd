@@ -170,17 +170,21 @@ var DiplomaticPhrasesNegative = [" condemned actions of ", " withdraw from a tre
 
 # Next week function like in game logic
 func WorldNextWeek(past):
+	var doesItEndWithCall = false
 	# progressing to elections
 	for c in range(0, len(Countries)):
 		Countries[c].ElectionProgress -= 1
 		if Countries[c].ElectionProgress <= 0:
 			# election
+			var eventualDesc = ""
 			var won = GameLogic.random.randi_range(29,55)
 			if GameLogic.random.randi_range(0,1) == 0:
 				GameLogic.AddWorldEvent("Elections in " + Countries[c].Name + ": Incumbent won, achieving "+str(won)+"%", past)
 				Countries[c].ElectionProgress = Countries[c].ElectionPeriod
 				Countries[c].PoliticsAggression += GameLogic.random.randi_range(-5,5)
 				Countries[c].PoliticsStability += GameLogic.random.randi_range(10,won)
+				if c == 0:
+					eventualDesc = "Incumbent won, achieving "+str(won)+"%. Government will largely stay in the same shape, continuing similar foreign policy, and preserving existing approach to intelligence services."
 			else:
 				GameLogic.AddWorldEvent("Elections in " + Countries[c].Name + ": New government formed, achieving "+str(won)+"%", past)
 				Countries[c].ElectionProgress = Countries[c].ElectionPeriod
@@ -189,8 +193,48 @@ func WorldNextWeek(past):
 				Countries[c].PoliticsStability += GameLogic.random.randi_range(won,90)
 				for d in range(0, len(Countries)):
 					DiplomaticRelations[c][d] += GameLogic.random.randi_range(-10,10)
-	# dealing with government stability
+				if c == 0:
+					var newApproach = "adverse"
+					var eventualIncrease = ""
+					if Countries[c].PoliticsIntel > 60:
+						newApproach = "friendly"
+						eventualIncrease = "As a mark of a new start, bureau's budget is increased by €" + str(int(GameLogic.BudgetFull*0.3)) + ",000."
+						GameLogic.BudgetFull *= 1.3
+					elif Countries[c].PoliticsIntel > 30: newApproach = "neutral"
+					eventualDesc = "New government formed, achieving "+str(won)+"%. Its approach towards intelligence services can be described as " + newApproach + ". " + eventualIncrease
+			# notifying user if that's homeland
+			if c == 0:
+				CallManager.CallQueue.append(
+					{
+						"Header": "Important Information",
+						"Level": "Unclassified",
+						"Operation": "",
+						"Content": "Homeland election was held in the last week.\n\n" + eventualDesc,
+						"Show1": false,
+						"Show2": false,
+						"Show3": false,
+						"Show4": true,
+						"Text1": "",
+						"Text2": "",
+						"Text3": "",
+						"Text4": "Understood",
+						"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision1Argument": null,
+						"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision2Argument": null,
+						"Decision3Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision3Argument": null,
+						"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision4Argument": null,
+					}
+				)
+	# dealing with country stats government stability
 	for c in range(0, len(Countries)):
+		# parameter fluctations
+		if GameLogic.random.randi_group(1,4) == 2:  # ~one per month
+			Countries[c].Size *= (1.0+GameLogic.random.randi_group(-1,1)*0.01)
+			Countries[c].IntelFriendliness += GameLogic.random.randi_group(-1,1)
+		# stability
 		var choice = GameLogic.random.randi_range(0,70)
 		if Countries[c].PoliticsStability < 20:
 			choice = GameLogic.random.randi_range(0,20)
@@ -247,3 +291,37 @@ func WorldNextWeek(past):
 	for w in range(0,len(Organizations)):
 		# intel decay
 		Organizations[w].IntelValue *= 0.99  # ~4%/month, ~40%/year
+		# staff and budget changes
+		if GameLogic.random.randi_group(1,4) == 2:  # ~one per month
+			Organizations[w].Budget *= (1.0+GameLogic.random.randi_group(-1,1)*0.01)
+			if Organizations[w].Staff > 100:  # large orgs
+				Organizations[w].Staff *= (1.0+GameLogic.random.randi_group(-1,1)*0.01)
+			else:  # small orgs
+				Organizations[w].Staff += GameLogic.random.randi_group(-1,1)
+		# sources
+		if len(Organizations[w].IntelSources) > 0:
+			# modifying every source
+			var sumOfLevels = 0.0
+			var highestLevel = 0
+			var sourceLoss = -1
+			for s in range(0,len(Organizations[w].IntelSources)):
+				# fluctuate trust
+				Organizations[w].IntelSources[s].Trust += GameLogic.random.randi_range(-1,1)
+				if Organizations[w].IntelSources[s].Trust < 1:
+					sourceLoss = w
+					continue
+				# fluctuate level
+				if GameLogic.random.randi_range(1,3) == 2:
+					Organizations[w].IntelSources[s].Level += GameLogic.random.randi_range(-1,1)
+				# noting levels for joint intel
+				sumOfLevels += Organizations[w].IntelSources[s].Level
+				if highestLevel < Organizations[w].IntelSources[s].Level:
+					highestLevel = Organizations[w].IntelSources[s].Level
+			# eventual source loss
+			if sourceLoss != -1:
+				Organizations[w].IntelSources.remove(sourceLoss)
+				GameLogic.AddEvent('Bureau lost source in ' + Organizations[w].Name)
+			# providing joint intel from all sources, every 8 weeks on average
+			if GameLogic.random.randi_range(1,8) == 4:
+				WorldIntel.GatherOnOrg(w, highestLevel*(1.0+len(Organizations[w].IntelSources)*0.1), GameLogic.GiveDateWithYear())
+	return doesItEndWithCall
