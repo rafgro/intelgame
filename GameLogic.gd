@@ -99,7 +99,6 @@ func _ready():
 func NextWeek():
 	############################################################################
 	var doesItEndWithCall = false
-	PreviousTrust = Trust
 	TrustChangeDesc = ""
 	# clearing u-tags in events
 	var i = 0
@@ -190,7 +189,7 @@ func NextWeek():
 			var opType = OperationGenerator.Type.MORE_INTEL
 			if WorldData.Organizations[whichOrg].IntelIdentified > 0 and random.randi_range(1,5) == 2:
 				opType = OperationGenerator.Type.RECRUIT_SOURCE
-			OperationGenerator.NewOperation(1, whichOrg, opType)
+			OperationGenerator.NewOperation(1, whichOrg, WorldData.Organizations[whichOrg].Countries[0], opType)
 			# if possible, start fast
 			if GameLogic.OfficersInHQ > 0:
 				GameLogic.Operations[-1].AnalyticalOfficers = GameLogic.OfficersInHQ
@@ -272,6 +271,7 @@ func NextWeek():
 		if Trust > PreviousTrust: TrustChangeDesc = "+" + str(int(Trust-PreviousTrust))
 		else: TrustChangeDesc = str(int(Trust-PreviousTrust))
 		TrustChangeDesc += "% change of government trust"
+		PreviousTrust = Trust
 	############################################################################
 	# call to action
 	if doesItEndWithCall == true:
@@ -331,8 +331,8 @@ func ImplementOfficerRescue(adictionary):
 		StaffSkill *= 1.01
 		StaffExperience *= 1.03
 		Trust *= 0.6
-		WorldData.DiplomaticRelations[0][WorldData.Organizations[Operations[i].Target].Countries[0]] -= random.randi_range(5,15)
-		WorldData.DiplomaticRelations[WorldData.Organizations[Operations[i].Target].Countries[0]][0] -= GameLogic.random.randi_range(5,15)
+		WorldData.DiplomaticRelations[0][Operations[i].Country] -= random.randi_range(5,15)
+		WorldData.DiplomaticRelations[Operations[i].Country][0] -= GameLogic.random.randi_range(5,15)
 	# "expelling will happen between intelligence services only, but these officers will never be allowed to enter this country again"
 	elif adictionary.Choice == 2:
 		AddEvent(Operations[i].Name + ": "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned to homeland after being arrested")
@@ -340,7 +340,7 @@ func ImplementOfficerRescue(adictionary):
 		StaffTrust *= 1.08
 		StaffSkill *= 1.01
 		StaffExperience *= 1.03
-		WorldData.Countries[WorldData.Organizations[Operations[i].Target].Countries[0]].Expelled += Operations[i].AbroadPlan.Officers
+		WorldData.Countries[Operations[i].Country].Expelled += Operations[i].AbroadPlan.Officers
 		# todo: expelling mechanism
 	# "denying affiliation will result in officer imprisonment and their de facto loss, affecting internal trust, but not affecting any external instituions"
 	elif adictionary.Choice == 3:
@@ -362,10 +362,10 @@ func ImplementOfficerRescue(adictionary):
 			content = "Bribing was successful. "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned to Homeland."
 		else:
 			# unsuccessful
-			content = "Bribing failed. Government officials of Homeland and " + WorldData.Countries[WorldData.Organizations[Operations[i].Target].Countries[0]].Name + " learned about the situation. "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned, but bureau lost " + str(int(Trust*0.6)) + "% of trust."
+			content = "Bribing failed. Government officials of Homeland and " + WorldData.Countries[Operations[i].Country].Name + " learned about the situation. "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned, but bureau lost " + str(int(Trust*0.6)) + "% of trust."
 			Trust *= 0.4
-			WorldData.DiplomaticRelations[0][WorldData.Organizations[Operations[i].Target].Countries[0]] -= random.randi_range(5,15)
-			WorldData.DiplomaticRelations[WorldData.Organizations[Operations[i].Target].Countries[0]][0] -= GameLogic.random.randi_range(5,15)
+			WorldData.DiplomaticRelations[0][Operations[i].Country] -= random.randi_range(5,15)
+			WorldData.DiplomaticRelations[Operations[i].Country][0] -= GameLogic.random.randi_range(5,15)
 		# user debriefing
 		CallManager.CallQueue.append(
 			{

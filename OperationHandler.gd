@@ -73,48 +73,71 @@ func ProgressOperations():
 				# adjusting number of officers
 				usedOfficers = GameLogic.random.randi_range(usedOfficers, maxOfficers)
 				# calculating cost and checking if it's possible
-				var singleOfficerCost = WorldData.Countries[WorldData.Organizations[which].Countries[0]].LocalCost \
-					+ (WorldData.Countries[WorldData.Organizations[which].Countries[0]].TravelCost / predictedLength / 2)
+				var singleOfficerCost = WorldData.Countries[GameLogic.Operations[i].Country].LocalCost \
+					+ (WorldData.Countries[GameLogic.Operations[i].Country].TravelCost / predictedLength / 2)
 				totalCost += singleOfficerCost * usedOfficers * predictedLength
 				for m in theMethods:
 					totalCost += WorldData.Methods[GameLogic.Operations[i].Type][m].Cost * predictedLength
 				if totalCost > GameLogic.FreeFundsWeekly()*predictedLength:
 					noPlanReasonCost += 1
 					continue
-				var expelled = WorldData.Countries[WorldData.Organizations[which].Countries[0]].Expelled
+				var expelled = WorldData.Countries[GameLogic.Operations[i].Country].Expelled
 				if usedOfficers > (GameLogic.OfficersInHQ-expelled):
 					noPlanReasonStaff += 1
 					continue
 				# calculating total operation parameters: clash of location and methods
-				# quality
-				var whichCountry = WorldData.Organizations[GameLogic.Operations[i].Target].Countries[0]
+				# quality, slightly balanced
+				var whichCountry = GameLogic.Operations[i].Country
 				var totalQuality = 0
+				var methodQuality = 0
+				var highestQuality = 0
 				for m in theMethods:
-					totalQuality += WorldData.Methods[GameLogic.Operations[i].Type][m].Quality
-				totalQuality *= ((WorldData.Countries[whichCountry].IntelFriendliness)/100.0)
-				totalQuality *= (0.5+(GameLogic.StaffSkill/100.0))
-				totalQuality *= 0.8+(predictedLength*0.5*0.2)  # 2->4w = 1.0->1.2
+					methodQuality += WorldData.Methods[GameLogic.Operations[i].Type][m].Quality
+					if highestQuality < WorldData.Methods[GameLogic.Operations[i].Type][m].Quality:
+						highestQuality = WorldData.Methods[GameLogic.Operations[i].Type][m].Quality
+				methodQuality -= highestQuality
+				# this one is clever: average of highest risk method and all other
+				totalQuality += (highestQuality+(methodQuality*1.0/len(theMethods)))*0.8
+				totalQuality *= 0.7+(1.0-WorldData.Organizations[which].Counterintelligence*0.01)
+				var staffPercent = WorldData.Organizations[which].IntelIdentified*1.0 / WorldData.Organizations[which].Staff
+				totalQuality += staffPercent * 30
+				totalQuality = totalQuality*1.0/len(WorldData.Organizations[which].Countries)
+				var officerFactor = 1.0 + usedOfficers*0.1
+				if officerFactor > 2.1: officerFactor = 2.1
+				totalQuality *= officerFactor
+				var lengthFactor = 1.0 + predictedLength*0.1
+				if lengthFactor > 1.8: lengthFactor = 1.8
+				totalQuality *= lengthFactor
 				var qualityDesc = "poor"
-				if totalQuality >= 90: qualityDesc = "great"
-				elif totalQuality >= 60: qualityDesc = "good"
-				elif totalQuality >= 40: qualityDesc = "medium"
+				if totalQuality >= 75: qualityDesc = "great"
+				elif totalQuality >= 55: qualityDesc = "good"
+				elif totalQuality >= 25: qualityDesc = "medium"
 				elif totalQuality >= 10: qualityDesc = "low"
-				# risk
+				# risk, slightly balanced
 				var totalRisk = 0
+				var methodRisk = 0
+				var highestRisk = 0
 				for m in theMethods:
-					totalRisk += WorldData.Methods[GameLogic.Operations[i].Type][m].Risk
-				#totalRisk += WorldData.Countries[whichCountry].Hostility/2
-				totalRisk += (-1)*WorldData.DiplomaticRelations[0][whichCountry]/2
-				totalRisk *= (WorldData.Organizations[which].Counterintelligence/100.0)
-				totalRisk *= (120.0-GameLogic.StaffExperience)/100.0
-				totalRisk *= 0.8+(predictedLength*0.5*0.2)  # 2->4w = 1.0->1.2
-				if GameLogic.StaffTrust < 50: totalRisk += (50.0-GameLogic.StaffTrust)/5.0
-				elif GameLogic.StaffTrust > 50: totalRisk -= (GameLogic.StaffTrust-50.0)/20.0
+					methodRisk += WorldData.Methods[GameLogic.Operations[i].Type][m].Risk
+					if highestRisk < WorldData.Methods[GameLogic.Operations[i].Type][m].Risk:
+						highestRisk = WorldData.Methods[GameLogic.Operations[i].Type][m].Risk
+				methodRisk -= highestRisk
+				# this one is clever: average of highest risk method and all other
+				totalRisk += (highestRisk+(methodRisk*1.0/len(theMethods)))*0.7
+				totalRisk *= 0.5+WorldData.Organizations[which].Counterintelligence*0.02
+				totalRisk -= WorldData.Organizations[GameLogic.Operations[i].Target].IntelValue*0.5
+				totalRisk *= 0.5+(100.0-WorldData.Countries[whichCountry].IntelFriendliness)*0.01
+				totalRisk -= GameLogic.StaffExperience*0.1
+				var potentialHostiliy = (-1.0)*WorldData.DiplomaticRelations[0][whichCountry]*0.03
+				if potentialHostiliy < 0: potentialHostiliy = 0
+				totalRisk *= 1.0 + potentialHostiliy
+				if totalRisk < 2: totalRisk = 2
+				var riskVsTime = totalRisk * predictedLength
 				var riskDesc = "no"
-				if totalRisk >= 90: riskDesc = "extreme"
-				elif totalRisk >= 60: riskDesc = "high"
-				elif totalRisk >= 40: riskDesc = "medium"
-				elif totalRisk >= 10: riskDesc = "low"
+				if riskVsTime >= 100: riskDesc = "extreme"
+				elif riskVsTime >= 70: riskDesc = "high"
+				elif riskVsTime >= 40: riskDesc = "medium"
+				elif riskVsTime >= 10: riskDesc = "low"
 				# saving and describing
 				var theDescription = "€"+str(totalCost)+",000 | "+str(usedOfficers)+" officers | " \
 					+str(predictedLength)+" weeks | "+qualityDesc+" quality, "+riskDesc+" risk\n"
@@ -125,7 +148,7 @@ func ProgressOperations():
 				localPlans.append(
 					{
 						"OperationId": i,
-						"Country": WorldData.Countries[WorldData.Organizations[which].Countries[0]].Name,
+						"Country": WorldData.Countries[GameLogic.Operations[i].Country].Name,
 						"Officers": usedOfficers,
 						"Cost": totalCost,
 						"Length": predictedLength,
@@ -222,7 +245,7 @@ func ProgressOperations():
 		###########################################################################
 		elif GameLogic.Operations[i].Stage == OperationGenerator.Stage.ABROAD_OPERATION:
 			# operation progressing or not
-			if GameLogic.random.randi_range(0, 100) > GameLogic.Operations[i].AbroadPlan.Risk:
+			if GameLogic.random.randi_range(0, 110) > GameLogic.Operations[i].AbroadPlan.Risk:
 				GameLogic.Operations[i].AbroadProgress -= GameLogic.Operations[i].AbroadRateOfProgress
 				if GameLogic.Operations[i].AbroadProgress > 0:  # check to avoid doubling events
 					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": ground operation continues")
@@ -240,7 +263,7 @@ func ProgressOperations():
 								"Header": "Urgent Decision",
 								"Level": GameLogic.Operations[i].Level,
 								"Operation": GameLogic.Operations[i].Name + "\nagainst " + WorldData.Organizations[GameLogic.Operations[i].Target].Name,
-								"Content": str(GameLogic.Operations[i].AbroadPlan.Officers) + " officers executing the action were arrested by " + WorldData.Countries[WorldData.Organizations[which].Countries[0]].Adjective + " authorities. Decide on appropriate reaction.\n\nPossibilities:\n- engaging government will return officers, but significantly decrease government's trust\n- expelling will happen between intelligence services only, but these officers will never be allowed to enter this country again\n- denying affiliation will result in officer imprisonment and their de facto loss, affecting internal trust, but not affecting any external instituions\n- bribing can return officers intact, but often does not succeed and instead lead to large diplomatic scandal",
+								"Content": str(GameLogic.Operations[i].AbroadPlan.Officers) + " officers executing the action were arrested by " + WorldData.Countries[GameLogic.Operations[i].Country].Adjective + " authorities. Decide on appropriate reaction.\n\nPossibilities:\n- engaging government will return officers, but significantly decrease government's trust\n- expelling will happen between intelligence services only, but these officers will never be allowed to enter this country again\n- denying affiliation will result in officer imprisonment and their de facto loss, affecting internal trust, but not affecting any external instituions\n- bribing can return officers intact, but often does not succeed and instead lead to large diplomatic scandal",
 								"Show1": true,
 								"Show2": true,
 								"Show3": true,
@@ -279,9 +302,9 @@ func ProgressOperations():
 						# diplomatic event
 						var ifDipl = ""
 						if (WorldData.Organizations[which].Type == WorldData.OrgType.GOVERNMENT or WorldData.Organizations[which].Type == WorldData.OrgType.INTEL):
-							ifDipl = " In addition, diplomatic relations between Homeland and " + WorldData.Countries[WorldData.Organizations[which].Countries[0]].Name + " suffered due to evident attack on a national asset."
-							WorldData.DiplomaticRelations[0][WorldData.Organizations[which].Countries[0]] -= GameLogic.random.randi_range(10,30)
-							WorldData.DiplomaticRelations[WorldData.Organizations[which].Countries[0]][0] -= GameLogic.random.randi_range(10,30)
+							ifDipl = " In addition, diplomatic relations between Homeland and " + WorldData.Countries[GameLogic.Operations[i].Country].Name + " suffered due to evident attack on a national asset."
+							WorldData.DiplomaticRelations[0][GameLogic.Operations[i].Country] -= GameLogic.random.randi_range(10,30)
+							WorldData.DiplomaticRelations[GameLogic.Operations[i].Country][0] -= GameLogic.random.randi_range(10,30)
 						# user briefing
 						GameLogic.AddEvent(GameLogic.Operations[i].Name + ": " + str(GameLogic.Operations[i].AbroadPlan.Officers) + " officers were caught and killed")
 						CallManager.CallQueue.append(
@@ -326,7 +349,7 @@ func ProgressOperations():
 					WorldData.Organizations[GameLogic.Operations[i].Target].Counterintelligence *= 1.02
 					GameLogic.StaffTrust -= 5
 					GameLogic.StaffExperience = GameLogic.StaffExperience*1.07
-					WorldData.DiplomaticRelations[0][WorldData.Organizations[GameLogic.Operations[i].Target].Countries[0]] -= 2
+					WorldData.DiplomaticRelations[0][GameLogic.Operations[i].Country] -= 2
 					if (WorldData.Countries[0].PoliticsIntel+GameLogic.random.randi_range(-15,15)) > 50:
 						# changing only if government cares
 						GameLogic.Trust -= 5
@@ -478,7 +501,7 @@ func ProgressOperations():
 						GameLogic.AddEvent("Government increased budget by €"+str(budgetIncrease)+"k")
 					content = "Operation has been finished. " + govFeedbackDesc
 				# debriefing user
-				if sourceLevel > 0:
+				if sourceLevel != 0:
 					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": bureau acquired a new source")
 				GameLogic.AddEvent(GameLogic.Operations[i].Name + ": "+str(GameLogic.Operations[i].AbroadPlan.Officers)+" officer(s) returned to homeland")
 				GameLogic.AddEvent("Bureau finished operation "+GameLogic.Operations[i].Name)

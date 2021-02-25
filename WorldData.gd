@@ -149,24 +149,24 @@ class AMethod:
 var Methods = [
 	# MORE_INTEL methods
 	[
-		AMethod.new({ "Name": "general surveillance", "Cost": 2, "Quality": 5, "Risk": 5, "OfficersRequired": 1, "MinimalSkill": 0, "Available": false, "MinimalIntel": -100, "MinimalTrust": 0, }),
-		AMethod.new({ "Name": "street observation on foot", "Cost": 1, "Quality": 10, "Risk": 40, "OfficersRequired": 1, "MinimalSkill": 0, "Available": false, "MinimalIntel": 2, "MinimalTrust": 0, }),
-		AMethod.new({ "Name": "street observation by car", "Cost": 2, "Quality": 15, "Risk": 20, "OfficersRequired": 2, "MinimalSkill": 0, "Available": false, "MinimalIntel": 2, "MinimalTrust": 0, }),
-		AMethod.new({ "Name": "install and operate external cameras", "Cost": 5, "Quality": 30, "Risk": 20, "OfficersRequired": 1, "MinimalSkill": 11, "Available": false, "MinimalIntel": 8, "MinimalTrust": 0, }),
-		AMethod.new({ "Name": "rent house for observation", "Cost": 20, "Quality": 40, "Risk": 5, "OfficersRequired": 2, "MinimalSkill": 5, "Available": false, "MinimalIntel": 5, "MinimalTrust": 0, }),
-		AMethod.new({ "Name": "attempt physical breach", "Cost": 20, "Quality": 65, "Risk": 65, "OfficersRequired": 5, "MinimalSkill": 25, "Available": false, "MinimalIntel": 50, "MinimalTrust": 30, }),
-		AMethod.new({ "Name": "eavesdropping", "Cost": 60, "Quality": 80, "Risk": 10, "OfficersRequired": 4, "MinimalSkill": 40, "Available": false, "MinimalIntel": 5, "MinimalTrust": 30, }),
-		AMethod.new({ "Name": "pose as undercover local company", "Cost": 100, "Quality": 55, "Risk": 20, "OfficersRequired": 8, "MinimalSkill": 40, "Available": false, "MinimalIntel": -50, "MinimalTrust": 40, }),
-		AMethod.new({ "Name": "pose as undercover government organization", "Cost": 300, "Quality": 70, "Risk": 20, "OfficersRequired": 16, "MinimalSkill": 50, "Available": false, "MinimalIntel": -100, "MinimalTrust": 75, }),
+		AMethod.new({ "Name": "general surveillance", "Cost": 2, "Quality": 10, "Risk": 2, "OfficersRequired": 1, "MinimalSkill": 0, "Available": false, "MinimalIntel": -100, "MinimalTrust": 0, }),
+		AMethod.new({ "Name": "street observation on foot", "Cost": 1, "Quality": 15, "Risk": 15, "OfficersRequired": 1, "MinimalSkill": 0, "Available": false, "MinimalIntel": 2, "MinimalTrust": 0, }),
+		AMethod.new({ "Name": "street observation by car", "Cost": 2, "Quality": 20, "Risk": 7, "OfficersRequired": 2, "MinimalSkill": 0, "Available": false, "MinimalIntel": 2, "MinimalTrust": 0, }),
+		AMethod.new({ "Name": "install and operate external cameras", "Cost": 5, "Quality": 30, "Risk": 12, "OfficersRequired": 1, "MinimalSkill": 11, "Available": false, "MinimalIntel": 8, "MinimalTrust": 0, }),
+		AMethod.new({ "Name": "rent house for observation", "Cost": 20, "Quality": 45, "Risk": 4, "OfficersRequired": 2, "MinimalSkill": 5, "Available": false, "MinimalIntel": 5, "MinimalTrust": 0, }),
+		AMethod.new({ "Name": "attempt physical breach", "Cost": 20, "Quality": 70, "Risk": 55, "OfficersRequired": 5, "MinimalSkill": 25, "Available": false, "MinimalIntel": 50, "MinimalTrust": 30, }),
+		AMethod.new({ "Name": "eavesdropping", "Cost": 60, "Quality": 80, "Risk": 15, "OfficersRequired": 4, "MinimalSkill": 40, "Available": false, "MinimalIntel": 5, "MinimalTrust": 30, }),
+		AMethod.new({ "Name": "pose as undercover local company", "Cost": 100, "Quality": 60, "Risk": 20, "OfficersRequired": 8, "MinimalSkill": 40, "Available": false, "MinimalIntel": -50, "MinimalTrust": 40, }),
+		AMethod.new({ "Name": "pose as undercover government organization", "Cost": 300, "Quality": 85, "Risk": 25, "OfficersRequired": 16, "MinimalSkill": 50, "Available": false, "MinimalIntel": -100, "MinimalTrust": 75, }),
 	],
 	# RECRUIT_SOURCE methods
 	[
-		AMethod.new({ "Name": "basic observation of potential assets", "Cost": 4, "Quality": 10, "Risk": 15, "OfficersRequired": 2, "MinimalSkill": 0, "Available": false, "MinimalIntel": 5, "MinimalTrust": 0, }),
-		AMethod.new({ "Name": "background check", "Cost": 6, "Quality": 20, "Risk": 25, "OfficersRequired": 3, "MinimalSkill": 10, "Available": false, "MinimalIntel": 10, "MinimalTrust": 0, }),
-		AMethod.new({ "Name": "arrange natural meetings with potential assets", "Cost": 10, "Quality": 30, "Risk": 40, "OfficersRequired": 2, "MinimalSkill": 15, "Available": false, "MinimalIntel": 15, "MinimalTrust": 0, }),
-		AMethod.new({ "Name": "collect blackmail material", "Cost": 12, "Quality": 60, "Risk": 40, "OfficersRequired": 8, "MinimalSkill": 35, "Available": false, "MinimalIntel": 25, "MinimalTrust": 0, }),
-		AMethod.new({ "Name": "construct network of close contacts", "Cost": 15, "Quality": 50, "Risk": 45, "OfficersRequired": 6, "MinimalSkill": 45, "Available": false, "MinimalIntel": 30, "MinimalTrust": 0, }),
-		AMethod.new({ "Name": "identify potential defectors", "Cost": 25, "Quality": 80, "Risk": 55, "OfficersRequired": 12, "MinimalSkill": 55, "Available": false, "MinimalIntel": 45, "MinimalTrust": 0, }),
+		AMethod.new({ "Name": "basic observation of potential assets", "Cost": 4, "Quality": 10, "Risk": 3, "OfficersRequired": 2, "MinimalSkill": 0, "Available": false, "MinimalIntel": 5, "MinimalTrust": 0, }),
+		AMethod.new({ "Name": "background check", "Cost": 6, "Quality": 20, "Risk": 10, "OfficersRequired": 3, "MinimalSkill": 10, "Available": false, "MinimalIntel": 10, "MinimalTrust": 0, }),
+		AMethod.new({ "Name": "arrange natural meetings with potential assets", "Cost": 10, "Quality": 30, "Risk": 20, "OfficersRequired": 2, "MinimalSkill": 15, "Available": false, "MinimalIntel": 15, "MinimalTrust": 0, }),
+		AMethod.new({ "Name": "collect blackmail material", "Cost": 12, "Quality": 60, "Risk": 15, "OfficersRequired": 8, "MinimalSkill": 35, "Available": false, "MinimalIntel": 25, "MinimalTrust": 0, }),
+		AMethod.new({ "Name": "construct network of close contacts", "Cost": 15, "Quality": 55, "Risk": 20, "OfficersRequired": 6, "MinimalSkill": 45, "Available": false, "MinimalIntel": 30, "MinimalTrust": 0, }),
+		AMethod.new({ "Name": "identify potential defectors", "Cost": 25, "Quality": 80, "Risk": 40, "OfficersRequired": 12, "MinimalSkill": 55, "Available": false, "MinimalIntel": 45, "MinimalTrust": 0, }),
 	]
 ]
 

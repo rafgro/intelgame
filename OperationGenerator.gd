@@ -120,7 +120,7 @@ enum Stage {
 	FAILED,
 }
 
-func NewOperation(source, againstOrg, whatType):
+func NewOperation(source, againstOrg, countryId, whatType):
 	GameLogic.PursuedOperations += 1
 	# name
 	var whichName = randi() % PossibleNames.size()
@@ -148,6 +148,7 @@ func NewOperation(source, againstOrg, whatType):
 			"GoalDescription": desc,
 			"Level": alevel,  # level displayed in calls
 			"Target": againstOrg,
+			"Country": countryId,
 			"AnalyticalOfficers": 0,
 			"OperationalOfficers": 0,
 			"Stage": Stage.NOT_STARTED,

@@ -2,6 +2,7 @@ extends Panel
 
 var mapOfCountries = []
 var lastMapOfOrgs = []
+var lastSelectedCountry = -1
 var lastSelectedOrg = -1
 
 func _ready():
@@ -31,6 +32,7 @@ func _on_Return_pressed():
 func _on_Countries_item_selected(index):
 	lastMapOfOrgs.clear()
 	$M/R/Organizations.clear()
+	lastSelectedCountry = mapOfCountries[index]
 	for o in range(0, len(WorldData.Organizations)):
 		if mapOfCountries[index] in WorldData.Organizations[o].Countries and WorldData.Organizations[o].Known == true:
 			lastMapOfOrgs.append(o)
@@ -56,7 +58,7 @@ func _on_Organizations_item_selected(index):
 
 func _on_Gather_pressed():
 	if lastSelectedOrg != -1:
-		OperationGenerator.NewOperation(0, lastSelectedOrg, OperationGenerator.Type.MORE_INTEL)
+		OperationGenerator.NewOperation(0, lastSelectedOrg, lastSelectedCountry, OperationGenerator.Type.MORE_INTEL)
 		# if possible, start fast
 		if GameLogic.OfficersInHQ > 0:
 			GameLogic.Operations[-1].AnalyticalOfficers = GameLogic.OfficersInHQ
@@ -67,7 +69,7 @@ func _on_Gather_pressed():
 
 func _on_Recruit_pressed():
 	if lastSelectedOrg != -1:
-		OperationGenerator.NewOperation(0, lastSelectedOrg, OperationGenerator.Type.RECRUIT_SOURCE)
+		OperationGenerator.NewOperation(0, lastSelectedOrg, lastSelectedCountry, OperationGenerator.Type.RECRUIT_SOURCE)
 		# if possible, start fast
 		if GameLogic.OfficersInHQ > 0:
 			GameLogic.Operations[-1].AnalyticalOfficers = GameLogic.OfficersInHQ
