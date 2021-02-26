@@ -135,8 +135,8 @@ func NewGenerate():
 		)
 		WorldData.Organizations[-1].IntelIdentified = GameLogic.random.randi_range(20,100)  # officials
 	# few general terror orgs
-	for i in range(0,4):
-		var size = GameLogic.random.randi_range(5,100)
+	for i in range(0,7):
+		var size = GameLogic.random.randi_range(3,100)
 		var places = []
 		for h in range(0, GameLogic.random.randi_range(1,4)):
 			var trying = GameLogic.random.randi_range(0,len(WorldData.Countries)-1)

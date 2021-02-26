@@ -15,6 +15,9 @@ func UpdateMainScreen():
 	$M/R/COfficer/HQAbroad.text = str(GameLogic.OfficersInHQ) + " in HQ, " \
 		+ str(GameLogic.OfficersAbroad) + " on the ground"
 	$M/R/COperations/Pursued.text = "Active operations: " + str(GameLogic.PursuedOperations)
+	if GameLogic.AttackTicker > 0:
+		$M/R/COperations/Ticker.text = str(GameLogic.AttackTicker) + " weeks to possible attack"
+	else: $M/R/COperations/Ticker.text = ""
 	$M/R/CEvents2/RichTextLabel.bbcode_text = PoolStringArray(GameLogic.BureauEvents).join("\n")
 	$M/R/CEvents4/RichTextLabel.bbcode_text = PoolStringArray(GameLogic.WorldEvents).join("\n")
 

@@ -420,7 +420,7 @@ func WorldNextWeek(past):
 							"Header": "Important Information",
 							"Level": "Unclassified",
 							"Operation": "-//-",
-							"Content": "The worst has happened.\n\nHomeland suffered from "+longDesc+". There were "+str(casualties)+" casualties. " + responsibility + "\n\nBureau lost "+str(int(trustLoss))+"% of trust.",
+							"Content": "[b]The worst has happened.[/b]\n\nHomeland suffered from "+longDesc+". There were "+str(casualties)+" casualties. " + responsibility + "\n\nBureau lost "+str(int(trustLoss))+"% of trust.",
 							"Show1": false,
 							"Show2": false,
 							"Show3": false,
@@ -452,11 +452,10 @@ func WorldNextWeek(past):
 			var randFrequency = 120 - opFrequency  # max aggr->20, min aggr->120
 			randFrequency *= 0.3  # three times higher frequency, balancing
 			if GameLogic.random.randi_range(0,randFrequency) == int(randFrequency*0.5):
-				# DEBUG
-				var whichCountry = 0#randi() % Countries.size()
+				var whichCountry = randi() % Countries.size()
 				# against other countries
 				if whichCountry != 0:
-					if GameLogic.random.randi_range(1,3) == 3:  # ~2/3 are prevented
+					if GameLogic.random.randi_range(1,4) == 3:  # ~3/4 are prevented
 						var desc = ""
 						if opFrequency > 35:
 							if GameLogic.random.randi_range(1,3) == 1:
@@ -488,6 +487,7 @@ func WorldNextWeek(past):
 					elif Organizations[w].Staff > 100: opLength += GameLogic.random.randi_range(-10,10)
 					else: opLength += GameLogic.random.randi_range(-5,5)
 					if opLength < 4: opLength = 4
+					opLength = int(opLength)
 					Organizations[w].OpsAgainstHomeland.append(AnExternalOperation.new(
 						{
 							"Type": ExtOpType.TERRORIST_ATTACK,
@@ -495,11 +495,41 @@ func WorldNextWeek(past):
 							"Persons": int(Organizations[w].Staff * 0.5 * opSize),
 							"Secrecy": int(opSecrecy),
 							"Damage": int(opDamage),
-							"FinishCounter": int(opLength),
+							"FinishCounter": opLength,
 						}
 					))
 					Organizations[w].ActiveOpsAgainstHomeland += 1
 					print("new op against homeland: "+str(opLength))
+					# most (but not all!) operations are vaguely communicated to the player
+					if GameLogic.random.randi_range(1,10) < 8:
+						GameLogic.AttackTicker = opLength  # main screen ticker
+						GameLogic.AttackTickerOp.Org = w
+						GameLogic.AttackTickerOp.Op = len(Organizations[w].OpsAgainstHomeland)-1
+						CallManager.CallQueue.append(
+							{
+								"Header": "Important Information",
+								"Level": "Top Secret",
+								"Operation": "-//-",
+								"Content": "General signal surveillance picked up chatter involving possible terrorist attacks and Homeland. After careful investigation, officers deduced that the attack can happen in "+str(opLength)+" weeks. Bureau has to do everything it can to stop that from happening.",
+								"Show1": false,
+								"Show2": false,
+								"Show3": false,
+								"Show4": true,
+								"Text1": "",
+								"Text2": "",
+								"Text3": "",
+								"Text4": "Understood",
+								"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
+								"Decision1Argument": null,
+								"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
+								"Decision2Argument": null,
+								"Decision3Callback": funcref(GameLogic, "EmptyFunc"),
+								"Decision3Argument": null,
+								"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
+								"Decision4Argument": null,
+							}
+						)
+						doesItEndWithCall = true
 		# sources
 		if len(Organizations[w].IntelSources) > 0:
 			# modifying every source

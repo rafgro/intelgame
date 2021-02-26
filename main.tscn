@@ -136,11 +136,21 @@ texture = ExtResource( 4 )
 [node name="Pursued" type="Label" parent="M/R/COperations"]
 margin_left = 45.0
 margin_top = 4.0
-margin_right = 680.0
+margin_right = 357.0
 margin_bottom = 35.0
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 2 )
 text = "Pursued operations: X"
+
+[node name="Ticker" type="Label" parent="M/R/COperations"]
+margin_left = 368.0
+margin_top = 4.0
+margin_right = 680.0
+margin_bottom = 35.0
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 2 )
+text = "3 weeks to possible attack"
+align = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="M/R"]
 margin_top = 211.0

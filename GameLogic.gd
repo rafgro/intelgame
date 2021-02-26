@@ -34,6 +34,8 @@ var Operations = []  # array of operation dictionaries
 var RecruitProgress = 0.0  # when reaches 1, a new officer arrives
 var PreviousTrust = Trust  # trust from previous week, to write down the next variable
 var TrustChangeDesc = ""  # ^
+var AttackTicker = 0  # race against time in preventing a terrorist attack, shown if >0
+var AttackTickerOp = {"Org":0,"Op":0}  # which organization and operation it is following
 # Sort of constants but also internal, always describe them
 var NewOfficerCost = 80  # thousands needed to spend on a new officer
 var SkillMaintenanceCost = 1  # thousands needed to maintain skills for an officer
@@ -105,6 +107,9 @@ func NextWeek():
 	while i < min(len(BureauEvents), 10):
 		if "[u]" in BureauEvents[i]:
 			BureauEvents[i] = BureauEvents[i].substr(3, len(BureauEvents[i])-7)
+		i += 1
+	i = 0
+	while i < min(len(WorldEvents), 20):
 		if "[u]" in WorldEvents[i]:
 			WorldEvents[i] = WorldEvents[i].substr(3, len(WorldEvents[i])-7)
 		i += 1
@@ -176,8 +181,7 @@ func NextWeek():
 	if ifCall == true: doesItEndWithCall = true
 	############################################################################
 	# eventual government assigned operations
-	# DEBUG
-	if random.randi_range(1,20) == 0:  # one every ~3 months
+	if random.randi_range(1,40) == 30:  # one every few months
 		# choosing organization
 		var whichOrg = -1
 		for f in range(0,5):  # max five attempts
@@ -268,11 +272,19 @@ func NextWeek():
 		doesItEndWithCall = true
 	############################################################################
 	# final variable maintenance
+	# trust label change
 	if int(Trust-PreviousTrust) != 0:  # against zero to avoid reporting -0 for -0.235
 		if Trust > PreviousTrust: TrustChangeDesc = "+" + str(int(Trust-PreviousTrust))
 		else: TrustChangeDesc = str(int(Trust-PreviousTrust))
 		TrustChangeDesc += "% change of government trust"
 		PreviousTrust = Trust
+	# ticker label change
+	if AttackTicker != 0:
+		var upd = WorldData.Organizations[AttackTickerOp.Org].OpsAgainstHomeland[AttackTickerOp.Op].FinishCounter
+		if upd != AttackTicker:
+			AttackTicker = upd
+		if WorldData.Organizations[AttackTickerOp.Org].OpsAgainstHomeland[AttackTickerOp.Op].Active == false:
+			AttackTicker = 0
 	############################################################################
 	# call to action
 	if doesItEndWithCall == true:
@@ -298,9 +310,8 @@ func ImplementAbroad(thePlan):
 		Operations[thePlan.OperationId].OperationalOfficers += thePlan.Officers
 		# moving budget
 		BudgetOngoingOperations += thePlan.Cost
-		# debug
-		print('DEBUG:')
-		print(Operations[thePlan.OperationId].AbroadPlan)
+		#print('DEBUG:')
+		#print(Operations[thePlan.OperationId].AbroadPlan)
 
 func ImplementCallOff(i):
 	Operations[i].Stage = OperationGenerator.Stage.CALLED_OFF

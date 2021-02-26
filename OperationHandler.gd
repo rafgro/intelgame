@@ -167,7 +167,7 @@ func ProgressOperations():
 				if len(noPlanReasonsArr) == 0: noPlanReasonsArr.append("resources")
 				var noPlanReasons = ""
 				if len(noPlanReasonsArr) > 1:
-					noPlanReasons = PoolStringArray(noPlanReasonsArr.slice(0,len(noPlanReasonsArr)-1)).join(", ") + ", and " + noPlanReasonsArr[-1] + " to approach this target. "
+					noPlanReasons = PoolStringArray(noPlanReasonsArr.slice(0,len(noPlanReasonsArr)-2)).join(", ") + ", and " + noPlanReasonsArr[-1] + " to approach this target. "
 				else:
 					noPlanReasons = noPlanReasonsArr[0] + " to approach this target."
 				CallManager.CallQueue.append(
@@ -394,6 +394,7 @@ func ProgressOperations():
 					if govFeedback > 0: govFeedback *= WorldData.Countries[0].PoliticsIntel*0.01
 					if govFeedback > 10: govFeedback = GameLogic.random.randi_range(8,12)
 					govFeedback = int(govFeedback)
+					if govFeedback == 0: govFeedback = -1
 					GameLogic.Trust += govFeedback
 					var govFeedbackDesc = "negatively rated its execution. Bureau lost "+str((-1)*govFeedback)+"% of trust."
 					GameLogic.Operations[i].Result = "COMPLETED, negative feedback"
@@ -402,7 +403,7 @@ func ProgressOperations():
 						GameLogic.BudgetFull += budgetIncrease
 						govFeedbackDesc = "positively rated its execution. Bureau gained "+str(govFeedback)+"% of trust. As a confirmation, government increases bureau's budget by €"+str(int(budgetIncrease))+",000.\n"
 						GameLogic.Operations[i].Result = "SUCCESS, positive feedback"
-						GameLogic.AddEvent("Government increased budget by €"+str(budgetIncrease)+"k")
+						GameLogic.AddEvent("Government increased budget by €"+str(int(budgetIncrease))+"k")
 					content = "Government-designated operation was sucessfully executed. Homeland " + govFeedbackDesc
 				# debriefing user
 				GameLogic.AddEvent(GameLogic.Operations[i].Name + ": "+str(GameLogic.Operations[i].AbroadPlan.Officers)+" officer(s) returned to homeland")
@@ -498,7 +499,7 @@ func ProgressOperations():
 						GameLogic.BudgetFull += budgetIncrease
 						govFeedbackDesc = "Officers acquired a new source in an organization indicated by the government. Bureau gained "+str(govFeedback)+"% of trust. As a confirmation, government increases bureau's budget by €"+str(int(budgetIncrease))+",000.\n"
 						GameLogic.Operations[i].Result = "SUCCESS, positive feedback"
-						GameLogic.AddEvent("Government increased budget by €"+str(budgetIncrease)+"k")
+						GameLogic.AddEvent("Government increased budget by €"+str(int(budgetIncrease))+"k")
 					content = "Operation has been finished. " + govFeedbackDesc
 				# debriefing user
 				if sourceLevel != 0:
