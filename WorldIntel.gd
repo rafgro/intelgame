@@ -13,7 +13,7 @@ func GatherOnOrg(o, quality, date):
 			"Budget": WorldData.Organizations[o].Budget,
 			"Counterintelligence": WorldData.Organizations[o].Counterintelligence,
 			"Type": WorldData.Organizations[o].Type,
-			"OpsAgainstHomeland": WorldData.Organizations[o].OpsAgainstHomeland.duplicate(true),
+			"ActiveOpsAgainstHomeland": WorldData.Organizations[o].ActiveOpsAgainstHomeland,
 		}
 		WorldData.Organizations[o].Staff *= (1.0+GameLogic.random.randi_range(-1,1)*0.1)
 		WorldData.Organizations[o].Budget *= (1.0+GameLogic.random.randi_range(-1,1)*0.1)
@@ -22,9 +22,9 @@ func GatherOnOrg(o, quality, date):
 			# do not change type of obvious organizations
 			pass  # todo in the future, eg criminal showed as noncriminal
 		if GameLogic.random.randi_range(1,2) == 2:
-			WorldData.Organizations[o].OpsAgainstHomeland = []
+			WorldData.Organizations[o].ActiveOpsAgainstHomeland = 0
 		else:
-			WorldData.Organizations[o].OpsAgainstHomeland = ['anything']
+			WorldData.Organizations[o].ActiveOpsAgainstHomeland = GameLogic.random.randi_range(1,2)
 	var desc = "[b]"+date+"[/b] "
 	# continuous intel value
 	var noOfIdentified = 0
@@ -73,7 +73,7 @@ func GatherOnOrg(o, quality, date):
 		# rounding example:
 		# 12,000 * 0.0001 = 1.2 -> ~= 1 -> = 1 * 10,000 = 10,000
 		var antihomeland = "no knowledge of activity against Homeland"
-		if len(WorldData.Organizations[o].OpsAgainstHomeland) > 0:
+		if WorldData.Organizations[o].ActiveOpsAgainstHomeland > 0:
 			if GameLogic.random.randi_range(1,4) == 2:
 				antihomeland = "[u]possible suspicious activity towards Homeland[/u]"
 		var desc1 = ""
@@ -100,7 +100,7 @@ func GatherOnOrg(o, quality, date):
 		elif WorldData.Organizations[o].Type == WorldData.OrgType.ARMTRADER:
 			WorldData.Organizations[o].IntelDescType = "arms trader"
 		var antihomeland = "probably no operations against Homeland"
-		if len(WorldData.Organizations[o].OpsAgainstHomeland) > 0:
+		if WorldData.Organizations[o].ActiveOpsAgainstHomeland > 0:
 			if GameLogic.random.randi_range(1,2) == 1:
 				antihomeland = "[u]probably involved in operations against Homeland[/u]"
 		var desc1 = ""
@@ -124,7 +124,7 @@ func GatherOnOrg(o, quality, date):
 		elif WorldData.Organizations[o].Type == WorldData.OrgType.ARMTRADER:
 			WorldData.Organizations[o].IntelDescType = "arms trader"
 		var antihomeland = "no operations against Homeland"
-		if len(WorldData.Organizations[o].OpsAgainstHomeland) > 0:
+		if WorldData.Organizations[o].ActiveOpsAgainstHomeland > 0:
 			antihomeland = "[u]executes operations against Homeland[/u]"
 		var desc1 = ""
 		if noOfIdentified > 0: desc1 += "identified " + str(noOfIdentified) + " individuals inside, "
@@ -147,8 +147,8 @@ func GatherOnOrg(o, quality, date):
 		elif WorldData.Organizations[o].Type == WorldData.OrgType.ARMTRADER:
 			WorldData.Organizations[o].IntelDescType = "arms trader"
 		var antihomeland = "no operations against Homeland"
-		if len(WorldData.Organizations[o].OpsAgainstHomeland) > 0:
-			antihomeland = "[u]executes " +str(len(WorldData.Organizations[o].OpsAgainstHomeland))+ " operations against Homeland[/u]"
+		if WorldData.Organizations[o].ActiveOpsAgainstHomeland > 0:
+			antihomeland = "[u]executes " +str(WorldData.Organizations[o].ActiveOpsAgainstHomeland)+ " operations against Homeland[/u]"
 		var desc1 = ""
 		if noOfIdentified > 0: desc1 += "identified " + str(noOfIdentified) + " individuals inside, "
 		desc1 += "current state of org: "
@@ -163,7 +163,7 @@ func GatherOnOrg(o, quality, date):
 		WorldData.Organizations[o].Budget = backup.Budget
 		WorldData.Organizations[o].Counterintelligence = backup.Counterintelligence
 		WorldData.Organizations[o].Type = backup.Type
-		WorldData.Organizations[o].OpsAgainstHomeland = backup.OpsAgainstHomeland.duplicate(true)
+		WorldData.Organizations[o].ActiveOpsAgainstHomeland = backup.ActiveOpsAgainstHomeland
 
 # Gathering intelligence information about organizations
 func RecruitInOrg(o, quality, date):

@@ -176,7 +176,8 @@ func NextWeek():
 	if ifCall == true: doesItEndWithCall = true
 	############################################################################
 	# eventual government assigned operations
-	if random.randi_range(1,10) == 6:  # one every ~3 months
+	# DEBUG
+	if random.randi_range(1,20) == 0:  # one every ~3 months
 		# choosing organization
 		var whichOrg = -1
 		for f in range(0,5):  # max five attempts
