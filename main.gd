@@ -17,6 +17,8 @@ func UpdateMainScreen():
 	$M/R/COperations/Pursued.text = "Active operations: " + str(GameLogic.PursuedOperations)
 	if GameLogic.AttackTicker > 0:
 		$M/R/COperations/Ticker.text = str(GameLogic.AttackTicker) + " weeks to possible attack"
+	elif GameLogic.UltimatumTicker > 0:
+		$M/R/COperations/Ticker.text = str(GameLogic.UltimatumTicker) + " weeks of ultimatum left"
 	else: $M/R/COperations/Ticker.text = ""
 	$M/R/CEvents2/RichTextLabel.bbcode_text = PoolStringArray(GameLogic.BureauEvents).join("\n")
 	$M/R/CEvents4/RichTextLabel.bbcode_text = PoolStringArray(GameLogic.WorldEvents).join("\n")

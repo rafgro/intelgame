@@ -31,11 +31,18 @@ var StaffTrust = 50  # 0 to 100
 # Operations
 var Operations = []  # array of operation dictionaries
 # Internal logic variables, always describe them
+var AllWeeks = 0  # noting all weeks for later summary
 var RecruitProgress = 0.0  # when reaches 1, a new officer arrives
 var PreviousTrust = Trust  # trust from previous week, to write down the next variable
 var TrustChangeDesc = ""  # ^
 var AttackTicker = 0  # race against time in preventing a terrorist attack, shown if >0
 var AttackTickerOp = {"Org":0,"Op":0}  # which organization and operation it is following
+var UltimatumTicker = 0  # weeks to actual lay off if user doesn't bring back trust
+# Distance counters: block anything that happens more frequently than limit
+var DistWalkinCounter = 0
+var DistWalkinMin = 10  # minimum ten weeks between those events
+var DistGovopCounter = 0
+var DistGovopMin = 6
 # Sort of constants but also internal, always describe them
 var NewOfficerCost = 80  # thousands needed to spend on a new officer
 var SkillMaintenanceCost = 1  # thousands needed to maintain skills for an officer
@@ -114,6 +121,7 @@ func NextWeek():
 			WorldEvents[i] = WorldEvents[i].substr(3, len(WorldEvents[i])-7)
 		i += 1
 	# moving seven days forward
+	AllWeeks += 1
 	DateDay += 7
 	# moving a month forward if needed
 	if DateDay >= 28:
@@ -181,7 +189,7 @@ func NextWeek():
 	if ifCall == true: doesItEndWithCall = true
 	############################################################################
 	# eventual government assigned operations
-	if random.randi_range(1,40) == 30:  # one every few months
+	if random.randi_range(1,40) == 30 and DistGovopCounter < 1:  # one every few months
 		# choosing organization
 		var whichOrg = -1
 		for f in range(0,5):  # max five attempts
@@ -225,10 +233,11 @@ func NextWeek():
 					"Decision4Argument": null,
 				}
 			)
+			DistGovopCounter = DistGovopMin
 			doesItEndWithCall = true
 	############################################################################
 	# walk-ins or whistleblowers
-	if random.randi_range(1,50) == 17:  # one every ~6 months
+	if random.randi_range(1,50) == 17 and DistWalkinMin < 1:  # one every ~6 months
 		var whichOrg = random.randi_range(0, len(WorldData.Organizations)-1)
 		var quality = random.randi_range(-65,65)
 		var content = "A source, claiming to be close to " + WorldData.Organizations[whichOrg].Name + " walked in into one our embassies. "
@@ -269,7 +278,98 @@ func NextWeek():
 				"Decision4Argument": {"Choice":2,"Content":content,"Whichorg":whichOrg,"Quality":quality},
 			}
 		)
+		DistWalkinCounter = DistWalkinMin
 		doesItEndWithCall = true
+	############################################################################
+	# close to losing game or losing game
+	if int(Trust-PreviousTrust) != 0 and UltimatumTicker == 0:
+		if PreviousTrust > 10 and Trust <= 10:
+			UltimatumTicker = 13
+			CallManager.CallQueue.append(
+				{
+					"Header": "Important Information",
+					"Level": "Confidential",
+					"Operation": "-//-",
+					"Content": "Government almost lost faith in you as the Bureau's Chief. As a result, they give an ultimatum: bring back trust level over 10% in three months or face contract termination.",
+					"Show1": false,
+					"Show2": false,
+					"Show3": false,
+					"Show4": true,
+					"Text1": "",
+					"Text2": "",
+					"Text3": "",
+					"Text4": "Understood",
+					"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
+					"Decision1Argument": null,
+					"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
+					"Decision2Argument": null,
+					"Decision3Callback": funcref(GameLogic, "EmptyFunc"),
+					"Decision3Argument": null,
+					"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
+					"Decision4Argument": null,
+				}
+			)
+			doesItEndWithCall = true
+	# noting ultimatum
+	if UltimatumTicker != 0:
+		UltimatumTicker -= 1
+		if UltimatumTicker == 0:
+			# make or break
+			if Trust < 10:
+				var localSummary = "- " + str(AllWeeks) + " weeks\n- " + str(len(Operations)) + " operations"  # expand in the future
+				CallManager.CallQueue.append(
+					{
+						"Header": "Important Information",
+						"Level": "Confidential",
+						"Operation": "-//-",
+						"Content": "As a result of prolonged period of low trust between Bureau and Government, your contract was terminated.\n\nSummary of your tenure as the chief:\n" + localSummary,
+						"Show1": false,
+						"Show2": false,
+						"Show3": false,
+						"Show4": true,
+						"Text1": "",
+						"Text2": "",
+						"Text3": "",
+						"Text4": "Game Over",
+						"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision1Argument": null,
+						"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision2Argument": null,
+						"Decision3Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision3Argument": null,
+						"Decision4Callback": funcref(GameLogic, "FinalQuit"),
+						"Decision4Argument": null,
+					}
+				)
+				doesItEndWithCall = true
+			else:
+				var increase = int(BudgetFull*0.3)
+				BudgetFull += increase
+				CallManager.CallQueue.append(
+					{
+						"Header": "Important Information",
+						"Level": "Confidential",
+						"Operation": "-//-",
+						"Content": "Bringing back level of trust into acceptable territory convinced Government to keep you as the chief of Bureau. In recognition of past struggles, the budget was increased by €" + str(increase) + ",000.",
+						"Show1": false,
+						"Show2": false,
+						"Show3": false,
+						"Show4": true,
+						"Text1": "",
+						"Text2": "",
+						"Text3": "",
+						"Text4": "Understood",
+						"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision1Argument": null,
+						"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision2Argument": null,
+						"Decision3Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision3Argument": null,
+						"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision4Argument": null,
+					}
+				)
+				doesItEndWithCall = true
 	############################################################################
 	# final variable maintenance
 	# trust label change
@@ -285,6 +385,9 @@ func NextWeek():
 			AttackTicker = upd
 		if WorldData.Organizations[AttackTickerOp.Org].OpsAgainstHomeland[AttackTickerOp.Op].Active == false:
 			AttackTicker = 0
+	# distance counters
+	DistWalkinCounter -= 1
+	DistGovopCounter -= 1
 	############################################################################
 	# call to action
 	if doesItEndWithCall == true:
@@ -438,6 +541,8 @@ func ImplementWalkin(adict):
 			}
 		)
 		
+func FinalQuit(anyArgument):
+	get_tree().quit()
 
 func EmptyFunc(anyArgument):
 	pass  # nothing happens
