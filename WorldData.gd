@@ -170,6 +170,18 @@ var Methods = [
 	]
 ]
 
+enum ExtOpType {
+	TERRORIST_ATTACK,
+}
+
+class AnExternalOperation:
+	var Type = 0
+	var Budget = 0  # weekly budget in thousands required for the operation to progress
+	var FinishCounter = 0  # -1 every week until it is 0 and operation is launched
+	var Persons = 0  # number of persons involved, more -> easier to catch but also more damage
+	var Secrecy = 0  # 0 (public knowledge) to 100 (bataclan)
+	var Damage = 0  # done to the target, 0 (observation) to 100 (9/11)
+
 # <countryA> phrase <countryB>
 var DiplomaticPhrasesPositive = ["'s officials visited ", " expressed will to improve relations with "]
 var DiplomaticPhrasesVeryPositive = [" signed a treaty with ", " held joint military exercise with ", " formed bilateral committee "]
@@ -313,6 +325,38 @@ func WorldNextWeek(past):
 				Organizations[w].Staff *= (1.0+GameLogic.random.randi_range(-1,1)*0.01)
 			else:  # small orgs
 				Organizations[w].Staff += GameLogic.random.randi_range(-1,1)
+		# operations against other countries
+		if Organizations[w].Type == OrgType.GENERALTERROR:
+			# number of attacks relies on budget*aggression
+			var opFrequency = Organizations[w].Aggression
+			if Organizations[w].Budget < 100: opFrequency *= 0.1
+			elif Organizations[w].Budget < 1000: opFrequency *= 0.2
+			elif Organizations[w].Budget < 10000: opFrequency *= 0.4
+			elif Organizations[w].Budget < 50000: opFrequency *= 0.6
+			elif Organizations[w].Budget < 100000: opFrequency *= 0.8
+			var randFrequency = 120 - opFrequency  # max aggr->20, min aggr->120
+			if GameLogic.random.randi_range(0,randFrequency) == int(randFrequency*0.5):
+				var desc = ""
+				if opFrequency > 35:
+					if GameLogic.random.randi_range(1,3) == 1:
+						desc = "Large terrorist attack with many casualties in "
+					else:
+						desc = "Terrorist attack in "
+				else:
+					if GameLogic.random.randi_range(1,3) == 2:
+						desc = "Terrorist attack in "
+					else:
+						desc = "Minor terrorist incident in "
+				var whichCountry = randi() % Countries.size()
+				desc += Countries[whichCountry].Name
+				if Organizations[w].Aggression > 70 and GameLogic.random.randi_range(1,2) == 2:
+					desc += ", " + Organizations[w].Name + " claimed responsibility"
+				else:
+					if GameLogic.random.randi_range(0,100) > Countries[whichCountry].IntelFriendliness:
+						desc += ", local authorities point to " + Organizations[w].Name + " as the perpetrator"
+					else:
+						desc += ", local authorities do not know the perpetrator"
+				GameLogic.AddWorldEvent(desc, past)
 		# sources
 		if len(Organizations[w].IntelSources) > 0:
 			# modifying every source
