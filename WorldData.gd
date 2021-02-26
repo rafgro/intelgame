@@ -78,7 +78,7 @@ class AnOrganization:
 	# generated and/or frequently modified
 	var ActiveOpsAgainstHomeland = 0  # counter to avoid browsing the array below
 	var OpsAgainstHomeland = []  # objects of AnExternalOperation
-	var IntelDescription = []  # just for user display, for many authomatically filled
+	var IntelDescription = []  # just for user display, sort of log: date - desc, many times
 	var IntelDescType = ""  # just for user display, showed over list of gathered intels
 	var IntelIdentified = 0  # number of identified members for possible recruitment
 	var IntelValue = 0  # -100 (long search) to 100 (own), determines available methods

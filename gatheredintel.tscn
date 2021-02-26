@@ -70,63 +70,145 @@ margin_bottom = 35.0
 custom_fonts/font = ExtResource( 1 )
 text = "Gathered Intel"
 
-[node name="Empty5" type="Label" parent="M/R"]
+[node name="Tabs" type="TabContainer" parent="M/R"]
 margin_top = 84.0
 margin_right = 680.0
-margin_bottom = 124.0
-rect_min_size = Vector2( 0, 40 )
+margin_bottom = 382.0
 size_flags_horizontal = 3
+size_flags_vertical = 0
 custom_fonts/font = ExtResource( 1 )
 
-[node name="Countries" type="ItemList" parent="M/R"]
-margin_top = 128.0
+[node name="Amount" type="Tabs" parent="M/R/Tabs"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 49.0
+margin_right = -4.0
+margin_bottom = -4.0
+rect_min_size = Vector2( 0, 245 )
+size_flags_horizontal = 12
+size_flags_vertical = 12
+custom_fonts/font = ExtResource( 1 )
+scrolling_enabled = false
+
+[node name="List" type="ItemList" parent="M/R/Tabs/Amount"]
+margin_left = -7.0
+margin_top = -10.0
 margin_right = 680.0
-margin_bottom = 378.0
+margin_bottom = 255.0
 rect_min_size = Vector2( 0, 250 )
 mouse_filter = 1
 size_flags_horizontal = 3
 size_flags_vertical = 0
 custom_fonts/font = ExtResource( 1 )
 script = ExtResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Type" type="Tabs" parent="M/R/Tabs"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 49.0
+margin_right = -4.0
+margin_bottom = -4.0
+rect_min_size = Vector2( 0, 245 )
+size_flags_horizontal = 12
+size_flags_vertical = 12
+custom_fonts/font = ExtResource( 1 )
+scrolling_enabled = false
+
+[node name="List" type="ItemList" parent="M/R/Tabs/Type"]
+margin_left = -7.0
+margin_top = -10.0
+margin_right = 680.0
+margin_bottom = 255.0
+rect_min_size = Vector2( 0, 250 )
+mouse_filter = 1
+size_flags_horizontal = 3
+size_flags_vertical = 0
+custom_fonts/font = ExtResource( 1 )
+script = ExtResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Countries" type="Tabs" parent="M/R/Tabs"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 49.0
+margin_right = -4.0
+margin_bottom = -4.0
+rect_min_size = Vector2( 0, 245 )
+size_flags_horizontal = 12
+size_flags_vertical = 12
+custom_fonts/font = ExtResource( 1 )
+scrolling_enabled = false
+
+[node name="List" type="ItemList" parent="M/R/Tabs/Countries"]
+margin_left = -7.0
+margin_top = -10.0
+margin_right = 680.0
+margin_bottom = 255.0
+rect_min_size = Vector2( 0, 250 )
+mouse_filter = 1
+size_flags_horizontal = 3
+size_flags_vertical = 0
+custom_fonts/font = ExtResource( 1 )
+script = ExtResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Empty4" type="Label" parent="M/R"]
-margin_top = 382.0
+margin_top = 386.0
 margin_right = 680.0
-margin_bottom = 422.0
+margin_bottom = 426.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Empty" type="Label" parent="M/R"]
-margin_top = 426.0
+margin_top = 430.0
 margin_right = 680.0
-margin_bottom = 466.0
+margin_bottom = 470.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
-text = "Organizations detected in this country:"
+text = "Organizations:"
 
 [node name="Organizations" type="ItemList" parent="M/R"]
-margin_top = 470.0
+margin_top = 474.0
 margin_right = 680.0
-margin_bottom = 620.0
+margin_bottom = 624.0
 rect_min_size = Vector2( 0, 150 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 script = ExtResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Empty3" type="Label" parent="M/R"]
-margin_top = 624.0
+margin_top = 628.0
 margin_right = 680.0
-margin_bottom = 664.0
+margin_bottom = 668.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 
 [node name="Details" type="RichTextLabel" parent="M/R"]
-margin_top = 668.0
+margin_top = 672.0
 margin_right = 680.0
 margin_bottom = 1044.0
+rect_min_size = Vector2( 0, 200 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_fonts/bold_font = SubResource( 1 )
@@ -206,7 +288,10 @@ rect_min_size = Vector2( 210, 120 )
 size_flags_horizontal = 0
 custom_fonts/font = ExtResource( 1 )
 text = "Return"
-[connection signal="item_selected" from="M/R/Countries" to="." method="_on_Countries_item_selected"]
+[connection signal="tab_changed" from="M/R/Tabs" to="." method="_on_Tabs_tab_changed"]
+[connection signal="item_selected" from="M/R/Tabs/Amount/List" to="." method="_on_AmountList_item_selected"]
+[connection signal="item_selected" from="M/R/Tabs/Type/List" to="." method="_on_TypeList_item_selected"]
+[connection signal="item_selected" from="M/R/Tabs/Countries/List" to="." method="_on_CountriesList_item_selected"]
 [connection signal="item_selected" from="M/R/Organizations" to="." method="_on_Organizations_item_selected"]
 [connection signal="pressed" from="M/R/H/Gather" to="." method="_on_Gather_pressed"]
 [connection signal="pressed" from="M/R/H/Recruit" to="." method="_on_Recruit_pressed"]

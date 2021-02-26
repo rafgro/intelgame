@@ -4,11 +4,23 @@ var mapOfCountries = []
 var lastMapOfOrgs = []
 var lastSelectedCountry = -1
 var lastSelectedOrg = -1
+var selectedTab = 0
 
 func _ready():
-	# mapping countries to their ids - to allow sorting, by hostility by default
+	$M/R/Tabs.set_tab_title(0, "Amount of Intel")
+	$M/R/Tabs.set_tab_title(1, "Organization Type")
+	$M/R/Tabs.set_tab_title(2, "Host Country")
+	# basic list setup
+	$M/R/Tabs/Amount/List.clear()
+	$M/R/Tabs/Amount/List.add_item("No Intel")
+	$M/R/Tabs/Amount/List.add_item("Minimal Knowledge")
+	$M/R/Tabs/Amount/List.add_item("Known Organizations")
+	$M/R/Tabs/Amount/List.add_item("Organizations with Sources Inside")
+	$M/R/Tabs/Type/List.clear()
+	$M/R/Tabs/Type/List.add_item("Governments")
+	$M/R/Tabs/Type/List.add_item("Intelligence Agencies")
+	$M/R/Tabs/Type/List.add_item("Suspected Terrorist Organizations")
 	mapOfCountries.clear()
-	$M/R/Countries.clear()
 	var descs = []
 	for c in range(1, len(WorldData.Countries)):
 		var desc = WorldData.Countries[c].Name
@@ -24,12 +36,48 @@ func _ready():
 			descs.append(desc)
 			mapOfCountries.append(c)
 	for d in descs:
-		$M/R/Countries.add_item(d)
+		$M/R/Tabs/Countries/List.add_item(d)
 
 func _on_Return_pressed():
 	get_tree().change_scene("res://main.tscn")
 
-func _on_Countries_item_selected(index):
+func _on_Tabs_tab_changed(tab):
+	$M/R/Organizations.clear()
+
+func _on_AmountList_item_selected(index):
+	lastMapOfOrgs.clear()
+	$M/R/Organizations.clear()
+	for o in range(0, len(WorldData.Organizations)):
+		if WorldData.Organizations[o].Known == true:
+			if index == 0:  # no intel
+				if len(WorldData.Organizations[o].IntelDescription) == 0:
+					lastMapOfOrgs.append(o)
+					$M/R/Organizations.add_item(WorldData.Organizations[o].Name)
+			elif index == 1:  # minimal knowledge
+				if len(WorldData.Organizations[o].IntelDescription) > 0 and  WorldData.Organizations[o].IntelValue < 10 and len(WorldData.Organizations[o].IntelSources) == 0:
+					lastMapOfOrgs.append(o)
+					$M/R/Organizations.add_item(WorldData.Organizations[o].Name)
+			elif index == 2:  # known organizations
+				if len(WorldData.Organizations[o].IntelDescription) > 0 and  WorldData.Organizations[o].IntelValue >= 10 and len(WorldData.Organizations[o].IntelSources) == 0:
+					lastMapOfOrgs.append(o)
+					$M/R/Organizations.add_item(WorldData.Organizations[o].Name)
+			elif index == 3:  # sources inside
+				if len(WorldData.Organizations[o].IntelDescription) > 0 and len(WorldData.Organizations[o].IntelSources) > 0:
+					lastMapOfOrgs.append(o)
+					$M/R/Organizations.add_item(WorldData.Organizations[o].Name)
+
+func _on_TypeList_item_selected(index):
+	lastMapOfOrgs.clear()
+	$M/R/Organizations.clear()
+	var whichType = WorldData.OrgType.GOVERNMENT
+	if index == 1: whichType = WorldData.OrgType.INTEL
+	elif index == 2: whichType = WorldData.OrgType.GENERALTERROR
+	for o in range(0, len(WorldData.Organizations)):
+		if WorldData.Organizations[o].Type == whichType and WorldData.Organizations[o].Known == true:
+			lastMapOfOrgs.append(o)
+			$M/R/Organizations.add_item(WorldData.Organizations[o].Name)
+
+func _on_CountriesList_item_selected(index):
 	lastMapOfOrgs.clear()
 	$M/R/Organizations.clear()
 	lastSelectedCountry = mapOfCountries[index]
@@ -50,6 +98,10 @@ func _on_Organizations_item_selected(index):
 			desc += WorldData.Organizations[o].IntelDescType + " | " + str(WorldData.Organizations[o].IntelIdentified) + " identified members"
 			if len(WorldData.Organizations[o].IntelSources) > 0:
 				desc += " | " + str(len(WorldData.Organizations[o].IntelSources)) + " sources inside"
+			var orgCountries = []
+			for c in WorldData.Organizations[o].Countries:
+				orgCountries.append(WorldData.Countries[c].Name)
+			desc += "\ncountries: " + PoolStringArray(orgCountries).join(", ")
 			desc += "\n" + PoolStringArray(WorldData.Organizations[o].IntelDescription).join("\n")
 		$M/R/Details.bbcode_text = desc
 		$M/R/H/Gather.disabled = false
