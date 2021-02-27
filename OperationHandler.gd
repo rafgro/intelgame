@@ -85,6 +85,11 @@ func ProgressOperations():
 						# adjust to methods
 						if WorldData.Methods[mt][methodId].OfficersRequired > usedOfficers:
 							usedOfficers = WorldData.Methods[mt][methodId].OfficersRequired
+				# intel agencies are currently off limits
+				if GameLogic.Operations[i].Type == OperationGenerator.Type.OFFENSIVE:
+					if WorldData.Organizations[which].Type == WorldData.OrgType.INTEL:
+						theMethods.clear()
+						noPlanReasonTradecraft = 10
 				# no methods
 				if len(theMethods) == 0:
 					if countUnavailable > noOfMethods*2:  # over half of failures
@@ -592,9 +597,9 @@ func ProgressOperations():
 				var destroyedOrg = false
 				var destroyedOps = 0
 				var lengthenedOps = 0
+				var methodId = GameLogic.Operations[i].AbroadPlan.Methods[0]
 				if GameLogic.random.randi_range(0,100) < GameLogic.Operations[i].AbroadPlan.Quality:
 					success = true
-					var methodId = GameLogic.Operations[i].AbroadPlan.Methods[0]
 					# removing members
 					if WorldData.Methods[2][methodId].PossibleCasualties > 0:
 						casualties = WorldData.Methods[2][methodId].PossibleCasualties * (1.0+(0.1*GameLogic.random.randi_range(-5,5)))
@@ -658,20 +663,35 @@ func ProgressOperations():
 							inflictedDamage += WorldData.Organizations[whichOrg].Name + " lost one valuable member. "
 					if funds > 0:
 						inflictedDamage += "Inflicted financial damage is estimated at €" + str(funds) + ",000. "
+				# special case: offensive action against government
+				var attributionDesc = ""
+				if WorldData.Organizations[whichOrg].Type == WorldData.OrgType.GOVERNMENT:
+					if success == true:
+						# destabilization
+						WorldData.Countries[WorldData.Organizations[whichOrg].Countries[0]].PoliticsStability -= GameLogic.random.randint(5,20)
+						# psyop destabilization
+						if methodId >= 9:
+							WorldData.Countries[WorldData.Organizations[whichOrg].Countries[0]].PoliticsStability -= GameLogic.random.randint(10,30)
+					# attribution can lead to diplomatic scandal
+					if GameLogic.random.randi_range(0,100) < WorldData.Methods[2][methodId].Attribution:
+						attributionDesc = "Unfortunately, the operation was publicly associated with Bureau, which led to international diplomatic scandal. "
+						WorldData.DiplomaticRelations[0][GameLogic.Operations[i].Country] -= GameLogic.random.randi_range(30,60)
+						WorldData.DiplomaticRelations[GameLogic.Operations[i].Country][0] -= GameLogic.random.randi_range(30,60)
 				# debriefing user and results of the intel
 				var content = ""
 				var methodDesc = WorldData.Methods[2][GameLogic.Operations[i].AbroadPlan.Methods[0]].Name
 				if GameLogic.Operations[i].Source == 0:
 					if success == false:
-						content = "Operation failed. Officers did not damage " + WorldData.Organizations[GameLogic.Operations[i].Target].Name + ", they were not able to successfully " + methodDesc + ".\n"
+						content = "Operation failed. Officers did not damage " + WorldData.Organizations[GameLogic.Operations[i].Target].Name + ", they were not able to successfully " + methodDesc + ". " + attributionDesc + "\n"
 						GameLogic.Operations[i].Result = "FAILURE"
 						GameLogic.StaffSkill += 2
 						GameLogic.StaffTrust = GameLogic.StaffTrust*0.9
 						if (WorldData.Countries[0].PoliticsIntel+GameLogic.random.randi_range(-15,15)) > 50:
 							# changing after own operation only if government cares
 							GameLogic.Trust *= 0.95
+							if len(attributionDesc) > 1: GameLogic.Trust *= 0.2
 					else:
-						content = "Operation was successfully executed. Officers damaged " + WorldData.Organizations[GameLogic.Operations[i].Target].Name + ", they were able to successfully " + methodDesc + ". " + inflictedDamage
+						content = "Operation was successfully executed. Officers damaged " + WorldData.Organizations[GameLogic.Operations[i].Target].Name + ", they were able to successfully " + methodDesc + ". " + inflictedDamage + attributionDesc
 						GameLogic.Operations[i].Result = "SUCCESS"
 						GameLogic.StaffSkill += GameLogic.random.randi_range(3,6)
 						GameLogic.StaffTrust = GameLogic.StaffTrust*1.1
@@ -680,6 +700,7 @@ func ProgressOperations():
 							GameLogic.Trust += 5
 						else:
 							GameLogic.Trust += 3
+						if len(attributionDesc) > 1: GameLogic.Trust *= 0.2
 				# debriefing government and effect on the user
 				elif GameLogic.Operations[i].Source == 1:
 					var govFeedback = GameLogic.random.randi_range(10,30)
@@ -688,8 +709,10 @@ func ProgressOperations():
 					if govFeedback > 0: govFeedback *= WorldData.Countries[0].PoliticsIntel*0.01
 					if govFeedback > 20: govFeedback = GameLogic.random.randi_range(20,23)
 					govFeedback = int(govFeedback)
+					if len(attributionDesc) > 1: govFeedback -= 30
+					if (GameLogic.Trust-govFeedback) < 0: govFeedback = (-1)*GameLogic.Trust
 					GameLogic.Trust += govFeedback
-					var govFeedbackDesc = "Officers failed at damaging an organization indicated by the government. Bureau lost "+str((-1)*govFeedback)+"% of trust."
+					var govFeedbackDesc = "Officers failed at damaging an organization indicated by the government. Bureau lost "+str((-1)*govFeedback)+"% of trust. "
 					GameLogic.Operations[i].Result = "COMPLETED, negative feedback"
 					if success == true:
 						var budgetIncrease = GameLogic.BudgetFull*(0.01*GameLogic.Trust*0.5)
@@ -698,7 +721,7 @@ func ProgressOperations():
 						govFeedbackDesc = "Officers damaged an organization indicated by the government. " + inflictedDamage + " Bureau gained "+str(govFeedback)+"% of trust. As a confirmation, government increases bureau's budget by €"+str(int(budgetIncrease))+",000.\n"
 						GameLogic.Operations[i].Result = "SUCCESS, positive feedback"
 						GameLogic.AddEvent("Government increased budget by €"+str(int(budgetIncrease))+"k")
-					content = "Operation has been finished. " + govFeedbackDesc
+					content = "Operation has been finished. " + govFeedbackDesc + attributionDesc
 				# debriefing user
 				if success == true:
 					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": bureau inflicted damage on the target")
