@@ -1,21 +1,10 @@
 extends Panel
 
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
-
 # Not only refreshing but also initiating all data on the main screen
 func UpdateMainScreen():
 	# date formatting
 	$M/R/CDate/Date.text = GameLogic.GiveDateWithYear()
-	# trust, here to account for many possible screens before showing this one
-	var trustDesc = ""
-	if int(GameLogic.Trust-GameLogic.PreviousTrust) != 0:  # against zero to avoid reporting -0 for -0.235
-		if GameLogic.Trust > GameLogic.PreviousTrust: trustDesc = "+" + str(int(GameLogic.Trust - GameLogic.PreviousTrust)) + "% change of government trust"
-		else: trustDesc = str(int(GameLogic.Trust - GameLogic.PreviousTrust)) + "% change of government trust"
-		GameLogic.PreviousTrust = GameLogic.Trust
 	# other
-	$M/R/CDate/C/TrustChange.text = trustDesc
 	$M/R/CTrust/TrustPercent.value = GameLogic.Trust
 	$M/R/COfficer/Active.text = "Active officers: " + str(GameLogic.ActiveOfficers)
 	$M/R/COfficer/HQAbroad.text = str(GameLogic.OfficersInHQ) + " in HQ, " \
@@ -33,9 +22,19 @@ func UpdateMainScreen():
 func _ready():
 	UpdateMainScreen()
 
+func _on_Panel_tree_entered():
+	# trust, here to account for many possible screens before showing this one
+	var trustDesc = ""
+	if int(GameLogic.Trust-GameLogic.PreviousTrust) != 0:  # against zero to avoid reporting -0 for -0.235
+		if GameLogic.Trust > GameLogic.PreviousTrust: trustDesc = "+" + str(int(GameLogic.Trust - GameLogic.PreviousTrust)) + "% change of government trust"
+		else: trustDesc = str(int(GameLogic.Trust - GameLogic.PreviousTrust)) + "% change of government trust"
+		GameLogic.PreviousTrust = GameLogic.Trust
+	$M/R/CDate/C/TrustChange.text = trustDesc
+
 # Main event: moving a week forwad
 func _on_NextWeek_pressed():
 	$M/R/Buttons3/NextWeek.disabled = true
+	$M/R/CDate/C/TrustChange.text = ""
 	GameLogic.NextWeek()
 	UpdateMainScreen()
 	$M/R/Buttons3/NextWeek.disabled = false

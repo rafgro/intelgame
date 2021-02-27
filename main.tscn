@@ -326,6 +326,7 @@ margin_bottom = 120.0
 rect_min_size = Vector2( 210, 120 )
 custom_fonts/font = ExtResource( 2 )
 text = "Next Week"
+[connection signal="tree_entered" from="." to="." method="_on_Panel_tree_entered"]
 [connection signal="pressed" from="M/R/Buttons/Budget" to="." method="_on_Budget_pressed"]
 [connection signal="pressed" from="M/R/Buttons/Staff" to="." method="_on_Staff_pressed"]
 [connection signal="pressed" from="M/R/Buttons/Government" to="." method="_on_Government_pressed"]

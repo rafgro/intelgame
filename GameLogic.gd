@@ -33,12 +33,13 @@ var Operations = []  # array of operation dictionaries
 # Internal logic variables, always describe them
 var AllWeeks = 0  # noting all weeks for later summary
 var RecruitProgress = 0.0  # when reaches 1, a new officer arrives
-var PreviousTrust = Trust  # trust from previous week, to write down the next variable
+var PreviousTrust = 0  # trust from previous week, to write down the next variable
 var TrustChangeDesc = ""  # ^
 var AttackTicker = 0  # race against time in preventing a terrorist attack, shown if >0
 var AttackTickerOp = {"Org":0,"Op":0}  # which organization and operation it is following
 var UltimatumTicker = 0  # weeks to actual lay off if user doesn't bring back trust
-var CurrentOpsAgainstHomeland = 0  # internal counter to not overwhelm user
+var CurrentOpsAgainstHomeland = 0  # internal counter to not overwhelm user, simultaneous
+var YearlyOpsAgainstHomeland = 0  # internal counter as well, yearly ops, zeroed on 01/01
 var OpsLimit = 2  # max number of simulatenous ops against homeland, might be increased over time
 # Distance counters: block anything that happens more frequently than limit
 var DistWalkinCounter = 0
@@ -143,6 +144,8 @@ func NextWeek():
 				if budgetIncrease > 200: budgetIncrease = 200
 				BudgetFull += budgetIncrease
 				AddEvent("New year budget increase: +€"+str(int(budgetIncrease))+"k")
+				# other new-year game logic
+				YearlyOpsAgainstHomeland = 0
 	# budget-based staff changes
 	# hiring
 	RecruitProgress += BudgetRecruitment / 4 / NewOfficerCost
@@ -450,7 +453,10 @@ func ImplementOfficerRescue(adictionary):
 		StaffTrust *= 1.1
 		StaffSkill *= 1.01
 		StaffExperience *= 1.03
-		Trust *= 0.6
+		var trustLoss = Trust * 0.4
+		if trustLoss < 20: trustLoss = 20
+		if trustLoss > Trust: trustLoss = Trust
+		Trust -= trustLoss
 		WorldData.DiplomaticRelations[0][Operations[i].Country] -= random.randi_range(5,15)
 		WorldData.DiplomaticRelations[Operations[i].Country][0] -= GameLogic.random.randi_range(5,15)
 	# "expelling will happen between intelligence services only, but these officers will never be allowed to enter this country again"
@@ -461,7 +467,6 @@ func ImplementOfficerRescue(adictionary):
 		StaffSkill *= 1.01
 		StaffExperience *= 1.03
 		WorldData.Countries[Operations[i].Country].Expelled += Operations[i].AbroadPlan.Officers
-		# todo: expelling mechanism
 	# "denying affiliation will result in officer imprisonment and their de facto loss, affecting internal trust, but not affecting any external instituions"
 	elif adictionary.Choice == 3:
 		ActiveOfficers -= Operations[i].AbroadPlan.Officers
@@ -469,23 +474,30 @@ func ImplementOfficerRescue(adictionary):
 		StaffTrust *= 0.4
 		StaffSkill *= 0.8
 		StaffExperience *= 0.8
-	# "bribing can return officers intact, but often does not succeed and instead lead to large diplomatic scandal"
+	# "exfiltration is a risky, covert rescue operation performed by the rest of the officers (" +str(GameLogic.OfficersInHQ) + " available), which returns officers intact in case of success but leads to both huge trust loss and expulsion in case of failure"
 	else:
 		AddEvent(Operations[i].Name + ": "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned to homeland after being arrested")
-		OfficersInHQ += Operations[i].AbroadPlan.Officers
 		StaffTrust *= 1.09
 		StaffSkill *= 1.02
 		StaffExperience *= 1.02
+		var involvedInExf = OfficersInHQ
+		if involvedInExf > 15: involvedInExf = GameLogic.random.randi_range(14,18)
 		var content = ""
-		if random.randi_range(1,2) == 1:
+		if random.randi_range(0, Operations[i].AbroadPlan.Officers) < involvedInExf and random.randi_range(1,3) < 3:  # second condition to ensure variability even if we sent 100 officers
 			# successful
-			content = "Bribing was successful. "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned to Homeland."
+			content = "Exfiltration was successful. "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned to Homeland."
+			OfficersInHQ += Operations[i].AbroadPlan.Officers
 		else:
 			# unsuccessful
-			content = "Bribing failed. Government officials of Homeland and " + WorldData.Countries[Operations[i].Country].Name + " learned about the situation. "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned, but bureau lost " + str(int(Trust*0.6)) + "% of trust."
-			Trust *= 0.4
+			var trustLoss = Trust * 0.5
+			if trustLoss < 25: trustLoss = 25
+			if trustLoss > Trust: trustLoss = Trust
+			Trust -= trustLoss
+			WorldData.Countries[Operations[i].Country].Expelled += Operations[i].AbroadPlan.Officers + involvedInExf
+			content = "Exfiltration failed. Government officials of Homeland and " + WorldData.Countries[Operations[i].Country].Name + " learned about the situation. "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned, but bureau lost " + str(int(trustLoss)) + "% of trust. In addition, " + int(Operations[i].AbroadPlan.Officers + involvedInExf) + " were deemed persona non grata in " + WorldData.Countries[Operations[i].Country].Name + "."
 			WorldData.DiplomaticRelations[0][Operations[i].Country] -= random.randi_range(5,15)
 			WorldData.DiplomaticRelations[Operations[i].Country][0] -= GameLogic.random.randi_range(5,15)
+			OfficersInHQ += Operations[i].AbroadPlan.Officers
 		# user debriefing
 		CallManager.CallQueue.append(
 			{

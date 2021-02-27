@@ -121,7 +121,7 @@ func _on_Gather_pressed():
 
 func _on_Recruit_pressed():
 	if lastSelectedOrg != -1:
-		OperationGenerator.NewOperation(0, lastSelectedOrg, lastSelectedCountry, OperationGenerator.Type.RECRUIT_SOURCE)
+		OperationGenerator.NewOperation(0, lastSelectedOrg, OperationGenerator.Type.RECRUIT_SOURCE)
 		# if possible, start fast
 		if GameLogic.OfficersInHQ > 0:
 			GameLogic.Operations[-1].AnalyticalOfficers = GameLogic.OfficersInHQ

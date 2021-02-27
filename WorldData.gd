@@ -120,7 +120,7 @@ var Organizations = [
 	AnOrganization.new({ "Type": OrgType.INTEL, "Name": "MIT (Milli Istihbarat Teskilati)", "Fixed": true, "Known": true, "Staff": 8000, "Budget": 180000, "Counterintelligence": 90, "Aggression": 80, "Countries": [11], "IntelValue": 5, }),
 	AnOrganization.new({ "Type": OrgType.INTEL, "Name": "Mukhabarat", "Fixed": true, "Known": true, "Staff": 4000, "Budget": 20000, "Counterintelligence": 85, "Aggression": 80, "Countries": [12], "IntelValue": 5, }),
 	AnOrganization.new({ "Type": OrgType.INTEL, "Name": "NDS", "Fixed": true, "Known": true, "Staff": 3000, "Budget": 10000, "Counterintelligence": 80, "Aggression": 70, "Countries": [13], "IntelValue": 5, }),
-	AnOrganization.new({ "Type": OrgType.GENERALTERROR, "Name": "Al-Qaeda", "Fixed": false, "Known": true, "Staff": 45000, "Budget": 25000, "Counterintelligence": 60, "Aggression": 90, "Countries": [12,13], "IntelValue": 0, }),
+	AnOrganization.new({ "Type": OrgType.GENERALTERROR, "Name": "Islamic State", "Fixed": false, "Known": true, "Staff": 5500, "Budget": 25000, "Counterintelligence": 50, "Aggression": 90, "Countries": [12,13], "IntelValue": 0, }),
 ]
 
 class AMethod:
@@ -181,7 +181,10 @@ var Methods = [
 ]
 
 enum ExtOpType {
-	TERRORIST_ATTACK,
+	HOME_TERRORIST_ATTACK = 0,
+	EMBASSY_TERRORIST_ATTACK = 1,
+	PLANE_HIJACKING = 2,
+	LEADER_ASSASSINATION = 3,
 }
 
 class AnExternalOperation:

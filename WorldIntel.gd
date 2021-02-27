@@ -176,14 +176,22 @@ func GatherOnOrg(o, quality, date):
 			elif newIntel < 40:
 				var roundedD = WorldData.Organizations[o].OpsAgainstHomeland[z].FinishCounter + GameLogic.random.randi_range(-2,2)
 				if roundedD < 1: roundedD = 1
-				var theType = "terrorist"
+				var theType = "terrorist operation inside Homeland"
+				if WorldData.Organizations[o].OpsAgainstHomeland[z].Type == WorldData.ExtOpType.EMBASSY_TERRORIST_ATTACK or WorldData.Organizations[o].OpsAgainstHomeland[z].Type == WorldData.ExtOpType.PLANE_HIJACKING:
+					theType = "terrorist operation targeting Homeland citizens abroad"
 				var damage = "large"
 				if WorldData.Organizations[o].OpsAgainstHomeland[z].Damage < 50: damage = "minor"
 				var people = "few"
 				if WorldData.Organizations[o].OpsAgainstHomeland[z].Persons > 20: people = "dozens of"
-				opDescriptions.append("probable " + damage + " " + theType + " operation, with " + people + " people involved, finishing in ~" + str(int(roundedD)) + " weeks")
+				opDescriptions.append("probable " + damage + " " + theType + ", with " + people + " people involved, finishing in ~" + str(int(roundedD)) + " weeks")
 			elif newIntel < 60:
-				var theType = "terrorist"
+				var theType = "terrorist operation inside Homeland"
+				if WorldData.Organizations[o].OpsAgainstHomeland[z].Type == WorldData.ExtOpType.EMBASSY_TERRORIST_ATTACK:
+					theType = "terrorist operation targeting embassy"
+				elif WorldData.Organizations[o].OpsAgainstHomeland[z].Type == WorldData.ExtOpType.PLANE_HIJACKING:
+					theType = "terrorist operation using Homeland planes"
+				elif WorldData.Organizations[o].OpsAgainstHomeland[z].Type == WorldData.ExtOpType.LEADER_ASSASSINATION:
+					theType = "terrorist operation targeting Homeland leaders"
 				var damage = "large"
 				if WorldData.Organizations[o].OpsAgainstHomeland[z].Damage < 20: damage = "minor"
 				elif WorldData.Organizations[o].OpsAgainstHomeland[z].Damage < 60: damage = "medium-sized"
@@ -194,9 +202,15 @@ func GatherOnOrg(o, quality, date):
 				var knownInvolved = " [no identified participants]"
 				if knownInvolvedValue > 0:
 					knownInvolved = " ["+str(int(knownInvolvedValue))+" identified participants]"
-				opDescriptions.append(damage + " " + theType + " operation, with ~" + roundedP + " individuals involved"+knownInvolved+", finishing in " + str(WorldData.Organizations[o].OpsAgainstHomeland[z].FinishCounter) + " weeks")
+				opDescriptions.append(damage + " " + theType + ", with ~" + roundedP + " individuals involved"+knownInvolved+", finishing in " + str(WorldData.Organizations[o].OpsAgainstHomeland[z].FinishCounter) + " weeks")
 			else:
-				var theType = "terrorist"
+				var theType = "terrorist operation inside Homeland"
+				if WorldData.Organizations[o].OpsAgainstHomeland[z].Type == WorldData.ExtOpType.EMBASSY_TERRORIST_ATTACK:
+					theType = "terrorist operation against embassy"
+				elif WorldData.Organizations[o].OpsAgainstHomeland[z].Type == WorldData.ExtOpType.PLANE_HIJACKING:
+					theType = "terrorist operation using Homeland planes"
+				elif WorldData.Organizations[o].OpsAgainstHomeland[z].Type == WorldData.ExtOpType.LEADER_ASSASSINATION:
+					theType = "terrorist operation targeting Homeland leaders"
 				var damage = "huge"
 				if WorldData.Organizations[o].OpsAgainstHomeland[z].Damage < 20: damage = "minor"
 				elif WorldData.Organizations[o].OpsAgainstHomeland[z].Damage < 60: damage = "medium-sized"
@@ -207,7 +221,7 @@ func GatherOnOrg(o, quality, date):
 				var knownInvolved = " [no identified participants]"
 				if knownInvolvedValue > 0:
 					knownInvolved = " ["+str(int(knownInvolvedValue))+" identified participants]"
-				opDescriptions.append(damage + " " + theType + " operation, with " + WorldData.Organizations[o].OpsAgainstHomeland[z].Persons + " individuals involved" + knownInvolved + ", finishing in " + str(WorldData.Organizations[o].OpsAgainstHomeland[z].FinishCounter) + " weeks")
+				opDescriptions.append(damage + " " + theType + ", with " + WorldData.Organizations[o].OpsAgainstHomeland[z].Persons + " individuals involved" + knownInvolved + ", finishing in " + str(WorldData.Organizations[o].OpsAgainstHomeland[z].FinishCounter) + " weeks")
 			# comparing significant intel change and notifying user if possible
 			var diff = newIntel - pastIntel
 			if diff >= 20:

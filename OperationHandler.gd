@@ -258,20 +258,22 @@ func ProgressOperations():
 					# arrest if against gov/intel and aggression*risk permits
 					if (WorldData.Organizations[which].Type == WorldData.OrgType.GOVERNMENT or WorldData.Organizations[which].Type == WorldData.OrgType.INTEL) and (WorldData.Organizations[which].Aggression < GameLogic.random.randi_range(70,90)) and (GameLogic.Operations[i].AbroadPlan.Risk < GameLogic.random.randi_range(50,75)):
 						# asking user for action
+						var ifExfiltrationAvailable = false
+						if GameLogic.OfficersInHQ > 0: ifExfiltrationAvailable = true
 						CallManager.CallQueue.append(
 							{
 								"Header": "Urgent Decision",
 								"Level": GameLogic.Operations[i].Level,
 								"Operation": GameLogic.Operations[i].Name + "\nagainst " + WorldData.Organizations[GameLogic.Operations[i].Target].Name,
-								"Content": str(GameLogic.Operations[i].AbroadPlan.Officers) + " officers executing the action were arrested by " + WorldData.Countries[GameLogic.Operations[i].Country].Adjective + " authorities. Decide on appropriate reaction.\n\nPossibilities:\n- engaging government will return officers, but significantly decrease government's trust\n- expelling will happen between intelligence services only, but these officers will never be allowed to enter this country again\n- denying affiliation will result in officer imprisonment and their de facto loss, affecting internal trust, but not affecting any external instituions\n- bribing can return officers intact, but often does not succeed and instead lead to large diplomatic scandal",
+								"Content": str(GameLogic.Operations[i].AbroadPlan.Officers) + " officers executing the action were arrested by " + WorldData.Countries[GameLogic.Operations[i].Country].Adjective + " authorities. Decide on appropriate reaction.\n\nPossibilities:\n- engaging government will return officers, but significantly decrease government's trust\n- expelling will happen between intelligence services only, but these officers will never be allowed to enter this country again\n- denying affiliation will result in officer imprisonment and their de facto loss, affecting internal trust, but not affecting any external instituions\n- exfiltration is a risky, covert rescue operation performed by the rest of the officers (" +str(GameLogic.OfficersInHQ) + " available), which returns officers intact in case of success but leads to both huge trust loss and expulsion in case of failure",
 								"Show1": true,
 								"Show2": true,
 								"Show3": true,
-								"Show4": true,
+								"Show4": ifExfiltrationAvailable,
 								"Text1": "Engage government",
 								"Text2": "Push for expelling",
 								"Text3": "Deny affiliation",
-								"Text4": "Bribe way out",
+								"Text4": "Attempt exfiltration",
 								"Decision1Callback": funcref(GameLogic, "ImplementOfficerRescue"),
 								"Decision1Argument": {"Operation":i, "Choice":1},
 								"Decision2Callback": funcref(GameLogic, "ImplementOfficerRescue"),
@@ -289,7 +291,7 @@ func ProgressOperations():
 					# otherwise, killed
 					else:
 						# debriefing variables
-						var staffPerecent = GameLogic.Staff * 1.0 / GameLogic.Operations[i].AbroadPlan.Officers
+						var staffPerecent = GameLogic.ActiveOfficers * 1.0 / GameLogic.Operations[i].AbroadPlan.Officers
 						GameLogic.PursuedOperations -= 1
 						GameLogic.Operations[i].Stage = OperationGenerator.Stage.FAILED
 						GameLogic.Operations[i].Result = "FAILED, " + str(GameLogic.Operations[i].AbroadPlan.Officers) + " officers lost"

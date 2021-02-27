@@ -154,163 +154,53 @@ func Execute(past):
 				continue
 			WorldData.Organizations[w].OpsAgainstHomeland[u].FinishCounter -= 1
 			if WorldData.Organizations[w].OpsAgainstHomeland[u].FinishCounter <= 0:
-				if WorldData.Organizations[w].OpsAgainstHomeland[u].Type == WorldData.ExtOpType.TERRORIST_ATTACK:
-					# clearing up mess with many attacks at the same time
-					var tickerDesc = ""
-					if GameLogic.AttackTicker != 0 and (GameLogic.AttackTickerOp.Org != w or GameLogic.AttackTickerOp.Op != u):
-						tickerDesc = "\n\nNote that this is a different plot than reported in dashboard. Homeland is facing more than one attack, possibly happenning in " + str(GameLogic.AttackTicker) + " weeks."
-					# decide if it's happenning: prevented or not
-					var knownInvolvedValue = WorldData.Organizations[w].OpsAgainstHomeland[u].Persons * (WorldData.Organizations[w].IntelIdentified*1.0 / WorldData.Organizations[w].Staff)
-					if (int(knownInvolvedValue) >= int(WorldData.Organizations[w].OpsAgainstHomeland[u].Persons*0.6) or GameLogic.random.randi_range(1,100) < WorldData.Organizations[w].OpsAgainstHomeland[u].IntelValue) and WorldData.Organizations[w].Known == true:
-						var reason = ""
-						if knownInvolvedValue > 0 and knownInvolvedValue < 20:
-							reason += "Law enforcement caught " + str(int(knownInvolvedValue)) + " terrorists. "
-						elif knownInvolvedValue > 0 and knownInvolvedValue < 20:
-							reason += str(knownInvolvedValue) + " terrorists were refused entry to the country. "
-						if WorldData.Organizations[w].OpsAgainstHomeland[u].IntelValue > 80:
-							reason += "Extremely detailed plans of the attack, obtained by Bureau, helped to secure all potential targets. "
-						elif WorldData.Organizations[w].OpsAgainstHomeland[u].IntelValue > 50:
-							reason += "Detailed plans of the attack, obtained by Bureau, helped to secure all potential targets. "
-						elif WorldData.Organizations[w].OpsAgainstHomeland[u].IntelValue > 25:
-							reason += "Plans of the attack, obtained by Bureau, helped to secure potential targets. "
-						WorldData.Organizations[w].OpsAgainstHomeland[u].Active = false
-						WorldData.Organizations[w].ActiveOpsAgainstHomeland -= 1
-						var trustIncrease = WorldData.Organizations[w].OpsAgainstHomeland[u].Damage
-						if trustIncrease < 20: trustIncrease = GameLogic.random.randi_range(21,25)
-						if (trustIncrease+GameLogic.Trust) > 100: trustIncrease = 100-GameLogic.Trust
-						GameLogic.Trust += trustIncrease
-						var budgetIncrease = GameLogic.BudgetFull*(0.01*GameLogic.Trust)
-						if budgetIncrease > 100: budgetIncrease = 100
-						GameLogic.BudgetFull += budgetIncrease
-						CallManager.CallQueue.append(
-							{
-								"Header": "Important Information",
-								"Level": "Classified",
-								"Operation": "-//-",
-								"Content": "[b]Congratulations.[/b]\n\nBased on Bureau's intel on " + WorldData.Organizations[w].Name + ", Homeland authorities prevented terrorist attack from happening. "+reason + "\n\nBureau gained "+str(int(trustIncrease))+"% of trust. As a confirmation, government increases bureau's budget by €"+str(int(budgetIncrease))+",000." + tickerDesc,
-								"Show1": false,
-								"Show2": false,
-								"Show3": false,
-								"Show4": true,
-								"Text1": "",
-								"Text2": "",
-								"Text3": "",
-								"Text4": "Understood",
-								"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
-								"Decision1Argument": null,
-								"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
-								"Decision2Argument": null,
-								"Decision3Callback": funcref(GameLogic, "EmptyFunc"),
-								"Decision3Argument": null,
-								"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
-								"Decision4Argument": null,
-							}
-						)
-						doesItEndWithCall = true
-						continue  # prevented
-					# it's happenning
-					var shortDesc = ""
-					var longDesc = ""
-					var casualties = 0
-					var trustLoss = 0
-					var responsibility = ""
-					# defining details
-					if WorldData.Organizations[w].Known == false and GameLogic.random.randi_range(1,2) == 1:
-						WorldData.Organizations[w].Known = true
-						WorldData.Organizations[w].IntelValue += 10
-						responsibility = "Officers attribute the attack to a new, previously unknown organization: " + WorldData.Organizations[w].Name + "."
-					elif WorldData.Organizations[w].Aggression > 70 and GameLogic.random.randi_range(1,2) == 2:
-						responsibility = WorldData.Organizations[w].Name + " claimed responsibility. "
-						if WorldData.Organizations[w].Known == false:
-							WorldData.Organizations[w].Known = true
-							WorldData.Organizations[w].IntelValue += 10
-						if WorldData.Organizations[w].OpsAgainstHomeland[u].IntelValue <= 0:
-							responsibility += "Officers could not confirm this association."
-						elif WorldData.Organizations[w].OpsAgainstHomeland[u].IntelValue < 30:
-							responsibility += "Officers estimate this association as probable."
-						else:
-							responsibility += "Officers confirm this association. Despite substantial knowledge about the organization, gathered intel was not enough to prevent the attack from happenning."
-					else:
-						if WorldData.Organizations[w].OpsAgainstHomeland[u].IntelValue <= 1:
-							responsibility = "Officers do not know who perpetuated the attack."
-						elif WorldData.Organizations[w].OpsAgainstHomeland[u].IntelValue < 30:
-							responsibility = "Officers point to " + WorldData.Organizations[w].Name + " as a probable perpetrator. Despite knowledge about the organization, gathered intel was not enough to prevent the attack from happenning."
-						else:
-							responsibility = "Officers identified " + WorldData.Organizations[w].Name + " as the perpetrator. Despite substantial knowledge about the organization, gathered intel was not enough to prevent the attack from happenning."
-					if WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 98:
-						shortDesc = "Large terrorist attack with many casualties"
-						casualties = GameLogic.random.randi_range(5000,100000)
-						trustLoss = GameLogic.Trust
-						# generate a detailed story about specifics later
-						longDesc = "a largest terrorist attack in the world history"
-					elif WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 90:
-						shortDesc = "Large terrorist attack with many casualties"
-						casualties = GameLogic.random.randi_range(1000,5000)
-						trustLoss = GameLogic.Trust*0.95
-						if trustLoss < 25: trustLoss = 25
-						longDesc = "a large terrorist attack"
-					elif WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 75:
-						shortDesc = "Large terrorist attack with many casualties"
-						casualties = GameLogic.random.randi_range(200,1000)
-						trustLoss = GameLogic.Trust*0.9
-						if trustLoss < 25: trustLoss = 25
-						longDesc = "a large terrorist attack"
-					elif WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 55:
-						shortDesc = "Terrorist attack"
-						casualties = GameLogic.random.randi_range(100,200)
-						trustLoss = GameLogic.Trust*0.9
-						if trustLoss < 25: trustLoss = 25
-						longDesc = "a terrorist attack"
-					elif WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 40:
-						shortDesc = "Terrorist attack"
-						casualties = GameLogic.random.randi_range(50,100)
-						trustLoss = GameLogic.Trust*0.9
-						if trustLoss < 25: trustLoss = 25
-						longDesc = "a terrorist attack"
-					elif WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 30:
-						shortDesc = "Terrorist attack"
-						casualties = GameLogic.random.randi_range(10,50)
-						trustLoss = GameLogic.Trust*0.9
-						if trustLoss < 25: trustLoss = 25
-						longDesc = "a terrorist attack"
-					elif WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 20:
-						shortDesc = "Minor terrorist incident"
-						casualties = GameLogic.random.randi_range(5,10)
-						trustLoss = GameLogic.Trust*0.8
-						if trustLoss < 15: trustLoss = 15
-						longDesc = "a minor terrorist incident"
-					elif WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 10:
-						shortDesc = "Minor terrorist incident"
-						casualties = GameLogic.random.randi_range(1,5)
-						trustLoss = GameLogic.Trust*0.8
-						if trustLoss < 15: trustLoss = 15
-						longDesc = "a minor terrorist incident"
-					else:
-						shortDesc = "Minor terrorist incident"
-						casualties = GameLogic.random.randi_range(0,1)
-						if casualties == 0: casualties = "no"
-						trustLoss = GameLogic.Trust*0.8
-						if trustLoss < 15: trustLoss = 15
-						longDesc = "a minor terrorist incident"
-					# executing details and communicating them
-					if trustLoss > GameLogic.Trust: trustLoss = GameLogic.Trust
-					GameLogic.Trust -= trustLoss
+				var typeDesc = "terrorist attack inside our country"
+				if WorldData.Organizations[w].OpsAgainstHomeland[u].Type == WorldData.ExtOpType.EMBASSY_TERRORIST_ATTACK:
+					typeDesc = "terrorist attack against our embassy"
+				elif WorldData.Organizations[w].OpsAgainstHomeland[u].Type == WorldData.ExtOpType.PLANE_HIJACKING:
+					typeDesc = "hijacking airplane with our citizens"
+				elif WorldData.Organizations[w].OpsAgainstHomeland[u].Type == WorldData.ExtOpType.LEADER_ASSASSINATION:
+					typeDesc = "terrorist attack targeting our leaders"
+				# clearing up mess with many attacks at the same time
+				var tickerDesc = ""
+				if GameLogic.AttackTicker != 0 and (GameLogic.AttackTickerOp.Org != w or GameLogic.AttackTickerOp.Op != u):
+					tickerDesc = "\n\nNote that this is a different plot than reported in dashboard. Homeland is facing more than one attack, possibly happenning in " + str(GameLogic.AttackTicker) + " weeks."
+				# decide if it's happenning: prevented or not
+				var knownInvolvedValue = WorldData.Organizations[w].OpsAgainstHomeland[u].Persons * (WorldData.Organizations[w].IntelIdentified*1.0 / WorldData.Organizations[w].Staff)
+				if ((int(knownInvolvedValue) >= int(WorldData.Organizations[w].OpsAgainstHomeland[u].Persons*0.6) or GameLogic.random.randi_range(10,100) < WorldData.Organizations[w].OpsAgainstHomeland[u].IntelValue)) and WorldData.Organizations[w].Known == true:
+					var reason = ""
+					if knownInvolvedValue > 0 and knownInvolvedValue < 20:
+						reason += "Law enforcement caught " + str(int(knownInvolvedValue)) + " terrorists. "
+					elif knownInvolvedValue > 0 and knownInvolvedValue < 20:
+						reason += str(knownInvolvedValue) + " terrorists were prevented from approaching the targets. "
+					if WorldData.Organizations[w].OpsAgainstHomeland[u].IntelValue > 80:
+						reason += "Extremely detailed plans of the attack, obtained by Bureau, helped to secure all potential targets. "
+					elif WorldData.Organizations[w].OpsAgainstHomeland[u].IntelValue > 50:
+						reason += "Detailed plans of the attack, obtained by Bureau, helped to secure all potential targets. "
+					elif WorldData.Organizations[w].OpsAgainstHomeland[u].IntelValue > 25:
+						reason += "Plans of the attack, obtained by Bureau, helped to secure potential targets. "
 					WorldData.Organizations[w].OpsAgainstHomeland[u].Active = false
 					WorldData.Organizations[w].ActiveOpsAgainstHomeland -= 1
-					GameLogic.AddWorldEvent(shortDesc+" in Homeland", past)
+					var trustIncrease = WorldData.Organizations[w].OpsAgainstHomeland[u].Damage
+					if trustIncrease < 20: trustIncrease = GameLogic.random.randi_range(21,25)
+					if (trustIncrease+GameLogic.Trust) > 100: trustIncrease = 100-GameLogic.Trust
+					GameLogic.Trust += trustIncrease
+					var budgetIncrease = GameLogic.BudgetFull*(0.01*GameLogic.Trust)
+					if budgetIncrease > 100: budgetIncrease = 100
+					GameLogic.BudgetFull += budgetIncrease
 					CallManager.CallQueue.append(
 						{
 							"Header": "Important Information",
-							"Level": "Unclassified",
+							"Level": "Classified",
 							"Operation": "-//-",
-							"Content": "[b]The worst has happened.[/b]\n\nHomeland suffered from "+longDesc+". There were "+str(casualties)+" casualties. " + responsibility + "\n\nBureau lost "+str(int(trustLoss))+"% of trust."+tickerDesc,
+							"Content": "[b]Congratulations.[/b]\n\nBased on Bureau's intel on " + WorldData.Organizations[w].Name + ", Homeland authorities prevented " + typeDesc + " from happening. "+reason + "\n\nBureau gained "+str(int(trustIncrease))+"% of trust. As a confirmation, government increases bureau's budget by €"+str(int(budgetIncrease))+",000." + tickerDesc,
 							"Show1": false,
 							"Show2": false,
 							"Show3": false,
 							"Show4": true,
 							"Text1": "",
 							"Text2": "",
-							"Text3": "Launch investigation",
+							"Text3": "",
 							"Text4": "Understood",
 							"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
 							"Decision1Argument": null,
@@ -323,6 +213,205 @@ func Execute(past):
 						}
 					)
 					doesItEndWithCall = true
+					continue  # prevented
+				# it's happenning
+				var shortDesc = ""
+				var longDesc = ""
+				var casualties = 0
+				var trustLoss = 0
+				var responsibility = ""
+				var theCountry = "Homeland"
+				# defining details
+				if WorldData.Organizations[w].Known == false and GameLogic.random.randi_range(1,2) == 1:
+					WorldData.Organizations[w].Known = true
+					WorldData.Organizations[w].IntelValue += 10
+					responsibility = "Officers attribute the attack to a new, previously unknown organization: " + WorldData.Organizations[w].Name + "."
+				elif WorldData.Organizations[w].Aggression > 70 and GameLogic.random.randi_range(1,2) == 2:
+					responsibility = WorldData.Organizations[w].Name + " claimed responsibility. "
+					if WorldData.Organizations[w].Known == false:
+						WorldData.Organizations[w].Known = true
+						WorldData.Organizations[w].IntelValue += 10
+					if WorldData.Organizations[w].OpsAgainstHomeland[u].IntelValue <= 0:
+						responsibility += "Officers could not confirm this association."
+					elif WorldData.Organizations[w].OpsAgainstHomeland[u].IntelValue < 30:
+						responsibility += "Officers estimate this association as probable."
+					else:
+						responsibility += "Officers confirm this association. Despite substantial knowledge about the organization, gathered intel was not enough to prevent the attack from happenning."
+				else:
+					if WorldData.Organizations[w].OpsAgainstHomeland[u].IntelValue <= 1:
+						responsibility = "Officers do not know who perpetuated the attack."
+					elif WorldData.Organizations[w].OpsAgainstHomeland[u].IntelValue < 30:
+						responsibility = "Officers point to " + WorldData.Organizations[w].Name + " as a probable perpetrator. Despite knowledge about the organization, gathered intel was not enough to prevent the attack from happenning."
+					else:
+						responsibility = "Officers identified " + WorldData.Organizations[w].Name + " as the perpetrator. Despite substantial knowledge about the organization, gathered intel was not enough to prevent the attack from happenning."
+				################################################################
+				# mundane ifs but had to be done
+				if WorldData.Organizations[w].OpsAgainstHomeland[u].Type == WorldData.ExtOpType.HOME_TERRORIST_ATTACK:
+					if WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 98:
+						shortDesc = "Large terrorist attack with many casualties"
+						casualties = GameLogic.random.randi_range(5000,100000)
+						trustLoss = GameLogic.Trust
+						# generate a detailed story about specifics later
+						longDesc = "Homeland suffered from a largest terrorist attack in the world history, executed inside our country. There were "+str(casualties)+" casualties. "
+					elif WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 90:
+						shortDesc = "Large terrorist attack with many casualties"
+						casualties = GameLogic.random.randi_range(1000,5000)
+						trustLoss = GameLogic.Trust*0.95
+						if trustLoss < 25: trustLoss = 25
+						longDesc = "Homeland suffered from a large terrorist attack inside our country. There were "+str(casualties)+" casualties. "
+					elif WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 75:
+						shortDesc = "Large terrorist attack with many casualties"
+						casualties = GameLogic.random.randi_range(200,1000)
+						trustLoss = GameLogic.Trust*0.9
+						if trustLoss < 25: trustLoss = 25
+						longDesc = "Homeland suffered from a large terrorist attack inside our country. There were "+str(casualties)+" casualties. "
+					elif WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 55:
+						shortDesc = "Terrorist attack"
+						casualties = GameLogic.random.randi_range(100,200)
+						trustLoss = GameLogic.Trust*0.9
+						if trustLoss < 25: trustLoss = 25
+						longDesc = "Homeland suffered from a terrorist attack inside our country. There were "+str(casualties)+" casualties. "
+					elif WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 40:
+						shortDesc = "Terrorist attack"
+						casualties = GameLogic.random.randi_range(50,100)
+						trustLoss = GameLogic.Trust*0.9
+						if trustLoss < 25: trustLoss = 25
+						longDesc = "Homeland suffered from a terrorist attack inside our country. There were "+str(casualties)+" casualties. "
+					elif WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 30:
+						shortDesc = "Terrorist attack"
+						casualties = GameLogic.random.randi_range(10,50)
+						trustLoss = GameLogic.Trust*0.9
+						if trustLoss < 25: trustLoss = 25
+						longDesc = "Homeland suffered from a terrorist attack inside our country. There were "+str(casualties)+" casualties. "
+					elif WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 20:
+						shortDesc = "Minor terrorist incident"
+						casualties = GameLogic.random.randi_range(5,10)
+						trustLoss = GameLogic.Trust*0.8
+						if trustLoss < 15: trustLoss = 15
+						longDesc = "Homeland suffered from a terrorist attack inside our country. There were "+str(casualties)+" casualties. "
+					elif WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 10:
+						shortDesc = "Minor terrorist incident"
+						casualties = GameLogic.random.randi_range(2,5)
+						trustLoss = GameLogic.Trust*0.6
+						if trustLoss < 15: trustLoss = 15
+						longDesc = "Homeland suffered from a minor terrorist incident inside our country. There were "+str(casualties)+" casualties. "
+					else:
+						shortDesc = "Minor terrorist incident"
+						var cas = "was 1 casualty"
+						if GameLogic.random.randi_range(0,1) == 0: casualties = "were no casualties"
+						trustLoss = GameLogic.Trust*0.5
+						if trustLoss < 15: trustLoss = 15
+						longDesc = "Homeland suffered from a minor terrorist incident inside our country. There "+cas+". "
+				################################################################
+				# mundane ifs but had to be done
+				elif WorldData.Organizations[w].OpsAgainstHomeland[u].Type == WorldData.ExtOpType.EMBASSY_TERRORIST_ATTACK:
+					theCountry = WorldData.Countries[GameLogic.random.randi_range(1, len(WorldData.Countries)-1)].Name
+					if WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 90:
+						shortDesc = "Large terrorist attack with many casualties"
+						casualties = GameLogic.random.randi_range(500,1000)
+						trustLoss = GameLogic.Trust*0.9
+						if trustLoss < 25: trustLoss = 25
+						# generate a detailed story about specifics later
+						longDesc = "Homeland suffered from a large terrorist attack, which wiped out our embassy in " + theCountry + ". There were "+str(casualties)+" casualties. "
+					elif WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 75:
+						shortDesc = "Large terrorist attack with many casualties"
+						casualties = GameLogic.random.randi_range(100,500)
+						trustLoss = GameLogic.Trust*0.7
+						if trustLoss < 25: trustLoss = 25
+						longDesc = "Homeland suffered from a large terrorist attack, which destroyed our embassy in " + theCountry + ". There were "+str(casualties)+" casualties. "
+					elif WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 40:
+						shortDesc = "Terrorist attack"
+						casualties = GameLogic.random.randi_range(10,100)
+						trustLoss = GameLogic.Trust*0.6
+						if trustLoss < 25: trustLoss = 25
+						longDesc = "Homeland suffered from a terrorist attack on our embassy in " + theCountry + ". There were "+str(casualties)+" casualties. "
+					elif WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 20:
+						shortDesc = "Minor terrorist incident"
+						casualties = GameLogic.random.randi_range(1,10)
+						trustLoss = GameLogic.Trust*0.5
+						if trustLoss < 15: trustLoss = 15
+						longDesc = "Homeland suffered from a terrorist attack on our embassy in " + theCountry + ". There were "+str(casualties)+" casualties. "
+					else:
+						shortDesc = "Minor terrorist incident"
+						var cas = "was 1 casualty"
+						if GameLogic.random.randi_range(0,1) == 0: casualties = "were no casualties"
+						trustLoss = GameLogic.Trust*0.5
+						if trustLoss < 15: trustLoss = 15
+						longDesc = "Homeland suffered from a minor terrorist incident near our embassy in " + theCountry + ". There "+cas+". "
+				################################################################
+				# mundane ifs but had to be done
+				elif WorldData.Organizations[w].OpsAgainstHomeland[u].Type == WorldData.ExtOpType.PLANE_HIJACKING:
+					theCountry = WorldData.Countries[GameLogic.random.randi_range(1, len(WorldData.Countries)-1)].Name
+					if WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 90:
+						shortDesc = "Large terrorist attack with many casualties"
+						casualties = GameLogic.random.randi_range(400,1500)
+						trustLoss = GameLogic.Trust
+						theCountry = "Homeland"
+						longDesc = "Passenger plane with our citizens was hijacked and crashed into a building in Homeland. There were "+str(casualties)+" casualties. "
+					elif WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 50:
+						shortDesc = "Large terrorist attack with many casualties"
+						casualties = GameLogic.random.randi_range(125,400)
+						trustLoss = GameLogic.Trust*0.9
+						if trustLoss < 25: trustLoss = 25
+						longDesc = "Passenger plane with Homeland citizens was hijacked and crashed in " + theCountry + ". There were "+str(casualties)+" casualties. "
+					elif WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 30:
+						shortDesc = "Terrorist attack"
+						casualties = GameLogic.random.randi_range(25,125)
+						trustLoss = GameLogic.Trust*0.8
+						if trustLoss < 25: trustLoss = 25
+						longDesc = "Passenger plane with Homeland citizens was hijacked and crashed in " + theCountry + ". There were "+str(casualties)+" casualties. "
+					else:
+						shortDesc = "Minor terrorist incident"
+						casualties = GameLogic.random.randi_range(3,25)
+						trustLoss = GameLogic.Trust*0.7
+						if trustLoss < 15: trustLoss = 15
+						longDesc = "Small airplane with Homeland citizens was hijacked and crashed in " + theCountry + ". There were "+str(casualties)+" casualties. "
+				################################################################
+				# mundane ifs but had to be done
+				elif WorldData.Organizations[w].OpsAgainstHomeland[u].Type == WorldData.ExtOpType.LEADER_ASSASSINATION:
+					shortDesc = "Terrorist attack"
+					trustLoss = GameLogic.Trust
+					if WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 90:
+						longDesc = "Homeland's President was assassinated in a terrorist attack. "
+					elif WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 70:
+						shortDesc = "Minor terrorist incident"
+						longDesc = "Homeland's President was wounded in a terrorist attack. "
+					elif WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 40:
+						longDesc = "One of political leaders in Homeland was assassinated by terrorists. "
+					else:
+						shortDesc = "Minor terrorist incident"
+						longDesc = "One of political leaders in Homeland was wounded in a terrorist attack. "
+				# executing details and communicating them
+				if trustLoss > GameLogic.Trust: trustLoss = GameLogic.Trust
+				GameLogic.Trust -= trustLoss
+				WorldData.Organizations[w].OpsAgainstHomeland[u].Active = false
+				WorldData.Organizations[w].ActiveOpsAgainstHomeland -= 1
+				GameLogic.AddWorldEvent(shortDesc+" in " + theCountry, past)
+				CallManager.CallQueue.append(
+					{
+						"Header": "Important Information",
+						"Level": "Unclassified",
+						"Operation": "-//-",
+						"Content": "[b]The worst has happened.[/b]\n\n" +longDesc + responsibility + "\n\nBureau lost "+str(int(trustLoss))+"% of trust."+tickerDesc,
+						"Show1": false,
+						"Show2": false,
+						"Show3": false,
+						"Show4": true,
+						"Text1": "",
+						"Text2": "",
+						"Text3": "Launch investigation",
+						"Text4": "Understood",
+						"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision1Argument": null,
+						"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision2Argument": null,
+						"Decision3Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision3Argument": null,
+						"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision4Argument": null,
+					}
+				)
+				doesItEndWithCall = true
 		# new operations against countries
 		if WorldData.Organizations[w].Type == WorldData.OrgType.GENERALTERROR:
 			# number of attacks relies on budget*aggression
@@ -333,7 +422,7 @@ func Execute(past):
 			elif WorldData.Organizations[w].Budget < 50000: opFrequency *= 0.6
 			elif WorldData.Organizations[w].Budget < 100000: opFrequency *= 0.8
 			var randFrequency = 120 - opFrequency  # max aggr->20, min aggr->120
-			randFrequency *= 0.3  # three times higher frequency, balancing
+			randFrequency *= 0.5  # two times higher frequency, balancing
 			if GameLogic.random.randi_range(0,randFrequency) == int(randFrequency*0.5):
 				var whichCountry = randi() % WorldData.Countries.size()
 				# against other countries: executing right now
@@ -367,7 +456,7 @@ func Execute(past):
 								desc += ", local authorities do not know the perpetrator"
 						GameLogic.AddWorldEvent(desc, past)
 				# against homeland: just planning for the future
-				elif past == null and GameLogic.CurrentOpsAgainstHomeland < GameLogic.OpsLimit:
+				elif past == null and GameLogic.CurrentOpsAgainstHomeland < GameLogic.OpsLimit and GameLogic.YearlyOpsAgainstHomeland < GameLogic.OpsLimit and GameLogic.random.randi_range(1,3) == 2:
 					var opSize = GameLogic.random.randi_range(1,10) * 0.1  # 0.0-1.0 of org resources
 					var opSecrecy = GameLogic.random.randi_range(WorldData.Organizations[w].Counterintelligence*0.7,100)
 					var opDamage = GameLogic.random.randi_range(WorldData.Organizations[w].Aggression*0.2, WorldData.Organizations[w].Aggression)
@@ -378,9 +467,10 @@ func Execute(past):
 					else: opLength += GameLogic.random.randi_range(-5,5)
 					if opLength < 4: opLength = 4
 					opLength = int(opLength)
+					var opType = GameLogic.random.randi_range(0,3)
 					WorldData.Organizations[w].OpsAgainstHomeland.append(WorldData.AnExternalOperation.new(
 						{
-							"Type": WorldData.ExtOpType.TERRORIST_ATTACK,
+							"Type": opType,
 							"Budget": int(WorldData.Organizations[w].Budget * opSize),
 							"Persons": int(WorldData.Organizations[w].Staff * 0.5 * opSize),
 							"Secrecy": int(opSecrecy),
@@ -389,6 +479,7 @@ func Execute(past):
 						}
 					))
 					GameLogic.CurrentOpsAgainstHomeland += 1
+					GameLogic.YearlyOpsAgainstHomeland += 1
 					WorldData.Organizations[w].ActiveOpsAgainstHomeland += 1
 					# most (but not all!) operations are vaguely communicated to the player
 					if GameLogic.random.randi_range(1,10) < 8:
