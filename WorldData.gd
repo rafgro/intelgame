@@ -345,15 +345,76 @@ func WorldNextWeek(past):
 			Organizations[w].OpsAgainstHomeland[u].FinishCounter -= 1
 			if Organizations[w].OpsAgainstHomeland[u].FinishCounter <= 0:
 				if Organizations[w].OpsAgainstHomeland[u].Type == ExtOpType.TERRORIST_ATTACK:
+					# decide if it's happenning: prevented or not
+					var knownInvolvedValue = Organizations[w].OpsAgainstHomeland[u].Persons * (Organizations[w].IntelIdentified*1.0 / Organizations[w].Staff)
+					if int(knownInvolvedValue) >= int(Organizations[w].OpsAgainstHomeland[u].Persons*0.6) or GameLogic.random.randi_range(1,100) < Organizations[w].OpsAgainstHomeland[u].IntelValue:
+						var reason = ""
+						if knownInvolvedValue > 0 and knownInvolvedValue < 20:
+							reason += "Law enforcement caught " + str(knownInvolvedValue) + " terrorists. "
+						elif knownInvolvedValue > 0 and knownInvolvedValue < 20:
+							reason += str(knownInvolvedValue) + " terrorists were refused entry to the country. "
+						if Organizations[w].OpsAgainstHomeland[u].IntelValue > 80:
+							reason += "Extremely detailed plans of the attack, obtained by Bureau, helped to secure all potential targets. "
+						elif Organizations[w].OpsAgainstHomeland[u].IntelValue > 50:
+							reason += "Detailed plans of the attack, obtained by Bureau, helped to secure all potential targets. "
+						elif Organizations[w].OpsAgainstHomeland[u].IntelValue > 25:
+							reason += "Plans of the attack, obtained by Bureau, helped to secure potential targets. "
+						Organizations[w].OpsAgainstHomeland[u].Active = false
+						Organizations[w].ActiveOpsAgainstHomeland -= 1
+						var trustIncrease = Organizations[w].OpsAgainstHomeland[u].Damage
+						if trustIncrease < 20: trustIncrease = GameLogic.random.randi_range(21,25)
+						if (trustIncrease+GameLogic.Trust) > 100: trustIncrease = 100-GameLogic.Trust
+						GameLogic.Trust += trustIncrease
+						var budgetIncrease = GameLogic.BudgetFull*(0.01*GameLogic.Trust)
+						GameLogic.BudgetFull += budgetIncrease
+						CallManager.CallQueue.append(
+							{
+								"Header": "Important Information",
+								"Level": "Classified",
+								"Operation": "-//-",
+								"Content": "[b]Congratulations![/b]\n\nBased on Bureau's intel, Homeland authorities prevented terrorist attack from happening."+reason + "\n\nBureau gained "+str(int(trustIncrease))+"% of trust. As a confirmation, government increases bureau's budget by €"+str(int(budgetIncrease))+",000.\n",
+								"Show1": false,
+								"Show2": false,
+								"Show3": false,
+								"Show4": true,
+								"Text1": "",
+								"Text2": "",
+								"Text3": "",
+								"Text4": "Understood",
+								"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
+								"Decision1Argument": null,
+								"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
+								"Decision2Argument": null,
+								"Decision3Callback": funcref(GameLogic, "EmptyFunc"),
+								"Decision3Argument": null,
+								"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
+								"Decision4Argument": null,
+							}
+						)
+						doesItEndWithCall = true
+						continue  # prevented
 					# it's happenning
 					var shortDesc = ""
 					var longDesc = ""
 					var casualties = 0
 					var trustLoss = 0
-					var responsibility = "Officers do not know who perpetuated the attack."
+					var responsibility = ""
 					# defining details
 					if Organizations[w].Aggression > 70 and GameLogic.random.randi_range(1,2) == 2:
 						responsibility = Organizations[w].Name + " claimed responsibility. "
+						if Organizations[w].OpsAgainstHomeland[u].IntelValue == 0:
+							responsibility += "Officers could not confirm this association."
+						elif Organizations[w].OpsAgainstHomeland[u].IntelValue < 30:
+							responsibility += "Officers estimate this association as probable."
+						else:
+							responsibility += "Officers confirm this association."
+					else:
+						if Organizations[w].OpsAgainstHomeland[u].IntelValue == 0:
+							responsibility = "Officers do not know who perpetuated the attack."
+						elif Organizations[w].OpsAgainstHomeland[u].IntelValue < 30:
+							responsibility = "Officers point to " + Organizations[w].Name + " as a probable perpetrator."
+						else:
+							responsibility = "Officers identified " + Organizations[w].Name + " as the perpetrator."
 					if Organizations[w].OpsAgainstHomeland[u].Damage >= 98:
 						shortDesc = "Large terrorist attack with many casualties"
 						casualties = GameLogic.random.randi_range(5000,100000)
@@ -555,5 +616,6 @@ func WorldNextWeek(past):
 				GameLogic.AddEvent('Bureau lost source in ' + Organizations[w].Name)
 			# providing joint intel from all sources, every 8 weeks on average
 			if GameLogic.random.randi_range(1,8) == 4:
-				WorldIntel.GatherOnOrg(w, highestLevel*(1.0+len(Organizations[w].IntelSources)*0.1), GameLogic.GiveDateWithYear())
+				var localCall = WorldIntel.GatherOnOrg(w, highestLevel*(0.9+len(Organizations[w].IntelSources)*0.1), GameLogic.GiveDateWithYear())
+				if localCall == true: doesItEndWithCall = true
 	return doesItEndWithCall

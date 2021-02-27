@@ -2,6 +2,7 @@ extends Node
 
 # Gathering intelligence information about organizations
 func GatherOnOrg(o, quality, date):
+	var doesItEndWithCall = false
 	var credible = true
 	var backup = null
 	if quality < 0:
@@ -25,7 +26,7 @@ func GatherOnOrg(o, quality, date):
 			WorldData.Organizations[o].ActiveOpsAgainstHomeland = 0
 		else:
 			WorldData.Organizations[o].ActiveOpsAgainstHomeland = GameLogic.random.randi_range(1,2)
-	var desc = "[b]"+date+"[/b] "
+	############################################################################
 	# continuous intel value
 	var noOfIdentified = 0
 	if quality > WorldData.Organizations[o].IntelValue:
@@ -44,15 +45,20 @@ func GatherOnOrg(o, quality, date):
 			noOfIdentified = WorldData.Organizations[o].IntelIdentified-newIdentified
 	else:
 		WorldData.Organizations[o].IntelValue += 1
+	############################################################################
 	# general intel description for the user
 	if WorldData.Organizations[o].Type == WorldData.OrgType.INTEL:
 		WorldData.Organizations[o].IntelDescType = "intelligence agency"
 	elif WorldData.Organizations[o].Type == WorldData.OrgType.GOVERNMENT:
 		WorldData.Organizations[o].IntelDescType = "official government"
+	############################################################################
 	# discrete intel descriptions, four stages
+	var discreteDesc = ""
+	var indicatedOps = false  # used further to provide operation details
 	if quality >= 0 and quality < 10:
 		if WorldData.Organizations[o].Type == WorldData.OrgType.GENERALTERROR or WorldData.Organizations[o].Type == WorldData.OrgType.ARMTRADER or WorldData.Organizations[o].Type == WorldData.OrgType.PARAMILITARY:
 			WorldData.Organizations[o].IntelDescType = "suspected criminal organization"
+		var desc = ""
 		if noOfIdentified > 0: desc += "identified " + str(noOfIdentified) + " individuals inside, "
 		desc += "current state of org: "
 		if WorldData.Organizations[o].Staff < 100: desc += "very small number of members"
@@ -64,7 +70,8 @@ func GatherOnOrg(o, quality, date):
 		elif WorldData.Organizations[o].Budget < 5000: desc += ", medium budget"
 		elif WorldData.Organizations[o].Budget < 1000000: desc += ", large budget"
 		else: desc += ", huge budget"
-		WorldData.Organizations[o].IntelDescription.push_front(desc)
+		discreteDesc = desc
+	############################################################################
 	elif quality < 30:
 		if WorldData.Organizations[o].Type == WorldData.OrgType.GENERALTERROR or WorldData.Organizations[o].Type == WorldData.OrgType.PARAMILITARY:
 			WorldData.Organizations[o].IntelDescType = "terrorist organization"
@@ -72,10 +79,6 @@ func GatherOnOrg(o, quality, date):
 			WorldData.Organizations[o].IntelDescType = "criminal organization"
 		# rounding example:
 		# 12,000 * 0.0001 = 1.2 -> ~= 1 -> = 1 * 10,000 = 10,000
-		var antihomeland = "no knowledge of activity against Homeland"
-		if WorldData.Organizations[o].ActiveOpsAgainstHomeland > 0:
-			if GameLogic.random.randi_range(1,4) == 2:
-				antihomeland = "[u]possible suspicious activity towards Homeland[/u]"
 		var desc1 = ""
 		if noOfIdentified > 0: desc1 += "identified " + str(noOfIdentified) + " individuals inside, "
 		desc1 += "current state of org: "
@@ -91,7 +94,8 @@ func GatherOnOrg(o, quality, date):
 		elif WorldData.Organizations[o].Counterintelligence > 70: counter = "significant"
 		elif WorldData.Organizations[o].Counterintelligence > 50: counter = "medium"
 		elif WorldData.Organizations[o].Counterintelligence > 20: counter = "weak"
-		WorldData.Organizations[o].IntelDescription.push_front(desc + antihomeland + ", " + desc1 + "approximately " + roundedStaff + " members, budget of " + roundedBudget + " millions monthly, " + counter + " counterintelligence measures")
+		discreteDesc = desc1 + "approximately " + roundedStaff + " members, budget of " + roundedBudget + " millions monthly, " + counter + " counterintelligence measures"
+	############################################################################
 	elif quality < 50:
 		if WorldData.Organizations[o].Type == WorldData.OrgType.GENERALTERROR:
 			WorldData.Organizations[o].IntelDescType = "terrorist organization"
@@ -99,10 +103,6 @@ func GatherOnOrg(o, quality, date):
 			WorldData.Organizations[o].IntelDescType = "paramilitary organization"
 		elif WorldData.Organizations[o].Type == WorldData.OrgType.ARMTRADER:
 			WorldData.Organizations[o].IntelDescType = "arms trader"
-		var antihomeland = "probably no operations against Homeland"
-		if WorldData.Organizations[o].ActiveOpsAgainstHomeland > 0:
-			if GameLogic.random.randi_range(1,2) == 1:
-				antihomeland = "[u]probably involved in operations against Homeland[/u]"
 		var desc1 = ""
 		if noOfIdentified > 0: desc1 += "identified " + str(noOfIdentified) + " individuals inside, "
 		desc1 += "current state of org: "
@@ -115,7 +115,8 @@ func GatherOnOrg(o, quality, date):
 		var roundedBudget = "€"+str(int(WorldData.Organizations[o].Budget * 0.001) * 10)
 		if roundedBudget == "€0": roundedBudget = "less than €10"
 		var roundedCounter = int(WorldData.Organizations[o].Counterintelligence * 0.1) * 10
-		WorldData.Organizations[o].IntelDescription.push_front(desc + antihomeland + ", " + desc1 + "approximately " + roundedStaff + " members, budget of " + roundedBudget + " millions monthly, " + str(roundedCounter) + "/100 counterintelligence measures")
+		discreteDesc = desc1 + "approximately " + roundedStaff + " members, budget of " + roundedBudget + " millions monthly, " + str(roundedCounter) + "/100 counterintelligence measures"
+	############################################################################
 	elif quality < 70:
 		if WorldData.Organizations[o].Type == WorldData.OrgType.GENERALTERROR:
 			WorldData.Organizations[o].IntelDescType = "terrorist organization"
@@ -123,9 +124,6 @@ func GatherOnOrg(o, quality, date):
 			WorldData.Organizations[o].IntelDescType = "paramilitary organization"
 		elif WorldData.Organizations[o].Type == WorldData.OrgType.ARMTRADER:
 			WorldData.Organizations[o].IntelDescType = "arms trader"
-		var antihomeland = "no operations against Homeland"
-		if WorldData.Organizations[o].ActiveOpsAgainstHomeland > 0:
-			antihomeland = "[u]executes operations against Homeland[/u]"
 		var desc1 = ""
 		if noOfIdentified > 0: desc1 += "identified " + str(noOfIdentified) + " individuals inside, "
 		desc1 += "current state of org: "
@@ -138,7 +136,8 @@ func GatherOnOrg(o, quality, date):
 		var roundedBudget = "€"+str(int(WorldData.Organizations[o].Budget * 0.01))
 		if roundedBudget == "€0": roundedBudget = "less than €1"
 		var roundedCounter = WorldData.Organizations[o].Counterintelligence
-		WorldData.Organizations[o].IntelDescription.push_front(desc + antihomeland + ", " + desc1 + "approximately " + roundedStaff + " members, budget of " + roundedBudget + " millions monthly, " + str(roundedCounter) + "/100 counterintelligence measures")
+		discreteDesc = desc1 + "approximately " + roundedStaff + " members, budget of " + roundedBudget + " millions monthly, " + str(roundedCounter) + "/100 counterintelligence measures"
+	############################################################################
 	else:
 		if WorldData.Organizations[o].Type == WorldData.OrgType.GENERALTERROR:
 			WorldData.Organizations[o].IntelDescType = "terrorist organization"
@@ -146,9 +145,6 @@ func GatherOnOrg(o, quality, date):
 			WorldData.Organizations[o].IntelDescType = "paramilitary organization"
 		elif WorldData.Organizations[o].Type == WorldData.OrgType.ARMTRADER:
 			WorldData.Organizations[o].IntelDescType = "arms trader"
-		var antihomeland = "no operations against Homeland"
-		if WorldData.Organizations[o].ActiveOpsAgainstHomeland > 0:
-			antihomeland = "[u]executes " +str(WorldData.Organizations[o].ActiveOpsAgainstHomeland)+ " operations against Homeland[/u]"
 		var desc1 = ""
 		if noOfIdentified > 0: desc1 += "identified " + str(noOfIdentified) + " individuals inside, "
 		desc1 += "current state of org: "
@@ -156,7 +152,119 @@ func GatherOnOrg(o, quality, date):
 		var roundedBudget = "€"+str(int(WorldData.Organizations[o].Budget * 0.01))
 		if roundedBudget == "€0": roundedBudget = "less than €1"
 		var roundedCounter = WorldData.Organizations[o].Counterintelligence
-		WorldData.Organizations[o].IntelDescription.push_front(desc + antihomeland + ", " + desc1 + roundedStaff + " members, budget of " + roundedBudget + " millions monthly, " + str(roundedCounter) + "/100 counterintelligence measures")
+		discreteDesc = desc1 + roundedStaff + " members, budget of " + roundedBudget + " millions monthly, " + str(roundedCounter) + "/100 counterintelligence measures"
+	############################################################################
+	# operation intel, both discrete descriptions and logic mechanics
+	# TODO: UPDATE TO HANDLE DECEPTION
+	# todo: update to handle postmortem investigations
+	var antihomeland = ""
+	if len(WorldData.Organizations[o].OpsAgainstHomeland) > 0 and quality >= 10:  # also inactive ops
+		var opDescriptions = []
+		for z in range(0,len(WorldData.Organizations[o].OpsAgainstHomeland)):
+			if WorldData.Organizations[o].OpsAgainstHomeland[z].Active == false:
+				continue
+			# most important logic change
+			var pastIntel = WorldData.Organizations[o].OpsAgainstHomeland[z].IntelValue
+			WorldData.Organizations[o].OpsAgainstHomeland[z].IntelValue += quality * ((100.0-WorldData.Organizations[o].OpsAgainstHomeland[z].Secrecy)*0.01)
+			var newIntel = WorldData.Organizations[o].OpsAgainstHomeland[z].IntelValue
+			# describing
+			if newIntel < 20:
+				var roundedD = WorldData.Organizations[o].OpsAgainstHomeland[z].FinishCounter/4 + GameLogic.random.randi_range(-2,2)
+				if roundedD < 1: roundedD = 1
+				opDescriptions.append("possible operation finishing in ~" + str(int(roundedD)) + " months")
+			elif newIntel < 40:
+				var roundedD = WorldData.Organizations[o].OpsAgainstHomeland[z].FinishCounter + GameLogic.random.randi_range(-2,2)
+				if roundedD < 1: roundedD = 1
+				var theType = "terrorist"
+				var damage = "large"
+				if WorldData.Organizations[o].OpsAgainstHomeland[z].Damage < 50: damage = "minor"
+				var people = "few"
+				if WorldData.Organizations[o].OpsAgainstHomeland[z].Persons > 20: people = "dozens of"
+				opDescriptions.append("probable " + damage + " " + theType + " operation, with " + people + " people involved, finishing in ~" + str(int(roundedD)) + " weeks")
+			elif newIntel < 60:
+				var theType = "terrorist"
+				var damage = "large"
+				if WorldData.Organizations[o].OpsAgainstHomeland[z].Damage < 20: damage = "minor"
+				elif WorldData.Organizations[o].OpsAgainstHomeland[z].Damage < 60: damage = "medium-sized"
+				var roundedP = WorldData.Organizations[o].OpsAgainstHomeland[z].Persons * (1.0+0.1*GameLogic.random.randi_range(-4,4))
+				if roundedP < 1: roundedP = 1
+				var knownInvolvedValue = WorldData.Organizations[o].OpsAgainstHomeland[z].Persons * (WorldData.Organizations[o].IntelIdentified*1.0 / WorldData.Organizations[o].Staff)
+				if knownInvolvedValue < roundedP: knownInvolvedValue = roundedP
+				var knownInvolved = " [no identified participants]"
+				if knownInvolvedValue > 0:
+					knownInvolved = " ["+str(int(knownInvolvedValue))+" identified participants]"
+				opDescriptions.append(damage + " " + theType + " operation, with ~" + roundedP + " individuals involved"+knownInvolved+", finishing in " + str(WorldData.Organizations[o].OpsAgainstHomeland[z].FinishCounter) + " weeks")
+			else:
+				var theType = "terrorist"
+				var damage = "huge"
+				if WorldData.Organizations[o].OpsAgainstHomeland[z].Damage < 20: damage = "minor"
+				elif WorldData.Organizations[o].OpsAgainstHomeland[z].Damage < 60: damage = "medium-sized"
+				elif WorldData.Organizations[o].OpsAgainstHomeland[z].Damage < 90: damage = "large"
+				var knownInvolvedValue = WorldData.Organizations[o].OpsAgainstHomeland[z].Persons * (WorldData.Organizations[o].IntelIdentified*1.0 / WorldData.Organizations[o].Staff)
+				if knownInvolvedValue > WorldData.Organizations[o].OpsAgainstHomeland[z].Persons:
+					knownInvolvedValue = WorldData.Organizations[o].OpsAgainstHomeland[z].Persons
+				var knownInvolved = " [no identified participants]"
+				if knownInvolvedValue > 0:
+					knownInvolved = " ["+str(int(knownInvolvedValue))+" identified participants]"
+				opDescriptions.append(damage + " " + theType + " operation, with " + WorldData.Organizations[o].OpsAgainstHomeland[z].Persons + " individuals involved" + knownInvolved + ", finishing in " + str(WorldData.Organizations[o].OpsAgainstHomeland[z].FinishCounter) + " weeks")
+			# comparing significant intel change and notifying user if possible
+			var diff = newIntel - pastIntel
+			if diff >= 20:
+				CallManager.CallQueue.append(
+					{
+						"Header": "Important Information",
+						"Level": "Top Secret",
+						"Operation": "-//-",
+						"Content": "New, significant intel has been gathered in " + WorldData.Organizations[o].Name + ". The organization was associated with:\n\n[b]"+opDescriptions[-1]+"[/b]\n\nHomeland authorities were notified about the danger. More details will better assist them in preventing the event from happening. Knowledge about members of the organization and persons involved in the operation is especially valuable. Bureau is also cleared to perform offensive operations against " + WorldData.Organizations[o].Name + " to disrupt, slow down, or even eliminate the adversary operation.",
+						"Show1": false,
+						"Show2": false,
+						"Show3": false,
+						"Show4": true,
+						"Text1": "",
+						"Text2": "",
+						"Text3": "",
+						"Text4": "Understood",
+						"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision1Argument": null,
+						"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision2Argument": null,
+						"Decision3Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision3Argument": null,
+						"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision4Argument": null,
+					}
+				)
+				doesItEndWithCall = true
+		# op description assembly
+		if quality < 20:
+			antihomeland = "no knowledge of activity against Homeland"
+			if WorldData.Organizations[o].ActiveOpsAgainstHomeland > 0:
+				if GameLogic.random.randi_range(1,4) == 2:
+					antihomeland = "[u]possible suspicious activity towards Homeland[/u]"
+					antihomeland += " ([u]" + opDescriptions[randi() % opDescriptions.size()] + "[/u])"
+		elif quality < 40:
+			antihomeland = "probably no operations against Homeland"
+			if WorldData.Organizations[o].ActiveOpsAgainstHomeland > 0:
+				if GameLogic.random.randi_range(1,2) == 1:
+					antihomeland = "[u]probably involved in operations against Homeland[/u]"
+					antihomeland += " ([u]" + opDescriptions[randi() % opDescriptions.size()] + "[/u])"
+		elif quality < 60:
+			antihomeland = "no operations against Homeland"
+			if WorldData.Organizations[o].ActiveOpsAgainstHomeland > 0:
+				antihomeland = "[u]executes operations against Homeland[/u]"
+				antihomeland += " ([u]" + opDescriptions[0] + "[/u])"
+		else:
+			antihomeland = "no operations against Homeland"
+			if WorldData.Organizations[o].ActiveOpsAgainstHomeland > 0:
+				antihomeland = "[u]executes " +str(WorldData.Organizations[o].ActiveOpsAgainstHomeland)+ " operations against Homeland[/u]"
+				antihomeland += " ([u]" + PoolStringArray(opDescriptions).join("; ") + "[/u])"
+	############################################################################
+	# result
+	if len(antihomeland) > 0:
+		WorldData.Organizations[o].IntelDescription.push_front("[b]"+date+"[/b] " + antihomeland + ", " + discreteDesc)
+	else:
+		WorldData.Organizations[o].IntelDescription.push_front("[b]"+date+"[/b] " + discreteDesc)
+	############################################################################
 	# backing up after deception
 	if credible == false:
 		WorldData.Organizations[o].Staff = backup.Staff
@@ -164,6 +272,8 @@ func GatherOnOrg(o, quality, date):
 		WorldData.Organizations[o].Counterintelligence = backup.Counterintelligence
 		WorldData.Organizations[o].Type = backup.Type
 		WorldData.Organizations[o].ActiveOpsAgainstHomeland = backup.ActiveOpsAgainstHomeland
+	# finish
+	return doesItEndWithCall
 
 # Gathering intelligence information about organizations
 func RecruitInOrg(o, quality, date):

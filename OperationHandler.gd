@@ -362,11 +362,12 @@ func ProgressOperations():
 			# operation finish: MORE_INTEL type
 			if GameLogic.Operations[i].AbroadProgress <= 0 and GameLogic.Operations[i].Type == OperationGenerator.Type.MORE_INTEL:
 				# operation finishes with intel gathering
-				WorldIntel.GatherOnOrg(
+				var localCall = WorldIntel.GatherOnOrg(
 					GameLogic.Operations[i].Target,
 					GameLogic.Operations[i].AbroadPlan.Quality,
 					GameLogic.GiveDateWithYear()
 				)
+				if localCall == true: doesItEndWithCall = true
 				# debriefing variables
 				GameLogic.Operations[i].Stage = OperationGenerator.Stage.FINISHED
 				GameLogic.OfficersInHQ += GameLogic.Operations[i].AbroadPlan.Officers
@@ -449,11 +450,12 @@ func ProgressOperations():
 				)  # where 0 means no source
 				# ensuring elementary intel if there isn't any
 				if len(WorldData.Organizations[GameLogic.Operations[i].Target].IntelDescription) == 0:
-					WorldIntel.GatherOnOrg(
+					var localCall = WorldIntel.GatherOnOrg(
 						GameLogic.Operations[i].Target,
 						GameLogic.Operations[i].AbroadPlan.Quality,
 						GameLogic.GiveDateWithYear()
 					)
+					if localCall == true: doesItEndWithCall = true
 				# debriefing variables
 				GameLogic.Operations[i].Stage = OperationGenerator.Stage.FINISHED
 				GameLogic.OfficersInHQ += GameLogic.Operations[i].AbroadPlan.Officers
