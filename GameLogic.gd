@@ -38,6 +38,8 @@ var TrustChangeDesc = ""  # ^
 var AttackTicker = 0  # race against time in preventing a terrorist attack, shown if >0
 var AttackTickerOp = {"Org":0,"Op":0}  # which organization and operation it is following
 var UltimatumTicker = 0  # weeks to actual lay off if user doesn't bring back trust
+var CurrentOpsAgainstHomeland = 0  # internal counter to not overwhelm user
+var OpsLimit = 2  # max number of simulatenous ops against homeland, might be increased over time
 # Distance counters: block anything that happens more frequently than limit
 var DistWalkinCounter = 0
 var DistWalkinMin = 10  # minimum ten weeks between those events
@@ -138,12 +140,13 @@ func NextWeek():
 				DateYear += 1
 				# new-year budget increase
 				var budgetIncrease = GameLogic.BudgetFull*(0.01*GameLogic.Trust)
+				if budgetIncrease > 200: budgetIncrease = 200
 				BudgetFull += budgetIncrease
 				AddEvent("New year budget increase: +€"+str(int(budgetIncrease))+"k")
 	# budget-based staff changes
 	# hiring
 	RecruitProgress += BudgetRecruitment / 4 / NewOfficerCost
-	if RecruitProgress >= 1.0:
+	if RecruitProgress >= 1.0 and FreeFundsWeekly() >= 4:
 		# currently always plus one, sort of weekly onboarding limit
 		# in the future expand that to a loop
 		ActiveOfficers += 1
@@ -152,6 +155,7 @@ func NextWeek():
 		StaffExperience -= 3
 		StaffSkill -= 2
 		StaffTrust = StaffTrust * 0.95
+		BudgetSalaries += 4
 		AddEvent("New officer joined the bureau")
 	# upskilling
 	var upskillDiff = BudgetUpskilling-(SkillMaintenanceCost*ActiveOfficers)
@@ -202,7 +206,7 @@ func NextWeek():
 			var opType = OperationGenerator.Type.MORE_INTEL
 			if WorldData.Organizations[whichOrg].IntelIdentified > 0 and random.randi_range(1,5) == 2:
 				opType = OperationGenerator.Type.RECRUIT_SOURCE
-			OperationGenerator.NewOperation(1, whichOrg, WorldData.Organizations[whichOrg].Countries[0], opType)
+			OperationGenerator.NewOperation(1, whichOrg, opType)
 			# if possible, start fast
 			if GameLogic.OfficersInHQ > 0:
 				GameLogic.Operations[-1].AnalyticalOfficers = GameLogic.OfficersInHQ
@@ -343,6 +347,7 @@ func NextWeek():
 				doesItEndWithCall = true
 			else:
 				var increase = int(BudgetFull*0.3)
+				if increase > 100: increase = 100
 				BudgetFull += increase
 				CallManager.CallQueue.append(
 					{
@@ -381,6 +386,13 @@ func NextWeek():
 	# distance counters
 	DistWalkinCounter -= 1
 	DistGovopCounter -= 1
+	# physical limits or bug patches
+	if BudgetOngoingOperations < 0: BudgetOngoingOperations = 0
+	if BudgetSalaries < 0: BudgetSalaries = 0
+	if StaffExperience > 100: StaffExperience = 100
+	if StaffSkill > 100: StaffSkill = 100
+	if StaffTrust > 100: StaffTrust = 100
+	if Trust > 100: Trust = 100
 	############################################################################
 	# call to action
 	if doesItEndWithCall == true:

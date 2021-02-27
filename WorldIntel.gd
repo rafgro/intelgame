@@ -45,6 +45,7 @@ func GatherOnOrg(o, quality, date):
 			noOfIdentified = WorldData.Organizations[o].IntelIdentified-newIdentified
 	else:
 		WorldData.Organizations[o].IntelValue += 1
+	noOfIdentified = int(noOfIdentified)
 	############################################################################
 	# general intel description for the user
 	if WorldData.Organizations[o].Type == WorldData.OrgType.INTEL:
@@ -330,6 +331,9 @@ func RecruitInOrg(o, quality, date):
 		elif WorldData.Organizations[o].Staff < 5000: levelOfSuccess *= 0.8
 		else: levelOfSuccess *= 0.6
 		if levelOfSuccess > 100: levelOfSuccess = 100
+		# intel automatically rises thanks to the source
+		# don't worry about it being too large, it decays 40% over a year
+		WorldData.Organizations[o].IntelValue += levelOfSuccess * 0.4
 		# noting source in org data
 		WorldData.Organizations[o].IntelSources.append(
 			{
@@ -340,6 +344,9 @@ func RecruitInOrg(o, quality, date):
 		var wordLevel = "low"
 		if levelOfSuccess > 70: wordLevel = "high"
 		elif levelOfSuccess > 30: wordLevel = "medium"
-		WorldData.Organizations[o].IntelDescription.push_front(desc + " a new "+wordLevel+"-level source acquired")
+		WorldData.Organizations[o].IntelDescription.push_front(desc + "a new "+wordLevel+"-level source acquired")
+		# ensuring that some minimal intel is present
+		if len(WorldData.Organizations[o].IntelDescription) == 1:
+			GatherOnOrg(o, GameLogic.random.randi_range(5,15), date)
 		# returning for user notification
 		return levelOfSuccess

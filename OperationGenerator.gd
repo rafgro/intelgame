@@ -120,12 +120,14 @@ enum Stage {
 	FAILED,
 }
 
-func NewOperation(source, againstOrg, countryId, whatType):
+func NewOperation(source, againstOrg, whatType):
 	GameLogic.PursuedOperations += 1
 	# name
 	var whichName = randi() % PossibleNames.size()
 	var theName = PossibleNames[whichName]
 	PossibleNames.remove(whichName)  # to avoid using the same name again
+	# place
+	var countryId = WorldData.Organizations[againstOrg].Countries[randi() % WorldData.Organizations[againstOrg].Countries.size()]
 	# type
 	var alevel = "Confidential"
 	var desc = ""

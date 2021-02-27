@@ -26,12 +26,12 @@ func Execute(past):
 				for d in range(0, len(WorldData.Countries)):
 					WorldData.DiplomaticRelations[c][d] += GameLogic.random.randi_range(-10,10)
 				if c == 0:
-					var newApproach = "adverse"
+					var newApproach = "unfavourable"
 					var eventualIncrease = ""
 					if WorldData.Countries[c].PoliticsIntel > 60:
 						newApproach = "friendly"
-						eventualIncrease = "As a mark of a new start, bureau's budget is increased by €" + str(int(GameLogic.BudgetFull*0.3)) + ",000."
-						GameLogic.BudgetFull *= 1.3
+						eventualIncrease = "As a mark of a new start, bureau's budget is increased by €" + str(int(GameLogic.BudgetFull*0.2)) + ",000."
+						GameLogic.BudgetFull *= 1.2
 					elif WorldData.Countries[c].PoliticsIntel > 30: newApproach = "neutral"
 					eventualDesc = "New government formed, achieving "+str(won)+"%. Its approach towards intelligence services can be described as " + newApproach + ". " + eventualIncrease
 			# notifying user if that's homeland
@@ -130,7 +130,8 @@ func Execute(past):
 	# organization proceedings
 	for w in range(0,len(WorldData.Organizations)):
 		# intel decay
-		WorldData.Organizations[w].IntelValue *= 0.99  # ~4%/month, ~40%/year
+		if WorldData.Organizations[w].IntelValue > 0:
+			WorldData.Organizations[w].IntelValue *= 0.99  # ~4%/month, ~40%/year
 		# change of visibility
 		if WorldData.Organizations[w].Known == false:
 			WorldData.Organizations[w].UndercoverCounter -= 1
@@ -156,14 +157,14 @@ func Execute(past):
 				if WorldData.Organizations[w].OpsAgainstHomeland[u].Type == WorldData.ExtOpType.TERRORIST_ATTACK:
 					# clearing up mess with many attacks at the same time
 					var tickerDesc = ""
-					if GameLogic.AttackTicker != 0 and (GameLogic.AttackTickerOp.Org == w or GameLogic.AttackTickerOp.Op == u):
+					if GameLogic.AttackTicker != 0 and (GameLogic.AttackTickerOp.Org != w or GameLogic.AttackTickerOp.Op != u):
 						tickerDesc = "\n\nNote that this is a different plot than reported in dashboard. Homeland is facing more than one attack, possibly happenning in " + str(GameLogic.AttackTicker) + " weeks."
 					# decide if it's happenning: prevented or not
 					var knownInvolvedValue = WorldData.Organizations[w].OpsAgainstHomeland[u].Persons * (WorldData.Organizations[w].IntelIdentified*1.0 / WorldData.Organizations[w].Staff)
-					if int(knownInvolvedValue) >= int(WorldData.Organizations[w].OpsAgainstHomeland[u].Persons*0.6) or GameLogic.random.randi_range(1,100) < WorldData.Organizations[w].OpsAgainstHomeland[u].IntelValue:
+					if (int(knownInvolvedValue) >= int(WorldData.Organizations[w].OpsAgainstHomeland[u].Persons*0.6) or GameLogic.random.randi_range(1,100) < WorldData.Organizations[w].OpsAgainstHomeland[u].IntelValue) and WorldData.Organizations[w].Known == true:
 						var reason = ""
 						if knownInvolvedValue > 0 and knownInvolvedValue < 20:
-							reason += "Law enforcement caught " + str(knownInvolvedValue) + " terrorists. "
+							reason += "Law enforcement caught " + str(int(knownInvolvedValue)) + " terrorists. "
 						elif knownInvolvedValue > 0 and knownInvolvedValue < 20:
 							reason += str(knownInvolvedValue) + " terrorists were refused entry to the country. "
 						if WorldData.Organizations[w].OpsAgainstHomeland[u].IntelValue > 80:
@@ -179,6 +180,7 @@ func Execute(past):
 						if (trustIncrease+GameLogic.Trust) > 100: trustIncrease = 100-GameLogic.Trust
 						GameLogic.Trust += trustIncrease
 						var budgetIncrease = GameLogic.BudgetFull*(0.01*GameLogic.Trust)
+						if budgetIncrease > 100: budgetIncrease = 100
 						GameLogic.BudgetFull += budgetIncrease
 						CallManager.CallQueue.append(
 							{
@@ -227,14 +229,14 @@ func Execute(past):
 						elif WorldData.Organizations[w].OpsAgainstHomeland[u].IntelValue < 30:
 							responsibility += "Officers estimate this association as probable."
 						else:
-							responsibility += "Officers confirm this association."
+							responsibility += "Officers confirm this association. Despite substantial knowledge about the organization, gathered intel was not enough to prevent the attack from happenning."
 					else:
-						if WorldData.Organizations[w].OpsAgainstHomeland[u].IntelValue <= 0:
+						if WorldData.Organizations[w].OpsAgainstHomeland[u].IntelValue <= 1:
 							responsibility = "Officers do not know who perpetuated the attack."
 						elif WorldData.Organizations[w].OpsAgainstHomeland[u].IntelValue < 30:
-							responsibility = "Officers point to " + WorldData.Organizations[w].Name + " as a probable perpetrator."
+							responsibility = "Officers point to " + WorldData.Organizations[w].Name + " as a probable perpetrator. Despite knowledge about the organization, gathered intel was not enough to prevent the attack from happenning."
 						else:
-							responsibility = "Officers identified " + WorldData.Organizations[w].Name + " as the perpetrator."
+							responsibility = "Officers identified " + WorldData.Organizations[w].Name + " as the perpetrator. Despite substantial knowledge about the organization, gathered intel was not enough to prevent the attack from happenning."
 					if WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 98:
 						shortDesc = "Large terrorist attack with many casualties"
 						casualties = GameLogic.random.randi_range(5000,100000)
@@ -365,7 +367,7 @@ func Execute(past):
 								desc += ", local authorities do not know the perpetrator"
 						GameLogic.AddWorldEvent(desc, past)
 				# against homeland: just planning for the future
-				elif past == null:  # not in the past
+				elif past == null and GameLogic.CurrentOpsAgainstHomeland < GameLogic.OpsLimit:
 					var opSize = GameLogic.random.randi_range(1,10) * 0.1  # 0.0-1.0 of org resources
 					var opSecrecy = GameLogic.random.randi_range(WorldData.Organizations[w].Counterintelligence*0.7,100)
 					var opDamage = GameLogic.random.randi_range(WorldData.Organizations[w].Aggression*0.2, WorldData.Organizations[w].Aggression)
@@ -386,8 +388,8 @@ func Execute(past):
 							"FinishCounter": opLength,
 						}
 					))
+					GameLogic.CurrentOpsAgainstHomeland += 1
 					WorldData.Organizations[w].ActiveOpsAgainstHomeland += 1
-					print("new op against homeland: "+str(opLength))
 					# most (but not all!) operations are vaguely communicated to the player
 					if GameLogic.random.randi_range(1,10) < 8:
 						var tickerDesc = ""

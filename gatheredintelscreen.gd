@@ -110,7 +110,7 @@ func _on_Organizations_item_selected(index):
 
 func _on_Gather_pressed():
 	if lastSelectedOrg != -1:
-		OperationGenerator.NewOperation(0, lastSelectedOrg, lastSelectedCountry, OperationGenerator.Type.MORE_INTEL)
+		OperationGenerator.NewOperation(0, lastSelectedOrg, OperationGenerator.Type.MORE_INTEL)
 		# if possible, start fast
 		if GameLogic.OfficersInHQ > 0:
 			GameLogic.Operations[-1].AnalyticalOfficers = GameLogic.OfficersInHQ

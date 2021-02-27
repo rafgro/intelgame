@@ -2,7 +2,10 @@ extends Panel
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	$M/R/Trust.text = "Current Trust: " + str(GameLogic.Trust) + "%"
+	var approach = "unfavourable"
+	if WorldData.Countries[0].PoliticsIntel > 60: approach = "friendly"
+	elif WorldData.Countries[0].PoliticsIntel > 30: approach = "neutral"
+	$M/R/Trust.text = "Current Trust: " + str(GameLogic.Trust) + "%\nAttitude towards intelligence: " + approach
 	var desc = "Government Politics:\n"
 	if WorldData.Countries[0].PoliticsStability > 40: desc += "stable"
 	elif WorldData.Countries[0].PoliticsStability > 20: desc += "unstable"
