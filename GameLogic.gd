@@ -33,14 +33,14 @@ var Operations = []  # array of operation dictionaries
 # Internal logic variables, always describe them
 var AllWeeks = 0  # noting all weeks for later summary
 var RecruitProgress = 0.0  # when reaches 1, a new officer arrives
-var PreviousTrust = 0  # trust from previous week, to write down the next variable
-var TrustChangeDesc = ""  # ^
+var PreviousTrust = 0  # trust from previous week, to write show the change week to week
 var AttackTicker = 0  # race against time in preventing a terrorist attack, shown if >0
 var AttackTickerOp = {"Org":0,"Op":0}  # which organization and operation it is following
 var UltimatumTicker = 0  # weeks to actual lay off if user doesn't bring back trust
 var CurrentOpsAgainstHomeland = 0  # internal counter to not overwhelm user, simultaneous
 var YearlyOpsAgainstHomeland = 0  # internal counter as well, yearly ops, zeroed on 01/01
 var OpsLimit = 2  # max number of simulatenous ops against homeland, might be increased over time
+var UniversalClearance = false  # with high trust, bureau can target anything they want
 # Distance counters: block anything that happens more frequently than limit
 var DistWalkinCounter = 0
 var DistWalkinMin = 10  # minimum ten weeks between those events
@@ -111,7 +111,6 @@ func _ready():
 func NextWeek():
 	############################################################################
 	var doesItEndWithCall = false
-	TrustChangeDesc = ""
 	# clearing u-tags in events
 	var i = 0
 	while i < min(len(BureauEvents), 10):

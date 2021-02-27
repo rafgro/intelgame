@@ -45,24 +45,46 @@ func ProgressOperations():
 				var safetyCounter = 0
 				var countUnavailable = 0
 				var countMinIntel = 0
-				while len(theMethods) < noOfMethods and safetyCounter < noOfMethods*4:
-					safetyCounter += 1
-					var methodId = randi() % WorldData.Methods[mt].size()
-					# avoid duplications
-					if methodId in theMethods:
-						continue
-					# do not use unavailable methods
-					if WorldData.Methods[mt][methodId].Available == false:
-						countUnavailable += 1
-						continue
-					# do not use methods not applicable here
-					if WorldData.Organizations[which].IntelValue < WorldData.Methods[mt][methodId].MinimalIntel:
-						countMinIntel += 1
-						continue
-					theMethods.append(methodId)
-					# adjust to methods
-					if WorldData.Methods[mt][methodId].OfficersRequired > usedOfficers:
-						usedOfficers = WorldData.Methods[mt][methodId].OfficersRequired
+				if GameLogic.Operations[i].Type == OperationGenerator.Type.OFFENSIVE:
+					# picking only one method at a time
+					while safetyCounter < 4:
+						safetyCounter += 1
+						var methodId = randi() % WorldData.Methods[mt].size()
+						# do not use unavailable methods
+						if WorldData.Methods[mt][methodId].Available == false:
+							countUnavailable += 1
+							continue
+						# do not use methods not applicable here
+						if WorldData.Organizations[which].IntelValue < WorldData.Methods[mt][methodId].MinimalIntel:
+							countMinIntel += 1
+							continue
+						theMethods.append(methodId)
+						# adjust to methods
+						if WorldData.Methods[mt][methodId].OfficersRequired > usedOfficers:
+							usedOfficers = WorldData.Methods[mt][methodId].OfficersRequired
+						# take length from the method
+						predictedLength = GameLogic.random.randi_range(WorldData.Methods[mt][methodId].MinLength, WorldData.Methods[mt][methodId].MaxLength)
+						break
+				else:
+					# matching many methods
+					while len(theMethods) < noOfMethods and safetyCounter < noOfMethods*4:
+						safetyCounter += 1
+						var methodId = randi() % WorldData.Methods[mt].size()
+						# avoid duplications
+						if methodId in theMethods:
+							continue
+						# do not use unavailable methods
+						if WorldData.Methods[mt][methodId].Available == false:
+							countUnavailable += 1
+							continue
+						# do not use methods not applicable here
+						if WorldData.Organizations[which].IntelValue < WorldData.Methods[mt][methodId].MinimalIntel:
+							countMinIntel += 1
+							continue
+						theMethods.append(methodId)
+						# adjust to methods
+						if WorldData.Methods[mt][methodId].OfficersRequired > usedOfficers:
+							usedOfficers = WorldData.Methods[mt][methodId].OfficersRequired
 				# no methods
 				if len(theMethods) == 0:
 					if countUnavailable > noOfMethods*2:  # over half of failures
@@ -124,13 +146,13 @@ func ProgressOperations():
 				methodRisk -= highestRisk
 				# this one is clever: average of highest risk method and all other
 				totalRisk += (highestRisk+(methodRisk*1.0/len(theMethods)))*0.7
-				totalRisk *= 0.5+WorldData.Organizations[which].Counterintelligence*0.02
+				totalRisk *= 0.2+WorldData.Organizations[which].Counterintelligence*0.02
 				totalRisk -= WorldData.Organizations[GameLogic.Operations[i].Target].IntelValue*0.5
 				totalRisk *= 0.5+(100.0-WorldData.Countries[whichCountry].IntelFriendliness)*0.01
 				totalRisk -= GameLogic.StaffExperience*0.1
 				var potentialHostiliy = (-1.0)*WorldData.DiplomaticRelations[0][whichCountry]*0.03
 				if potentialHostiliy < 0: potentialHostiliy = 0
-				totalRisk *= 1.0 + potentialHostiliy
+				totalRisk *= 1.0 + (potentialHostiliy*0.5)
 				if totalRisk < 2: totalRisk = 2
 				var riskVsTime = totalRisk * predictedLength
 				var riskDesc = "no"
@@ -197,8 +219,11 @@ func ProgressOperations():
 					}
 				)
 			else:
+				var ifHostile = ""
+				if WorldData.DiplomaticRelations[0][GameLogic.Operations[i].Country] < -30:
+					ifHostile =" (hostile to Homeland, which contributes to the risk)"
 				var wholeContent = "Officers designed following ground operation plans " \
-					+ "to be executed in "+localPlans[0].Country+".\n\n"
+					+ "to be executed in "+localPlans[0].Country+ifHostile+".\n\n"
 				var sh2 = true
 				var sh3 = true
 				if len(localPlans) == 1:
@@ -252,44 +277,11 @@ func ProgressOperations():
 			else:
 				# many shades of _something went wrong_
 				var whatHappened = GameLogic.random.randi_range(0, 100)
-				# base p=15/100: arrest or shooting
-				if whatHappened <= 15:
+				# base p=10/100: arrest or shooting
+				if whatHappened <= 10:
 					var which = GameLogic.Operations[i].Target
-					# arrest if against gov/intel and aggression*risk permits
-					if (WorldData.Organizations[which].Type == WorldData.OrgType.GOVERNMENT or WorldData.Organizations[which].Type == WorldData.OrgType.INTEL) and (WorldData.Organizations[which].Aggression < GameLogic.random.randi_range(70,90)) and (GameLogic.Operations[i].AbroadPlan.Risk < GameLogic.random.randi_range(50,75)):
-						# asking user for action
-						var ifExfiltrationAvailable = false
-						if GameLogic.OfficersInHQ > 0: ifExfiltrationAvailable = true
-						CallManager.CallQueue.append(
-							{
-								"Header": "Urgent Decision",
-								"Level": GameLogic.Operations[i].Level,
-								"Operation": GameLogic.Operations[i].Name + "\nagainst " + WorldData.Organizations[GameLogic.Operations[i].Target].Name,
-								"Content": str(GameLogic.Operations[i].AbroadPlan.Officers) + " officers executing the action were arrested by " + WorldData.Countries[GameLogic.Operations[i].Country].Adjective + " authorities. Decide on appropriate reaction.\n\nPossibilities:\n- engaging government will return officers, but significantly decrease government's trust\n- expelling will happen between intelligence services only, but these officers will never be allowed to enter this country again\n- denying affiliation will result in officer imprisonment and their de facto loss, affecting internal trust, but not affecting any external instituions\n- exfiltration is a risky, covert rescue operation performed by the rest of the officers (" +str(GameLogic.OfficersInHQ) + " available), which returns officers intact in case of success but leads to both huge trust loss and expulsion in case of failure",
-								"Show1": true,
-								"Show2": true,
-								"Show3": true,
-								"Show4": ifExfiltrationAvailable,
-								"Text1": "Engage government",
-								"Text2": "Push for expelling",
-								"Text3": "Deny affiliation",
-								"Text4": "Attempt exfiltration",
-								"Decision1Callback": funcref(GameLogic, "ImplementOfficerRescue"),
-								"Decision1Argument": {"Operation":i, "Choice":1},
-								"Decision2Callback": funcref(GameLogic, "ImplementOfficerRescue"),
-								"Decision2Argument": {"Operation":i, "Choice":2},
-								"Decision3Callback": funcref(GameLogic, "ImplementOfficerRescue"),
-								"Decision3Argument": {"Operation":i, "Choice":3},
-								"Decision4Callback": funcref(GameLogic, "ImplementOfficerRescue"),
-								"Decision4Argument": {"Operation":i, "Choice":4},
-							}
-						)
-						doesItEndWithCall = true
-						# also, if this was gov op, then we loose trust
-						if GameLogic.Operations[i].Source == 1:
-							GameLogic.Trust -= GameLogic.random.randi_range(5,15)
-					# otherwise, killed
-					else:
+					# kill if cannot arrest and aggression*risk permits
+					if WorldData.Organizations[which].Type != WorldData.OrgType.GOVERNMENT and WorldData.Organizations[which].Type != WorldData.OrgType.INTEL and (WorldData.Organizations[which].Aggression > GameLogic.random.randi_range(50,70)) and (GameLogic.Operations[i].AbroadPlan.Risk > GameLogic.random.randi_range(75,95)):
 						# debriefing variables
 						var staffPerecent = GameLogic.ActiveOfficers * 1.0 / GameLogic.Operations[i].AbroadPlan.Officers
 						GameLogic.PursuedOperations -= 1
@@ -336,11 +328,44 @@ func ProgressOperations():
 							}
 						)
 						doesItEndWithCall = true
+						# also, if this was gov op, then we loose trust in hard negative, not only fraction
+						if GameLogic.Operations[i].Source == 1:
+							GameLogic.Trust -= GameLogic.random.randi_range(5,15)
+					# otherwise, arrest
+					else:
+						# asking user for action
+						var ifExfiltrationAvailable = false
+						if GameLogic.OfficersInHQ > 0: ifExfiltrationAvailable = true
+						CallManager.CallQueue.append(
+							{
+								"Header": "Urgent Decision",
+								"Level": GameLogic.Operations[i].Level,
+								"Operation": GameLogic.Operations[i].Name + "\nagainst " + WorldData.Organizations[GameLogic.Operations[i].Target].Name,
+								"Content": str(GameLogic.Operations[i].AbroadPlan.Officers) + " officers executing the action were arrested by " + WorldData.Countries[GameLogic.Operations[i].Country].Adjective + " authorities. Decide on appropriate reaction.\n\nPossibilities:\n- engaging government will return officers, but significantly decrease government's trust\n- expelling will happen between intelligence services only, but these officers will never be allowed to enter this country again\n- denying affiliation will result in officer imprisonment and their de facto loss, affecting internal trust, but not affecting any external instituions\n- exfiltration is a risky, covert rescue operation performed by the rest of the officers (" +str(GameLogic.OfficersInHQ) + " available), which returns officers intact in case of success but leads to both huge trust loss and expulsion in case of failure",
+								"Show1": true,
+								"Show2": true,
+								"Show3": true,
+								"Show4": ifExfiltrationAvailable,
+								"Text1": "Engage government",
+								"Text2": "Push for expelling",
+								"Text3": "Deny affiliation",
+								"Text4": "Attempt exfiltration",
+								"Decision1Callback": funcref(GameLogic, "ImplementOfficerRescue"),
+								"Decision1Argument": {"Operation":i, "Choice":1},
+								"Decision2Callback": funcref(GameLogic, "ImplementOfficerRescue"),
+								"Decision2Argument": {"Operation":i, "Choice":2},
+								"Decision3Callback": funcref(GameLogic, "ImplementOfficerRescue"),
+								"Decision3Argument": {"Operation":i, "Choice":3},
+								"Decision4Callback": funcref(GameLogic, "ImplementOfficerRescue"),
+								"Decision4Argument": {"Operation":i, "Choice":4},
+							}
+						)
+						doesItEndWithCall = true
 						# also, if this was gov op, then we loose trust
 						if GameLogic.Operations[i].Source == 1:
 							GameLogic.Trust -= GameLogic.random.randi_range(5,15)
 				# base p=25/100: escape
-				elif whatHappened <= 40:
+				elif whatHappened <= 35:
 					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": officers were almost caught and had to flee to homeland")
 					# internal debriefing
 					GameLogic.Operations[i].Stage = OperationGenerator.Stage.PLANNING_OPERATION
@@ -357,7 +382,7 @@ func ProgressOperations():
 					if (WorldData.Countries[0].PoliticsIntel+GameLogic.random.randi_range(-15,15)) > 50:
 						# changing only if government cares
 						GameLogic.Trust -= 5
-				# base p=70/100: slowdown
+				# base p=65/100: slowdown
 				else:
 					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": counterintelligence slowed down operation")
 					GameLogic.StaffSkill = GameLogic.StaffSkill*1.01
@@ -487,7 +512,7 @@ func ProgressOperations():
 						if sourceLevel > 70: wordLevel = "high"
 						elif sourceLevel > 30: wordLevel = "medium"
 						content = "Operation was successfully executed. A new, " +wordLevel+ "-level source in " + WorldData.Organizations[GameLogic.Operations[i].Target].Name + " will regularly provide new intel.\n"
-						GameLogic.Operations[i].Result = "Success"
+						GameLogic.Operations[i].Result = "SUCCESS"
 						GameLogic.StaffSkill += GameLogic.random.randi_range(3,6)
 						GameLogic.StaffTrust = GameLogic.StaffTrust*(1.05+difficulty*0.0025)
 						if (WorldData.Countries[0].PoliticsIntel+GameLogic.random.randi_range(-15,15)) > 50:
@@ -518,6 +543,165 @@ func ProgressOperations():
 				# debriefing user
 				if sourceLevel != 0:
 					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": bureau acquired a new source")
+				GameLogic.AddEvent(GameLogic.Operations[i].Name + ": "+str(GameLogic.Operations[i].AbroadPlan.Officers)+" officer(s) returned to homeland")
+				GameLogic.AddEvent("Bureau finished operation "+GameLogic.Operations[i].Name)
+				CallManager.CallQueue.append(
+					{
+						"Header": "Important Information",
+						"Level": GameLogic.Operations[i].Level,
+						"Operation": GameLogic.Operations[i].Name  + "\nagainst " + WorldData.Organizations[GameLogic.Operations[i].Target].Name,
+						"Content": content,
+						"Show1": false,
+						"Show2": false,
+						"Show3": false,
+						"Show4": true,
+						"Text1": "",
+						"Text2": "",
+						"Text3": "",
+						"Text4": "Understood",
+						"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision1Argument": null,
+						"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision2Argument": null,
+						"Decision3Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision3Argument": null,
+						"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision4Argument": null,
+					}
+				)
+				doesItEndWithCall = true
+				# internal debriefing
+				GameLogic.StaffExperience += GameLogic.Operations[i].AbroadPlan.Officers
+			####################################################################
+			# operation finish: OFFENSIVE type
+			elif GameLogic.Operations[i].AbroadProgress <= 0 and GameLogic.Operations[i].Type == OperationGenerator.Type.OFFENSIVE:
+				# work out anything that's possible from method
+				# but not everything is, so some parts are hardcoded
+				# debriefing variables
+				GameLogic.Operations[i].Stage = OperationGenerator.Stage.FINISHED
+				GameLogic.OfficersInHQ += GameLogic.Operations[i].AbroadPlan.Officers
+				GameLogic.OfficersAbroad -= GameLogic.Operations[i].AbroadPlan.Officers
+				GameLogic.BudgetOngoingOperations -= GameLogic.Operations[i].AbroadPlan.Cost
+				GameLogic.PursuedOperations -= 1
+				var whichOrg = GameLogic.Operations[i].Target
+				WorldData.Organizations[whichOrg].IntelValue += 2
+				# actual result and influence on organization
+				var success = false
+				var casualties = 0
+				var funds = 0
+				var destroyedOrg = false
+				var destroyedOps = 0
+				var lengthenedOps = 0
+				if GameLogic.random.randi_range(0,100) < GameLogic.Operations[i].AbroadPlan.Quality:
+					success = true
+					var methodId = GameLogic.Operations[i].AbroadPlan.Methods[0]
+					# removing members
+					if WorldData.Methods[2][methodId].PossibleCasualties > 0:
+						casualties = WorldData.Methods[2][methodId].PossibleCasualties * (1.0+(0.1*GameLogic.random.randi_range(-5,5)))
+						if casualties > WorldData.Organizations[whichOrg].Staff:
+							casualties = WorldData.Organizations[whichOrg].Staff
+						WorldData.Organizations[whichOrg].Staff -= casualties
+						if WorldData.Organizations[whichOrg].Staff <= 0:
+							destroyedOrg = true
+					# removing money
+					if WorldData.Methods[2][methodId].BudgetChange > 0:
+						funds = (WorldData.Methods[2][methodId].BudgetChange*0.01) * WorldData.Organizations[whichOrg].Budget - GameLogic.random.randi_range(100,1000)
+						if funds > WorldData.Organizations[whichOrg].Budget:
+							funds = WorldData.Organizations[whichOrg].Budget
+						WorldData.Organizations[whichOrg].Budget -= funds
+						if WorldData.Organizations[whichOrg].Budget <= 0:
+							destroyedOrg = true
+					# removing operations, accumulated with previous ones
+					if WorldData.Organizations[whichOrg].ActiveOpsAgainstHomeland > 0:
+						var accumulatedDamage = WorldData.Methods[2][methodId].DamageToOps + GameLogic.random.randi_range(-5,5)
+						for a in range(0, len(WorldData.Organizations[whichOrg].OpsAgainstHomeland)):
+							if WorldData.Organizations[whichOrg].OpsAgainstHomeland[a].Active == false:
+								continue
+							# person-based approach
+							if WorldData.Organizations[whichOrg].OpsAgainstHomeland[a].Persons > casualties:
+								WorldData.Organizations[whichOrg].OpsAgainstHomeland[a].Active = false
+								destroyedOps += 1
+								continue
+							elif casualties > 0:
+								var percentOfChange = 1.0 + (casualties*1.0 / WorldData.Organizations[whichOrg].OpsAgainstHomeland[a].Persons) + (GameLogic.random.randi_range(-10,10)*0.01)
+								WorldData.Organizations[whichOrg].OpsAgainstHomeland[a].FinishCounter *= percentOfChange
+								WorldData.Organizations[whichOrg].OpsAgainstHomeland[a].Damage -= 5
+								if percentOfChange > 1.0: lengthenedOps += 1
+								continue
+							# budget-based approach
+							if WorldData.Organizations[whichOrg].OpsAgainstHomeland[a].Budget > funds:
+								WorldData.Organizations[whichOrg].OpsAgainstHomeland[a].Active = false
+								destroyedOps += 1
+								continue
+							elif funds > 0:
+								var percentOfChange = 1.0 + (funds*1.0 / WorldData.Organizations[whichOrg].OpsAgainstHomeland[a].Budget) + (GameLogic.random.randi_range(-10,10)*0.01)
+								WorldData.Organizations[whichOrg].OpsAgainstHomeland[a].FinishCounter *= percentOfChange
+								WorldData.Organizations[whichOrg].OpsAgainstHomeland[a].Damage -= 5
+								if percentOfChange > 1.0: lengthenedOps += 1
+								continue
+				var inflictedDamage = ""
+				if success == true:
+					if destroyedOrg == true:
+						inflictedDamage = "As a result, the organization has been completely eliminated. "
+						WorldData.Organizations[whichOrg].Active = false
+					else:
+						if destroyedOps > 0:
+							inflictedDamage = "As a result, danger of some of the attacks was eliminated. "
+						elif lengthenedOps > 0:
+							inflictedDamage = "As a result, some operations of the organization were delayed. "
+					casualties = int(casualties)
+					funds = int(funds)
+					if casualties > 0:
+						if casualties > 1:
+							inflictedDamage += WorldData.Organizations[whichOrg].Name + " lost " + str(casualties) + " members. "
+						elif casualties == 1:
+							inflictedDamage += WorldData.Organizations[whichOrg].Name + " lost one valuable member. "
+					if funds > 0:
+						inflictedDamage += "Inflicted financial damage is estimated at €" + str(funds) + ",000. "
+				# debriefing user and results of the intel
+				var content = ""
+				var methodDesc = WorldData.Methods[2][GameLogic.Operations[i].AbroadPlan.Methods[0]].Name
+				if GameLogic.Operations[i].Source == 0:
+					if success == false:
+						content = "Operation failed. Officers did not damage " + WorldData.Organizations[GameLogic.Operations[i].Target].Name + ", they were not able to successfully " + methodDesc + ".\n"
+						GameLogic.Operations[i].Result = "FAILURE"
+						GameLogic.StaffSkill += 2
+						GameLogic.StaffTrust = GameLogic.StaffTrust*0.9
+						if (WorldData.Countries[0].PoliticsIntel+GameLogic.random.randi_range(-15,15)) > 50:
+							# changing after own operation only if government cares
+							GameLogic.Trust *= 0.95
+					else:
+						content = "Operation was successfully executed. Officers damaged " + WorldData.Organizations[GameLogic.Operations[i].Target].Name + ", they were able to successfully " + methodDesc + ". " + inflictedDamage
+						GameLogic.Operations[i].Result = "SUCCESS"
+						GameLogic.StaffSkill += GameLogic.random.randi_range(3,6)
+						GameLogic.StaffTrust = GameLogic.StaffTrust*1.1
+						if (WorldData.Countries[0].PoliticsIntel+GameLogic.random.randi_range(-15,15)) > 50:
+							# increasing more if government cares
+							GameLogic.Trust += 5
+						else:
+							GameLogic.Trust += 3
+				# debriefing government and effect on the user
+				elif GameLogic.Operations[i].Source == 1:
+					var govFeedback = GameLogic.random.randi_range(10,30)
+					if success == false:
+						govFeedback = GameLogic.random.randi_range(-20,-5)
+					if govFeedback > 0: govFeedback *= WorldData.Countries[0].PoliticsIntel*0.01
+					if govFeedback > 20: govFeedback = GameLogic.random.randi_range(20,23)
+					govFeedback = int(govFeedback)
+					GameLogic.Trust += govFeedback
+					var govFeedbackDesc = "Officers failed at damaging an organization indicated by the government. Bureau lost "+str((-1)*govFeedback)+"% of trust."
+					GameLogic.Operations[i].Result = "COMPLETED, negative feedback"
+					if success == true:
+						var budgetIncrease = GameLogic.BudgetFull*(0.01*GameLogic.Trust*0.5)
+						if budgetIncrease > 100: budgetIncrease = 100
+						GameLogic.BudgetFull += budgetIncrease
+						govFeedbackDesc = "Officers damaged an organization indicated by the government. " + inflictedDamage + " Bureau gained "+str(govFeedback)+"% of trust. As a confirmation, government increases bureau's budget by €"+str(int(budgetIncrease))+",000.\n"
+						GameLogic.Operations[i].Result = "SUCCESS, positive feedback"
+						GameLogic.AddEvent("Government increased budget by €"+str(int(budgetIncrease))+"k")
+					content = "Operation has been finished. " + govFeedbackDesc
+				# debriefing user
+				if success == true:
+					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": bureau inflicted damage on the target")
 				GameLogic.AddEvent(GameLogic.Operations[i].Name + ": "+str(GameLogic.Operations[i].AbroadPlan.Officers)+" officer(s) returned to homeland")
 				GameLogic.AddEvent("Bureau finished operation "+GameLogic.Operations[i].Name)
 				CallManager.CallQueue.append(

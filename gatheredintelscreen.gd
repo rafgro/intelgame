@@ -48,7 +48,7 @@ func _on_AmountList_item_selected(index):
 	lastMapOfOrgs.clear()
 	$M/R/Organizations.clear()
 	for o in range(0, len(WorldData.Organizations)):
-		if WorldData.Organizations[o].Known == true:
+		if WorldData.Organizations[o].Known == true and WorldData.Organizations[o].Active == true:
 			if index == 0:  # no intel
 				if len(WorldData.Organizations[o].IntelDescription) == 0:
 					lastMapOfOrgs.append(o)
@@ -73,7 +73,7 @@ func _on_TypeList_item_selected(index):
 	if index == 1: whichType = WorldData.OrgType.INTEL
 	elif index == 2: whichType = WorldData.OrgType.GENERALTERROR
 	for o in range(0, len(WorldData.Organizations)):
-		if WorldData.Organizations[o].Type == whichType and WorldData.Organizations[o].Known == true:
+		if WorldData.Organizations[o].Type == whichType and WorldData.Organizations[o].Known == true and WorldData.Organizations[o].Active == true:
 			lastMapOfOrgs.append(o)
 			$M/R/Organizations.add_item(WorldData.Organizations[o].Name)
 
@@ -82,7 +82,7 @@ func _on_CountriesList_item_selected(index):
 	$M/R/Organizations.clear()
 	lastSelectedCountry = mapOfCountries[index]
 	for o in range(0, len(WorldData.Organizations)):
-		if mapOfCountries[index] in WorldData.Organizations[o].Countries and WorldData.Organizations[o].Known == true:
+		if mapOfCountries[index] in WorldData.Organizations[o].Countries and WorldData.Organizations[o].Known == true and WorldData.Organizations[o].Active == true:
 			lastMapOfOrgs.append(o)
 			var desc = WorldData.Organizations[o].Name
 			$M/R/Organizations.add_item(desc)
@@ -107,7 +107,7 @@ func _on_Organizations_item_selected(index):
 		$M/R/H/Gather.disabled = false
 		if WorldData.Organizations[o].IntelIdentified > 0: $M/R/H/Recruit.disabled = false
 		else: $M/R/H/Recruit.disabled = true
-		if WorldData.Organizations[o].OffensiveClearance == true: $M/R/H/Offensive.disabled = false
+		if WorldData.Organizations[o].OffensiveClearance == true or GameLogic.UniversalClearance == true: $M/R/H/Offensive.disabled = false
 		else: $M/R/H/Offensive.disabled = true
 
 func _on_Gather_pressed():

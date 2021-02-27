@@ -66,6 +66,7 @@ enum OrgType {
 }
 
 class AnOrganization:
+	var Active = true  # instead of removing, just inactivating organizations
 	var Type = OrgType.INTEL
 	var Name = null
 	var Fixed = true  # cannot delete if true, mainly for intel agencies
@@ -84,8 +85,7 @@ class AnOrganization:
 	var IntelValue = 0  # -100 (long search) to 100 (own), determines available methods
 	var IntelSources = []  # arr of dicts {"Level","Trust"}
 	var UndercoverCounter = 0  # weeks with known=false, subtracted 1 every week
-	# DEBUG true
-	var OffensiveClearance = true  # gov-given clearance for using offensive methods
+	var OffensiveClearance = false  # gov-given clearance for using offensive methods
 	
 	func _init(adictionary):
 		Type = adictionary.Type
@@ -165,7 +165,6 @@ class AMethodOffensive:  # in future change to inheritance or something
 	var PossibleCasualties = 0  # how many members of org can be killed or arrested
 	var BudgetChange = 0  # 0 to 100, additional change, apart from casualties
 	var DamageToOps = 0  # 0 to 100, additional change, apart from budget and casualties
-	var Luck = 0  # 0 (never happens) to 100 (always happens)
 	
 	func _init(aDictionary):
 		Name = aDictionary.Name
@@ -218,7 +217,8 @@ var Methods = [
 	],
 	# OFFENSIVE methods
 	[
-		AMethodOffensive.new({ "Name": "track down and disrupt funding", "Cost": 15, "Quality": 25, "Risk": 20, "OfficersRequired": 3, "MinimalSkill": 15, "Available": false, "MinimalIntel": -10, "MinimalTrust": 0, "MinLength": 5, "MaxLength": 12, "PossibleCasualties": 0, "BudgetChange": 100, "DamageToOps": 0, }),
+		AMethodOffensive.new({ "Name": "target any funding sources", "Cost": 10, "Quality": 90, "Risk": 20, "OfficersRequired": 3, "MinimalSkill": 10, "Available": false, "MinimalIntel": -10, "MinimalTrust": 0, "MinLength": 3, "MaxLength": 6, "PossibleCasualties": 0, "BudgetChange": 10, "DamageToOps": 0, }),
+		AMethodOffensive.new({ "Name": "track down and disrupt funding", "Cost": 15, "Quality": 50, "Risk": 20, "OfficersRequired": 3, "MinimalSkill": 15, "Available": false, "MinimalIntel": -10, "MinimalTrust": 0, "MinLength": 4, "MaxLength": 10, "PossibleCasualties": 0, "BudgetChange": 50, "DamageToOps": 0, }),
 		AMethodOffensive.new({ "Name": "provide evidence for local arrests", "Cost": 2, "Quality": 15, "Risk": 30, "OfficersRequired": 1, "MinimalSkill": 10, "Available": false, "MinimalIntel": 15, "MinimalTrust": 10, "MinLength": 1, "MaxLength": 2, "PossibleCasualties": 20, "BudgetChange": 0, "DamageToOps": 10, }),
 		AMethodOffensive.new({ "Name": "kidnap and interrogate a known member", "Cost": 20, "Quality": 35, "Risk": 90, "OfficersRequired": 6, "MinimalSkill": 30, "Available": false, "MinimalIntel": 20, "MinimalTrust": 25, "MinLength": 2, "MaxLength": 3, "PossibleCasualties": 1, "BudgetChange": 0, "DamageToOps": 40, }),
 		AMethodOffensive.new({ "Name": "kill a known member", "Cost": 30, "Quality": 50, "Risk": 75, "OfficersRequired": 8, "MinimalSkill": 35, "Available": false, "MinimalIntel": 15, "MinimalTrust": 25, "MinLength": 1, "MaxLength": 2, "PossibleCasualties": 1, "BudgetChange": 0, "DamageToOps": 40, }),
@@ -226,9 +226,9 @@ var Methods = [
 		AMethodOffensive.new({ "Name": "engage local gangs", "Cost": 50, "Quality": 10, "Risk": 40, "OfficersRequired": 2, "MinimalSkill": 15, "Available": false, "MinimalIntel": 20, "MinimalTrust": 35, "MinLength": 1, "MaxLength": 3, "PossibleCasualties": 250, "BudgetChange": 40, "DamageToOps": 30, }),
 		AMethodOffensive.new({ "Name": "bomb locations", "Cost": 60, "Quality": 75, "Risk": 60, "OfficersRequired": 10, "MinimalSkill": 45, "Available": false, "MinimalIntel": -20, "MinimalTrust": 25, "MinLength": 2, "MaxLength": 4, "PossibleCasualties": 1000, "BudgetChange": 20, "DamageToOps": 70, }),
 		AMethodOffensive.new({ "Name": "train and send private guerilla", "Cost": 100, "Quality": 85, "Risk": 20, "OfficersRequired": 25, "MinimalSkill": 35, "Available": false, "MinimalIntel": -40, "MinimalTrust": 50, "MinLength": 10, "MaxLength": 25, "PossibleCasualties": 2500, "BudgetChange": 50, "DamageToOps": 90, }),
-		AMethodOffensive.new({ "Name": "basic psychological operation", "Cost": 30, "Quality": 10, "Risk": 10, "OfficersRequired": 3, "MinimalSkill": 20, "Available": false, "MinimalIntel": 5, "MinimalTrust": 0, "MinLength": 2, "MaxLength": 9, "PossibleCasualties": 0, "BudgetChange": 10, "DamageToOps": 10, }),
-		AMethodOffensive.new({ "Name": "misinformation campaign", "Cost": 50, "Quality": 30, "Risk": 10, "OfficersRequired": 6, "MinimalSkill": 40, "Available": false, "MinimalIntel": 15, "MinimalTrust": 20, "MinLength": 2, "MaxLength": 9, "PossibleCasualties": 0, "BudgetChange": 20, "DamageToOps": 20, }),
-		AMethodOffensive.new({ "Name": "black propaganda", "Cost": 100, "Quality": 45, "Risk": 5, "OfficersRequired": 25, "MinimalSkill": 60, "Available": false, "MinimalIntel": 25, "MinimalTrust": 40, "MinLength": 6, "MaxLength": 12, "PossibleCasualties": 0, "BudgetChange": 40, "DamageToOps": 100, }),
+		AMethodOffensive.new({ "Name": "perform basic psychological operation", "Cost": 30, "Quality": 10, "Risk": 10, "OfficersRequired": 3, "MinimalSkill": 20, "Available": false, "MinimalIntel": 5, "MinimalTrust": 0, "MinLength": 2, "MaxLength": 9, "PossibleCasualties": 0, "BudgetChange": 10, "DamageToOps": 10, }),
+		AMethodOffensive.new({ "Name": "execute misinformation campaign", "Cost": 50, "Quality": 30, "Risk": 10, "OfficersRequired": 6, "MinimalSkill": 40, "Available": false, "MinimalIntel": 15, "MinimalTrust": 20, "MinLength": 2, "MaxLength": 9, "PossibleCasualties": 0, "BudgetChange": 20, "DamageToOps": 20, }),
+		AMethodOffensive.new({ "Name": "spread black propaganda", "Cost": 100, "Quality": 45, "Risk": 5, "OfficersRequired": 25, "MinimalSkill": 60, "Available": false, "MinimalIntel": 25, "MinimalTrust": 40, "MinLength": 6, "MaxLength": 12, "PossibleCasualties": 0, "BudgetChange": 40, "DamageToOps": 100, }),
 	]
 ]
 

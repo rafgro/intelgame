@@ -129,6 +129,8 @@ func Execute(past):
 		GameLogic.AddWorldEvent(message, past)
 	# organization proceedings
 	for w in range(0,len(WorldData.Organizations)):
+		if WorldData.Organizations[w].Active == false:
+			continue
 		# intel decay
 		if WorldData.Organizations[w].IntelValue > 0:
 			WorldData.Organizations[w].IntelValue *= 0.99  # ~4%/month, ~40%/year

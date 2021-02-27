@@ -31,7 +31,13 @@ func GatherOnOrg(o, quality, date):
 	var noOfIdentified = 0
 	if quality > WorldData.Organizations[o].IntelValue:
 		# general intel value
-		WorldData.Organizations[o].IntelValue += quality*0.5
+		var theFactor = 0.1  # easier to gain in early stages, harder in later
+		if WorldData.Organizations[o].IntelValue < 10: theFactor = 1.0
+		elif WorldData.Organizations[o].IntelValue < 20: theFactor = 0.8
+		elif WorldData.Organizations[o].IntelValue < 35: theFactor = 0.6
+		elif WorldData.Organizations[o].IntelValue < 50: theFactor = 0.4
+		elif WorldData.Organizations[o].IntelValue < 70: theFactor = 0.2
+		WorldData.Organizations[o].IntelValue += quality*theFactor
 		if credible == false: WorldData.Organizations[o].IntelValue -= quality
 		# individual members identified
 		var infFactor = 0.001*quality  # eg, 30->0.03
@@ -202,7 +208,7 @@ func GatherOnOrg(o, quality, date):
 				var knownInvolved = " [no identified participants]"
 				if knownInvolvedValue > 0:
 					knownInvolved = " ["+str(int(knownInvolvedValue))+" identified participants]"
-				opDescriptions.append(damage + " " + theType + ", with ~" + roundedP + " individuals involved"+knownInvolved+", finishing in " + str(WorldData.Organizations[o].OpsAgainstHomeland[z].FinishCounter) + " weeks")
+				opDescriptions.append(damage + " " + theType + ", with ~" + str(int(roundedP)) + " individuals involved"+knownInvolved+", finishing in " + str(WorldData.Organizations[o].OpsAgainstHomeland[z].FinishCounter) + " weeks")
 			else:
 				var theType = "terrorist operation inside Homeland"
 				if WorldData.Organizations[o].OpsAgainstHomeland[z].Type == WorldData.ExtOpType.EMBASSY_TERRORIST_ATTACK:
@@ -230,7 +236,7 @@ func GatherOnOrg(o, quality, date):
 						"Header": "Important Information",
 						"Level": "Top Secret",
 						"Operation": "-//-",
-						"Content": "New, significant intel has been gathered in " + WorldData.Organizations[o].Name + ". The organization was associated with:\n\n[b]"+opDescriptions[-1]+"[/b]\n\nHomeland authorities were notified about the danger. More details will better assist them in preventing the event from happening. Knowledge about members of the organization and persons involved in the operation is especially valuable. Bureau is also cleared to perform offensive operations against " + WorldData.Organizations[o].Name + " to disrupt, slow down, or even eliminate the adversary operation.",
+						"Content": "New, significant intel has been gathered in " + WorldData.Organizations[o].Name + ". The organization was associated with:\n\n[b]"+opDescriptions[-1]+"[/b]\n\nHomeland authorities were notified about the danger. More details will better assist them in preventing the event from happening. Knowledge about members of the organization and persons involved in the operation is especially valuable. Bureau is also cleared to perform offensive operations against " + WorldData.Organizations[o].Name + " to disrupt, slow down, or even eliminate the adversary.",
 						"Show1": false,
 						"Show2": false,
 						"Show3": false,
@@ -249,6 +255,9 @@ func GatherOnOrg(o, quality, date):
 						"Decision4Argument": null,
 					}
 				)
+				if WorldData.Organizations[o].OffensiveClearance == false:
+					WorldData.Organizations[o].OffensiveClearance = true
+					GameLogic.AddEvent("Bureau received offensive clearance for targeting " + WorldData.Organizations[o].Name)
 				doesItEndWithCall = true
 		# op description assembly
 		if quality < 20:
@@ -263,16 +272,25 @@ func GatherOnOrg(o, quality, date):
 				if GameLogic.random.randi_range(1,2) == 1:
 					antihomeland = "[u]probably involved in operations against Homeland[/u]"
 					antihomeland += " ([u]" + opDescriptions[randi() % opDescriptions.size()] + "[/u])"
+					if WorldData.Organizations[o].OffensiveClearance == false:
+						WorldData.Organizations[o].OffensiveClearance = true
+						GameLogic.AddEvent("Bureau received offensive clearance for targeting " + WorldData.Organizations[o].Name)
 		elif quality < 60:
 			antihomeland = "no operations against Homeland"
 			if WorldData.Organizations[o].ActiveOpsAgainstHomeland > 0:
 				antihomeland = "[u]executes operations against Homeland[/u]"
 				antihomeland += " ([u]" + opDescriptions[0] + "[/u])"
+				if WorldData.Organizations[o].OffensiveClearance == false:
+					WorldData.Organizations[o].OffensiveClearance = true
+					GameLogic.AddEvent("Bureau received offensive clearance for targeting " + WorldData.Organizations[o].Name)
 		else:
 			antihomeland = "no operations against Homeland"
 			if WorldData.Organizations[o].ActiveOpsAgainstHomeland > 0:
 				antihomeland = "[u]executes " +str(WorldData.Organizations[o].ActiveOpsAgainstHomeland)+ " operations against Homeland[/u]"
 				antihomeland += " ([u]" + PoolStringArray(opDescriptions).join("; ") + "[/u])"
+				if WorldData.Organizations[o].OffensiveClearance == false:
+					WorldData.Organizations[o].OffensiveClearance = true
+					GameLogic.AddEvent("Bureau received offensive clearance for targeting " + WorldData.Organizations[o].Name)
 	############################################################################
 	# intel about agencies brings intel about random other organizations
 	if WorldData.Organizations[o].Type == WorldData.OrgType.INTEL:

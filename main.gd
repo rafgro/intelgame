@@ -24,10 +24,19 @@ func _ready():
 
 func _on_Panel_tree_entered():
 	# trust, here to account for many possible screens before showing this one
+	# a little bit of game logic happenning too, because thats the most logical place
 	var trustDesc = ""
 	if int(GameLogic.Trust-GameLogic.PreviousTrust) != 0:  # against zero to avoid reporting -0 for -0.235
-		if GameLogic.Trust > GameLogic.PreviousTrust: trustDesc = "+" + str(int(GameLogic.Trust - GameLogic.PreviousTrust)) + "% change of government trust"
-		else: trustDesc = str(int(GameLogic.Trust - GameLogic.PreviousTrust)) + "% change of government trust"
+		if GameLogic.Trust > GameLogic.PreviousTrust:
+			trustDesc = "+" + str(int(GameLogic.Trust - GameLogic.PreviousTrust)) + "% change of government trust"
+			if GameLogic.Trust >= 80 and GameLogic.PreviousTrust < 80:
+				GameLogic.AddEvent("Thanks to increase of trust, bureau received universal clearance to perform all operations")
+				GameLogic.UniversalClearance = true
+		else:
+			trustDesc = str(int(GameLogic.Trust - GameLogic.PreviousTrust)) + "% change of government trust"
+			if GameLogic.Trust < 80 and GameLogic.PreviousTrust >= 80:
+				GameLogic.AddEvent("Due to decrease of trust, bureau lost the universal clearance")
+				GameLogic.UniversalClearance = false
 		GameLogic.PreviousTrust = GameLogic.Trust
 	$M/R/CDate/C/TrustChange.text = trustDesc
 

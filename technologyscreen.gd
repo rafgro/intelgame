@@ -25,6 +25,13 @@ func _on_ItemList_item_selected(index):
 	if WorldData.Methods[t][m].Available == true:
 		desc += "Cost: €" + str(WorldData.Methods[t][m].Cost) + ",000 weekly\n"
 		desc += "Officers involved: " + str(WorldData.Methods[t][m].OfficersRequired) + "\n"
+		var intelDesc = "none"
+		if WorldData.Methods[t][m].MinimalIntel > 50: intelDesc = "very deep intelligence"
+		elif WorldData.Methods[t][m].MinimalIntel > 30: intelDesc = "deep intelligence"
+		elif WorldData.Methods[t][m].MinimalIntel > 10: intelDesc = "known organization"
+		elif WorldData.Methods[t][m].MinimalIntel > 0: intelDesc = "basic knowledge"
+		elif WorldData.Methods[t][m].MinimalIntel > -20: intelDesc = "negligible knowledge"
+		desc += "Required amount of intel: " + intelDesc + "\n"
 	else:
 		desc += "Cost: €" + str(WorldData.Methods[t][m].Cost) + ",000 weekly"
 		if GameLogic.FreeFundsWeeklyWithoutOngoing() < WorldData.Methods[t][m].Cost:
