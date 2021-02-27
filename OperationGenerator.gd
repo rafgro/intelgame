@@ -136,6 +136,9 @@ func NewOperation(source, againstOrg, whatType):
 	elif whatType == Type.RECRUIT_SOURCE:
 		desc = "Recruit source in " + WorldData.Organizations[againstOrg].Name
 		alevel = "Secret"
+	elif whatType == Type.OFFENSIVE:
+		desc = "Damage " + WorldData.Organizations[againstOrg].Name
+		alevel = "Top Secret"
 	# local communicate
 	if source == 0:
 		GameLogic.AddEvent("Bureau started a new operation: " + theName)

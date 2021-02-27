@@ -84,6 +84,8 @@ class AnOrganization:
 	var IntelValue = 0  # -100 (long search) to 100 (own), determines available methods
 	var IntelSources = []  # arr of dicts {"Level","Trust"}
 	var UndercoverCounter = 0  # weeks with known=false, subtracted 1 every week
+	# DEBUG true
+	var OffensiveClearance = true  # gov-given clearance for using offensive methods
 	
 	func _init(adictionary):
 		Type = adictionary.Type
@@ -145,6 +147,42 @@ class AMethod:
 		MinimalIntel = aDictionary.MinimalIntel
 		MinimalTrust = aDictionary.MinimalTrust
 
+class AMethodOffensive:  # in future change to inheritance or something
+	# difference to normal methods: offensive ones are exclusive
+	# plus quality is regarded as a probability/luck factor
+	# whereas other, precise parameters define actual outcome
+	var Name = null
+	var Cost = 0  # weekly
+	var Quality = 0  # from 0 (useless) to 100 (perfect theft)
+	var Risk = 0  # from 0 (hacking) to 100 (shooting), given well working counterintelligence
+	var OfficersRequired = 0  # how many must be involved in operation
+	var MinimalSkill = 0  # minimal average skill to permit this method
+	var Available = false  # automatically controlled and set by the game
+	var MinimalIntel = 0  # minimal intel level about a target to use this method
+	var MinimalTrust = 0  # minimal government trust level to use this method
+	var MinLength = 0  # minimal length of operation in weeks
+	var MaxLength = 0  # maximal length of operation in weeks
+	var PossibleCasualties = 0  # how many members of org can be killed or arrested
+	var BudgetChange = 0  # 0 to 100, additional change, apart from casualties
+	var DamageToOps = 0  # 0 to 100, additional change, apart from budget and casualties
+	var Luck = 0  # 0 (never happens) to 100 (always happens)
+	
+	func _init(aDictionary):
+		Name = aDictionary.Name
+		Cost = aDictionary.Cost
+		Quality = aDictionary.Quality
+		Risk = aDictionary.Risk
+		OfficersRequired = aDictionary.OfficersRequired
+		MinimalSkill = aDictionary.MinimalSkill
+		Available = aDictionary.Available
+		MinimalIntel = aDictionary.MinimalIntel
+		MinimalTrust = aDictionary.MinimalTrust
+		MinLength = aDictionary.MinLength
+		MaxLength = aDictionary.MaxLength
+		PossibleCasualties = aDictionary.PossibleCasualties
+		BudgetChange = aDictionary.BudgetChange
+		DamageToOps = aDictionary.DamageToOps
+
 # Methods on the ground
 # 2D array: first row for MORE_INTEL, second row for RECRUIT_SOURCE etc
 var Methods = [
@@ -177,6 +215,20 @@ var Methods = [
 		AMethod.new({ "Name": "construct network of close contacts", "Cost": 15, "Quality": 55, "Risk": 20, "OfficersRequired": 6, "MinimalSkill": 45, "Available": false, "MinimalIntel": 40, "MinimalTrust": 0, }),
 		AMethod.new({ "Name": "identify potential defectors", "Cost": 25, "Quality": 70, "Risk": 40, "OfficersRequired": 12, "MinimalSkill": 55, "Available": false, "MinimalIntel": 45, "MinimalTrust": 0, }),
 		AMethod.new({ "Name": "target members close to the leader", "Cost": 40, "Quality": 90, "Risk": 55, "OfficersRequired": 15, "MinimalSkill": 65, "Available": false, "MinimalIntel": 50, "MinimalTrust": 0, }),
+	],
+	# OFFENSIVE methods
+	[
+		AMethodOffensive.new({ "Name": "track down and disrupt funding", "Cost": 15, "Quality": 25, "Risk": 20, "OfficersRequired": 3, "MinimalSkill": 15, "Available": false, "MinimalIntel": -10, "MinimalTrust": 0, "MinLength": 5, "MaxLength": 12, "PossibleCasualties": 0, "BudgetChange": 100, "DamageToOps": 0, }),
+		AMethodOffensive.new({ "Name": "provide evidence for local arrests", "Cost": 2, "Quality": 15, "Risk": 30, "OfficersRequired": 1, "MinimalSkill": 10, "Available": false, "MinimalIntel": 15, "MinimalTrust": 10, "MinLength": 1, "MaxLength": 2, "PossibleCasualties": 20, "BudgetChange": 0, "DamageToOps": 10, }),
+		AMethodOffensive.new({ "Name": "kidnap and interrogate a known member", "Cost": 20, "Quality": 35, "Risk": 90, "OfficersRequired": 6, "MinimalSkill": 30, "Available": false, "MinimalIntel": 20, "MinimalTrust": 25, "MinLength": 2, "MaxLength": 3, "PossibleCasualties": 1, "BudgetChange": 0, "DamageToOps": 40, }),
+		AMethodOffensive.new({ "Name": "kill a known member", "Cost": 30, "Quality": 50, "Risk": 75, "OfficersRequired": 8, "MinimalSkill": 35, "Available": false, "MinimalIntel": 15, "MinimalTrust": 25, "MinLength": 1, "MaxLength": 2, "PossibleCasualties": 1, "BudgetChange": 0, "DamageToOps": 40, }),
+		AMethodOffensive.new({ "Name": "poison highest-ranking known member", "Cost": 20, "Quality": 65, "Risk": 60, "OfficersRequired": 3, "MinimalSkill": 50, "Available": false, "MinimalIntel": 15, "MinimalTrust": 25, "MinLength": 2, "MaxLength": 4, "PossibleCasualties": 1, "BudgetChange": 0, "DamageToOps": 60, }),
+		AMethodOffensive.new({ "Name": "engage local gangs", "Cost": 50, "Quality": 10, "Risk": 40, "OfficersRequired": 2, "MinimalSkill": 15, "Available": false, "MinimalIntel": 20, "MinimalTrust": 35, "MinLength": 1, "MaxLength": 3, "PossibleCasualties": 250, "BudgetChange": 40, "DamageToOps": 30, }),
+		AMethodOffensive.new({ "Name": "bomb locations", "Cost": 60, "Quality": 75, "Risk": 60, "OfficersRequired": 10, "MinimalSkill": 45, "Available": false, "MinimalIntel": -20, "MinimalTrust": 25, "MinLength": 2, "MaxLength": 4, "PossibleCasualties": 1000, "BudgetChange": 20, "DamageToOps": 70, }),
+		AMethodOffensive.new({ "Name": "train and send private guerilla", "Cost": 100, "Quality": 85, "Risk": 20, "OfficersRequired": 25, "MinimalSkill": 35, "Available": false, "MinimalIntel": -40, "MinimalTrust": 50, "MinLength": 10, "MaxLength": 25, "PossibleCasualties": 2500, "BudgetChange": 50, "DamageToOps": 90, }),
+		AMethodOffensive.new({ "Name": "basic psychological operation", "Cost": 30, "Quality": 10, "Risk": 10, "OfficersRequired": 3, "MinimalSkill": 20, "Available": false, "MinimalIntel": 5, "MinimalTrust": 0, "MinLength": 2, "MaxLength": 9, "PossibleCasualties": 0, "BudgetChange": 10, "DamageToOps": 10, }),
+		AMethodOffensive.new({ "Name": "misinformation campaign", "Cost": 50, "Quality": 30, "Risk": 10, "OfficersRequired": 6, "MinimalSkill": 40, "Available": false, "MinimalIntel": 15, "MinimalTrust": 20, "MinLength": 2, "MaxLength": 9, "PossibleCasualties": 0, "BudgetChange": 20, "DamageToOps": 20, }),
+		AMethodOffensive.new({ "Name": "black propaganda", "Cost": 100, "Quality": 45, "Risk": 5, "OfficersRequired": 25, "MinimalSkill": 60, "Available": false, "MinimalIntel": 25, "MinimalTrust": 40, "MinLength": 6, "MaxLength": 12, "PossibleCasualties": 0, "BudgetChange": 40, "DamageToOps": 100, }),
 	]
 ]
 

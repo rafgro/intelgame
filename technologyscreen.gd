@@ -8,6 +8,7 @@ func _ready():
 			var desc = ""
 			if t == 0: desc += "intel: "
 			elif t == 1: desc += "recruitment: "
+			elif t == 2: desc += "offensive: "
 			desc += WorldData.Methods[t][m].Name
 			if WorldData.Methods[t][m].Available == false:
 				desc += " (unavailable)"

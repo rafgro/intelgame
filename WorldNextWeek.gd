@@ -421,8 +421,7 @@ func Execute(past):
 			elif WorldData.Organizations[w].Budget < 10000: opFrequency *= 0.4
 			elif WorldData.Organizations[w].Budget < 50000: opFrequency *= 0.6
 			elif WorldData.Organizations[w].Budget < 100000: opFrequency *= 0.8
-			var randFrequency = 120 - opFrequency  # max aggr->20, min aggr->120
-			randFrequency *= 0.5  # two times higher frequency, balancing
+			var randFrequency = 140 - opFrequency  # max aggr->p=1/40, min aggr->p=1/140
 			if GameLogic.random.randi_range(0,randFrequency) == int(randFrequency*0.5):
 				var whichCountry = randi() % WorldData.Countries.size()
 				# against other countries: executing right now

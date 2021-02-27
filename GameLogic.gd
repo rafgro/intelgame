@@ -244,7 +244,7 @@ func NextWeek():
 			doesItEndWithCall = true
 	############################################################################
 	# walk-ins or whistleblowers
-	if random.randi_range(1,50) == 17 and DistWalkinMin < 1:  # one every ~6 months
+	if random.randi_range(1,40) == 17 and DistWalkinMin < 1:  # one every ~6 months
 		var whichOrg = random.randi_range(0, len(WorldData.Organizations)-1)
 		var quality = random.randi_range(-65,65)
 		var content = "A source, claiming to be close to " + WorldData.Organizations[whichOrg].Name + " walked in into one our embassies. "

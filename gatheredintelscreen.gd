@@ -107,6 +107,8 @@ func _on_Organizations_item_selected(index):
 		$M/R/H/Gather.disabled = false
 		if WorldData.Organizations[o].IntelIdentified > 0: $M/R/H/Recruit.disabled = false
 		else: $M/R/H/Recruit.disabled = true
+		if WorldData.Organizations[o].OffensiveClearance == true: $M/R/H/Offensive.disabled = false
+		else: $M/R/H/Offensive.disabled = true
 
 func _on_Gather_pressed():
 	if lastSelectedOrg != -1:
@@ -122,6 +124,17 @@ func _on_Gather_pressed():
 func _on_Recruit_pressed():
 	if lastSelectedOrg != -1:
 		OperationGenerator.NewOperation(0, lastSelectedOrg, OperationGenerator.Type.RECRUIT_SOURCE)
+		# if possible, start fast
+		if GameLogic.OfficersInHQ > 0:
+			GameLogic.Operations[-1].AnalyticalOfficers = GameLogic.OfficersInHQ
+			GameLogic.Operations[-1].Stage = OperationGenerator.Stage.PLANNING_OPERATION
+			GameLogic.Operations[-1].Started = GameLogic.GiveDateWithYear()
+			GameLogic.Operations[-1].Result = "ONGOING (PLANNING)"
+		get_tree().change_scene("res://main.tscn")
+
+func _on_Offensive_pressed():
+	if lastSelectedOrg != -1:
+		OperationGenerator.NewOperation(0, lastSelectedOrg, OperationGenerator.Type.OFFENSIVE)
 		# if possible, start fast
 		if GameLogic.OfficersInHQ > 0:
 			GameLogic.Operations[-1].AnalyticalOfficers = GameLogic.OfficersInHQ
