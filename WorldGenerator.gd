@@ -153,6 +153,14 @@ func NewGenerate():
 			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.GENERALTERROR, "Name": GenerateHostileName(), "Fixed": false, "Known": false, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-50,150), "Counterintelligence": GameLogic.random.randi_range(5,50), "Aggression": GameLogic.random.randi_range(45,95), "Countries": [places], "IntelValue": GameLogic.random.randi_range(-50,-5), })
 		)
 		WorldData.Organizations[-1].UndercoverCounter = GameLogic.random.randi_range(30,130)
+	# lone wolves
+	for i in range(0,2):
+		var size = 1
+		var places = GameLogic.random.randi_range(0,len(WorldData.Countries)-1)
+		WorldData.Organizations.append(
+			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.GENERALTERROR, "Name": GenerateHostileName(), "Fixed": false, "Known": false, "Staff": size, "Budget": GameLogic.random.randi_range(25,150), "Counterintelligence": GameLogic.random.randi_range(20,80), "Aggression": GameLogic.random.randi_range(15,65), "Countries": [places], "IntelValue": GameLogic.random.randi_range(-10,0), })
+		)
+		WorldData.Organizations[-1].UndercoverCounter = GameLogic.random.randi_range(60,180)
 	############################################################################
 	# filling in some organizatiions
 	for o in range(0, len(WorldData.Organizations)):
@@ -187,5 +195,5 @@ func NewGenerate():
 		if pastMonth < 10: localDate += "0"
 		localDate += str(pastMonth) + "/" + str(pastYear)
 		# actual next week
-		WorldData.WorldNextWeek(localDate)
+		WorldNextWeek.Execute(localDate)
 

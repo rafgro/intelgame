@@ -185,7 +185,7 @@ func NextWeek():
 	if ifCall == true: doesItEndWithCall = true
 	############################################################################
 	# world changes
-	ifCall = WorldData.WorldNextWeek(null)
+	ifCall = WorldNextWeek.Execute(null)
 	if ifCall == true: doesItEndWithCall = true
 	############################################################################
 	# eventual government assigned operations
