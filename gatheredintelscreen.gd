@@ -20,6 +20,8 @@ func _ready():
 	$M/R/Tabs/Type/List.add_item("Governments")
 	$M/R/Tabs/Type/List.add_item("Intelligence Agencies")
 	$M/R/Tabs/Type/List.add_item("Suspected Terrorist Organizations")
+	$M/R/Tabs/Type/List.add_item("Corporations")
+	$M/R/Tabs/Type/List.add_item("Scientific Institutions")
 	mapOfCountries.clear()
 	var descs = []
 	for c in range(0, len(WorldData.Countries)):
@@ -72,6 +74,8 @@ func _on_TypeList_item_selected(index):
 	var whichType = WorldData.OrgType.GOVERNMENT
 	if index == 1: whichType = WorldData.OrgType.INTEL
 	elif index == 2: whichType = WorldData.OrgType.GENERALTERROR
+	elif index == 3: whichType = WorldData.OrgType.COMPANY
+	elif index == 4: whichType = WorldData.OrgType.UNIVERSITY
 	for o in range(0, len(WorldData.Organizations)):
 		if WorldData.Organizations[o].Type == whichType and WorldData.Organizations[o].Known == true and WorldData.Organizations[o].Active == true:
 			lastMapOfOrgs.append(o)

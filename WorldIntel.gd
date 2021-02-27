@@ -58,12 +58,14 @@ func GatherOnOrg(o, quality, date):
 		WorldData.Organizations[o].IntelDescType = "intelligence agency"
 	elif WorldData.Organizations[o].Type == WorldData.OrgType.GOVERNMENT:
 		WorldData.Organizations[o].IntelDescType = "official government"
+	elif WorldData.Organizations[o].Type == WorldData.OrgType.COMPANY:
+		WorldData.Organizations[o].IntelDescType = "private corporation"
 	############################################################################
 	# discrete intel descriptions, four stages
 	var discreteDesc = ""
 	var indicatedOps = false  # used further to provide operation details
 	if quality >= 0 and quality < 10:
-		if WorldData.Organizations[o].Type == WorldData.OrgType.GENERALTERROR or WorldData.Organizations[o].Type == WorldData.OrgType.ARMTRADER or WorldData.Organizations[o].Type == WorldData.OrgType.PARAMILITARY:
+		if WorldData.Organizations[o].Type == WorldData.OrgType.GENERALTERROR or WorldData.Organizations[o].Type == WorldData.OrgType.ARMTRADER:
 			WorldData.Organizations[o].IntelDescType = "suspected criminal organization"
 		var desc = ""
 		if noOfIdentified > 0: desc += "identified " + str(noOfIdentified) + " individuals inside, "
@@ -80,7 +82,7 @@ func GatherOnOrg(o, quality, date):
 		discreteDesc = desc
 	############################################################################
 	elif quality < 30:
-		if WorldData.Organizations[o].Type == WorldData.OrgType.GENERALTERROR or WorldData.Organizations[o].Type == WorldData.OrgType.PARAMILITARY:
+		if WorldData.Organizations[o].Type == WorldData.OrgType.GENERALTERROR:
 			WorldData.Organizations[o].IntelDescType = "terrorist organization"
 		elif WorldData.Organizations[o].Type == WorldData.OrgType.ARMTRADER:
 			WorldData.Organizations[o].IntelDescType = "criminal organization"
@@ -106,8 +108,6 @@ func GatherOnOrg(o, quality, date):
 	elif quality < 50:
 		if WorldData.Organizations[o].Type == WorldData.OrgType.GENERALTERROR:
 			WorldData.Organizations[o].IntelDescType = "terrorist organization"
-		elif WorldData.Organizations[o].Type == WorldData.OrgType.PARAMILITARY:
-			WorldData.Organizations[o].IntelDescType = "paramilitary organization"
 		elif WorldData.Organizations[o].Type == WorldData.OrgType.ARMTRADER:
 			WorldData.Organizations[o].IntelDescType = "arms trader"
 		var desc1 = ""
@@ -127,8 +127,6 @@ func GatherOnOrg(o, quality, date):
 	elif quality < 70:
 		if WorldData.Organizations[o].Type == WorldData.OrgType.GENERALTERROR:
 			WorldData.Organizations[o].IntelDescType = "terrorist organization"
-		elif WorldData.Organizations[o].Type == WorldData.OrgType.PARAMILITARY:
-			WorldData.Organizations[o].IntelDescType = "paramilitary organization"
 		elif WorldData.Organizations[o].Type == WorldData.OrgType.ARMTRADER:
 			WorldData.Organizations[o].IntelDescType = "arms trader"
 		var desc1 = ""
@@ -148,14 +146,12 @@ func GatherOnOrg(o, quality, date):
 	else:
 		if WorldData.Organizations[o].Type == WorldData.OrgType.GENERALTERROR:
 			WorldData.Organizations[o].IntelDescType = "terrorist organization"
-		elif WorldData.Organizations[o].Type == WorldData.OrgType.PARAMILITARY:
-			WorldData.Organizations[o].IntelDescType = "paramilitary organization"
 		elif WorldData.Organizations[o].Type == WorldData.OrgType.ARMTRADER:
 			WorldData.Organizations[o].IntelDescType = "arms trader"
 		var desc1 = ""
 		if noOfIdentified > 0: desc1 += "identified " + str(noOfIdentified) + " individuals inside, "
 		desc1 += "current state of org: "
-		var roundedStaff = str(WorldData.Organizations[o].Staff)
+		var roundedStaff = str(int(WorldData.Organizations[o].Staff))
 		var roundedBudget = "€"+str(int(WorldData.Organizations[o].Budget * 0.01))
 		if roundedBudget == "€0": roundedBudget = "less than €1"
 		var roundedCounter = WorldData.Organizations[o].Counterintelligence
@@ -315,8 +311,40 @@ func GatherOnOrg(o, quality, date):
 			if len(orgNames) > 0:
 				discreteDesc += ", in addition officers tapped into intel gathered by this agency about " + PoolStringArray(orgNames).join(", ")
 	############################################################################
+	# organization-type-specific intels
+	elif WorldData.Organizations[o].Type == WorldData.OrgType.COMPANY or WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY:
+		var techDesc = ""
+		if quality < 5:
+			pass  # not enough
+		elif quality < 20:
+			techDesc = ", probably no interesting technology"
+			if WorldData.Organizations[o].Technology > 50 and GameLogic.random.randi_range(1,2) == 1:
+				techDesc = ", potentially interesting technology"
+		elif quality < 40:
+			if WorldData.Organizations[o].Technology < 30:
+				techDesc = ", no interesting technology"
+			elif WorldData.Organizations[o].Technology < 60:
+				techDesc = ", some technological details acquired"
+			else:
+				techDesc = ", interesting technological details acquired"
+		elif quality < 75:
+			if WorldData.Organizations[o].Technology < 30:
+				techDesc = ", no interesting technology"
+			elif WorldData.Organizations[o].Technology < 60:
+				techDesc = ", technological documents acquired"
+			else:
+				techDesc = ", interesting technological documents acquired"
+		else:
+			if WorldData.Organizations[o].Technology < 30:
+				techDesc = ", no valuable technology"
+			elif WorldData.Organizations[o].Technology < 60:
+				techDesc = ", valuable technological documents acquired"
+			else:
+				techDesc = ", significantly valuable technological documents acquired"
+		discreteDesc += techDesc
+	############################################################################
 	# result
-	if len(antihomeland) > 0:
+	if len(antihomeland) > 0 and WorldData.Organizations[o].Type != WorldData.OrgType.COMPANY and WorldData.Organizations[o].Type != WorldData.OrgType.UNIVERSITY:
 		WorldData.Organizations[o].IntelDescription.push_front("[b]"+date+"[/b] " + antihomeland + ", " + discreteDesc)
 	else:
 		WorldData.Organizations[o].IntelDescription.push_front("[b]"+date+"[/b] " + discreteDesc)

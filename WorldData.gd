@@ -61,8 +61,8 @@ enum OrgType {
 	INTEL,
 	GENERALTERROR,
 	ARMTRADER,
-	PARAMILITARY,
-	MAFIA,
+	COMPANY,
+	UNIVERSITY,
 }
 
 class AnOrganization:
@@ -86,6 +86,7 @@ class AnOrganization:
 	var IntelSources = []  # arr of dicts {"Level","Trust"}
 	var UndercoverCounter = 0  # weeks with known=false, subtracted 1 every week
 	var OffensiveClearance = false  # gov-given clearance for using offensive methods
+	var Technology = 0  # for companies and universities only, 0 to 100
 	
 	func _init(adictionary):
 		Type = adictionary.Type
@@ -265,3 +266,4 @@ var DiplomaticPhrasesPositive = ["'s officials visited ", " expressed will to im
 var DiplomaticPhrasesVeryPositive = [" signed a treaty with ", " held joint military exercise with ", " formed bilateral committee "]
 var DiplomaticPhrasesNegative = [" condemned actions of ", " withdraw from a treaty with ", " expressed concern about changes in "]
 var DiplomaticPhrasesVeryNegative = [" refused to meet with officials of ", " expelled some citizens of ", " attributed destabilization of the region to ", "'s military officials threatened "]
+var TechnologicalPhrases = ["New discovery reported by scientists", "Significant technological breakthrough made by engineers", "Scientific breakthrough presented"]

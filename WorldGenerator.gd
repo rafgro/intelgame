@@ -1,26 +1,34 @@
 extends Node
 
 func GenerateHostileName():
-	var words = ["Tobiah","Yseut","Esther","Iphigenia","Yemima","Rexana","Amaterasu","Joslyn","Mattityahu","Karl","Izanami","Jemma","Lorinda","Avram","Ned","Trophimus","Isolde","Harvey","Marsha","Lyn","Shani","Anu","Marilyn","Montgomery","Davey","Leland","Crescens","Jordana","Vern","Bradford","Marianne","Adamu","Manahem","Earleen","Peronel","Enosh","Ryker","Adelle","Myrddin","Carver","Jody","Anat","Atarah","Capricia","Sidney","Cindra","Nik","Jehoash","Atarah","Iahel"]
+	var wordsA = ["Leftist", "Right", "Proud", "Revolutionary", "Republican", "Combat", "Black", "Democratic", "Real"]
+	var wordsB = ["Tobiah","Yseut","Esther","Iphigenia","Yemima","Rexana","Amaterasu","Joslyn","Mattityahu","Karl","Izanami","Jemma","Lorinda","Avram","Ned","Trophimus","Isolde","Harvey","Marsha","Lyn","Shani","Anu","Marilyn","Montgomery","Davey","Leland","Crescens","Jordana","Vern","Bradford","Marianne","Adamu","Manahem","Earleen","Peronel","Enosh","Ryker","Adelle","Myrddin","Carver","Jody","Anat","Atarah","Capricia","Sidney","Cindra","Nik","Jehoash","Atarah","Iahel"]
+	var wordsC = ["Movement", "Brotherhood", "Force", "Action", "Militants", "Extremists"]
 	var content = ""
 	var length = GameLogic.random.randi_range(1,3)
 	if length == 1:
-		return words[randi() % words.size()]
+		return wordsB[randi() % wordsB.size()]
 	elif length == 2:
-		content += words[randi() % words.size()]
-		if GameLogic.random.randi_range(1,4) == 1: content += "-"
-		else: content += " "
-		content += words[randi() % words.size()]
+		if GameLogic.random.randi_range(1,2) == 1:
+			content += wordsA[randi() % wordsA.size()] + " " + wordsB[randi() % wordsB.size()]
+		else:
+			content += wordsB[randi() % wordsB.size()] + " " + wordsC[randi() % wordsC.size()]
 		return content
 	else:
-		content += words[randi() % words.size()]
-		if GameLogic.random.randi_range(1,4) == 1: content += "-"
-		else: content += " "
-		content += words[randi() % words.size()]
-		if GameLogic.random.randi_range(1,4) == 1: content += "-"
-		else: content += " "
-		content += words[randi() % words.size()]
+		content += wordsA[randi() % wordsA.size()]
+		content += " "
+		content += wordsB[randi() % wordsB.size()]
+		content += " "
+		content += wordsC[randi() % wordsC.size()]
 		return content
+
+func GenerateCompanyName():
+	var wordsA = ["Seed", "Pink Productions", "Lagoon Entertainment", "Surgesystems", "Golbrews", "Lucentertainment", "Ogreprises", "Quadtronics", "Gorillapoly", "Shadeshine", "Accent Intelligence", "Iceberg Corp", "Prophecy Intelligence", "Thorecords", "Nemotors", "Cliffoods", "Lagoonavigations", "Granitebeat", "Riddleman", "Woodshine", "Freak Solutions", "Brisk Coms", "Titanium Navigations", "Oceanavigations", "Cloverprises", "Shadoworks", "Icecaproductions", "Saildew", "Typhoonbank", "Ravenbite", "Cruise Enterprises", "Pyramid Security", "Phantasm Intelligence", "Bridgelectrics", "Ecstaticorps", "Soulightning", "Owlimited", "Globebooks", "Peachways", "Primepoint", "Red Technologies", "Glacier Acoustics", "Odinetworks", "Hatchworks", "Energence", "Spectertainment", "Dreamdew", "Shadowshack", "Freakshade", "Sapling Networks", "Dinosaur Intelligence", "Cruise Solutions", "Smilectronics", "Voyagetronics", "Ansoft", "Amazystems", "Zeuspoly", "Vortexwares", "Arcaneworks", "Apricot Acoustics", "Turtle Microsystems", "Smart Microsystems", "Mothechnologies", "Flukords", "Griffindustries", "Jewelectrics", "Motionhead", "Berrytales", "Wonderhouse", "Apple Solutions", "Joy Acoustics", "Ecstatic Industries", "Aces", "Starecords", "Elecoms", "Tucanterprises", "Bluebank", "Microtime", "Herbtales"]
+	return wordsA[randi() % wordsA.size()]
+
+func GenerateUniversityName(adjective):
+	var wordsA = ["University", "Institute", "College", "Technological University", "National Colllege", "Institute of Technology", "School of Science", "Polytechnic", "Academy of Sciences", "Institute for Advanced Study", "National Laboratory"]
+	return adjective + " " + wordsA[randi() % wordsA.size()]
 
 func NewGenerate():
 	GameLogic.random.randomize()
@@ -128,6 +136,7 @@ func NewGenerate():
 		c += 1
 	############################################################################
 	# generating organizations
+	var doNotDuplicate = []
 	# governments
 	for i in range(1, len(WorldData.Countries)):
 		WorldData.Organizations.append(
@@ -142,25 +151,58 @@ func NewGenerate():
 			var trying = GameLogic.random.randi_range(0,len(WorldData.Countries)-1)
 			if !(trying in places):
 				places.append(trying)
+		var name = GenerateHostileName()
+		if name in doNotDuplicate: continue
+		doNotDuplicate.append(name)
 		WorldData.Organizations.append(
-			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.GENERALTERROR, "Name": GenerateHostileName(), "Fixed": false, "Known": true, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-100,100), "Counterintelligence": GameLogic.random.randi_range(10,60), "Aggression": GameLogic.random.randi_range(30,95), "Countries": places, "IntelValue": GameLogic.random.randi_range(-50,10), })
+			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.GENERALTERROR, "Name": name, "Fixed": false, "Known": true, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-100,100), "Counterintelligence": GameLogic.random.randi_range(10,60), "Aggression": GameLogic.random.randi_range(30,95), "Countries": places, "IntelValue": GameLogic.random.randi_range(-50,10), })
 		)
 	# hidden or emerging terror orgs
 	for i in range(0,2):
 		var size = GameLogic.random.randi_range(2,10)
 		var places = GameLogic.random.randi_range(0,len(WorldData.Countries)-1)
+		var name = GenerateHostileName()
+		if name in doNotDuplicate: continue
+		doNotDuplicate.append(name)
 		WorldData.Organizations.append(
-			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.GENERALTERROR, "Name": GenerateHostileName(), "Fixed": false, "Known": false, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-50,150), "Counterintelligence": GameLogic.random.randi_range(5,50), "Aggression": GameLogic.random.randi_range(45,95), "Countries": [places], "IntelValue": GameLogic.random.randi_range(-50,-5), })
+			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.GENERALTERROR, "Name": name, "Fixed": false, "Known": false, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-50,150), "Counterintelligence": GameLogic.random.randi_range(5,50), "Aggression": GameLogic.random.randi_range(45,95), "Countries": [places], "IntelValue": GameLogic.random.randi_range(-50,-5), })
 		)
 		WorldData.Organizations[-1].UndercoverCounter = GameLogic.random.randi_range(30,130)
 	# lone wolves
 	for i in range(0,2):
 		var size = 1
 		var places = GameLogic.random.randi_range(0,len(WorldData.Countries)-1)
+		var name = GenerateHostileName()
+		if name in doNotDuplicate: continue
+		doNotDuplicate.append(name)
 		WorldData.Organizations.append(
-			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.GENERALTERROR, "Name": GenerateHostileName(), "Fixed": false, "Known": false, "Staff": size, "Budget": GameLogic.random.randi_range(25,150), "Counterintelligence": GameLogic.random.randi_range(20,80), "Aggression": GameLogic.random.randi_range(15,65), "Countries": [places], "IntelValue": GameLogic.random.randi_range(-10,0), })
+			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.GENERALTERROR, "Name": name, "Fixed": false, "Known": false, "Staff": size, "Budget": GameLogic.random.randi_range(25,150), "Counterintelligence": GameLogic.random.randi_range(20,80), "Aggression": GameLogic.random.randi_range(15,65), "Countries": [places], "IntelValue": GameLogic.random.randi_range(-10,0), })
 		)
 		WorldData.Organizations[-1].UndercoverCounter = GameLogic.random.randi_range(60,180)
+	# companies
+	for i in range(0,10):
+		var size = GameLogic.random.randi_range(10,5000)
+		var places = GameLogic.random.randi_range(0,len(WorldData.Countries)-1)
+		var name = GenerateCompanyName()
+		if name in doNotDuplicate: continue
+		doNotDuplicate.append(name)
+		WorldData.Organizations.append(
+			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.COMPANY, "Name": name, "Fixed": false, "Known": true, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-100,100), "Counterintelligence": GameLogic.random.randi_range(0,30), "Aggression": GameLogic.random.randi_range(0,10), "Countries": [places], "IntelValue": GameLogic.random.randi_range(-10,10), })
+		)
+		WorldData.Organizations[-1].IntelIdentified = GameLogic.random.randi_range(1,10)  # officials
+		WorldData.Organizations[-1].Technology = GameLogic.random.randi_range(10,90)
+	# universities
+	for i in range(0,10):
+		var size = GameLogic.random.randi_range(200,2000)
+		var places = GameLogic.random.randi_range(0,len(WorldData.Countries)-1)
+		var name = GenerateUniversityName(WorldData.Countries[places].Adjective)
+		if name in doNotDuplicate: continue
+		doNotDuplicate.append(name)
+		WorldData.Organizations.append(
+			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.UNIVERSITY, "Name": name, "Fixed": false, "Known": true, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-100,100), "Counterintelligence": GameLogic.random.randi_range(0,10), "Aggression": GameLogic.random.randi_range(0,5), "Countries": [places], "IntelValue": GameLogic.random.randi_range(-10,10), })
+		)
+		WorldData.Organizations[-1].IntelIdentified = GameLogic.random.randi_range(1,10)  # officials
+		WorldData.Organizations[-1].Technology = GameLogic.random.randi_range(1,100)
 	############################################################################
 	# filling in some organizatiions
 	for o in range(0, len(WorldData.Organizations)):

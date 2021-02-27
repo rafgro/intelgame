@@ -85,9 +85,9 @@ func ProgressOperations():
 						# adjust to methods
 						if WorldData.Methods[mt][methodId].OfficersRequired > usedOfficers:
 							usedOfficers = WorldData.Methods[mt][methodId].OfficersRequired
-				# intel agencies are currently off limits
+				# intel agencies and universities are currently off limits
 				if GameLogic.Operations[i].Type == OperationGenerator.Type.OFFENSIVE:
-					if WorldData.Organizations[which].Type == WorldData.OrgType.INTEL:
+					if WorldData.Organizations[which].Type == WorldData.OrgType.INTEL or WorldData.Organizations[which].Type == WorldData.OrgType.UNIVERSITY:
 						theMethods.clear()
 						noPlanReasonTradecraft = 10
 				# no methods
@@ -422,8 +422,15 @@ func ProgressOperations():
 						GameLogic.Trust += 2
 					else:
 						GameLogic.Trust += 1
+					# special gov feedbacks
+					var whichO = GameLogic.Operations[i].Target
+					if WorldData.Organizations[whichO].Type == WorldData.OrgType.COMPANY or WorldData.Organizations[whichO].Type == WorldData.OrgType.UNIVERSITY:
+						if GameLogic.Operations[i].AbroadPlan.Quality >= 40:
+							if WorldData.Organizations[whichO].Technology >= 60:
+								GameLogic.Trust += GameLogic.random.randi_range(5,12)
 				# debriefing government and effect on the user
 				elif GameLogic.Operations[i].Source == 1:
+					# standard gov feedback
 					var govFeedback = 0  # from -100 to 100, usually -20 to 20
 					var weekDiff = (0.0 + GameLogic.Operations[i].WeeksPassed - GameLogic.Operations[i].ExpectedWeeks) / GameLogic.Operations[i].ExpectedWeeks
 					govFeedback += weekDiff * 10  # -1 for being 10% late
@@ -433,6 +440,14 @@ func ProgressOperations():
 					if govFeedback > 5: govFeedback = GameLogic.random.randi_range(5,7)
 					govFeedback = int(govFeedback)
 					if govFeedback == 0: govFeedback = -1
+					var whichO = GameLogic.Operations[i].Target
+					# special gov feedbacks
+					if WorldData.Organizations[whichO].Type == WorldData.OrgType.COMPANY or WorldData.Organizations[whichO].Type == WorldData.OrgType.UNIVERSITY:
+						if GameLogic.Operations[i].AbroadPlan.Quality >= 20:
+							if WorldData.Organizations[whichO].Technology > 30:
+								govFeedback = GameLogic.random.randi_range(4,8)
+							elif WorldData.Organizations[whichO].Technology > 60:
+								govFeedback = GameLogic.random.randi_range(7,15)
 					GameLogic.Trust += govFeedback
 					var govFeedbackDesc = "negatively rated its execution. Bureau lost "+str((-1)*govFeedback)+"% of trust."
 					GameLogic.Operations[i].Result = "COMPLETED, negative feedback"
@@ -525,6 +540,12 @@ func ProgressOperations():
 							GameLogic.Trust += 3
 						else:
 							GameLogic.Trust += 1
+						# special gov feedbacks
+						var whichO = GameLogic.Operations[i].Target
+						if WorldData.Organizations[whichO].Type == WorldData.OrgType.COMPANY or WorldData.Organizations[whichO].Type == WorldData.OrgType.UNIVERSITY:
+							if GameLogic.Operations[i].AbroadPlan.Quality >= 40:
+								if WorldData.Organizations[whichO].Technology >= 60:
+									GameLogic.Trust += GameLogic.random.randi_range(4,8)
 				# debriefing government and effect on the user
 				elif GameLogic.Operations[i].Source == 1:
 					var govFeedback = sourceLevel*(1.0+(difficulty*0.05))
@@ -534,6 +555,14 @@ func ProgressOperations():
 					if govFeedback < -10: govFeedback = GameLogic.random.randi_range(-12,-10)
 					if govFeedback > 10: govFeedback = GameLogic.random.randi_range(10,12)
 					govFeedback = int(govFeedback)
+					var whichO = GameLogic.Operations[i].Target
+					# special gov feedbacks
+					if WorldData.Organizations[whichO].Type == WorldData.OrgType.COMPANY or WorldData.Organizations[whichO].Type == WorldData.OrgType.UNIVERSITY:
+						if GameLogic.Operations[i].AbroadPlan.Quality >= 20 and sourceLevel > 0:
+							if WorldData.Organizations[whichO].Technology > 30:
+								govFeedback = GameLogic.random.randi_range(4,9)
+							elif WorldData.Organizations[whichO].Technology > 60:
+								govFeedback = GameLogic.random.randi_range(9,16)
 					GameLogic.Trust += govFeedback
 					var govFeedbackDesc = "Officers failed at acquiring a new source in an organization indicated by the government. Bureau lost "+str((-1)*govFeedback)+"% of trust."
 					GameLogic.Operations[i].Result = "COMPLETED, negative feedback"

@@ -198,11 +198,33 @@ func NextWeek():
 	if random.randi_range(1,40) == 30 and DistGovopCounter < 1:  # one every few months
 		# choosing organization
 		var whichOrg = -1
-		for f in range(0,5):  # max five attempts
-			var check = random.randi_range(0, len(WorldData.Organizations)-1)
-			if WorldData.Organizations[check].Type == WorldData.OrgType.GOVERNMENT:
-				whichOrg = check
-				break
+		if random.randi_range(1,4) == 1:
+			# any government
+			for f in range(0,4):  # max four attempts
+				var check = random.randi_range(0, len(WorldData.Organizations)-1)
+				if WorldData.Organizations[check].Type == WorldData.OrgType.GOVERNMENT:
+					whichOrg = check
+					break
+			# or any techie
+			if whichOrg == -1:
+				for f in range(0,5):  # max six attempts
+					var check = random.randi_range(0, len(WorldData.Organizations)-1)
+					if WorldData.Organizations[check].Type == WorldData.OrgType.COMPANY or WorldData.Organizations[check].Type == WorldData.OrgType.UNIVERSITY:
+						whichOrg = check
+						break
+		else:
+			# diplomatic priorities
+			var lowestVal = 50
+			var lowestId = 0
+			for g in range(1, len(WorldData.Countries)):
+				if WorldData.DiplomaticRelations[0][g] < lowestVal:
+					lowestVal = WorldData.DiplomaticRelations[0][g]
+					lowestId = g
+			for j in range(0, len(WorldData.Organizations)):
+				if WorldData.Organizations[j].Type == WorldData.OrgType.GOVERNMENT or WorldData.Organizations[j].Type == WorldData.OrgType.INTEL or WorldData.Organizations[j].Type == WorldData.OrgType.COMPANY or WorldData.Organizations[j].Type == WorldData.OrgType.UNIVERSITY:
+					if WorldData.Organizations[j].Countries[0] == lowestId:
+						whichOrg = j
+						break
 		# assigning the operation
 		if whichOrg != -1:
 			var opType = OperationGenerator.Type.MORE_INTEL
