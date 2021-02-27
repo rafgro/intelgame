@@ -22,7 +22,7 @@ func _ready():
 	$M/R/Tabs/Type/List.add_item("Suspected Terrorist Organizations")
 	mapOfCountries.clear()
 	var descs = []
-	for c in range(1, len(WorldData.Countries)):
+	for c in range(0, len(WorldData.Countries)):
 		var desc = WorldData.Countries[c].Name
 		if WorldData.DiplomaticRelations[0][c] < -30:
 			desc += " (hostile country)"
