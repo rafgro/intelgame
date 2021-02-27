@@ -154,6 +154,10 @@ func Execute(past):
 			WorldData.Organizations[w].OpsAgainstHomeland[u].FinishCounter -= 1
 			if WorldData.Organizations[w].OpsAgainstHomeland[u].FinishCounter <= 0:
 				if WorldData.Organizations[w].OpsAgainstHomeland[u].Type == WorldData.ExtOpType.TERRORIST_ATTACK:
+					# clearing up mess with many attacks at the same time
+					var tickerDesc = ""
+					if GameLogic.AttackTicker != 0 and (GameLogic.AttackTickerOp.Org == w or GameLogic.AttackTickerOp.Op == u):
+						tickerDesc = "\n\nNote that this is a different plot than reported in dashboard. Homeland is facing more than one attack, possibly happenning in " + str(GameLogic.AttackTicker) + " weeks."
 					# decide if it's happenning: prevented or not
 					var knownInvolvedValue = WorldData.Organizations[w].OpsAgainstHomeland[u].Persons * (WorldData.Organizations[w].IntelIdentified*1.0 / WorldData.Organizations[w].Staff)
 					if int(knownInvolvedValue) >= int(WorldData.Organizations[w].OpsAgainstHomeland[u].Persons*0.6) or GameLogic.random.randi_range(1,100) < WorldData.Organizations[w].OpsAgainstHomeland[u].IntelValue:
@@ -181,7 +185,7 @@ func Execute(past):
 								"Header": "Important Information",
 								"Level": "Classified",
 								"Operation": "-//-",
-								"Content": "[b]Congratulations.[/b]\n\nBased on Bureau's intel on " + WorldData.Organizations[w].Name + ", Homeland authorities prevented terrorist attack from happening."+reason + "\n\nBureau gained "+str(int(trustIncrease))+"% of trust. As a confirmation, government increases bureau's budget by €"+str(int(budgetIncrease))+",000.\n",
+								"Content": "[b]Congratulations.[/b]\n\nBased on Bureau's intel on " + WorldData.Organizations[w].Name + ", Homeland authorities prevented terrorist attack from happening. "+reason + "\n\nBureau gained "+str(int(trustIncrease))+"% of trust. As a confirmation, government increases bureau's budget by €"+str(int(budgetIncrease))+",000." + tickerDesc,
 								"Show1": false,
 								"Show2": false,
 								"Show3": false,
@@ -297,7 +301,7 @@ func Execute(past):
 							"Header": "Important Information",
 							"Level": "Unclassified",
 							"Operation": "-//-",
-							"Content": "[b]The worst has happened.[/b]\n\nHomeland suffered from "+longDesc+". There were "+str(casualties)+" casualties. " + responsibility + "\n\nBureau lost "+str(int(trustLoss))+"% of trust.",
+							"Content": "[b]The worst has happened.[/b]\n\nHomeland suffered from "+longDesc+". There were "+str(casualties)+" casualties. " + responsibility + "\n\nBureau lost "+str(int(trustLoss))+"% of trust."+tickerDesc,
 							"Show1": false,
 							"Show2": false,
 							"Show3": false,
@@ -386,15 +390,19 @@ func Execute(past):
 					print("new op against homeland: "+str(opLength))
 					# most (but not all!) operations are vaguely communicated to the player
 					if GameLogic.random.randi_range(1,10) < 8:
-						GameLogic.AttackTicker = opLength  # main screen ticker
-						GameLogic.AttackTickerOp.Org = w
-						GameLogic.AttackTickerOp.Op = len(WorldData.Organizations[w].OpsAgainstHomeland)-1
+						var tickerDesc = ""
+						if GameLogic.AttackTicker == 0:
+							GameLogic.AttackTicker = opLength  # main screen ticker
+							GameLogic.AttackTickerOp.Org = w
+							GameLogic.AttackTickerOp.Op = len(WorldData.Organizations[w].OpsAgainstHomeland)-1
+						else:
+							tickerDesc = "\n\nNote that this is a different plot than previously detected. Homeland is facing more than one attack."
 						CallManager.CallQueue.append(
 							{
 								"Header": "Important Information",
 								"Level": "Top Secret",
 								"Operation": "-//-",
-								"Content": "General signal surveillance picked up chatter involving possible terrorist attacks and Homeland. After careful investigation, officers deduced that the attack can happen in "+str(opLength)+" weeks. Bureau has to do everything it can to stop that from happening.",
+								"Content": "General signal surveillance picked up chatter involving possible terrorist attacks and Homeland. After careful investigation, officers deduced that the attack can happen in "+str(opLength)+" weeks. Bureau has to do everything it can to stop that from happening. "+tickerDesc,
 								"Show1": false,
 								"Show2": false,
 								"Show3": false,

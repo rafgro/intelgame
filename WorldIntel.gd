@@ -158,7 +158,7 @@ func GatherOnOrg(o, quality, date):
 	# TODO: UPDATE TO HANDLE DECEPTION
 	# todo: update to handle postmortem investigations
 	var antihomeland = ""
-	if len(WorldData.Organizations[o].OpsAgainstHomeland) > 0 and quality >= 10:  # also inactive ops
+	if quality >= 10:
 		var opDescriptions = []
 		for z in range(0,len(WorldData.Organizations[o].OpsAgainstHomeland)):
 			if WorldData.Organizations[o].OpsAgainstHomeland[z].Active == false:
@@ -237,7 +237,7 @@ func GatherOnOrg(o, quality, date):
 				doesItEndWithCall = true
 		# op description assembly
 		if quality < 20:
-			antihomeland = "no knowledge of activity against Homeland"
+			antihomeland = "lack of knowledge about activity against Homeland"
 			if WorldData.Organizations[o].ActiveOpsAgainstHomeland > 0:
 				if GameLogic.random.randi_range(1,4) == 2:
 					antihomeland = "[u]possible suspicious activity towards Homeland[/u]"
@@ -258,6 +258,29 @@ func GatherOnOrg(o, quality, date):
 			if WorldData.Organizations[o].ActiveOpsAgainstHomeland > 0:
 				antihomeland = "[u]executes " +str(WorldData.Organizations[o].ActiveOpsAgainstHomeland)+ " operations against Homeland[/u]"
 				antihomeland += " ([u]" + PoolStringArray(opDescriptions).join("; ") + "[/u])"
+	############################################################################
+	# intel about agencies brings intel about random other organizations
+	if WorldData.Organizations[o].Type == WorldData.OrgType.INTEL:
+		if quality < 5:
+			pass  # not enough
+		else:
+			var howManyOrgs = 1
+			if quality > 90: howManyOrgs = 6
+			elif quality > 70: howManyOrgs = 3
+			elif quality > 35: howManyOrgs = 2
+			var orgNames = []
+			for h in range(0, howManyOrgs):
+				var whichOrg = randi() % WorldData.Organizations.size()
+				if whichOrg == o:
+					continue
+				if WorldData.Organizations[whichOrg].Type == WorldData.OrgType.INTEL:
+					if GameLogic.random.randi_range(1,10) != 5:
+						continue  # to avoid too frequent recurency
+				var ifAnyCall = GatherOnOrg(whichOrg, GameLogic.random.randi_range(10,WorldData. Organizations[whichOrg].Counterintelligence*0.5), date)  # counter as upper, since it's directly proportional to quality of the agency
+				orgNames.append(WorldData.Organizations[whichOrg].Name)
+				if ifAnyCall == true: doesItEndWithCall = true
+			if len(orgNames) > 0:
+				discreteDesc += ", in addition officers tapped into intel gathered by this agency about " + PoolStringArray(orgNames).join(", ")
 	############################################################################
 	# result
 	if len(antihomeland) > 0:

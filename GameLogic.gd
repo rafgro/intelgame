@@ -282,34 +282,33 @@ func NextWeek():
 		doesItEndWithCall = true
 	############################################################################
 	# close to losing game or losing game
-	if int(Trust-PreviousTrust) != 0 and UltimatumTicker == 0:
-		if PreviousTrust > 10 and Trust <= 10:
-			UltimatumTicker = 13
-			CallManager.CallQueue.append(
-				{
-					"Header": "Important Information",
-					"Level": "Confidential",
-					"Operation": "-//-",
-					"Content": "Government almost lost faith in you as the Bureau's Chief. As a result, they give an ultimatum: bring back trust level over 10% in three months or face contract termination.",
-					"Show1": false,
-					"Show2": false,
-					"Show3": false,
-					"Show4": true,
-					"Text1": "",
-					"Text2": "",
-					"Text3": "",
-					"Text4": "Understood",
-					"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
-					"Decision1Argument": null,
-					"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
-					"Decision2Argument": null,
-					"Decision3Callback": funcref(GameLogic, "EmptyFunc"),
-					"Decision3Argument": null,
-					"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
-					"Decision4Argument": null,
-				}
-			)
-			doesItEndWithCall = true
+	if UltimatumTicker == 0 and Trust <= 10:
+		UltimatumTicker = 13
+		CallManager.CallQueue.append(
+			{
+				"Header": "Important Information",
+				"Level": "Confidential",
+				"Operation": "-//-",
+				"Content": "Government almost lost faith in you as the Bureau's Chief. As a result, they give an ultimatum: bring back trust level over 10% in three months or face contract termination.",
+				"Show1": false,
+				"Show2": false,
+				"Show3": false,
+				"Show4": true,
+				"Text1": "",
+				"Text2": "",
+				"Text3": "",
+				"Text4": "Understood",
+				"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
+				"Decision1Argument": null,
+				"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
+				"Decision2Argument": null,
+				"Decision3Callback": funcref(GameLogic, "EmptyFunc"),
+				"Decision3Argument": null,
+				"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
+				"Decision4Argument": null,
+			}
+		)
+		doesItEndWithCall = true
 	# noting ultimatum
 	if UltimatumTicker != 0:
 		UltimatumTicker -= 1
@@ -372,12 +371,6 @@ func NextWeek():
 				doesItEndWithCall = true
 	############################################################################
 	# final variable maintenance
-	# trust label change
-	if int(Trust-PreviousTrust) != 0:  # against zero to avoid reporting -0 for -0.235
-		if Trust > PreviousTrust: TrustChangeDesc = "+" + str(int(Trust-PreviousTrust))
-		else: TrustChangeDesc = str(int(Trust-PreviousTrust))
-		TrustChangeDesc += "% change of government trust"
-		PreviousTrust = Trust
 	# ticker label change
 	if AttackTicker != 0:
 		var upd = WorldData.Organizations[AttackTickerOp.Org].OpsAgainstHomeland[AttackTickerOp.Op].FinishCounter
