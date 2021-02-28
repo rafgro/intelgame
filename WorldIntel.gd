@@ -60,6 +60,8 @@ func GatherOnOrg(o, quality, date):
 		WorldData.Organizations[o].IntelDescType = "official government"
 	elif WorldData.Organizations[o].Type == WorldData.OrgType.COMPANY:
 		WorldData.Organizations[o].IntelDescType = "private corporation"
+	elif WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY:
+		WorldData.Organizations[o].IntelDescType = "scientific institution"
 	############################################################################
 	# discrete intel descriptions, four stages
 	var discreteDesc = ""
@@ -313,6 +315,7 @@ func GatherOnOrg(o, quality, date):
 	############################################################################
 	# organization-type-specific intels
 	elif WorldData.Organizations[o].Type == WorldData.OrgType.COMPANY or WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY:
+		var technologyWinCall = false
 		var techDesc = ""
 		if quality < 5:
 			pass  # not enough
@@ -320,27 +323,89 @@ func GatherOnOrg(o, quality, date):
 			techDesc = ", probably no interesting technology"
 			if WorldData.Organizations[o].Technology > 50 and GameLogic.random.randi_range(1,2) == 1:
 				techDesc = ", potentially interesting technology"
+				WorldData.Organizations[o].IntelTechnology = WorldData.Organizations[o].Technology*0.2
 		elif quality < 40:
 			if WorldData.Organizations[o].Technology < 30:
 				techDesc = ", no interesting technology"
 			elif WorldData.Organizations[o].Technology < 60:
 				techDesc = ", some technological details acquired"
+				WorldData.Organizations[o].IntelTechnology = WorldData.Organizations[o].Technology*0.3
 			else:
-				techDesc = ", interesting technological details acquired"
+				var ifNew = ""
+				var newIntelTech = WorldData.Organizations[o].Technology*0.5
+				if newIntelTech > WorldData.Organizations[o].IntelTechnology:
+					technologyWinCall = true
+					ifNew = "new "
+				techDesc = ", " + ifNew + "interesting technological details acquired"
+				WorldData.Organizations[o].IntelTechnology = newIntelTech
 		elif quality < 75:
 			if WorldData.Organizations[o].Technology < 30:
 				techDesc = ", no interesting technology"
 			elif WorldData.Organizations[o].Technology < 60:
 				techDesc = ", technological documents acquired"
+				var newIntelTech = WorldData.Organizations[o].Technology*0.6
+				WorldData.Organizations[o].IntelTechnology = newIntelTech
 			else:
-				techDesc = ", interesting technological documents acquired"
+				var ifNew = ""
+				var newIntelTech = WorldData.Organizations[o].Technology*0.8
+				if newIntelTech > WorldData.Organizations[o].IntelTechnology:
+					technologyWinCall = true
+					ifNew = "new "
+				techDesc = ", " + ifNew + "interesting technological documents acquired"
+				WorldData.Organizations[o].IntelTechnology = newIntelTech
 		else:
 			if WorldData.Organizations[o].Technology < 30:
 				techDesc = ", no valuable technology"
 			elif WorldData.Organizations[o].Technology < 60:
-				techDesc = ", valuable technological documents acquired"
+				var ifNew = ""
+				var newIntelTech = WorldData.Organizations[o].Technology*0.8
+				if newIntelTech > WorldData.Organizations[o].IntelTechnology:
+					technologyWinCall = true
+					ifNew = "new "
+				techDesc = ", " + ifNew + "valuable technological documents acquired"
+				WorldData.Organizations[o].IntelTechnology = newIntelTech
 			else:
-				techDesc = ", significantly valuable technological documents acquired"
+				var ifNew = ""
+				var newIntelTech = WorldData.Organizations[o].Technology
+				if newIntelTech > WorldData.Organizations[o].IntelTechnology:
+					technologyWinCall = true
+					ifNew = "new "
+				techDesc = ", " + ifNew + "significantly valuable technological documents acquired"
+				WorldData.Organizations[o].IntelTechnology = newIntelTech
+			# eventual user debriefing
+			if technologyWinCall == true:
+				var trustIncrease = quality*0.15
+				if trustIncrease > 10: trustIncrease = 10
+				if (GameLogic.Trust+trustIncrease) > 100: trustIncrease = 101-GameLogic.Trust
+				GameLogic.Trust += trustIncrease
+				var budgetIncrease = quality*0.3
+				if budgetIncrease > 50: budgetIncrease = 50
+				GameLogic.BudgetFull += budgetIncrease
+				CallManager.CallQueue.append(
+					{
+						"Header": "Important Information",
+						"Level": "Confidential",
+						"Operation": "-//-",
+						"Content": "New technological intel has been gathered in " + WorldData.Organizations[o].Name + ". Homeland authorities recognized it as highly valuable. In recognition of the efforts and in hope of continuation, government raised the trust by " + str(int(trustIncrease)) + "% and increased Bureau's budget by €" + str(int(budgetIncrease)) + ",000.",
+						"Show1": false,
+						"Show2": false,
+						"Show3": false,
+						"Show4": true,
+						"Text1": "",
+						"Text2": "",
+						"Text3": "",
+						"Text4": "Understood",
+						"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision1Argument": null,
+						"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision2Argument": null,
+						"Decision3Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision3Argument": null,
+						"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision4Argument": null,
+					}
+				)
+				doesItEndWithCall = true
 		discreteDesc += techDesc
 	############################################################################
 	# result

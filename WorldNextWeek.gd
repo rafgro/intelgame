@@ -155,9 +155,11 @@ func Execute(past):
 				if WorldData.Organizations[w].Staff < 1: WorldData.Organizations[w].Staff = 1
 		# technology changes
 		if WorldData.Organizations[w].Type == WorldData.OrgType.COMPANY or WorldData.Organizations[w].Type == WorldData.OrgType.UNIVERSITY:
-			if GameLogic.random.randi_range(1,500) == 123:  # seems rare but p*20
-				WorldData.Organizations[w].Technology = GameLogic.random.randi_range(60,95)
-				GameLogic.AddWorldEvent(WorldData.TechnologicalPhrases[ randi() % WorldData.TechnologicalPhrases.size() ] + " in " + WorldData.Countries[WorldData.Organizations[w].Countries[0]].Name, past)
+			if GameLogic.random.randi_range(1,200) == 123:  # seems rare but p*20
+				if GameLogic.random.randi_range(20,100) < WorldData.Organizations[w].Technology:
+					# better technology leads to more frequent discoveries
+					WorldData.Organizations[w].Technology += GameLogic.random.randi_range(15,35)
+					GameLogic.AddWorldEvent(WorldData.TechnologicalPhrases[ randi() % WorldData.TechnologicalPhrases.size() ] + " in " + WorldData.Countries[WorldData.Organizations[w].Countries[0]].Name, past)
 		# continuing existing operations
 		for u in range(0,len(WorldData.Organizations[w].OpsAgainstHomeland)):
 			if WorldData.Organizations[w].OpsAgainstHomeland[u].Active == false:

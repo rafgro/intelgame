@@ -190,7 +190,7 @@ func NewGenerate():
 			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.COMPANY, "Name": name, "Fixed": false, "Known": true, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-100,100), "Counterintelligence": GameLogic.random.randi_range(0,30), "Aggression": GameLogic.random.randi_range(0,10), "Countries": [places], "IntelValue": GameLogic.random.randi_range(-10,10), })
 		)
 		WorldData.Organizations[-1].IntelIdentified = GameLogic.random.randi_range(1,10)  # officials
-		WorldData.Organizations[-1].Technology = GameLogic.random.randi_range(10,90)
+		WorldData.Organizations[-1].Technology = GameLogic.random.randi_range(1, WorldData.Countries[places].SoftPower)
 	# universities
 	for i in range(0,10):
 		var size = GameLogic.random.randi_range(200,2000)
@@ -202,7 +202,7 @@ func NewGenerate():
 			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.UNIVERSITY, "Name": name, "Fixed": false, "Known": true, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-100,100), "Counterintelligence": GameLogic.random.randi_range(0,10), "Aggression": GameLogic.random.randi_range(0,5), "Countries": [places], "IntelValue": GameLogic.random.randi_range(-10,10), })
 		)
 		WorldData.Organizations[-1].IntelIdentified = GameLogic.random.randi_range(1,10)  # officials
-		WorldData.Organizations[-1].Technology = GameLogic.random.randi_range(1,100)
+		WorldData.Organizations[-1].Technology = GameLogic.random.randi_range(1, WorldData.Countries[places].SoftPower)
 	############################################################################
 	# filling in some organizatiions
 	for o in range(0, len(WorldData.Organizations)):
