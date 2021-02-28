@@ -64,4 +64,4 @@ func _on_Tradecraft_pressed():
 	get_tree().change_scene("res://craft.tscn")
 
 func _on_Directions_pressed():
-	get_tree().change_scene("res://staff.tscn")
+	get_tree().change_scene("res://directions.tscn")
