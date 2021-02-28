@@ -13,8 +13,14 @@ class ACountry:
 	var PoliticsIntel = 50  # attitude towards own intel agency, 0 to 100
 	var PoliticsAggression = 0  # attitude towards other countries, 0 to 100
 	var PoliticsStability = 50  # risk of wrong decisions or earlier elections, 0 to 100
-	var Expelled = 0  # how many officers are persona non grata
 	var SoftPower = 0  # 0 to 100, currently defines technology
+	# direction-related variables
+	var Expelled = 0  # how many officers are persona non grata
+	var DiplomaticTravel = true  # if officers can travel officially
+	var CovertTravel = 50  # 0 (unavailable) to 100 (easy to conduct)
+	var OperationStats = 0  # how many operations performed here
+	var KnowhowLanguage = 0  # 0 (no knowledge) to 100 (native)
+	var KnowhowCustoms = 10  # 0 (no knowledge) to 100 (native)
 	
 	func _init(aDictionary):
 		Name = aDictionary.Name
@@ -41,11 +47,11 @@ var Countries = [
 		"SoftPower": GameLogic.random.randi_range(30,70),
 	}),
 	ACountry.new({ "Name": "Ireland", "Adjective": "Irish", "TravelCost": 1, "LocalCost": 1, "IntelFriendliness": 90, "Size": 5, "ElectionPeriod": 52*4, "ElectionProgress": GameLogic.random.randi_range(1,50*4), "SoftPower": GameLogic.random.randi_range(30,70), }),
-	ACountry.new({ "Name": "United Kingdom", "Adjective": "English", "TravelCost": 1, "LocalCost": 2, "IntelFriendliness": 60, "Size": 67, "ElectionPeriod": 52*4, "ElectionProgress": GameLogic.random.randi_range(1,50*4), "SoftPower": GameLogic.random.randi_range(50,100), }),
+	ACountry.new({ "Name": "United Kingdom", "Adjective": "British", "TravelCost": 1, "LocalCost": 2, "IntelFriendliness": 40, "Size": 67, "ElectionPeriod": 52*4, "ElectionProgress": GameLogic.random.randi_range(1,50*4), "SoftPower": GameLogic.random.randi_range(50,100), }),
 	ACountry.new({ "Name": "Belgium", "Adjective": "Belgian", "TravelCost": 1, "LocalCost": 2, "IntelFriendliness": 80, "Size": 11, "ElectionPeriod": 52*4,  "ElectionProgress": GameLogic.random.randi_range(1,50*4), "SoftPower": GameLogic.random.randi_range(30,70), }),
 	ACountry.new({ "Name": "Germany", "Adjective": "German", "TravelCost": 1, "LocalCost": 2, "IntelFriendliness": 50, "Size": 83, "ElectionPeriod": 52*4, "ElectionProgress": GameLogic.random.randi_range(1,50*4), "SoftPower": GameLogic.random.randi_range(60,90), }),
-	ACountry.new({ "Name": "United States", "Adjective": "American", "TravelCost": 3, "LocalCost": 2, "IntelFriendliness": 40, "Size": 328, "ElectionPeriod": 52*4, "ElectionProgress": GameLogic.random.randi_range(1,50*4), "SoftPower": GameLogic.random.randi_range(70,100), }),
-	ACountry.new({ "Name": "Poland", "Adjective": "Polish", "TravelCost": 1, "LocalCost": 1, "IntelFriendliness": 70, "Size": 38, "ElectionPeriod": 52*4, "ElectionProgress": GameLogic.random.randi_range(1,50*4), "SoftPower": GameLogic.random.randi_range(30,70), }),
+	ACountry.new({ "Name": "United States", "Adjective": "American", "TravelCost": 3, "LocalCost": 2, "IntelFriendliness": 30, "Size": 328, "ElectionPeriod": 52*4, "ElectionProgress": GameLogic.random.randi_range(1,50*4), "SoftPower": GameLogic.random.randi_range(70,100), }),
+	ACountry.new({ "Name": "Poland", "Adjective": "Polish", "TravelCost": 1, "LocalCost": 1, "IntelFriendliness": 60, "Size": 38, "ElectionPeriod": 52*4, "ElectionProgress": GameLogic.random.randi_range(1,50*4), "SoftPower": GameLogic.random.randi_range(30,70), }),
 	ACountry.new({ "Name": "France", "Adjective": "French", "TravelCost": 1, "LocalCost": 2, "IntelFriendliness": 40, "Size": 67, "ElectionPeriod": 52*4, "ElectionProgress": GameLogic.random.randi_range(1,50*4), "SoftPower": GameLogic.random.randi_range(30,70), }),
 	ACountry.new({ "Name": "Russia", "Adjective": "Russian", "TravelCost": 3, "LocalCost": 1, "IntelFriendliness": 30, "Size": 144, "ElectionPeriod": 52*10, "ElectionProgress": GameLogic.random.randi_range(50*5,50*10), "SoftPower": GameLogic.random.randi_range(10,50), }),
 	ACountry.new({ "Name": "China", "Adjective": "Chinese", "TravelCost": 5, "LocalCost": 2, "IntelFriendliness": 20, "Size": 1398, "ElectionPeriod": 52*20, "ElectionProgress": GameLogic.random.randi_range(50*10,50*20), "SoftPower": GameLogic.random.randi_range(60,95), }),
@@ -141,6 +147,7 @@ class AMethod:
 	var MinimalIntel = 0  # minimal intel level about a target to use this method
 	var MinimalTrust = 0  # minimal government trust level to use this method
 	var MinimalTech = 0  # minimal technology score to use this method
+	var MinimalLocal = 0  # 0 (no role of local skills) to 100 (perfect language and customs required)
 	
 	func _init(aDictionary):
 		Name = aDictionary.Name
@@ -153,6 +160,7 @@ class AMethod:
 		MinimalIntel = aDictionary.MinimalIntel
 		MinimalTrust = aDictionary.MinimalTrust
 		MinimalTech = aDictionary.MinimalTech
+		MinimalLocal = aDictionary.MinimalLocal
 
 class AMethodOffensive:  # in future change to inheritance or something
 	# difference to normal methods: offensive ones are exclusive
@@ -174,6 +182,7 @@ class AMethodOffensive:  # in future change to inheritance or something
 	var BudgetChange = 0  # 0 to 100, additional change, apart from casualties
 	var DamageToOps = 0  # 0 to 100, additional change, apart from budget and casualties
 	var Attribution = 0  # 0 to 100, public attribution of the operation to bureau
+	var MinimalLocal = 0  # 0 (no role of local skills) to 100 (perfect language and customs required)
 	
 	func _init(aDictionary):
 		Name = aDictionary.Name
@@ -191,54 +200,55 @@ class AMethodOffensive:  # in future change to inheritance or something
 		PossibleCasualties = aDictionary.PossibleCasualties
 		BudgetChange = aDictionary.BudgetChange
 		DamageToOps = aDictionary.DamageToOps
+		MinimalLocal = aDictionary.MinimalLocal
 
 # Methods on the ground
 # 2D array: first row for MORE_INTEL, second row for RECRUIT_SOURCE etc
 var Methods = [
 	# MORE_INTEL methods
 	[
-		AMethod.new({ "Name": "general surveillance", "Cost": 2, "Quality": 10, "Risk": 2, "OfficersRequired": 1, "MinimalSkill": 0, "Available": false, "MinimalIntel": -100, "MinimalTrust": 0, "MinimalTech": 0, }),
-		AMethod.new({ "Name": "street observation on foot and by car", "Cost": 2, "Quality": 12, "Risk": 10, "OfficersRequired": 1, "MinimalSkill": 0, "Available": false, "MinimalIntel": -30, "MinimalTrust": 0, "MinimalTech": 0, }),
-		AMethod.new({ "Name": "following members of organization", "Cost": 3, "Quality": 20, "Risk": 20, "OfficersRequired": 3, "MinimalSkill": 10, "Available": false, "MinimalIntel": -20, "MinimalTrust": 0, "MinimalTech": 0, }),
-		AMethod.new({ "Name": "open observation by disguised officers", "Cost": 4, "Quality": 25, "Risk": 5, "OfficersRequired": 3, "MinimalSkill": 20, "Available": false, "MinimalIntel": -30, "MinimalTrust": 0, "MinimalTech": 5, }),
-		AMethod.new({ "Name": "install and operate external cameras", "Cost": 5, "Quality": 30, "Risk": 12, "OfficersRequired": 1, "MinimalSkill": 11, "Available": false, "MinimalIntel": -10, "MinimalTrust": 0, "MinimalTech": 10, }),
-		AMethod.new({ "Name": "intercept local mobile communication", "Cost": 10, "Quality": 40, "Risk": 5, "OfficersRequired": 1, "MinimalSkill": 30, "Available": false, "MinimalIntel": -10, "MinimalTrust": 10, "MinimalTech": 25, }),
-		AMethod.new({ "Name": "rent house for observation", "Cost": 20, "Quality": 35, "Risk": 2, "OfficersRequired": 2, "MinimalSkill": 5, "Available": false, "MinimalIntel": 5, "MinimalTrust": 0, "MinimalTech": 0, }),
-		AMethod.new({ "Name": "attemp walk in from a street", "Cost": 20, "Quality": 60, "Risk": 55, "OfficersRequired": 5, "MinimalSkill": 25, "Available": false, "MinimalIntel": 10, "MinimalTrust": 40, "MinimalTech": 0, }),
-		AMethod.new({ "Name": "bug places frequented by members", "Cost": 60, "Quality": 80, "Risk": 15, "OfficersRequired": 4, "MinimalSkill": 40, "Available": false, "MinimalIntel": 25, "MinimalTrust": 40, "MinimalTech": 35, }),
-		AMethod.new({ "Name": "break-in and copy documents", "Cost": 60, "Quality": 90, "Risk": 75, "OfficersRequired": 10, "MinimalSkill": 50, "Available": false, "MinimalIntel": 50, "MinimalTrust": 50, "MinimalTech": 60, }),
-		AMethod.new({ "Name": "pose as undercover local company", "Cost": 100, "Quality": 60, "Risk": 20, "OfficersRequired": 12, "MinimalSkill": 40, "Available": false, "MinimalIntel": -50, "MinimalTrust": 40, "MinimalTech": 0, }),
-		AMethod.new({ "Name": "pose as undercover government organization", "Cost": 300, "Quality": 85, "Risk": 25, "OfficersRequired": 16, "MinimalSkill": 50, "Available": false, "MinimalIntel": -100, "MinimalTrust": 75, "MinimalTech": 0, }),
-		AMethod.new({ "Name": "buy information from close contacts", "Cost": 30, "Quality": 50, "Risk": 50, "OfficersRequired": 1, "MinimalSkill": 10, "Available": false, "MinimalIntel": -10, "MinimalTrust": 0, "MinimalTech": 0, }),
+		AMethod.new({ "Name": "general surveillance", "Cost": 2, "Quality": 10, "Risk": 2, "OfficersRequired": 1, "MinimalSkill": 0, "Available": false, "MinimalIntel": -100, "MinimalTrust": 0, "MinimalTech": 0, "MinimalLocal": 0, }),
+		AMethod.new({ "Name": "street observation on foot and by car", "Cost": 2, "Quality": 12, "Risk": 10, "OfficersRequired": 1, "MinimalSkill": 0, "Available": false, "MinimalIntel": -30, "MinimalTrust": 0, "MinimalTech": 0, "MinimalLocal": 5, }),
+		AMethod.new({ "Name": "following members of organization", "Cost": 3, "Quality": 20, "Risk": 20, "OfficersRequired": 3, "MinimalSkill": 10, "Available": false, "MinimalIntel": -20, "MinimalTrust": 0, "MinimalTech": 0, "MinimalLocal": 5, }),
+		AMethod.new({ "Name": "open observation by disguised officers", "Cost": 4, "Quality": 25, "Risk": 5, "OfficersRequired": 3, "MinimalSkill": 20, "Available": false, "MinimalIntel": -30, "MinimalTrust": 0, "MinimalTech": 5, "MinimalLocal": 5, }),
+		AMethod.new({ "Name": "install and operate external cameras", "Cost": 5, "Quality": 30, "Risk": 12, "OfficersRequired": 1, "MinimalSkill": 11, "Available": false, "MinimalIntel": -10, "MinimalTrust": 0, "MinimalTech": 10, "MinimalLocal": 0, }),
+		AMethod.new({ "Name": "intercept local mobile communication", "Cost": 10, "Quality": 40, "Risk": 5, "OfficersRequired": 1, "MinimalSkill": 30, "Available": false, "MinimalIntel": -10, "MinimalTrust": 10, "MinimalTech": 25, "MinimalLocal": 10, }),
+		AMethod.new({ "Name": "rent house for observation", "Cost": 20, "Quality": 35, "Risk": 2, "OfficersRequired": 2, "MinimalSkill": 5, "Available": false, "MinimalIntel": 5, "MinimalTrust": 0, "MinimalTech": 0, "MinimalLocal": 30, }),
+		AMethod.new({ "Name": "attemp walk in from a street", "Cost": 20, "Quality": 60, "Risk": 55, "OfficersRequired": 5, "MinimalSkill": 25, "Available": false, "MinimalIntel": 10, "MinimalTrust": 40, "MinimalTech": 0, "MinimalLocal": 50, }),
+		AMethod.new({ "Name": "bug places frequented by members", "Cost": 60, "Quality": 80, "Risk": 15, "OfficersRequired": 4, "MinimalSkill": 40, "Available": false, "MinimalIntel": 25, "MinimalTrust": 40, "MinimalTech": 35, "MinimalLocal": 10, }),
+		AMethod.new({ "Name": "break-in and copy documents", "Cost": 60, "Quality": 90, "Risk": 75, "OfficersRequired": 10, "MinimalSkill": 50, "Available": false, "MinimalIntel": 50, "MinimalTrust": 50, "MinimalTech": 60, "MinimalLocal": 5, }),
+		AMethod.new({ "Name": "pose as undercover local company", "Cost": 100, "Quality": 60, "Risk": 20, "OfficersRequired": 12, "MinimalSkill": 40, "Available": false, "MinimalIntel": -50, "MinimalTrust": 40, "MinimalTech": 0, "MinimalLocal": 70, }),
+		AMethod.new({ "Name": "pose as undercover government organization", "Cost": 300, "Quality": 85, "Risk": 25, "OfficersRequired": 16, "MinimalSkill": 50, "Available": false, "MinimalIntel": -100, "MinimalTrust": 75, "MinimalTech": 0, "MinimalLocal": 90, }),
+		AMethod.new({ "Name": "buy information from close contacts", "Cost": 30, "Quality": 50, "Risk": 50, "OfficersRequired": 1, "MinimalSkill": 10, "Available": false, "MinimalIntel": -10, "MinimalTrust": 0, "MinimalTech": 0, "MinimalLocal": 20, }),
 	],
 	# RECRUIT_SOURCE methods
 	[
-		AMethod.new({ "Name": "basic observation of potential assets", "Cost": 4, "Quality": 10, "Risk": 3, "OfficersRequired": 2, "MinimalSkill": 0, "Available": false, "MinimalIntel": -25, "MinimalTrust": 0, "MinimalTech": 0, }),
-		AMethod.new({ "Name": "background check", "Cost": 6, "Quality": 20, "Risk": 10, "OfficersRequired": 3, "MinimalSkill": 10, "Available": false, "MinimalIntel": -10, "MinimalTrust": 0, "MinimalTech": 0, }),
-		AMethod.new({ "Name": "arrange natural meetings with potential assets", "Cost": 10, "Quality": 30, "Risk": 20, "OfficersRequired": 2, "MinimalSkill": 10, "Available": false, "MinimalIntel": 15, "MinimalTrust": 0, "MinimalTech": 0, }),
-		AMethod.new({ "Name": "build relationship with potential assets", "Cost": 10, "Quality": 50, "Risk": 30, "OfficersRequired": 2, "MinimalSkill": 40, "Available": false, "MinimalIntel": 15, "MinimalTrust": 0, "MinimalTech": 0, }),
-		AMethod.new({ "Name": "set up thorough covers for officers", "Cost": 30, "Quality": 40, "Risk": 0, "OfficersRequired": 1, "MinimalSkill": 25, "Available": false, "MinimalIntel": 0, "MinimalTrust": 0, "MinimalTech": 5, }),
-		AMethod.new({ "Name": "propose large amount of money for cooperation", "Cost": 100, "Quality": 40, "Risk": 15, "OfficersRequired": 2, "MinimalSkill": 0, "Available": false, "MinimalIntel": -10, "MinimalTrust": 0, "MinimalTech": 0, }),
-		AMethod.new({ "Name": "collect blackmail material", "Cost": 12, "Quality": 60, "Risk": 15, "OfficersRequired": 8, "MinimalSkill": 35, "Available": false, "MinimalIntel": 30, "MinimalTrust": 0, "MinimalTech": 5, }),
-		AMethod.new({ "Name": "honeytrap blackmail", "Cost": 20, "Quality": 60, "Risk": 5, "OfficersRequired": 5, "MinimalSkill": 35, "Available": false, "MinimalIntel": 10, "MinimalTrust": 0, "MinimalTech": 0, }),
-		AMethod.new({ "Name": "construct network of close contacts", "Cost": 15, "Quality": 55, "Risk": 20, "OfficersRequired": 6, "MinimalSkill": 45, "Available": false, "MinimalIntel": 40, "MinimalTrust": 0, "MinimalTech": 5, }),
-		AMethod.new({ "Name": "identify potential defectors", "Cost": 25, "Quality": 70, "Risk": 40, "OfficersRequired": 12, "MinimalSkill": 55, "Available": false, "MinimalIntel": 45, "MinimalTrust": 0, "MinimalTech": 0, }),
-		AMethod.new({ "Name": "target members close to the leader", "Cost": 40, "Quality": 90, "Risk": 55, "OfficersRequired": 15, "MinimalSkill": 65, "Available": false, "MinimalIntel": 50, "MinimalTrust": 0, "MinimalTech": 0, }),
+		AMethod.new({ "Name": "basic observation of potential assets", "Cost": 4, "Quality": 10, "Risk": 3, "OfficersRequired": 2, "MinimalSkill": 0, "Available": false, "MinimalIntel": -25, "MinimalTrust": 0, "MinimalTech": 0, "MinimalLocal": 0, }),
+		AMethod.new({ "Name": "background check", "Cost": 6, "Quality": 20, "Risk": 10, "OfficersRequired": 3, "MinimalSkill": 10, "Available": false, "MinimalIntel": -10, "MinimalTrust": 0, "MinimalTech": 0, "MinimalLocal": 30, }),
+		AMethod.new({ "Name": "arrange natural meetings with potential assets", "Cost": 10, "Quality": 30, "Risk": 20, "OfficersRequired": 2, "MinimalSkill": 10, "Available": false, "MinimalIntel": 15, "MinimalTrust": 0, "MinimalTech": 0, "MinimalLocal": 60, }),
+		AMethod.new({ "Name": "build relationship with potential assets", "Cost": 10, "Quality": 50, "Risk": 30, "OfficersRequired": 2, "MinimalSkill": 40, "Available": false, "MinimalIntel": 15, "MinimalTrust": 0, "MinimalTech": 0, "MinimalLocal": 80, }),
+		AMethod.new({ "Name": "set up thorough covers for officers", "Cost": 30, "Quality": 40, "Risk": 0, "OfficersRequired": 1, "MinimalSkill": 25, "Available": false, "MinimalIntel": 0, "MinimalTrust": 0, "MinimalTech": 5, "MinimalLocal": 70, }),
+		AMethod.new({ "Name": "large amount of money for cooperation", "Cost": 100, "Quality": 40, "Risk": 15, "OfficersRequired": 2, "MinimalSkill": 0, "Available": false, "MinimalIntel": -10, "MinimalTrust": 0, "MinimalTech": 0, "MinimalLocal": 50, }),
+		AMethod.new({ "Name": "collect blackmail material", "Cost": 12, "Quality": 60, "Risk": 15, "OfficersRequired": 8, "MinimalSkill": 35, "Available": false, "MinimalIntel": 30, "MinimalTrust": 0, "MinimalTech": 5, "MinimalLocal": 60, }),
+		AMethod.new({ "Name": "honeytrap blackmail", "Cost": 20, "Quality": 60, "Risk": 5, "OfficersRequired": 5, "MinimalSkill": 35, "Available": false, "MinimalIntel": 10, "MinimalTrust": 0, "MinimalTech": 0, "MinimalLocal": 70, }),
+		AMethod.new({ "Name": "construct network of close contacts", "Cost": 15, "Quality": 55, "Risk": 20, "OfficersRequired": 6, "MinimalSkill": 45, "Available": false, "MinimalIntel": 40, "MinimalTrust": 0, "MinimalTech": 5, "MinimalLocal": 60, }),
+		AMethod.new({ "Name": "identify potential defectors", "Cost": 25, "Quality": 70, "Risk": 40, "OfficersRequired": 12, "MinimalSkill": 55, "Available": false, "MinimalIntel": 45, "MinimalTrust": 0, "MinimalTech": 0, "MinimalLocal": 85, }),
+		AMethod.new({ "Name": "target members close to the leader", "Cost": 40, "Quality": 90, "Risk": 55, "OfficersRequired": 15, "MinimalSkill": 65, "Available": false, "MinimalIntel": 50, "MinimalTrust": 0, "MinimalTech": 0, "MinimalLocal": 85, }),
 	],
 	# OFFENSIVE methods
 	[
-		AMethodOffensive.new({ "Name": "target any funding sources", "Cost": 10, "Quality": 90, "Risk": 20, "OfficersRequired": 3, "MinimalSkill": 10, "Available": false, "MinimalIntel": -10, "MinimalTrust": 0, "MinLength": 3, "MaxLength": 6, "PossibleCasualties": 0, "BudgetChange": 10, "DamageToOps": 0, "Attribution": 5, "MinimalTech": 0, }),
-		AMethodOffensive.new({ "Name": "provide evidence for local arrests", "Cost": 2, "Quality": 15, "Risk": 30, "OfficersRequired": 1, "MinimalSkill": 10, "Available": false, "MinimalIntel": 15, "MinimalTrust": 10, "MinLength": 1, "MaxLength": 2, "PossibleCasualties": 20, "BudgetChange": 0, "DamageToOps": 10, "Attribution": 100, "MinimalTech": 0, }),
-		AMethodOffensive.new({ "Name": "track down and disrupt funding", "Cost": 15, "Quality": 50, "Risk": 20, "OfficersRequired": 3, "MinimalSkill": 15, "Available": false, "MinimalIntel": -10, "MinimalTrust": 0, "MinLength": 4, "MaxLength": 10, "PossibleCasualties": 0, "BudgetChange": 50, "DamageToOps": 0, "Attribution": 0, "MinimalTech": 10, }),
-		AMethodOffensive.new({ "Name": "kidnap and interrogate a known member", "Cost": 20, "Quality": 35, "Risk": 90, "OfficersRequired": 6, "MinimalSkill": 30, "Available": false, "MinimalIntel": 20, "MinimalTrust": 25, "MinLength": 2, "MaxLength": 3, "PossibleCasualties": 1, "BudgetChange": 0, "DamageToOps": 40, "Attribution": 40, "MinimalTech": 10, }),
-		AMethodOffensive.new({ "Name": "kill a known member", "Cost": 30, "Quality": 50, "Risk": 75, "OfficersRequired": 8, "MinimalSkill": 35, "Available": false, "MinimalIntel": 15, "MinimalTrust": 25, "MinLength": 1, "MaxLength": 2, "PossibleCasualties": 1, "BudgetChange": 0, "DamageToOps": 40, "Attribution": 60, "MinimalTech": 30, }),
-		AMethodOffensive.new({ "Name": "poison highest-ranking known member", "Cost": 20, "Quality": 65, "Risk": 60, "OfficersRequired": 3, "MinimalSkill": 50, "Available": false, "MinimalIntel": 15, "MinimalTrust": 25, "MinLength": 2, "MaxLength": 4, "PossibleCasualties": 1, "BudgetChange": 0, "DamageToOps": 60, "Attribution": 10, "MinimalTech": 75, }),
-		AMethodOffensive.new({ "Name": "engage local gangs", "Cost": 50, "Quality": 10, "Risk": 40, "OfficersRequired": 2, "MinimalSkill": 15, "Available": false, "MinimalIntel": 20, "MinimalTrust": 35, "MinLength": 1, "MaxLength": 3, "PossibleCasualties": 250, "BudgetChange": 40, "DamageToOps": 30, "Attribution": 5, "MinimalTech": 0, }),
-		AMethodOffensive.new({ "Name": "bomb locations", "Cost": 60, "Quality": 75, "Risk": 60, "OfficersRequired": 10, "MinimalSkill": 45, "Available": false, "MinimalIntel": -20, "MinimalTrust": 25, "MinLength": 2, "MaxLength": 4, "PossibleCasualties": 1000, "BudgetChange": 20, "DamageToOps": 70, "Attribution": 60, "MinimalTech": 50, }),
-		AMethodOffensive.new({ "Name": "train and send private guerilla", "Cost": 100, "Quality": 85, "Risk": 20, "OfficersRequired": 25, "MinimalSkill": 35, "Available": false, "MinimalIntel": -40, "MinimalTrust": 50, "MinLength": 10, "MaxLength": 25, "PossibleCasualties": 2500, "BudgetChange": 50, "DamageToOps": 90, "Attribution": 5, "MinimalTech": 20, }),
-		AMethodOffensive.new({ "Name": "perform basic psychological operation", "Cost": 30, "Quality": 10, "Risk": 10, "OfficersRequired": 3, "MinimalSkill": 20, "Available": false, "MinimalIntel": 5, "MinimalTrust": 0, "MinLength": 2, "MaxLength": 9, "PossibleCasualties": 0, "BudgetChange": 10, "DamageToOps": 10, "Attribution": 0, "MinimalTech": 5, }),
-		AMethodOffensive.new({ "Name": "execute misinformation campaign", "Cost": 50, "Quality": 30, "Risk": 10, "OfficersRequired": 6, "MinimalSkill": 40, "Available": false, "MinimalIntel": 15, "MinimalTrust": 20, "MinLength": 2, "MaxLength": 9, "PossibleCasualties": 0, "BudgetChange": 20, "DamageToOps": 20, "Attribution": 5, "MinimalTech": 20, }),
-		AMethodOffensive.new({ "Name": "spread black propaganda", "Cost": 100, "Quality": 45, "Risk": 5, "OfficersRequired": 25, "MinimalSkill": 60, "Available": false, "MinimalIntel": 25, "MinimalTrust": 40, "MinLength": 6, "MaxLength": 12, "PossibleCasualties": 0, "BudgetChange": 40, "DamageToOps": 100, "Attribution": 10, "MinimalTech": 30, }),
+		AMethodOffensive.new({ "Name": "target any funding sources", "Cost": 10, "Quality": 90, "Risk": 20, "OfficersRequired": 3, "MinimalSkill": 10, "Available": false, "MinimalIntel": -10, "MinimalTrust": 0, "MinLength": 3, "MaxLength": 6, "PossibleCasualties": 0, "BudgetChange": 10, "DamageToOps": 0, "Attribution": 5, "MinimalTech": 0, "MinimalLocal": 10, }),
+		AMethodOffensive.new({ "Name": "provide evidence for local arrests", "Cost": 2, "Quality": 15, "Risk": 30, "OfficersRequired": 1, "MinimalSkill": 10, "Available": false, "MinimalIntel": 15, "MinimalTrust": 10, "MinLength": 1, "MaxLength": 2, "PossibleCasualties": 20, "BudgetChange": 0, "DamageToOps": 10, "Attribution": 100, "MinimalTech": 0, "MinimalLocal": 40, }),
+		AMethodOffensive.new({ "Name": "track down and disrupt funding", "Cost": 15, "Quality": 50, "Risk": 20, "OfficersRequired": 3, "MinimalSkill": 15, "Available": false, "MinimalIntel": -10, "MinimalTrust": 0, "MinLength": 4, "MaxLength": 10, "PossibleCasualties": 0, "BudgetChange": 50, "DamageToOps": 0, "Attribution": 0, "MinimalTech": 10, "MinimalLocal": 50, }),
+		AMethodOffensive.new({ "Name": "kidnap and interrogate a known member", "Cost": 20, "Quality": 35, "Risk": 90, "OfficersRequired": 6, "MinimalSkill": 30, "Available": false, "MinimalIntel": 20, "MinimalTrust": 25, "MinLength": 2, "MaxLength": 3, "PossibleCasualties": 1, "BudgetChange": 0, "DamageToOps": 40, "Attribution": 40, "MinimalTech": 10, "MinimalLocal": 10, }),
+		AMethodOffensive.new({ "Name": "kill a known member", "Cost": 30, "Quality": 50, "Risk": 75, "OfficersRequired": 8, "MinimalSkill": 35, "Available": false, "MinimalIntel": 15, "MinimalTrust": 25, "MinLength": 1, "MaxLength": 2, "PossibleCasualties": 1, "BudgetChange": 0, "DamageToOps": 40, "Attribution": 60, "MinimalTech": 30, "MinimalLocal": 0, }),
+		AMethodOffensive.new({ "Name": "poison highest-ranking known member", "Cost": 20, "Quality": 65, "Risk": 60, "OfficersRequired": 3, "MinimalSkill": 50, "Available": false, "MinimalIntel": 15, "MinimalTrust": 25, "MinLength": 2, "MaxLength": 4, "PossibleCasualties": 1, "BudgetChange": 0, "DamageToOps": 60, "Attribution": 10, "MinimalTech": 75, "MinimalLocal": 0, }),
+		AMethodOffensive.new({ "Name": "engage local gangs", "Cost": 50, "Quality": 10, "Risk": 40, "OfficersRequired": 2, "MinimalSkill": 15, "Available": false, "MinimalIntel": 20, "MinimalTrust": 35, "MinLength": 1, "MaxLength": 3, "PossibleCasualties": 250, "BudgetChange": 40, "DamageToOps": 30, "Attribution": 5, "MinimalTech": 0, "MinimalLocal": 70, }),
+		AMethodOffensive.new({ "Name": "bomb locations", "Cost": 60, "Quality": 75, "Risk": 60, "OfficersRequired": 10, "MinimalSkill": 45, "Available": false, "MinimalIntel": -20, "MinimalTrust": 25, "MinLength": 2, "MaxLength": 4, "PossibleCasualties": 1000, "BudgetChange": 20, "DamageToOps": 70, "Attribution": 60, "MinimalTech": 50, "MinimalLocal": 0, }),
+		AMethodOffensive.new({ "Name": "train and send private guerilla", "Cost": 100, "Quality": 85, "Risk": 20, "OfficersRequired": 25, "MinimalSkill": 35, "Available": false, "MinimalIntel": -40, "MinimalTrust": 50, "MinLength": 10, "MaxLength": 25, "PossibleCasualties": 2500, "BudgetChange": 50, "DamageToOps": 90, "Attribution": 5, "MinimalTech": 20, "MinimalLocal": 60, }),
+		AMethodOffensive.new({ "Name": "perform basic psychological operation", "Cost": 30, "Quality": 10, "Risk": 10, "OfficersRequired": 3, "MinimalSkill": 20, "Available": false, "MinimalIntel": 5, "MinimalTrust": 0, "MinLength": 2, "MaxLength": 9, "PossibleCasualties": 0, "BudgetChange": 10, "DamageToOps": 10, "Attribution": 0, "MinimalTech": 5, "MinimalLocal": 60, }),
+		AMethodOffensive.new({ "Name": "execute misinformation campaign", "Cost": 50, "Quality": 30, "Risk": 10, "OfficersRequired": 6, "MinimalSkill": 40, "Available": false, "MinimalIntel": 15, "MinimalTrust": 20, "MinLength": 2, "MaxLength": 9, "PossibleCasualties": 0, "BudgetChange": 20, "DamageToOps": 20, "Attribution": 5, "MinimalTech": 20, "MinimalLocal": 80, }),
+		AMethodOffensive.new({ "Name": "spread black propaganda", "Cost": 100, "Quality": 45, "Risk": 5, "OfficersRequired": 25, "MinimalSkill": 60, "Available": false, "MinimalIntel": 25, "MinimalTrust": 40, "MinLength": 6, "MaxLength": 12, "PossibleCasualties": 0, "BudgetChange": 40, "DamageToOps": 100, "Attribution": 10, "MinimalTech": 30, "MinimalLocal": 90, }),
 	],
 ]
 

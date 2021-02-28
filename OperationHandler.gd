@@ -21,6 +21,7 @@ func ProgressOperations():
 			# differring by parameters: officers on the ground, cost of methods,
 			# quality of operation, risk of failure
 			var which = GameLogic.Operations[i].Target
+			var whichCountry = GameLogic.Operations[i].Country
 			var minOfficers = 1
 			var maxOfficers = GameLogic.OfficersInHQ
 			var localPlans = []
@@ -29,6 +30,8 @@ func ProgressOperations():
 			var noPlanReasonMinIntel = 0
 			var noPlanReasonCost = 0
 			var noPlanReasonStaff = 0
+			var noPlanReasonLocal = 0
+			var noPlanReasonTravel = 0
 			# actual method planning
 			var j = 0
 			while j < 6:  # six tries but will present only first three
@@ -45,6 +48,7 @@ func ProgressOperations():
 				var safetyCounter = 0
 				var countUnavailable = 0
 				var countMinIntel = 0
+				var countMinLocal = 0
 				if GameLogic.Operations[i].Type == OperationGenerator.Type.OFFENSIVE:
 					# picking only one method at a time
 					while safetyCounter < 4:
@@ -53,6 +57,10 @@ func ProgressOperations():
 						# do not use unavailable methods
 						if WorldData.Methods[mt][methodId].Available == false:
 							countUnavailable += 1
+							continue
+						# do not use locally unavaialbe
+						if WorldData.Methods[mt][methodId].MinimalLocal < ((WorldData.Countries[whichCountry].KnowhowLanguage + WorldData.Countries[whichCountry].KnowhowCustoms)*0.5):
+							countMinLocal += 1
 							continue
 						# do not use methods not applicable here
 						if WorldData.Organizations[which].IntelValue < WorldData.Methods[mt][methodId].MinimalIntel:
@@ -67,7 +75,7 @@ func ProgressOperations():
 						break
 				else:
 					# matching many methods
-					while len(theMethods) < noOfMethods and safetyCounter < noOfMethods*4:
+					while len(theMethods) < noOfMethods and safetyCounter < noOfMethods*6:
 						safetyCounter += 1
 						var methodId = randi() % WorldData.Methods[mt].size()
 						# avoid duplications
@@ -76,6 +84,10 @@ func ProgressOperations():
 						# do not use unavailable methods
 						if WorldData.Methods[mt][methodId].Available == false:
 							countUnavailable += 1
+							continue
+						# do not use locally unavaialbe
+						if WorldData.Methods[mt][methodId].MinimalLocal > ((WorldData.Countries[whichCountry].KnowhowLanguage + WorldData.Countries[whichCountry].KnowhowCustoms)*0.5):
+							countMinLocal += 1
 							continue
 						# do not use methods not applicable here
 						if WorldData.Organizations[which].IntelValue < WorldData.Methods[mt][methodId].MinimalIntel:
@@ -96,6 +108,8 @@ func ProgressOperations():
 						noPlanReasonTradecraft += 1
 					if countMinIntel > noOfMethods*2:  # over half of failures
 						noPlanReasonMinIntel += 1
+					if countMinLocal > noOfMethods*2:  # over half of failures
+						noPlanReasonLocal += 1
 					continue
 				# adjusting number of officers
 				usedOfficers = GameLogic.random.randi_range(usedOfficers, maxOfficers)
@@ -112,9 +126,17 @@ func ProgressOperations():
 				if usedOfficers > (GameLogic.OfficersInHQ-expelled):
 					noPlanReasonStaff += 1
 					continue
+				var ifDiplomaticTravel = WorldData.Countries[whichCountry].DiplomaticTravel
+				if WorldData.Countries[whichCountry].DiplomaticTravel == false and WorldData.Countries[whichCountry].CovertTravel < 5:
+					noPlanReasonTravel += 1
+					continue
+				# means of travelling
+				else:
+					if WorldData.Countries[whichCountry].DiplomaticTravel == true and WorldData.Countries[whichCountry].CovertTravel >= 5:
+						if GameLogic.random.randi_range(1,2) == 1:
+							ifDiplomaticTravel = false
 				# calculating total operation parameters: clash of location and methods
 				# quality, slightly balanced
-				var whichCountry = GameLogic.Operations[i].Country
 				var totalQuality = 0
 				var methodQuality = 0
 				var highestQuality = 0
@@ -128,6 +150,8 @@ func ProgressOperations():
 				totalQuality *= 0.7+(1.0-WorldData.Organizations[which].Counterintelligence*0.01)
 				var staffPercent = WorldData.Organizations[which].IntelIdentified*1.0 / WorldData.Organizations[which].Staff
 				totalQuality += staffPercent * 30
+				if ifDiplomaticTravel == false:
+					totalQuality *= (1.0 + 0.002 * WorldData.Countries[whichCountry].CovertTravel)
 				totalQuality = totalQuality*1.0/len(WorldData.Organizations[which].Countries)
 				var officerFactor = 1.0 + usedOfficers*0.1
 				if officerFactor > 2.1: officerFactor = 2.1
@@ -158,6 +182,14 @@ func ProgressOperations():
 				var potentialHostiliy = (-1.0)*WorldData.DiplomaticRelations[0][whichCountry]*0.03
 				if potentialHostiliy < 0: potentialHostiliy = 0
 				totalRisk *= 1.0 + (potentialHostiliy*0.5)
+				if ifDiplomaticTravel == false:
+					totalRisk += 10
+					if WorldData.Countries[whichCountry].CovertTravel < 20:
+						totalRisk += 0.6 * (100-WorldData.Countries[whichCountry].CovertTravel)
+					elif WorldData.Countries[whichCountry].CovertTravel < 40:
+						totalRisk += 0.4 * (100-WorldData.Countries[whichCountry].CovertTravel)
+					elif WorldData.Countries[whichCountry].CovertTravel < 70:
+						totalRisk += 0.2 * (100-WorldData.Countries[whichCountry].CovertTravel)
 				if totalRisk < 2: totalRisk = 2
 				var riskVsTime = totalRisk * predictedLength
 				var riskDesc = "no"
@@ -172,6 +204,8 @@ func ProgressOperations():
 					theDescription += WorldData.Methods[GameLogic.Operations[i].Type][m].Name+"\n"
 				if GameLogic.Operations[i].Type == OperationGenerator.Type.RECRUIT_SOURCE:
 					theDescription += "approach and recruit selected asset\n"
+				var ifCovertTravel = false
+				if ifDiplomaticTravel == false: ifCovertTravel = true
 				localPlans.append(
 					{
 						"OperationId": i,
@@ -183,10 +217,13 @@ func ProgressOperations():
 						"Quality": totalQuality,
 						"Methods": theMethods,
 						"Description": theDescription,
+						"Covert": ifCovertTravel,
 					}
 				)
 			if len(localPlans) == 0:
 				var noPlanReasonsArr = []
+				if noPlanReasonLocal > 1: noPlanReasonsArr.append("knowledge of local language and customs in " + WorldData.Countries[whichCountry].Name)
+				if noPlanReasonLocal > 1: noPlanReasonsArr.append("acceptable means of travel to " + WorldData.Countries[whichCountry].Name)
 				if noPlanReasonMinIntel > 1: noPlanReasonsArr.append("intel about " + WorldData.Organizations[GameLogic.Operations[i].Target].Name)
 				if noPlanReasonStaff > 1: noPlanReasonsArr.append("human resources")
 				if noPlanReasonCost > 1: noPlanReasonsArr.append("financial resources")
@@ -227,8 +264,11 @@ func ProgressOperations():
 				var ifHostile = ""
 				if WorldData.DiplomaticRelations[0][GameLogic.Operations[i].Country] < -30:
 					ifHostile =" (hostile to Homeland, which contributes to the risk)"
+				var ifNoknowhow = ""
+				if noPlanReasonLocal > 1:
+					ifNoknowhow = " Note that planning was constrained by unfamiliarity with local language and customs."
 				var wholeContent = "Officers designed following ground operation plans " \
-					+ "to be executed in "+localPlans[0].Country+ifHostile+".\n\n"
+					+ "to be executed in "+localPlans[0].Country+ifHostile+"."+ifNoknowhow+"\n\n"
 				var sh2 = true
 				var sh3 = true
 				if len(localPlans) == 1:
@@ -282,8 +322,27 @@ func ProgressOperations():
 			else:
 				# many shades of _something went wrong_
 				var whatHappened = GameLogic.random.randi_range(0, 100)
+				# first week - travel problems
+				if GameLogic.Operations[i].AbroadProgress == GameLogic.Operations[i].AbroadPlan.Length and GameLogic.Operations[i].AbroadPlan.Covert == true and whatHappened < WorldData.Countries[GameLogic.Operations[i].Country].CovertTravel:
+					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": covert travel did not succeed, officers were turned back at the border")
+					# internal debriefing
+					GameLogic.Operations[i].Stage = OperationGenerator.Stage.PLANNING_OPERATION
+					GameLogic.OfficersInHQ += GameLogic.Operations[i].AbroadPlan.Officers
+					GameLogic.OfficersAbroad -= GameLogic.Operations[i].AbroadPlan.Officers
+					GameLogic.BudgetOngoingOperations -= GameLogic.Operations[i].AbroadPlan.Cost
+					GameLogic.Operations[i].AbroadPlan = null
+					GameLogic.Operations[i].Result = "ONGOING (PLANNING)"
+					# world taking notice of our failure
+					GameLogic.StaffTrust -= 5
+					GameLogic.StaffExperience += 1
+					WorldData.Countries[GameLogic.Operations[i].Country].CovertTravel -= 3
+					if WorldData.Countries[GameLogic.Operations[i].Country].CovertTravel < 0:
+						WorldData.Countries[GameLogic.Operations[i].Country].CovertTravel = 0
+					if (WorldData.Countries[0].PoliticsIntel+GameLogic.random.randi_range(-15,15)) > 50:
+						# changing only if government cares
+						GameLogic.Trust -= 1
 				# base p=10/100: arrest or shooting
-				if whatHappened <= 10:
+				elif whatHappened <= 10:
 					var which = GameLogic.Operations[i].Target
 					# kill if cannot arrest and aggression*risk permits
 					if WorldData.Organizations[which].Type != WorldData.OrgType.GOVERNMENT and WorldData.Organizations[which].Type != WorldData.OrgType.INTEL and (WorldData.Organizations[which].Aggression > GameLogic.random.randi_range(50,70)) and (GameLogic.Operations[i].AbroadPlan.Risk > GameLogic.random.randi_range(75,95)):
@@ -407,6 +466,14 @@ func ProgressOperations():
 				GameLogic.OfficersAbroad -= GameLogic.Operations[i].AbroadPlan.Officers
 				GameLogic.BudgetOngoingOperations -= GameLogic.Operations[i].AbroadPlan.Cost
 				GameLogic.PursuedOperations -= 1
+				WorldData.Countries[GameLogic.Operations[i].Country].KnowhowLanguage *= 1.01
+				WorldData.Countries[GameLogic.Operations[i].Country].KnowhowCustoms += 2
+				if WorldData.Countries[GameLogic.Operations[i].Country].KnowhowCustoms > 85:
+					WorldData.Countries[GameLogic.Operations[i].Country].KnowhowCustoms -= 2
+				if GameLogic.Operations[i].AbroadPlan.Covert == true:
+					WorldData.Countries[GameLogic.Operations[i].Country].CovertTravel += 2
+					if WorldData.Countries[GameLogic.Operations[i].Country].CovertTravel > 98:
+						WorldData.Countries[GameLogic.Operations[i].Country].CovertTravel = 98
 				# quality as the main outcome
 				var qualityDiff = (0.0 + GameLogic.Operations[i].AbroadPlan.Quality - GameLogic.Operations[i].ExpectedQuality) / GameLogic.Operations[i].ExpectedQuality
 				if qualityDiff > 2.0: qualityDiff = 2.0
@@ -514,6 +581,14 @@ func ProgressOperations():
 				GameLogic.OfficersAbroad -= GameLogic.Operations[i].AbroadPlan.Officers
 				GameLogic.BudgetOngoingOperations -= GameLogic.Operations[i].AbroadPlan.Cost
 				GameLogic.PursuedOperations -= 1
+				WorldData.Countries[GameLogic.Operations[i].Country].KnowhowLanguage *= 1.01
+				WorldData.Countries[GameLogic.Operations[i].Country].KnowhowCustoms += 3
+				if WorldData.Countries[GameLogic.Operations[i].Country].KnowhowCustoms > 90:
+					WorldData.Countries[GameLogic.Operations[i].Country].KnowhowCustoms -= 3
+				if GameLogic.Operations[i].AbroadPlan.Covert == true:
+					WorldData.Countries[GameLogic.Operations[i].Country].CovertTravel += 2
+					if WorldData.Countries[GameLogic.Operations[i].Country].CovertTravel > 98:
+						WorldData.Countries[GameLogic.Operations[i].Country].CovertTravel = 98
 				# debriefing user and results of the intel
 				var difficulty = WorldData.Organizations[GameLogic.Operations[i].Target].Counterintelligence
 				var content = ""
@@ -616,6 +691,14 @@ func ProgressOperations():
 				GameLogic.OfficersAbroad -= GameLogic.Operations[i].AbroadPlan.Officers
 				GameLogic.BudgetOngoingOperations -= GameLogic.Operations[i].AbroadPlan.Cost
 				GameLogic.PursuedOperations -= 1
+				WorldData.Countries[GameLogic.Operations[i].Country].KnowhowLanguage *= 1.01
+				WorldData.Countries[GameLogic.Operations[i].Country].KnowhowCustoms += 3
+				if WorldData.Countries[GameLogic.Operations[i].Country].KnowhowCustoms > 90:
+					WorldData.Countries[GameLogic.Operations[i].Country].KnowhowCustoms -= 3
+				if GameLogic.Operations[i].AbroadPlan.Covert == true:
+					WorldData.Countries[GameLogic.Operations[i].Country].CovertTravel += 2
+					if WorldData.Countries[GameLogic.Operations[i].Country].CovertTravel > 98:
+						WorldData.Countries[GameLogic.Operations[i].Country].CovertTravel = 98
 				var whichOrg = GameLogic.Operations[i].Target
 				WorldData.Organizations[whichOrg].IntelValue += 2
 				# actual result and influence on organization

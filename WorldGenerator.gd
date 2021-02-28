@@ -135,6 +135,28 @@ func NewGenerate():
 		WorldData.Countries[c].PoliticsStability = GameLogic.random.randi_range(10,90)
 		c += 1
 	############################################################################
+	# setting initial direction parameters
+	for e in range(1, len(WorldData.Countries)):
+		WorldData.Countries[e].IntelFriendliness += GameLogic.random.randi_range(-10,10)
+		# covert travel determination, later modified by eventual local intel agency
+		if WorldData.DiplomaticRelations[e][0] > 30:
+			WorldData.Countries[e].CovertTravel = WorldData.Countries[e].IntelFriendliness + GameLogic.random.randi_range(5,20)
+		elif WorldData.DiplomaticRelations[e][0] < -30:
+			WorldData.Countries[e].CovertTravel = WorldData.Countries[e].IntelFriendliness + GameLogic.random.randi_range(-20,-5)
+		else:
+			WorldData.Countries[e].CovertTravel = WorldData.Countries[e].IntelFriendliness + GameLogic.random.randi_range(-5,5)
+		# english language plus popular culture
+		if WorldData.Countries[e].Adjective == "Irish" or WorldData.Countries[e].Adjective == "British" or WorldData.Countries[e].Adjective == "American":
+			WorldData.Countries[e].KnowhowLanguage = GameLogic.random.randi_range(75,85)
+			WorldData.Countries[e].KnowhowCustoms = GameLogic.random.randi_range(50,90)
+		else:
+			WorldData.Countries[e].KnowhowCustoms = GameLogic.random.randi_range(0,15)
+	# three directions provided by officers knowing their language and some customs
+	for z in range(0,3):
+		var whichC = GameLogic.random.randi_range(1, len(WorldData.Countries)-1)
+		WorldData.Countries[whichC].KnowhowLanguage = GameLogic.random.randi_range(70,95)
+		WorldData.Countries[whichC].KnowhowCustoms = GameLogic.random.randi_range(20,65)
+	############################################################################
 	# generating organizations
 	var doNotDuplicate = []
 	# governments
@@ -209,6 +231,10 @@ func NewGenerate():
 		if WorldData.Organizations[o].Type == WorldData.OrgType.INTEL:
 			WorldData.Organizations[o].Technology = WorldData.Organizations[o].Counterintelligence + GameLogic.random.randi_range(-15,15)
 			WorldIntel.GatherOnOrg(o, 0, "01/01/2021")
+			# updating initial country characterization
+			WorldData.Countries[WorldData.Organizations[o].Countries[0]].CovertTravel -= WorldData.Organizations[o].Counterintelligence * 0.3
+			if WorldData.Countries[WorldData.Organizations[o].Countries[0]].CovertTravel < 0:
+				WorldData.Countries[WorldData.Organizations[o].Countries[0]].CovertTravel = 0
 	############################################################################
 	# simulating last few years
 	var pastDay = 1

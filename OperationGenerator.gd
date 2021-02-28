@@ -128,6 +128,7 @@ func NewOperation(source, againstOrg, whatType):
 	PossibleNames.remove(whichName)  # to avoid using the same name again
 	# place
 	var countryId = WorldData.Organizations[againstOrg].Countries[randi() % WorldData.Organizations[againstOrg].Countries.size()]
+	WorldData.Countries[countryId].OperationStats += 1
 	# type
 	var alevel = "Confidential"
 	var desc = ""
