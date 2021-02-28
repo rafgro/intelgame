@@ -46,6 +46,8 @@ func _on_List_item_selected(index):
 	else: desc += "covert travel always available"
 	if WorldData.Countries[c].Network > 0:
 		desc += "\nNetwork of " + str(WorldData.Countries[c].Network) + " local agents present"
+	if WorldData.Countries[c].Station > 0:
+		desc += "\nIntelligence station with " + str(WorldData.Countries[c].Station) + " employees present"
 	desc += "\nAverage travel cost per officer: €" + str(int(WorldData.Countries[c].TravelCost)) + ",000\n"
 	desc += "Average cost of living per officer per week: €" + str(int(WorldData.Countries[c].LocalCost)) + ",000\n\n"
 	desc += str(WorldData.Countries[c].OperationStats) + " operations inside performed to date\n"
@@ -61,6 +63,8 @@ func _on_List_item_selected(index):
 			$M/R/H/Network.text = "Expand Network"
 	if WorldData.Countries[c].KnowhowLanguage > 50 and WorldData.Countries[c].KnowhowCustoms > 50 and WorldData.Countries[c].DiplomaticTravel == true:
 		$M/R/H/Station.disabled = false
+		if WorldData.Countries[c].Station > 0:
+			$M/R/H/Station.text = "Expand Station"
 
 func _on_Develop_pressed():
 	if lastSelectedCountry > 0:
@@ -147,6 +151,41 @@ func _on_Network_pressed():
 				"Decision2Argument": null,
 				"Decision3Callback": funcref(GameLogic, "ImplementDirectionDevelopment"),
 				"Decision3Argument": {"Choice":4, "Cost": planCost, "Length": planLength, "Officers": planOfficers, "Country": lastSelectedCountry},
+				"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
+				"Decision4Argument": null,
+			}
+		)
+		get_tree().change_scene("res://call.tscn")
+
+func _on_Station_pressed():
+	if lastSelectedCountry > 0:
+		var planOfficers = GameLogic.random.randi_range(1, GameLogic.OfficersInHQ)
+		var planLength = GameLogic.random.randi_range(8,26)
+		var planCost = planOfficers*10*planLength
+		var content = "Establishing"
+		if WorldData.Countries[lastSelectedCountry].Network > 0: content = "Expanding"
+		content += " intelligence station in " + WorldData.Countries[lastSelectedCountry].Name + " will require €" + str(planCost) + ",000 and " + str(planOfficers) + " officers. The operation will last " + str(planLength) + " weeks.\n\nConfirm if you want to start this operation."
+		# call
+		CallManager.CallQueue.append(
+			{
+				"Header": "Decision",
+				"Level": "Top Secret",
+				"Operation": "-//-",
+				"Content": content,
+				"Show1": false,
+				"Show2": false,
+				"Show3": true,
+				"Show4": true,
+				"Text1": "",
+				"Text2": "",
+				"Text3": "Approve",
+				"Text4": "Cancel",
+				"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
+				"Decision1Argument": null,
+				"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
+				"Decision2Argument": null,
+				"Decision3Callback": funcref(GameLogic, "ImplementDirectionDevelopment"),
+				"Decision3Argument": {"Choice":5, "Cost": planCost, "Length": planLength, "Officers": planOfficers, "Country": lastSelectedCountry},
 				"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 				"Decision4Argument": null,
 			}

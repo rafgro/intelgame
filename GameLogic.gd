@@ -241,7 +241,7 @@ func NextWeek():
 				# training
 				if Directions[t].Type <= 3:
 					AddEvent(str(Directions[t].Officers) + " officer(s) came back with improved knowledge about " + WorldData.Countries[Directions[t].Country].Name)
-				# establishing new network
+				# network
 				elif Directions[t].Type == 4:
 					if WorldData.Countries[Directions[t].Country].Network > 0:
 						WorldData.Countries[Directions[t].Country].Network *= (1.0 + Directions[t].Quality*0.01)
@@ -249,6 +249,14 @@ func NextWeek():
 					else:
 						WorldData.Countries[Directions[t].Country].Network = int(Directions[t].Quality)
 						AddEvent(str(Directions[t].Officers) + " officer(s) came back after establishing agent network in " + WorldData.Countries[Directions[t].Country].Name)
+				# station
+				elif Directions[t].Type == 5:
+					if WorldData.Countries[Directions[t].Country].Station > 0:
+						WorldData.Countries[Directions[t].Country].Station *= (1.0 + Directions[t].Quality*0.01)
+						AddEvent(str(Directions[t].Officers) + " officer(s) came back after expanding station in " + WorldData.Countries[Directions[t].Country].Name)
+					else:
+						WorldData.Countries[Directions[t].Country].Station = int(Directions[t].Quality)
+						AddEvent(str(Directions[t].Officers) + " officer(s) came back after establishing station in " + WorldData.Countries[Directions[t].Country].Name)
 	############################################################################
 	# operations
 	var ifCall = OperationHandler.ProgressOperations()
@@ -705,6 +713,13 @@ func ImplementDirectionDevelopment(aDict):
 		quality = (WorldData.Countries[aDict.Country].KnowhowCustoms + WorldData.Countries[aDict.Country].KnowhowLanguage + StaffSkill) * 0.3
 		if WorldData.Countries[aDict.Country].Network == 0 and quality > 15:
 			quality = random.randi_range(13,17)
+		if quality < 2: quality = 2
+	elif aDict.Choice == 5:
+		# establishing a new station or expanding existing one
+		quality = (WorldData.Countries[aDict.Country].KnowhowCustoms + WorldData.Countries[aDict.Country].KnowhowLanguage) * 0.4 + (StaffSkill + Technology) * 0.6
+		if WorldData.Countries[aDict.Country].Station == 0 and quality > 8:
+			quality = random.randi_range(7,10)
+		if quality < 2: quality = 2
 	Directions.append(
 		{
 			"Active": true,
@@ -732,6 +747,11 @@ func ImplementDirectionDevelopment(aDict):
 			AddEvent(str(aDict.Officers) + " officer(s) departed to " + WorldData.Countries[aDict.Country].Name + " to expand Bureau's network")
 		else:
 			AddEvent(str(aDict.Officers) + " officer(s) departed to " + WorldData.Countries[aDict.Country].Name + " to establish a new network")
+	elif aDict.Choice == 5:
+		if WorldData.Countries[aDict.Country].Station > 0:
+			AddEvent(str(aDict.Officers) + " officer(s) departed to " + WorldData.Countries[aDict.Country].Name + " to expand intelligence station")
+		else:
+			AddEvent(str(aDict.Officers) + " officer(s) departed to " + WorldData.Countries[aDict.Country].Name + " to establish a new intelligence station")
 
 func FinalQuit(anyArgument):
 	get_tree().quit()

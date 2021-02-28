@@ -22,6 +22,7 @@ class ACountry:
 	var KnowhowLanguage = 0  # 0 (no knowledge) to 100 (native)
 	var KnowhowCustoms = 10  # 0 (no knowledge) to 100 (native)
 	var Network = 0  # number of members in a local asset network, supporting ops
+	var Station = 0  # number of employees in a local station, supporting ops
 	
 	func _init(aDictionary):
 		Name = aDictionary.Name

@@ -67,8 +67,8 @@ func Execute(past):
 		if GameLogic.random.randi_range(1,4) == 2:  # ~one per month
 			WorldData.Countries[c].Size *= (1.0+GameLogic.random.randi_range(-1,1)*0.01)
 			WorldData.Countries[c].IntelFriendliness += GameLogic.random.randi_range(-1,1)
-		if WorldData.Countries.Network > 0:
-			if GameLogic.random.randi_range(1,10) == 6: WorldData.Countries.Network -= 1
+		if WorldData.Countries[c].Network > 0:
+			if GameLogic.random.randi_range(1,10) == 6: WorldData.Countries[c].Network -= 1
 		# stability
 		var choice = GameLogic.random.randi_range(0,70)
 		if WorldData.Countries[c].PoliticsStability < 20:
@@ -555,6 +555,17 @@ func Execute(past):
 			if GameLogic.random.randi_range(1,8) == 4:
 				var localCall = WorldIntel.GatherOnOrg(w, highestLevel*(0.9+len(WorldData.Organizations[w].IntelSources)*0.1), GameLogic.GiveDateWithYear())
 				if localCall == true: doesItEndWithCall = true
+		# intel stations
+		if WorldData.Countries[WorldData.Organizations[w].Countries[0]].Station > 0:
+			var prob = 80  # one time in 80 weeks
+			if WorldData.Countries[WorldData.Organizations[w].Countries[0]].Station > 100: prob = 20
+			elif WorldData.Countries[WorldData.Organizations[w].Countries[0]].Station > 50: prob = 40
+			elif WorldData.Countries[WorldData.Organizations[w].Countries[0]].Station > 25: prob = 50
+			elif WorldData.Countries[WorldData.Organizations[w].Countries[0]].Station > 15: prob = 60
+			elif WorldData.Countries[WorldData.Organizations[w].Countries[0]].Station > 5: prob = 70
+			if GameLogic.random.randi_range(0, prob) == int(prob*0.5):
+				var qual = GameLogic.StaffSkill*0.5 + WorldData.Countries[WorldData.Organizations[w].Countries[0]].KnowhowLanguage*0.3 + WorldData.Countries[WorldData.Organizations[w].Countries[0]].KnowhowCustoms*0.2
+				WorldIntel.GatherOnOrg(w, qual, GameLogic.GiveDateWithYear())
 	############################################################################
 	# rare new organizations, no more than one per year
 	if GameLogic.random.randi_range(1,80) == 45:
