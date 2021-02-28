@@ -16,23 +16,21 @@ var OfficersAbroad = 0
 var PursuedOperations = 0
 var BureauEvents = []
 var WorldEvents = []
-# New bureau screen
+# Bureau screen
 var IntensityHiring = 5
 var IntensityUpskill = 5
 var IntensityTech = 5
-# Budget screen
 var BudgetFull = 100  # in thousands
-var BudgetSalaries = 12
-var BudgetOffice = 5
-var BudgetRecruitment = 5
-var BudgetUpskilling = 5
-var BudgetSecurity = 5
 var BudgetOngoingOperations = 0
-# Staff screen
+# Staff
 var StaffSkill = 10  # 0 to 100
+var StaffSkillMonthsAgo = []  # array of 13 last values, furthest is the first
 var StaffExperience = 0  # 0 to 100
+var StaffExperienceMonthsAgo = []  # array of 13 last values, furthest is the first
 var StaffTrust = 50  # 0 to 100
+var StaffTrustMonthsAgo = []  # array of 13 last values, furthest is the first
 var Technology = 5  # 0 to 100
+var TechnologyMonthsAgo = []  # array of 13 last values, furthest is the first
 # Operations
 var Operations = []  # array of operation dictionaries
 # Internal logic variables, always describe them
@@ -53,8 +51,8 @@ var DistGovopCounter = 0
 var DistGovopMin = 6
 # Sort of constants but also internal, always describe them
 var NewOfficerCost = 80  # thousands needed to spend on a new officer
-var SkillMaintenanceCost = 1  # thousands needed to maintain skills for an officer
-var SecurityMaintenanceCost = 1  # thousands needed to maintain security per officer
+var NewTechCost = 200  # thousands needed to spend on a new percent of technology
+var SkillMaintenanceCost = 5  # thousands needed to maintain skills for an officer
 
 func GiveDateWithYear():
 	var dateString = ""
@@ -82,12 +80,13 @@ func AddWorldEvent(text, past):
 		WorldEvents.push_front("[b]"+past+"[/b] " + text)
 
 func FreeFundsWeekly():
-	return (BudgetFull - (BudgetSalaries+BudgetOffice+BudgetRecruitment \
-		+BudgetUpskilling+BudgetSecurity+BudgetOngoingOperations)) / 4
+	return (BudgetFull - (ActiveOfficers*4+ActiveOfficers*1+BudgetOngoingOperations)) / 4
 
 func FreeFundsWeeklyWithoutOngoing():
-	return (BudgetFull - (BudgetSalaries+BudgetOffice+BudgetRecruitment \
-		+BudgetUpskilling+BudgetSecurity)) / 4
+	return (BudgetFull - (ActiveOfficers*4+ActiveOfficers*1)) / 4
+
+func IntensityPercent(which):
+	return int(which * 1.0 / (IntensityHiring + IntensityUpskill + IntensityTech) * 100)
 
 # first ever call: proper initialization of vars
 func _init():
@@ -114,6 +113,11 @@ func _ready():
 					continue
 				# change from false to criterions fulfilled
 				WorldData.Methods[t][m].Available = true
+	# initial change counters
+	StaffSkillMonthsAgo.append(StaffSkill)
+	StaffExperienceMonthsAgo.append(StaffExperience)
+	StaffTrustMonthsAgo.append(StaffTrust)
+	TechnologyMonthsAgo.append(Technology)
 
 func NextWeek():
 	############################################################################
@@ -152,9 +156,11 @@ func NextWeek():
 				AddEvent("New year budget increase: +€"+str(int(budgetIncrease))+"k")
 				# other new-year game logic
 				YearlyOpsAgainstHomeland = 0
-	# budget-based staff changes
+	############################################################################
+	# budget-based changes
 	# hiring
-	RecruitProgress += BudgetRecruitment / 4 / NewOfficerCost
+	var freeFund = FreeFundsWeekly()
+	RecruitProgress += freeFund * (IntensityPercent(IntensityHiring)*0.01) / NewOfficerCost
 	if RecruitProgress >= 1.0 and FreeFundsWeekly() >= 4:
 		# currently always plus one, sort of weekly onboarding limit
 		# in the future expand that to a loop
@@ -164,20 +170,27 @@ func NextWeek():
 		StaffExperience -= 3
 		StaffSkill -= 2
 		StaffTrust = StaffTrust * 0.95
-		BudgetSalaries += 4
 		AddEvent("New officer joined the bureau")
 	# upskilling
-	var upskillDiff = BudgetUpskilling-(SkillMaintenanceCost*ActiveOfficers)
+	var upskillDiff = (freeFund * (IntensityPercent(IntensityUpskill)*0.01)) - (SkillMaintenanceCost*ActiveOfficers)
 	if upskillDiff > 0.5: upskillDiff = 0.5
 	elif upskillDiff < -1: upskillDiff = -1
-	StaffSkill += upskillDiff
-	# security and trust, breaches in the future
-	var trustDiff = BudgetSecurity-(SecurityMaintenanceCost*ActiveOfficers)
-	if trustDiff > 1: trustDiff = 1
-	elif trustDiff < -2: trustDiff = -2
-	StaffTrust += trustDiff
-	# tech increase, more of DEBUG than real feature
-	if random.randi_range(1,3) == 2: Technology += 1
+	if random.randi_range(1,2) == 2: StaffSkill += upskillDiff
+	# tech increase, slowing down with higher tech level to achieve
+	var techDiff = (freeFund * (IntensityPercent(IntensityTech)*0.01)) / NewTechCost
+	if Technology < 10: Technology += techDiff
+	elif Technology < 25:
+		if random.randi_range(1,2) == 2: Technology += techDiff
+	elif Technology < 40:
+		if random.randi_range(1,3) == 2: Technology += techDiff
+	elif Technology < 55:
+		if random.randi_range(1,4) == 2: Technology += techDiff*0.5
+	elif Technology < 75:
+		if random.randi_range(1,5) == 2: Technology += techDiff*0.2
+	elif Technology < 95:
+		if random.randi_range(1,6) == 2: Technology += techDiff*0.1
+	elif Technology < 100:
+		if random.randi_range(1,8) == 2: Technology += techDiff*0.05
 	############################################################################
 	# craft availability changes
 	for t in range(0, len(WorldData.Methods)):
@@ -423,11 +436,28 @@ func NextWeek():
 	DistGovopCounter -= 1
 	# physical limits or bug patches
 	if BudgetOngoingOperations < 0: BudgetOngoingOperations = 0
-	if BudgetSalaries < 0: BudgetSalaries = 0
 	if StaffExperience > 100: StaffExperience = 100
 	if StaffSkill > 100: StaffSkill = 100
 	if StaffTrust > 100: StaffTrust = 100
 	if Trust > 100: Trust = 100
+	if Technology > 100: Technology = 100
+	# histories of certain variables
+	if len(StaffSkillMonthsAgo) < 13:  # if this is under, all histories are under
+		# building initial history
+		StaffSkillMonthsAgo.append(StaffSkill)
+		StaffExperienceMonthsAgo.append(StaffExperience)
+		StaffTrustMonthsAgo.append(StaffTrust)
+		TechnologyMonthsAgo.append(Technology)
+	else:
+		# first out, last in
+		StaffSkillMonthsAgo.remove(0)
+		StaffSkillMonthsAgo.append(StaffSkill)
+		StaffExperienceMonthsAgo.remove(0)
+		StaffExperienceMonthsAgo.append(StaffExperience)
+		StaffTrustMonthsAgo.remove(0)
+		StaffTrustMonthsAgo.append(StaffTrust)
+		TechnologyMonthsAgo.remove(0)
+		TechnologyMonthsAgo.append(Technology)
 	############################################################################
 	# call to action
 	if doesItEndWithCall == true:

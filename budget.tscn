@@ -185,18 +185,178 @@ rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 
-[node name="Empty3" type="Label" parent="M/R"]
+[node name="CSkill" type="HBoxContainer" parent="M/R"]
 margin_top = 480.0
 margin_right = 680.0
 margin_bottom = 520.0
+
+[node name="SkillLabel" type="Label" parent="M/R/CSkill"]
+margin_right = 338.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 150, 40 )
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 1 )
+text = "Tradecraft know-how level:"
+
+[node name="SkillBar" type="ProgressBar" parent="M/R/CSkill"]
+margin_left = 342.0
+margin_right = 680.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 150, 40 )
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 1 )
+rounded = true
+
+[node name="SkillChange" type="Label" parent="M/R"]
+margin_top = 524.0
+margin_right = 680.0
+margin_bottom = 564.0
+rect_min_size = Vector2( 0, 40 )
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 1 )
+text = "+30% in the last six months"
+align = 2
+
+[node name="Empty12" type="Label" parent="M/R"]
+margin_top = 568.0
+margin_right = 680.0
+margin_bottom = 608.0
+rect_min_size = Vector2( 0, 40 )
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 1 )
+
+[node name="CTech2" type="HBoxContainer" parent="M/R"]
+margin_top = 612.0
+margin_right = 680.0
+margin_bottom = 652.0
+
+[node name="TechLabel" type="Label" parent="M/R/CTech2"]
+margin_right = 338.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 150, 40 )
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 1 )
+text = "Tradecraft technology level:"
+
+[node name="TechBar" type="ProgressBar" parent="M/R/CTech2"]
+margin_left = 342.0
+margin_right = 680.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 150, 40 )
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 1 )
+rounded = true
+
+[node name="TechChange" type="Label" parent="M/R"]
+margin_top = 656.0
+margin_right = 680.0
+margin_bottom = 696.0
+rect_min_size = Vector2( 0, 40 )
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 1 )
+text = "-//-"
+align = 2
+
+[node name="Empty13" type="Label" parent="M/R"]
+margin_top = 700.0
+margin_right = 680.0
+margin_bottom = 740.0
+rect_min_size = Vector2( 0, 40 )
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 1 )
+
+[node name="CExperience" type="HBoxContainer" parent="M/R"]
+margin_top = 744.0
+margin_right = 680.0
+margin_bottom = 784.0
+
+[node name="ExperienceLabel" type="Label" parent="M/R/CExperience"]
+margin_right = 338.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 150, 40 )
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 1 )
+text = "Tradecraft experience:"
+
+[node name="ExperienceBar" type="ProgressBar" parent="M/R/CExperience"]
+margin_left = 342.0
+margin_right = 680.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 150, 40 )
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 1 )
+rounded = true
+
+[node name="ExperienceChange" type="Label" parent="M/R"]
+margin_top = 788.0
+margin_right = 680.0
+margin_bottom = 828.0
+rect_min_size = Vector2( 0, 40 )
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 1 )
+text = "-//-"
+align = 2
+
+[node name="Empty14" type="Label" parent="M/R"]
+margin_top = 832.0
+margin_right = 680.0
+margin_bottom = 872.0
+rect_min_size = Vector2( 0, 40 )
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 1 )
+
+[node name="CTrust" type="HBoxContainer" parent="M/R"]
+margin_top = 876.0
+margin_right = 680.0
+margin_bottom = 916.0
+
+[node name="TrustLabel" type="Label" parent="M/R/CTrust"]
+margin_right = 338.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 150, 40 )
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 1 )
+text = "Internal trust level:"
+
+[node name="TrustBar" type="ProgressBar" parent="M/R/CTrust"]
+margin_left = 342.0
+margin_right = 680.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 150, 40 )
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 1 )
+rounded = true
+
+[node name="TrustChange" type="Label" parent="M/R"]
+margin_top = 920.0
+margin_right = 680.0
+margin_bottom = 960.0
+rect_min_size = Vector2( 0, 40 )
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 1 )
+text = "-//-"
+align = 2
+
+[node name="Empty15" type="Label" parent="M/R"]
+margin_top = 964.0
+margin_right = 680.0
+margin_bottom = 1004.0
+rect_min_size = Vector2( 0, 40 )
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 1 )
+
+[node name="Empty3" type="Label" parent="M/R"]
+margin_top = 1008.0
+margin_right = 680.0
+margin_bottom = 1048.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 
 [node name="CReturn" type="HBoxContainer" parent="M/R"]
-margin_top = 524.0
+margin_top = 1052.0
 margin_right = 680.0
-margin_bottom = 644.0
+margin_bottom = 1172.0
 
 [node name="Label" type="Label" parent="M/R/CReturn"]
 margin_top = 53.0

@@ -136,7 +136,7 @@ func NewOperation(source, againstOrg, whatType):
 	elif whatType == Type.MORE_INTEL and WorldData.Organizations[againstOrg].Type == WorldData.OrgType.GOVERNMENT:
 		desc = "Gather diplomatic intel in " + WorldData.Organizations[againstOrg].Name
 	elif whatType == Type.MORE_INTEL:
-		desc = "Gather intel from " + WorldData.Organizations[againstOrg].Name
+		desc = "Gather intel on " + WorldData.Organizations[againstOrg].Name
 	elif whatType == Type.RECRUIT_SOURCE:
 		desc = "Recruit source in " + WorldData.Organizations[againstOrg].Name
 		alevel = "Secret"

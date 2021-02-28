@@ -298,7 +298,6 @@ func ProgressOperations():
 						GameLogic.StaffTrust *= 0.2
 						GameLogic.StaffSkill -= GameLogic.StaffSkill*staffPerecent
 						GameLogic.StaffExperience -= GameLogic.StaffExperience*staffPerecent
-						GameLogic.BudgetSalaries -= GameLogic.Operations[i].AbroadPlan.Officers*4
 						GameLogic.Trust *= 0.1
 						# diplomatic event
 						var ifDipl = ""
@@ -458,7 +457,7 @@ func ProgressOperations():
 						govFeedbackDesc = "positively rated its execution. Bureau gained "+str(govFeedback)+"% of trust. As a confirmation, government increases bureau's budget by €"+str(int(budgetIncrease))+",000.\n"
 						GameLogic.Operations[i].Result = "SUCCESS, positive feedback"
 						GameLogic.AddEvent("Government increased budget by €"+str(int(budgetIncrease))+"k")
-					content = "Government-designated operation was sucessfully executed. Homeland " + govFeedbackDesc
+					content = "Government-designated operation was finished. Homeland " + govFeedbackDesc
 				# debriefing user
 				GameLogic.AddEvent(GameLogic.Operations[i].Name + ": "+str(GameLogic.Operations[i].AbroadPlan.Officers)+" officer(s) returned to homeland")
 				GameLogic.AddEvent("Bureau finished operation "+GameLogic.Operations[i].Name)
