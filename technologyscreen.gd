@@ -45,4 +45,7 @@ func _on_ItemList_item_selected(index):
 		if WorldData.Methods[t][m].MinimalTrust > 0 and WorldData.Methods[t][m].MinimalTrust > GameLogic.Trust:
 			desc += "Minimal government trust required: " + str(WorldData.Methods[t][m].MinimalTrust) + "%"
 			desc += " (" + str(int(WorldData.Methods[t][m].MinimalTrust-GameLogic.Trust)) + "% more required)\n"
+		if GameLogic.Technology < WorldData.Methods[t][m].MinimalTech:
+			desc += "Minimal technology level required: " + str(WorldData.Methods[t][m].MinimalTech) + "%"
+			desc += " (" + str(int(WorldData.Methods[t][m].MinimalTech-GameLogic.Technology)) + "% more required)\n"
 	$M/R/Details.text = desc

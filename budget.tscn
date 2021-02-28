@@ -2,7 +2,7 @@
 
 [ext_resource path="res://sourcesans.tres" type="DynamicFont" id=1]
 [ext_resource path="res://budgetscreen.gd" type="Script" id=2]
-[ext_resource path="res://icons/money.png" type="Texture" id=3]
+[ext_resource path="res://icons/staff.png" type="Texture" id=3]
 
 [node name="Panel" type="Panel"]
 margin_right = 720.0
@@ -44,25 +44,25 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="HBoxContainer" type="HBoxContainer" parent="M/R/CHeader/CenterContainer"]
-margin_left = 280.0
+margin_left = 276.0
 margin_top = 20.0
-margin_right = 400.0
+margin_right = 403.0
 margin_bottom = 60.0
 custom_constants/separation = 10
 
 [node name="TextureRect" type="TextureRect" parent="M/R/CHeader/CenterContainer/HBoxContainer"]
-margin_right = 38.0
+margin_right = 45.0
 margin_bottom = 40.0
 rect_min_size = Vector2( 38, 40 )
 texture = ExtResource( 3 )
 
 [node name="Label" type="Label" parent="M/R/CHeader/CenterContainer/HBoxContainer"]
-margin_left = 48.0
+margin_left = 55.0
 margin_top = 4.0
-margin_right = 120.0
+margin_right = 127.0
 margin_bottom = 35.0
 custom_fonts/font = ExtResource( 1 )
-text = "Budget"
+text = "Bureau"
 
 [node name="Empty5" type="Label" parent="M/R"]
 margin_top = 84.0
@@ -81,7 +81,7 @@ size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 text = "Monthly budget: €100,000 (17% spent)"
 
-[node name="Empty4" type="Label" parent="M/R"]
+[node name="Empty6" type="Label" parent="M/R"]
 margin_top = 172.0
 margin_right = 680.0
 margin_bottom = 212.0
@@ -89,64 +89,20 @@ rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 
-[node name="BasicCosts" type="Label" parent="M/R"]
+[node name="CHiring" type="HBoxContainer" parent="M/R"]
 margin_top = 216.0
 margin_right = 680.0
-margin_bottom = 315.0
-rect_min_size = Vector2( 0, 40 )
-size_flags_horizontal = 3
-custom_fonts/font = ExtResource( 1 )
-text = "Basic costs
- - €12,000 staff compensation
- - €5,000 office maintenance"
+margin_bottom = 256.0
 
-[node name="Empty" type="Label" parent="M/R"]
-margin_top = 319.0
-margin_right = 680.0
-margin_bottom = 359.0
-rect_min_size = Vector2( 0, 40 )
-size_flags_horizontal = 3
-custom_fonts/font = ExtResource( 1 )
-
-[node name="Empty8" type="Label" parent="M/R"]
-margin_top = 363.0
-margin_right = 680.0
-margin_bottom = 403.0
-rect_min_size = Vector2( 0, 40 )
-size_flags_horizontal = 3
-custom_fonts/font = ExtResource( 1 )
-
-[node name="RemainingBudget" type="Label" parent="M/R"]
-margin_top = 407.0
-margin_right = 680.0
-margin_bottom = 447.0
-rect_min_size = Vector2( 0, 40 )
-size_flags_horizontal = 3
-custom_fonts/font = ExtResource( 1 )
-text = "Custom allocation"
-
-[node name="Empty6" type="Label" parent="M/R"]
-margin_top = 451.0
-margin_right = 680.0
-margin_bottom = 491.0
-rect_min_size = Vector2( 0, 40 )
-size_flags_horizontal = 3
-custom_fonts/font = ExtResource( 1 )
-
-[node name="CRecruit" type="HBoxContainer" parent="M/R"]
-margin_top = 495.0
-margin_right = 680.0
-margin_bottom = 535.0
-
-[node name="RecruitBudget" type="Label" parent="M/R/CRecruit"]
+[node name="HiringLabel" type="Label" parent="M/R/CHiring"]
 margin_right = 338.0
 margin_bottom = 40.0
 rect_min_size = Vector2( 150, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
-text = "Recruit officers: €0,000"
+text = "Hiring intensity: X/100"
 
-[node name="RecruitSlider" type="HSlider" parent="M/R/CRecruit"]
+[node name="HiringSlider" type="HSlider" parent="M/R/CHiring"]
 margin_left = 342.0
 margin_right = 680.0
 margin_bottom = 40.0
@@ -158,25 +114,25 @@ tick_count = 15
 ticks_on_borders = true
 
 [node name="Empty7" type="Label" parent="M/R"]
-margin_top = 539.0
+margin_top = 260.0
 margin_right = 680.0
-margin_bottom = 579.0
+margin_bottom = 300.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 
 [node name="CUpskill" type="HBoxContainer" parent="M/R"]
-margin_top = 583.0
+margin_top = 304.0
 margin_right = 680.0
-margin_bottom = 623.0
+margin_bottom = 344.0
 
-[node name="UpskillBudget" type="Label" parent="M/R/CUpskill"]
+[node name="UpskillLabel" type="Label" parent="M/R/CUpskill"]
 margin_right = 338.0
 margin_bottom = 40.0
 rect_min_size = Vector2( 150, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
-text = "Upskill staff: €0,000"
+text = "Upskiling intensity: X/100"
 
 [node name="UpskillSlider" type="HSlider" parent="M/R/CUpskill"]
 margin_left = 342.0
@@ -190,27 +146,27 @@ tick_count = 15
 ticks_on_borders = true
 
 [node name="Empty9" type="Label" parent="M/R"]
-margin_top = 627.0
+margin_top = 348.0
 margin_right = 680.0
-margin_bottom = 667.0
+margin_bottom = 388.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 
-[node name="COffice" type="HBoxContainer" parent="M/R"]
-margin_top = 671.0
+[node name="CTech" type="HBoxContainer" parent="M/R"]
+margin_top = 392.0
 margin_right = 680.0
-margin_bottom = 711.0
+margin_bottom = 432.0
 
-[node name="OfficeBudget" type="Label" parent="M/R/COffice"]
+[node name="TechLabel" type="Label" parent="M/R/CTech"]
 margin_right = 338.0
 margin_bottom = 40.0
 rect_min_size = Vector2( 150, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
-text = "Office security: €0,000"
+text = "R&D intensity: X/100"
 
-[node name="OfficeSlider" type="HSlider" parent="M/R/COffice"]
+[node name="TechSlider" type="HSlider" parent="M/R/CTech"]
 margin_left = 342.0
 margin_right = 680.0
 margin_bottom = 40.0
@@ -222,25 +178,25 @@ tick_count = 15
 ticks_on_borders = true
 
 [node name="Empty2" type="Label" parent="M/R"]
-margin_top = 715.0
+margin_top = 436.0
 margin_right = 680.0
-margin_bottom = 755.0
+margin_bottom = 476.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 
 [node name="Empty3" type="Label" parent="M/R"]
-margin_top = 759.0
+margin_top = 480.0
 margin_right = 680.0
-margin_bottom = 799.0
+margin_bottom = 520.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 
 [node name="CReturn" type="HBoxContainer" parent="M/R"]
-margin_top = 803.0
+margin_top = 524.0
 margin_right = 680.0
-margin_bottom = 923.0
+margin_bottom = 644.0
 
 [node name="Label" type="Label" parent="M/R/CReturn"]
 margin_top = 53.0
@@ -256,7 +212,7 @@ rect_min_size = Vector2( 210, 120 )
 size_flags_horizontal = 0
 custom_fonts/font = ExtResource( 1 )
 text = "Return"
-[connection signal="value_changed" from="M/R/CRecruit/RecruitSlider" to="." method="_on_RecruitSlider_value_changed"]
+[connection signal="value_changed" from="M/R/CHiring/HiringSlider" to="." method="_on_HiringSlider_value_changed"]
 [connection signal="value_changed" from="M/R/CUpskill/UpskillSlider" to="." method="_on_UpskillSlider_value_changed"]
-[connection signal="value_changed" from="M/R/COffice/OfficeSlider" to="." method="_on_OfficeSlider_value_changed"]
+[connection signal="value_changed" from="M/R/CTech/TechSlider" to="." method="_on_TechSlider_value_changed"]
 [connection signal="pressed" from="M/R/CReturn/Return" to="." method="_on_Return_pressed"]

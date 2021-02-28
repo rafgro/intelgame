@@ -16,6 +16,10 @@ var OfficersAbroad = 0
 var PursuedOperations = 0
 var BureauEvents = []
 var WorldEvents = []
+# New bureau screen
+var IntensityHiring = 5
+var IntensityUpskill = 5
+var IntensityTech = 5
 # Budget screen
 var BudgetFull = 100  # in thousands
 var BudgetSalaries = 12
@@ -28,6 +32,7 @@ var BudgetOngoingOperations = 0
 var StaffSkill = 10  # 0 to 100
 var StaffExperience = 0  # 0 to 100
 var StaffTrust = 50  # 0 to 100
+var Technology = 5  # 0 to 100
 # Operations
 var Operations = []  # array of operation dictionaries
 # Internal logic variables, always describe them
@@ -105,6 +110,8 @@ func _ready():
 					continue
 				if Trust < WorldData.Methods[t][m].MinimalTrust:
 					continue
+				if Technology < WorldData.Methods[t][m].MinimalTech:
+					continue
 				# change from false to criterions fulfilled
 				WorldData.Methods[t][m].Available = true
 
@@ -169,6 +176,8 @@ func NextWeek():
 	if trustDiff > 1: trustDiff = 1
 	elif trustDiff < -2: trustDiff = -2
 	StaffTrust += trustDiff
+	# tech increase, more of DEBUG than real feature
+	if random.randi_range(1,3) == 2: Technology += 1
 	############################################################################
 	# craft availability changes
 	for t in range(0, len(WorldData.Methods)):
@@ -181,6 +190,8 @@ func NextWeek():
 				if StaffSkill < WorldData.Methods[t][m].MinimalSkill:
 					continue
 				if Trust < WorldData.Methods[t][m].MinimalTrust:
+					continue
+				if Technology < WorldData.Methods[t][m].MinimalTech:
 					continue
 				# change from false to criterions fulfilled
 				WorldData.Methods[t][m].Available = true

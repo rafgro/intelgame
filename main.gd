@@ -48,12 +48,6 @@ func _on_NextWeek_pressed():
 	UpdateMainScreen()
 	$M/R/Buttons3/NextWeek.disabled = false
 
-func _on_Budget_pressed():
-	get_tree().change_scene("res://budget.tscn")
-
-func _on_Staff_pressed():
-	get_tree().change_scene("res://staff.tscn")
-
 func _on_Government_pressed():
 	get_tree().change_scene("res://government.tscn")
 
@@ -63,5 +57,11 @@ func _on_GatheredIntel_pressed():
 func _on_Operations_pressed():
 	get_tree().change_scene("res://operations.tscn")
 
-func _on_Craft_pressed():
+func _on_Bureau_pressed():
+	get_tree().change_scene("res://budget.tscn")
+
+func _on_Tradecraft_pressed():
 	get_tree().change_scene("res://craft.tscn")
+
+func _on_Directions_pressed():
+	get_tree().change_scene("res://staff.tscn")

@@ -314,9 +314,10 @@ func GatherOnOrg(o, quality, date):
 				discreteDesc += ", in addition officers tapped into intel gathered by this agency about " + PoolStringArray(orgNames).join(", ")
 	############################################################################
 	# organization-type-specific intels
-	elif WorldData.Organizations[o].Type == WorldData.OrgType.COMPANY or WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY:
+	elif WorldData.Organizations[o].Type == WorldData.OrgType.COMPANY or WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY or WorldData.Organizations[o].Type == WorldData.OrgType.INTEL:
 		var technologyWinCall = false
 		var techDesc = ""
+		var innerTechChange = 0
 		if quality < 5:
 			pass  # not enough
 		elif quality < 20:
@@ -324,18 +325,22 @@ func GatherOnOrg(o, quality, date):
 			if WorldData.Organizations[o].Technology > 50 and GameLogic.random.randi_range(1,2) == 1:
 				techDesc = ", potentially interesting technology"
 				WorldData.Organizations[o].IntelTechnology = WorldData.Organizations[o].Technology*0.2
+				innerTechChange = 1
 		elif quality < 40:
 			if WorldData.Organizations[o].Technology < 30:
 				techDesc = ", no interesting technology"
 			elif WorldData.Organizations[o].Technology < 60:
 				techDesc = ", some technological details acquired"
 				WorldData.Organizations[o].IntelTechnology = WorldData.Organizations[o].Technology*0.3
+				innerTechChange = 1
 			else:
 				var ifNew = ""
 				var newIntelTech = WorldData.Organizations[o].Technology*0.5
 				if newIntelTech > WorldData.Organizations[o].IntelTechnology:
 					technologyWinCall = true
 					ifNew = "new "
+					innerTechChange = 2
+				else: innerTechChange = 1
 				techDesc = ", " + ifNew + "interesting technological details acquired"
 				WorldData.Organizations[o].IntelTechnology = newIntelTech
 		elif quality < 75:
@@ -345,12 +350,15 @@ func GatherOnOrg(o, quality, date):
 				techDesc = ", technological documents acquired"
 				var newIntelTech = WorldData.Organizations[o].Technology*0.6
 				WorldData.Organizations[o].IntelTechnology = newIntelTech
+				innerTechChange = 2
 			else:
 				var ifNew = ""
 				var newIntelTech = WorldData.Organizations[o].Technology*0.8
 				if newIntelTech > WorldData.Organizations[o].IntelTechnology:
 					technologyWinCall = true
 					ifNew = "new "
+					innerTechChange = 3
+				else: innerTechChange = 2
 				techDesc = ", " + ifNew + "interesting technological documents acquired"
 				WorldData.Organizations[o].IntelTechnology = newIntelTech
 		else:
@@ -362,6 +370,8 @@ func GatherOnOrg(o, quality, date):
 				if newIntelTech > WorldData.Organizations[o].IntelTechnology:
 					technologyWinCall = true
 					ifNew = "new "
+					innerTechChange = 3
+				else: innerTechChange = 2
 				techDesc = ", " + ifNew + "valuable technological documents acquired"
 				WorldData.Organizations[o].IntelTechnology = newIntelTech
 			else:
@@ -370,8 +380,21 @@ func GatherOnOrg(o, quality, date):
 				if newIntelTech > WorldData.Organizations[o].IntelTechnology:
 					technologyWinCall = true
 					ifNew = "new "
+					innerTechChange = 4
+				else: innerTechChange = 3
 				techDesc = ", " + ifNew + "significantly valuable technological documents acquired"
 				WorldData.Organizations[o].IntelTechnology = newIntelTech
+			# inner technology change
+			if WorldData.Organizations[o].Type == WorldData.OrgType.COMPANY or WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY:
+				# limited use of private tech
+				if GameLogic.Technology < 20: GameLogic.Technology += innerTechChange
+				elif GameLogic.Technology < 30: GameLogic.Technology += innerTechChange*0.5
+				elif GameLogic.Technology < 40: GameLogic.Technology += innerTechChange*0.1
+			elif WorldData.Organizations[o].Type == WorldData.OrgType.INTEL:
+				# huge use of intel tech
+				if GameLogic.Technology < 50: GameLogic.Technology += innerTechChange
+				elif GameLogic.Technology < 65: GameLogic.Technology += innerTechChange*0.5
+				elif GameLogic.Technology < 80: GameLogic.Technology += innerTechChange*0.1
 			# eventual user debriefing
 			if technologyWinCall == true:
 				var trustIncrease = quality*0.15

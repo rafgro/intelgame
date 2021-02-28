@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://sourcesans.tres" type="DynamicFont" id=1]
-[ext_resource path="res://icons/staff.png" type="Texture" id=2]
+[ext_resource path="res://icons/directions.png" type="Texture" id=2]
 [ext_resource path="res://staffscreen.gd" type="Script" id=3]
 
 [node name="Panel" type="Panel"]
@@ -44,25 +44,25 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="HBoxContainer" type="HBoxContainer" parent="M/R/CHeader/CenterContainer"]
-margin_left = 289.0
+margin_left = 257.0
 margin_top = 20.0
-margin_right = 391.0
+margin_right = 422.0
 margin_bottom = 60.0
 custom_constants/separation = 10
 
 [node name="TextureRect" type="TextureRect" parent="M/R/CHeader/CenterContainer/HBoxContainer"]
-margin_right = 45.0
+margin_right = 53.0
 margin_bottom = 40.0
 rect_min_size = Vector2( 38, 40 )
 texture = ExtResource( 2 )
 
 [node name="Label" type="Label" parent="M/R/CHeader/CenterContainer/HBoxContainer"]
-margin_left = 55.0
+margin_left = 63.0
 margin_top = 4.0
-margin_right = 102.0
+margin_right = 165.0
 margin_bottom = 35.0
 custom_fonts/font = ExtResource( 1 )
-text = "Staff"
+text = "Directions"
 
 [node name="Empty5" type="Label" parent="M/R"]
 margin_top = 84.0

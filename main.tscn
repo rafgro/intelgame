@@ -200,22 +200,22 @@ margin_right = 680.0
 margin_bottom = 721.0
 custom_constants/separation = 20
 
-[node name="Budget" type="Button" parent="M/R/Buttons"]
+[node name="Bureau" type="Button" parent="M/R/Buttons"]
 margin_right = 213.0
 margin_bottom = 120.0
 rect_min_size = Vector2( 200, 120 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 2 )
-text = "Budget"
+text = "Bureau"
 
-[node name="Staff" type="Button" parent="M/R/Buttons"]
+[node name="Tradecraft" type="Button" parent="M/R/Buttons"]
 margin_left = 233.0
 margin_right = 446.0
 margin_bottom = 120.0
 rect_min_size = Vector2( 200, 120 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 2 )
-text = "Staff"
+text = "Tradecraft"
 
 [node name="Government" type="Button" parent="M/R/Buttons"]
 margin_left = 466.0
@@ -232,13 +232,13 @@ margin_right = 680.0
 margin_bottom = 856.0
 custom_constants/separation = 20
 
-[node name="GatheredIntel" type="Button" parent="M/R/Buttons2"]
+[node name="Directions" type="Button" parent="M/R/Buttons2"]
 margin_right = 213.0
 margin_bottom = 120.0
 rect_min_size = Vector2( 200, 120 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 2 )
-text = "Intelligence"
+text = "Directions"
 
 [node name="Operations" type="Button" parent="M/R/Buttons2"]
 margin_left = 233.0
@@ -249,14 +249,14 @@ size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 2 )
 text = "Operations"
 
-[node name="Craft" type="Button" parent="M/R/Buttons2"]
+[node name="GatheredIntel" type="Button" parent="M/R/Buttons2"]
 margin_left = 466.0
 margin_right = 680.0
 margin_bottom = 120.0
 rect_min_size = Vector2( 200, 120 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 2 )
-text = "Tradecraft"
+text = "Intelligence"
 
 [node name="Label" type="Label" parent="M/R"]
 margin_top = 871.0
@@ -327,10 +327,10 @@ rect_min_size = Vector2( 210, 120 )
 custom_fonts/font = ExtResource( 2 )
 text = "Next Week"
 [connection signal="tree_entered" from="." to="." method="_on_Panel_tree_entered"]
-[connection signal="pressed" from="M/R/Buttons/Budget" to="." method="_on_Budget_pressed"]
-[connection signal="pressed" from="M/R/Buttons/Staff" to="." method="_on_Staff_pressed"]
+[connection signal="pressed" from="M/R/Buttons/Bureau" to="." method="_on_Bureau_pressed"]
+[connection signal="pressed" from="M/R/Buttons/Tradecraft" to="." method="_on_Tradecraft_pressed"]
 [connection signal="pressed" from="M/R/Buttons/Government" to="." method="_on_Government_pressed"]
-[connection signal="pressed" from="M/R/Buttons2/GatheredIntel" to="." method="_on_GatheredIntel_pressed"]
+[connection signal="pressed" from="M/R/Buttons2/Directions" to="." method="_on_Directions_pressed"]
 [connection signal="pressed" from="M/R/Buttons2/Operations" to="." method="_on_Operations_pressed"]
-[connection signal="pressed" from="M/R/Buttons2/Craft" to="." method="_on_Craft_pressed"]
+[connection signal="pressed" from="M/R/Buttons2/GatheredIntel" to="." method="_on_GatheredIntel_pressed"]
 [connection signal="pressed" from="M/R/Buttons3/NextWeek" to="." method="_on_NextWeek_pressed"]

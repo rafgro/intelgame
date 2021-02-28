@@ -207,6 +207,7 @@ func NewGenerate():
 	# filling in some organizatiions
 	for o in range(0, len(WorldData.Organizations)):
 		if WorldData.Organizations[o].Type == WorldData.OrgType.INTEL:
+			WorldData.Organizations[o].Technology = WorldData.Organizations[o].Counterintelligence + GameLogic.random.randi_range(-15,15)
 			WorldIntel.GatherOnOrg(o, 0, "01/01/2021")
 	############################################################################
 	# simulating last few years
