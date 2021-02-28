@@ -148,7 +148,7 @@ func NewGenerate():
 		# english language plus popular culture
 		if WorldData.Countries[e].Adjective == "Irish" or WorldData.Countries[e].Adjective == "British" or WorldData.Countries[e].Adjective == "American":
 			WorldData.Countries[e].KnowhowLanguage = GameLogic.random.randi_range(75,85)
-			WorldData.Countries[e].KnowhowCustoms = GameLogic.random.randi_range(50,90)
+			WorldData.Countries[e].KnowhowCustoms = GameLogic.random.randi_range(40,75)
 		else:
 			WorldData.Countries[e].KnowhowCustoms = GameLogic.random.randi_range(0,15)
 	# three directions provided by officers knowing their language and some customs

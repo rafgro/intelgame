@@ -319,6 +319,11 @@ func ProgressOperations():
 				GameLogic.Operations[i].AbroadProgress -= GameLogic.Operations[i].AbroadRateOfProgress
 				if GameLogic.Operations[i].AbroadProgress > 0:  # check to avoid doubling events
 					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": ground operation continues")
+			# second chance with help of a network
+			elif WorldData.Countries[GameLogic.Operations[i].Country].Network > 0 and GameLogic.random.randi_range(0,GameLogic.Operations[i].AbroadPlan.Risk*2) < WorldData.Countries[GameLogic.Operations[i].Country].Network:
+				GameLogic.Operations[i].AbroadProgress -= GameLogic.Operations[i].AbroadRateOfProgress
+				if GameLogic.Operations[i].AbroadProgress > 0:  # check to avoid doubling events
+					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": ground operation continues with support of local agent network")
 			else:
 				# many shades of _something went wrong_
 				var whatHappened = GameLogic.random.randi_range(0, 100)
@@ -404,7 +409,7 @@ func ProgressOperations():
 								"Header": "Urgent Decision",
 								"Level": GameLogic.Operations[i].Level,
 								"Operation": GameLogic.Operations[i].Name + "\nagainst " + WorldData.Organizations[GameLogic.Operations[i].Target].Name,
-								"Content": str(GameLogic.Operations[i].AbroadPlan.Officers) + " officers executing the action were arrested by " + WorldData.Countries[GameLogic.Operations[i].Country].Adjective + " authorities. Decide on appropriate reaction.\n\nPossibilities:\n- engaging government will return officers, but significantly decrease government's trust\n- expelling will happen between intelligence services only, but these officers will never be allowed to enter this country again\n- denying affiliation will result in officer imprisonment and their de facto loss, affecting internal trust, but not affecting any external instituions\n- exfiltration is a risky, covert rescue operation performed by the rest of the officers (" +str(GameLogic.OfficersInHQ) + " available), which returns officers intact in case of success but leads to both huge trust loss and expulsion in case of failure",
+								"Content": str(GameLogic.Operations[i].AbroadPlan.Officers) + " officers executing the action were arrested by " + WorldData.Countries[GameLogic.Operations[i].Country].Adjective + " authorities. Decide on appropriate reaction.\n\nPossibilities:\n- engaging government will return officers, but significantly decrease government's trust\n- expelling will happen between intelligence services only, but these officers will never be allowed to enter this country again\n- denying affiliation will result in officer imprisonment and their de facto loss, affecting internal trust, but not affecting any external instituions\n- exfiltration is a risky, covert rescue operation performed by the rest of the officers (" +str(GameLogic.OfficersInHQ) + " available) and eventual agent network (" +str(WorldData.Countries[GameLogic.Operations[i].Country].Network) + " available), which returns officers intact in case of success but leads to both huge trust loss and expulsion in case of failure",
 								"Show1": true,
 								"Show2": true,
 								"Show3": true,

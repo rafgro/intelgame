@@ -21,6 +21,7 @@ class ACountry:
 	var OperationStats = 0  # how many operations performed here
 	var KnowhowLanguage = 0  # 0 (no knowledge) to 100 (native)
 	var KnowhowCustoms = 10  # 0 (no knowledge) to 100 (native)
+	var Network = 0  # number of members in a local asset network, supporting ops
 	
 	func _init(aDictionary):
 		Name = aDictionary.Name

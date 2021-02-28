@@ -263,4 +263,6 @@ text = "Return"
 [connection signal="item_selected" from="M/R/Tabs/Hostile/List" to="." method="_on_List_item_selected"]
 [connection signal="item_selected" from="M/R/Tabs/Neutral/List" to="." method="_on_List_item_selected"]
 [connection signal="item_selected" from="M/R/Tabs/Friendly/List" to="." method="_on_List_item_selected"]
+[connection signal="pressed" from="M/R/H/Develop" to="." method="_on_Develop_pressed"]
+[connection signal="pressed" from="M/R/H/Network" to="." method="_on_Network_pressed"]
 [connection signal="pressed" from="M/R/CReturn/Return" to="." method="_on_Return_pressed"]

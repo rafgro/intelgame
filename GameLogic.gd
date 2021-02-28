@@ -10,15 +10,15 @@ var DateDay = 1
 var DateMonth = 1
 var DateYear = 2021
 var Trust = 51
-var ActiveOfficers = 3
-var OfficersInHQ = 3
+var ActiveOfficers = 5
+var OfficersInHQ = 5
 var OfficersAbroad = 0
 var PursuedOperations = 0
 var BureauEvents = []
 var WorldEvents = []
 # Bureau screen
 var IntensityHiring = 5
-var IntensityUpskill = 5
+var IntensityUpskill = 10
 var IntensityTech = 5
 var BudgetFull = 100  # in thousands
 var BudgetOngoingOperations = 0
@@ -33,6 +33,7 @@ var Technology = 5  # 0 to 100
 var TechnologyMonthsAgo = []  # array of 13 last values, furthest is the first
 # Operations
 var Operations = []  # array of operation dictionaries
+var Directions = []  # array of simple operation-like dicts
 # Internal logic variables, always describe them
 var AllWeeks = 0  # noting all weeks for later summary
 var RecruitProgress = 0.0  # when reaches 1, a new officer arrives
@@ -170,7 +171,20 @@ func NextWeek():
 		StaffExperience -= 3
 		StaffSkill -= 2
 		StaffTrust = StaffTrust * 0.95
-		AddEvent("New officer joined the bureau")
+		var ifDirection = ""
+		if ActiveOfficers < 10:
+			if random.randi_range(1,2) == 1:
+				var chosenC = random.randi_range(1, len(WorldData.Countries)-1)
+				WorldData.Countries[chosenC].KnowhowLanguage += random.randi_range(20,55)
+				WorldData.Countries[chosenC].KnowhowCustoms += random.randi_range(5,25)
+				ifDirection = " and brought in some knowledge about " + WorldData.Countries[chosenC].Name
+		else:
+			if random.randi_range(1,5) == 1:
+				var chosenC = random.randi_range(1, len(WorldData.Countries)-1)
+				WorldData.Countries[chosenC].KnowhowLanguage += random.randi_range(10,35)
+				WorldData.Countries[chosenC].KnowhowCustoms += random.randi_range(5,15)
+				ifDirection = " and brought in some knowledge about " + WorldData.Countries[chosenC].Name
+		AddEvent("New officer joined the bureau"+ifDirection)
 	# upskilling
 	var upskillDiff = (freeFund * (IntensityPercent(IntensityUpskill)*0.01)) - (SkillMaintenanceCost*ActiveOfficers)
 	if upskillDiff > 0.5: upskillDiff = 0.5
@@ -209,6 +223,32 @@ func NextWeek():
 				# change from false to criterions fulfilled
 				WorldData.Methods[t][m].Available = true
 				AddEvent("New craft is available: " + WorldData.Methods[t][m].Name)
+	############################################################################
+	# training or working in a general direction
+	for t in range(0, len(Directions)):
+		# { Active, MonthlyCost, Length, LengthCounter, Officers, Country, LanguageEffect, CustomsEffect, CovertEffect }
+		if Directions[t].Active == true:
+			Directions[t].LengthCounter -= 1
+			if Directions[t].LengthCounter <= 0:
+				# finish
+				Directions[t].Active = false
+				BudgetOngoingOperations -= Directions[t].MonthlyCost
+				OfficersInHQ += Directions[t].Officers
+				OfficersAbroad -= Directions[t].Officers
+				WorldData.Countries[Directions[t].Country].KnowhowLanguage += Directions[t].LanguageEffect
+				WorldData.Countries[Directions[t].Country].KnowhowCustoms += Directions[t].CustomsEffect
+				WorldData.Countries[Directions[t].Country].CovertTravel += Directions[t].CovertEffect
+				# training
+				if Directions[t].Type <= 3:
+					AddEvent(str(Directions[t].Officers) + " officer(s) came back with improved knowledge about " + WorldData.Countries[Directions[t].Country].Name)
+				# establishing new network
+				elif Directions[t].Type == 4:
+					if WorldData.Countries[Directions[t].Country].Network > 0:
+						WorldData.Countries[Directions[t].Country].Network *= (1.0 + Directions[t].Quality*0.01)
+						AddEvent(str(Directions[t].Officers) + " officer(s) came back after expanding agent network in " + WorldData.Countries[Directions[t].Country].Name)
+					else:
+						WorldData.Countries[Directions[t].Country].Network = int(Directions[t].Quality)
+						AddEvent(str(Directions[t].Officers) + " officer(s) came back after establishing agent network in " + WorldData.Countries[Directions[t].Country].Name)
 	############################################################################
 	# operations
 	var ifCall = OperationHandler.ProgressOperations()
@@ -549,6 +589,10 @@ func ImplementOfficerRescue(adictionary):
 			# successful
 			content = "Exfiltration was successful. "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned to Homeland."
 			OfficersInHQ += Operations[i].AbroadPlan.Officers
+		elif random.randi_range(0, 50) < WorldData.Countries[Operations[i].Country].Network:
+			# successful
+			content = "Exfiltration was successful, largely due to support of local agent network. "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned to Homeland."
+			OfficersInHQ += Operations[i].AbroadPlan.Officers
 		else:
 			# unsuccessful
 			var trustLoss = Trust * 0.5
@@ -619,7 +663,76 @@ func ImplementWalkin(adict):
 				"Decision4Argument": null,
 			}
 		)
-		
+
+func ImplementDirectionDevelopment(aDict):
+	# {Choice, Cost, Length, Officers, Country}
+	var languageEffect = 0
+	var customsEffect = 0
+	var covertEffect = 0
+	var quality = 0  # unused in training
+	if aDict.Choice == 1:
+		# language training
+		languageEffect = aDict.Officers * aDict.Length * (1.0+(random.randi_range(-3,3)*0.1))
+		if WorldData.Countries[aDict.Country].KnowhowLanguage > 70: languageEffect *= 0.5
+	elif aDict.Choice == 2 and WorldData.Countries[aDict.Country].DiplomaticTravel == true:
+		# embassy residency, language immersion, engagement with local culture
+		languageEffect = aDict.Officers * aDict.Length * (1.0+(random.randi_range(-2,5)*0.1))
+		if WorldData.Countries[aDict.Country].KnowhowLanguage > 90: languageEffect *= 0.3
+		elif WorldData.Countries[aDict.Country].KnowhowLanguage > 70: languageEffect *= 0.6
+		customsEffect = aDict.Officers * aDict.Length * (1.0+(random.randi_range(-2,5)*0.1))
+		if WorldData.Countries[aDict.Country].KnowhowCustoms > 90: customsEffect *= 0.3
+		elif WorldData.Countries[aDict.Country].KnowhowCustoms > 70: customsEffect *= 0.6
+		if WorldData.Countries[aDict.Country].CovertTravel < 10: covertEffect = random.randi_range(5,10)
+	elif aDict.Choice == 2 and WorldData.Countries[aDict.Country].DiplomaticTravel == false:
+		# residency in closest possible country, acquitance with local emmigrants from targeted country
+		languageEffect = aDict.Officers * aDict.Length * (1.0+(random.randi_range(-4,2)*0.1))
+		if WorldData.Countries[aDict.Country].KnowhowLanguage > 90: languageEffect *= 0.3
+		elif WorldData.Countries[aDict.Country].KnowhowLanguage > 70: languageEffect *= 0.6
+		customsEffect = aDict.Officers * aDict.Length * (1.0+(random.randi_range(-2,5)*0.1))
+		if WorldData.Countries[aDict.Country].KnowhowCustoms > 90: customsEffect *= 0.3
+		elif WorldData.Countries[aDict.Country].KnowhowCustoms > 70: customsEffect *= 0.6
+		if WorldData.Countries[aDict.Country].CovertTravel < 30: covertEffect = random.randi_range(5,10)
+	elif aDict.Choice == 3 and WorldData.Countries[aDict.Country].CovertTravel <= 35:
+		# develop passport forging system, test and correct covert travel procedures
+		covertEffect = aDict.Officers * aDict.Length * (1.0+(random.randi_range(-2,4)*0.1))
+	elif aDict.Choice == 3:
+		# correct covert travel procedures, live as a covert local
+		covertEffect = aDict.Officers * aDict.Length * (1.0+(random.randi_range(-5,5)*0.1))
+		if WorldData.Countries[aDict.Country].CovertTravel > 80: covertEffect *= 0.3
+		elif WorldData.Countries[aDict.Country].CovertTravel > 60: covertEffect *= 0.6
+	elif aDict.Choice == 4:
+		# establishing a new network or expanding existing one
+		quality = (WorldData.Countries[aDict.Country].KnowhowCustoms + WorldData.Countries[aDict.Country].KnowhowLanguage + StaffSkill) * 0.3
+		if WorldData.Countries[aDict.Country].Network == 0 and quality > 15:
+			quality = random.randi_range(13,17)
+	Directions.append(
+		{
+			"Active": true,
+			"Type": aDict.Choice,
+			"MonthlyCost": aDict.Cost * 4.0 / aDict.Length,
+			"Length": aDict.Length,
+			"LengthCounter": aDict.Length,
+			"Officers": aDict.Officers,
+			"Country": aDict.Country,
+			"LanguageEffect": languageEffect,
+			"CustomsEffect": customsEffect,
+			"CovertEffect": covertEffect,
+			"Quality": quality,
+		}
+	)
+	BudgetOngoingOperations += aDict.Cost * 4
+	OfficersInHQ -= aDict.Officers
+	OfficersAbroad += aDict.Officers
+	if aDict.Choice == 1:
+		AddEvent(str(aDict.Officers) + " officer(s) departed to training center")
+	elif aDict.Choice <= 3:
+		AddEvent(str(aDict.Officers) + " officer(s) departed to " + WorldData.Countries[aDict.Country].Name + " to develop new skills")
+	elif aDict.Choice == 4:
+		if WorldData.Countries[aDict.Country].Network > 0:
+			AddEvent(str(aDict.Officers) + " officer(s) departed to " + WorldData.Countries[aDict.Country].Name + " to expand Bureau's network")
+		else:
+			AddEvent(str(aDict.Officers) + " officer(s) departed to " + WorldData.Countries[aDict.Country].Name + " to establish a new network")
+
 func FinalQuit(anyArgument):
 	get_tree().quit()
 

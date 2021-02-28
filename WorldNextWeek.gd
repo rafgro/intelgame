@@ -67,6 +67,8 @@ func Execute(past):
 		if GameLogic.random.randi_range(1,4) == 2:  # ~one per month
 			WorldData.Countries[c].Size *= (1.0+GameLogic.random.randi_range(-1,1)*0.01)
 			WorldData.Countries[c].IntelFriendliness += GameLogic.random.randi_range(-1,1)
+		if WorldData.Countries.Network > 0:
+			if GameLogic.random.randi_range(1,10) == 6: WorldData.Countries.Network -= 1
 		# stability
 		var choice = GameLogic.random.randi_range(0,70)
 		if WorldData.Countries[c].PoliticsStability < 20:
