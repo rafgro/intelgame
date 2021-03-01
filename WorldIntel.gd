@@ -71,6 +71,8 @@ func GatherOnOrg(o, quality, date):
 	if quality >= 0 and quality < 10:
 		if WorldData.Organizations[o].Type == WorldData.OrgType.GENERALTERROR or WorldData.Organizations[o].Type == WorldData.OrgType.ARMTRADER:
 			WorldData.Organizations[o].IntelDescType = "suspected criminal organization"
+		elif WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE:
+			WorldData.Organizations[o].IntelDescType = "scientific institution"
 		var desc = ""
 		if noOfIdentified > 0: desc += "identified " + str(noOfIdentified) + " individuals inside, "
 		desc += "current state of org: "
@@ -89,7 +91,9 @@ func GatherOnOrg(o, quality, date):
 		if WorldData.Organizations[o].Type == WorldData.OrgType.GENERALTERROR:
 			WorldData.Organizations[o].IntelDescType = "terrorist organization"
 		elif WorldData.Organizations[o].Type == WorldData.OrgType.ARMTRADER:
-			WorldData.Organizations[o].IntelDescType = "criminal organization"
+			WorldData.Organizations[o].IntelDescType = "illegal arms dealer"
+		elif WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE:
+			WorldData.Organizations[o].IntelDescType = "well-protected scientific institution"
 		# rounding example:
 		# 12,000 * 0.0001 = 1.2 -> ~= 1 -> = 1 * 10,000 = 10,000
 		var desc1 = ""
@@ -113,7 +117,9 @@ func GatherOnOrg(o, quality, date):
 		if WorldData.Organizations[o].Type == WorldData.OrgType.GENERALTERROR:
 			WorldData.Organizations[o].IntelDescType = "terrorist organization"
 		elif WorldData.Organizations[o].Type == WorldData.OrgType.ARMTRADER:
-			WorldData.Organizations[o].IntelDescType = "arms trader"
+			WorldData.Organizations[o].IntelDescType = "illegal arms dealer"
+		elif WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE:
+			WorldData.Organizations[o].IntelDescType = "well-protected scientific institution"
 		var desc1 = ""
 		if noOfIdentified > 0: desc1 += "identified " + str(noOfIdentified) + " individuals inside, "
 		desc1 += "current state of org: "
@@ -132,7 +138,9 @@ func GatherOnOrg(o, quality, date):
 		if WorldData.Organizations[o].Type == WorldData.OrgType.GENERALTERROR:
 			WorldData.Organizations[o].IntelDescType = "terrorist organization"
 		elif WorldData.Organizations[o].Type == WorldData.OrgType.ARMTRADER:
-			WorldData.Organizations[o].IntelDescType = "arms trader"
+			WorldData.Organizations[o].IntelDescType = "illegal arms dealer"
+		elif WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE:
+			WorldData.Organizations[o].IntelDescType = "well-protected scientific institution"
 		var desc1 = ""
 		if noOfIdentified > 0: desc1 += "identified " + str(noOfIdentified) + " individuals inside, "
 		desc1 += "current state of org: "
@@ -151,7 +159,9 @@ func GatherOnOrg(o, quality, date):
 		if WorldData.Organizations[o].Type == WorldData.OrgType.GENERALTERROR:
 			WorldData.Organizations[o].IntelDescType = "terrorist organization"
 		elif WorldData.Organizations[o].Type == WorldData.OrgType.ARMTRADER:
-			WorldData.Organizations[o].IntelDescType = "arms trader"
+			WorldData.Organizations[o].IntelDescType = "illegal arms dealer"
+		elif WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE:
+			WorldData.Organizations[o].IntelDescType = "well-protected scientific institution"
 		var desc1 = ""
 		if noOfIdentified > 0: desc1 += "identified " + str(noOfIdentified) + " individuals inside, "
 		desc1 += "current state of org: "
@@ -265,13 +275,15 @@ func GatherOnOrg(o, quality, date):
 			if WorldData.Organizations[o].ActiveOpsAgainstHomeland > 0:
 				if GameLogic.random.randi_range(1,4) == 2:
 					antihomeland = "[u]possible suspicious activity towards Homeland[/u]"
-					antihomeland += " ([u]" + opDescriptions[randi() % opDescriptions.size()] + "[/u])"
+					if len(opDescriptions) > 0:
+						antihomeland += " ([u]" + opDescriptions[randi() % opDescriptions.size()] + "[/u])"
 		elif quality < 40:
 			antihomeland = "probably no operations against Homeland"
 			if WorldData.Organizations[o].ActiveOpsAgainstHomeland > 0:
 				if GameLogic.random.randi_range(1,2) == 1:
 					antihomeland = "[u]probably involved in operations against Homeland[/u]"
-					antihomeland += " ([u]" + opDescriptions[randi() % opDescriptions.size()] + "[/u])"
+					if len(opDescriptions) > 0:
+						antihomeland += " ([u]" + opDescriptions[randi() % opDescriptions.size()] + "[/u])"
 					if WorldData.Organizations[o].OffensiveClearance == false:
 						WorldData.Organizations[o].OffensiveClearance = true
 						GameLogic.AddEvent("Bureau received offensive clearance for targeting " + WorldData.Organizations[o].Name)
@@ -294,7 +306,7 @@ func GatherOnOrg(o, quality, date):
 	############################################################################
 	# intel about agencies brings intel about random other organizations
 	if WorldData.Organizations[o].Type == WorldData.OrgType.INTEL:
-		if quality < 5:
+		if quality < 15:
 			pass  # not enough
 		else:
 			var howManyOrgs = 1
@@ -432,7 +444,99 @@ func GatherOnOrg(o, quality, date):
 				)
 				doesItEndWithCall = true
 		discreteDesc += techDesc
-	elif WorldData.Organizations[o].Type == WorldData.OrgType.MOVEMENT:
+	elif WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE:
+		# will call user only if clearance is off
+		# this is trick/shortcut to have one-time wmd notification
+		var technologyWinCall = false
+		var techDesc = ""
+		if quality < 10:
+			pass  # not enough
+		elif quality < 20:
+			techDesc = ", lack of knowledge about research area"
+			if WorldData.Organizations[o].Technology > 50 and GameLogic.random.randi_range(1,2) == 1:
+				techDesc = ", potentially dangerous research"
+				WorldData.Organizations[o].IntelTechnology = WorldData.Organizations[o].Technology*0.1
+		elif quality < 40:
+			if WorldData.Organizations[o].Technology < 30:
+				techDesc = ", no dangerous research"
+			elif WorldData.Organizations[o].Technology < 60:
+				techDesc = ", potentially conducting research on WMD"
+				WorldData.Organizations[o].IntelTechnology = WorldData.Organizations[o].Technology*0.3
+			else:
+				var newIntelTech = WorldData.Organizations[o].Technology*0.5
+				techDesc = ", conducts research on WMD"
+				WorldData.Organizations[o].IntelTechnology = newIntelTech
+				technologyWinCall = true
+		elif quality < 75:
+			if WorldData.Organizations[o].Technology < 30:
+				techDesc = ", no dangerous research"
+			elif WorldData.Organizations[o].Technology < 60:
+				techDesc = ", conducts research on WMD, some details acquired"
+				var newIntelTech = WorldData.Organizations[o].Technology*0.6
+				WorldData.Organizations[o].IntelTechnology = newIntelTech
+				technologyWinCall = true
+				GameLogic.Trust += 1
+			else:
+				var newIntelTech = WorldData.Organizations[o].Technology*0.8
+				techDesc = ", conducts research on WMD, technological details acquired"
+				WorldData.Organizations[o].IntelTechnology = newIntelTech
+				technologyWinCall = true
+				GameLogic.Trust += 2
+		else:
+			if WorldData.Organizations[o].Technology < 30:
+				techDesc = ", no dangerous technology"
+			elif WorldData.Organizations[o].Technology < 60:
+				var ifNew = ""
+				var newIntelTech = WorldData.Organizations[o].Technology*0.8
+				techDesc = ", conducts research on WMD, technological details acquired"
+				WorldData.Organizations[o].IntelTechnology = newIntelTech
+				technologyWinCall = true
+				GameLogic.Trust += 2
+			else:
+				var ifNew = ""
+				var newIntelTech = WorldData.Organizations[o].Technology
+				techDesc = ", conducts research on WMD, significantly valuable details acquired"
+				WorldData.Organizations[o].IntelTechnology = newIntelTech
+				technologyWinCall = true
+				GameLogic.Trust += 3
+			# eventual user debriefing
+			if technologyWinCall == true and WorldData.Organizations[o].OffensiveClearance == false:
+				var trustIncrease = quality*0.15
+				if trustIncrease > 10: trustIncrease = 10
+				if (GameLogic.Trust+trustIncrease) > 100: trustIncrease = 101-GameLogic.Trust
+				GameLogic.Trust += trustIncrease
+				var budgetIncrease = quality*0.3
+				if budgetIncrease > 50: budgetIncrease = 50
+				GameLogic.BudgetFull += budgetIncrease
+				CallManager.CallQueue.append(
+					{
+						"Header": "Important Information",
+						"Level": "Top Secret",
+						"Operation": "-//-",
+						"Content": "New technological intel has been gathered in " + WorldData.Organizations[o].Name + ", concerning development of weapons of mass destruction. Homeland authorities recognized it as extremely valuable. In recognition of the efforts and in hope of continuation, government raised the trust by " + str(int(trustIncrease)) + "% and increased Bureau's budget by €" + str(int(budgetIncrease)) + ",000.\nnBureau is also cleared to conduct eventual offensive operations against the organization.",
+						"Show1": false,
+						"Show2": false,
+						"Show3": false,
+						"Show4": true,
+						"Text1": "",
+						"Text2": "",
+						"Text3": "",
+						"Text4": "Understood",
+						"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision1Argument": null,
+						"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision2Argument": null,
+						"Decision3Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision3Argument": null,
+						"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision4Argument": null,
+					}
+				)
+				WorldData.Organizations[o].OffensiveClearance = true
+				GameLogic.AddEvent("Bureau received offensive clearance for targeting " + WorldData.Organizations[o].Name)
+				doesItEndWithCall = true
+		discreteDesc += techDesc
+	elif WorldData.Organizations[o].Type == WorldData.OrgType.MOVEMENT or WorldData.Organizations[o].Type == WorldData.OrgType.ARMTRADER:
 		var movDesc = ""
 		if quality < 10:
 			pass  # not enough

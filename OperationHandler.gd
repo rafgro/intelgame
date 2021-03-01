@@ -43,7 +43,8 @@ func ProgressOperations():
 				var usedOfficers = minOfficers
 				# finding methods to use in the operation
 				var mt = GameLogic.Operations[i].Type
-				var noOfMethods = GameLogic.random.randi_range(1, len(WorldData.Methods[mt]))
+				var noOfMethods = GameLogic.random.randi_range(1,4)
+				if GameLogic.random.randi_range(1,4) == 3: noOfMethods = GameLogic.random.randi_range(1,8)
 				var theMethods = []
 				var safetyCounter = 0
 				var countUnavailable = 0
@@ -51,7 +52,7 @@ func ProgressOperations():
 				var countMinLocal = 0
 				if GameLogic.Operations[i].Type == OperationGenerator.Type.OFFENSIVE:
 					# picking only one method at a time
-					while safetyCounter < 4:
+					while safetyCounter < 10:
 						safetyCounter += 1
 						var methodId = randi() % WorldData.Methods[mt].size()
 						# do not use unavailable methods
@@ -75,7 +76,7 @@ func ProgressOperations():
 						break
 				else:
 					# matching many methods
-					while len(theMethods) < noOfMethods and safetyCounter < noOfMethods*6:
+					while len(theMethods) < noOfMethods and safetyCounter < noOfMethods*10:
 						safetyCounter += 1
 						var methodId = randi() % WorldData.Methods[mt].size()
 						# avoid duplications
@@ -122,8 +123,7 @@ func ProgressOperations():
 				# calculating cost and checking if it's possible
 				var ifDiplomaticTravel = WorldData.Countries[whichCountry].DiplomaticTravel
 				if ifAllRemote == false:
-					var singleOfficerCost = WorldData.Countries[GameLogic.Operations[i].Country].LocalCost \
-						+ (WorldData.Countries[GameLogic.Operations[i].Country].TravelCost / predictedLength / 2)
+					var singleOfficerCost = WorldData.Countries[GameLogic.Operations[i].Country].LocalCost + (WorldData.Countries[GameLogic.Operations[i].Country].TravelCost / predictedLength / 2)
 					totalCost += singleOfficerCost * usedOfficers * predictedLength
 					for m in theMethods:
 						totalCost += WorldData.Methods[GameLogic.Operations[i].Type][m].Cost * predictedLength
@@ -160,9 +160,9 @@ func ProgressOperations():
 					if highestQuality < WorldData.Methods[GameLogic.Operations[i].Type][m].Quality:
 						highestQuality = WorldData.Methods[GameLogic.Operations[i].Type][m].Quality
 				methodQuality -= highestQuality
-				# this one is clever: average of highest risk method and all other
+				# this one is clever: average of highest quality method and all other
 				totalQuality += (highestQuality+(methodQuality*1.0/len(theMethods)))*0.8
-				totalQuality *= 0.7+(1.0-WorldData.Organizations[which].Counterintelligence*0.01)
+				totalQuality *= 0.5+(1.0-WorldData.Organizations[which].Counterintelligence*0.01)
 				var staffPercent = WorldData.Organizations[which].IntelIdentified*1.0 / WorldData.Organizations[which].Staff
 				totalQuality += staffPercent * 30
 				if ifDiplomaticTravel == false and ifAllRemote == false:
@@ -219,7 +219,7 @@ func ProgressOperations():
 					+str(predictedLength)+" weeks | "+qualityDesc+" quality, "+riskDesc+" risk\n"
 				if ifAllRemote == true: theDescription += "no travel\n"
 				elif ifCovertTravel == true: theDescription += "covert travel\n"
-				else: theDescription += "overt travel to embassy\n"
+				else: theDescription += "travel to embassy\n"
 				for m in theMethods:
 					theDescription += WorldData.Methods[GameLogic.Operations[i].Type][m].Name+"\n"
 				if GameLogic.Operations[i].Type == OperationGenerator.Type.RECRUIT_SOURCE:
@@ -751,14 +751,52 @@ func ProgressOperations():
 						if funds > WorldData.Organizations[whichOrg].Budget:
 							funds = WorldData.Organizations[whichOrg].Budget
 						WorldData.Organizations[whichOrg].Budget -= funds
-						if WorldData.Organizations[whichOrg].Budget <= 0:
+						if WorldData.Organizations[whichOrg].Budget <= 0 and WorldData.Organizations[whichOrg].Type != WorldData.OrgType.MOVEMENT:
 							destroyedOrg = true
+					# damaging connected organizations
+					for z in WorldData.Organizations[whichOrg].ConnectedTo:
+						# movement -> terror org
+						if WorldData.Organizations[whichOrg].Type == WorldData.OrgType.MOVEMENT:
+							if casualties > 0:
+								WorldData.OrgType[z].Aggression += GameLogic.random.randi_range(5,10)
+								if WorldData.OrgType[z].Staff > casualties:
+									WorldData.OrgType[z].Staff -= GameLogic.random.randi_range(0, casualties*0.5)
+							WorldData.Organizations[z].Budget *= 1.0 - (WorldData.Methods[2][methodId].BudgetChange*0.002)
+							if WorldData.Organizations[z].ActiveOpsAgainstHomeland > 0:
+								for u in range(0,len(WorldData.Organizations[z].OpsAgainstHomeland)):
+									WorldData.Organizations[z].OpsAgainstHomeland[u].FinishCounter *= (1.0 + GameLogic.random.randi_range(1,25)*0.01)
+						# armtrader -> terror org
+						if WorldData.Organizations[whichOrg].Type == WorldData.OrgType.ARMTRADER:
+							if WorldData.Organizations[z].ActiveOpsAgainstHomeland > 0:
+								for u in range(0,len(WorldData.Organizations[z].OpsAgainstHomeland)):
+									if destroyedOrg == false:
+										WorldData.Organizations[z].OpsAgainstHomeland[u].FinishCounter *= (1.0 + GameLogic.random.randi_range(1,25)*0.01)
+										WorldData.Organizations[z].OpsAgainstHomeland[u].Damage -= GameLogic.random.randi_range(5,25)
+									else:
+										if GameLogic.random.randi_range(1,2) == 1:
+											WorldData.Organizations[z].OpsAgainstHomeland[u].Active = false
+											destroyedOps += 1
+										else:
+											WorldData.Organizations[z].OpsAgainstHomeland[u].FinishCounter *= (1.0 + GameLogic.random.randi_range(25,100)*0.01)
+					# removing technology, accumulated
+					if WorldData.Organizations[whichOrg].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE:
+						if GameLogic.random.randi_range(0,100) < WorldData.Methods[2][methodId].DamageToOps:
+							WorldData.Organizations[whichOrg].Technology -= GameLogic.random.randi_range(1, WorldData.Methods[2][methodId].DamageToOps*0.5)
 					# removing operations, accumulated with previous ones
 					if WorldData.Organizations[whichOrg].ActiveOpsAgainstHomeland > 0:
-						var accumulatedDamage = WorldData.Methods[2][methodId].DamageToOps + GameLogic.random.randi_range(-5,5)
 						for a in range(0, len(WorldData.Organizations[whichOrg].OpsAgainstHomeland)):
 							if WorldData.Organizations[whichOrg].OpsAgainstHomeland[a].Active == false:
 								continue
+							# isolated approach
+							if GameLogic.random.randi_range(0,100) < WorldData.Methods[2][methodId].DamageToOps:
+								if GameLogic.random.randi_range(1,4) == 2:
+									WorldData.Organizations[whichOrg].OpsAgainstHomeland[a].Active = false
+									destroyedOps += 1
+									continue
+								else:
+									WorldData.Organizations[whichOrg].OpsAgainstHomeland[a].FinishCounter *= 1.0 + (WorldData.Methods[2][methodId].DamageToOps*0.005)
+									lengthenedOps += 1
+									continue
 							# person-based approach
 							if WorldData.Organizations[whichOrg].OpsAgainstHomeland[a].Persons > casualties:
 								WorldData.Organizations[whichOrg].OpsAgainstHomeland[a].Active = false
@@ -800,6 +838,8 @@ func ProgressOperations():
 							inflictedDamage += WorldData.Organizations[whichOrg].Name + " lost one valuable member. "
 					if funds > 0:
 						inflictedDamage += "Inflicted financial damage is estimated at €" + str(funds) + ",000. "
+					if len(WorldData.Organizations[whichOrg].ConnectedTo) > 0:
+						inflictedDamage += "In addition, some of the terrorist organizations connected to " + WorldData.Organizations[whichOrg].Name + " were also affected. "
 				# special case: offensive action against government
 				var attributionDesc = ""
 				if WorldData.Organizations[whichOrg].Type == WorldData.OrgType.GOVERNMENT:
@@ -816,7 +856,7 @@ func ProgressOperations():
 						WorldData.DiplomaticRelations[GameLogic.Operations[i].Country][0] -= GameLogic.random.randi_range(30,60)
 				# debriefing user and results of the intel
 				var content = ""
-				var methodDesc = WorldData.Methods[2][GameLogic.Operations[i].AbroadPlan.Methods[0]].Name
+				var methodDesc = WorldData.Methods[2][GameLogic.Operations[i].AbroadPlan.Methods[0]].Name.replace("(remote) ", "")
 				if GameLogic.Operations[i].Source == 0:
 					if success == false:
 						content = "Operation failed. Officers did not damage " + WorldData.Organizations[GameLogic.Operations[i].Target].Name + ", they were not able to successfully " + methodDesc + ". " + attributionDesc + "\n"

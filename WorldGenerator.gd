@@ -3,7 +3,7 @@ extends Node
 func GenerateHostileName():
 	var wordsA = ["Leftist", "Right", "Proud", "Revolutionary", "Republican", "Combat", "Black", "Democratic", "Real"]
 	var wordsB = ["Tobiah","Yseut","Esther","Iphigenia","Yemima","Rexana","Amaterasu","Joslyn","Mattityahu","Karl","Izanami","Jemma","Lorinda","Avram","Ned","Trophimus","Isolde","Harvey","Marsha","Lyn","Shani","Anu","Marilyn","Montgomery","Davey","Leland","Crescens","Jordana","Vern","Bradford","Marianne","Adamu","Manahem","Earleen","Peronel","Enosh","Ryker","Adelle","Myrddin","Carver","Jody","Anat","Atarah","Capricia","Sidney","Cindra","Nik","Jehoash","Atarah","Iahel"]
-	var wordsC = ["Group", "Brotherhood", "Force", "Action", "Militants", "Extremists"]
+	var wordsC = ["Group", "Brotherhood", "Force", "Action", "Militants", "Extremists", "Gang"]
 	var content = ""
 	var length = GameLogic.random.randi_range(1,3)
 	if length == 1:
@@ -27,7 +27,7 @@ func GenerateCompanyName():
 	return wordsA[randi() % wordsA.size()]
 
 func GenerateUniversityName(adjective):
-	var wordsA = ["University", "Institute", "College", "Technological University", "National Colllege", "Institute of Technology", "School of Science", "Polytechnic", "Academy of Sciences", "Institute for Advanced Study", "National Laboratory"]
+	var wordsA = ["University", "Institute", "College", "Technological University", "National Colllege", "Institute of Technology", "School of Science", "Polytechnic", "Academy of Sciences", "Institute for Advanced Study", "National Laboratory", "Research Center", "Scientific Society"]
 	return adjective + " " + wordsA[randi() % wordsA.size()]
 
 func NewGenerate():
@@ -166,7 +166,7 @@ func NewGenerate():
 		)
 		WorldData.Organizations[-1].IntelIdentified = GameLogic.random.randi_range(20,100)  # officials
 	# movements
-	var movNames = ["Religious", "Nationalist", "Anarchist"]
+	var movNames = ["Religious", "Nationalist", "Anarchist", "Counter-culture"]
 	for i in range(0,3):
 		var doNotRepeat = []
 		for k in range(0,GameLogic.random.randi_range(3,6)):
@@ -232,6 +232,29 @@ func NewGenerate():
 			if WorldData.Organizations[j].Countries[0] != places: continue
 			if GameLogic.random.randi_range(1,2) == 1:
 				WorldData.Organizations[j].ConnectedTo.append(len(WorldData.Organizations)-1)
+	# few arms traders
+	for i in range(0,5):
+		var places = GameLogic.random.randi_range(0,len(WorldData.Countries)-1)
+		var name = GenerateCompanyName()
+		if name in doNotDuplicate: continue
+		doNotDuplicate.append(name)
+		var ifKnown = false
+		if GameLogic.random.randi_range(1,3) == 2: ifKnown = true
+		WorldData.Organizations.append(
+			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.ARMTRADER, "Name": name, "Fixed": false, "Known": ifKnown, "Staff": GameLogic.random.randi_range(10,200), "Budget": GameLogic.random.randi_range(1000,100000), "Counterintelligence": GameLogic.random.randi_range(50,80), "Aggression": GameLogic.random.randi_range(55,95), "Countries": [places], "IntelValue": GameLogic.random.randi_range(-30,0), })
+		)
+		if ifKnown == false:
+			WorldData.Organizations[-1].UndercoverCounter = GameLogic.random.randi_range(30,240)
+		# tying some terror orgs to this arm trader
+		var howManyToTie = GameLogic.random.randi_range(0,3)
+		var tied = 0
+		for j in range(0,len(WorldData.Organizations)):
+			if tied >= howManyToTie: break
+			if WorldData.Organizations[j].Type != WorldData.OrgType.GENERALTERROR: continue
+			if !(places in WorldData.Organizations[j].Countries): continue
+			if GameLogic.random.randi_range(1,4) == 2:
+				WorldData.Organizations[-1].ConnectedTo.append(j)
+				tied += 1
 	# companies
 	for i in range(0,10):
 		var size = GameLogic.random.randi_range(10,5000)
@@ -240,22 +263,34 @@ func NewGenerate():
 		if name in doNotDuplicate: continue
 		doNotDuplicate.append(name)
 		WorldData.Organizations.append(
-			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.COMPANY, "Name": name, "Fixed": false, "Known": true, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-100,100), "Counterintelligence": GameLogic.random.randi_range(0,30), "Aggression": GameLogic.random.randi_range(0,10), "Countries": [places], "IntelValue": GameLogic.random.randi_range(-10,10), })
+			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.COMPANY, "Name": name, "Fixed": false, "Known": true, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-100,100), "Counterintelligence": GameLogic.random.randi_range(10,50), "Aggression": GameLogic.random.randi_range(0,10), "Countries": [places], "IntelValue": GameLogic.random.randi_range(-10,10), })
 		)
 		WorldData.Organizations[-1].IntelIdentified = GameLogic.random.randi_range(1,10)  # officials
 		WorldData.Organizations[-1].Technology = GameLogic.random.randi_range(1, WorldData.Countries[places].SoftPower)
 	# universities
-	for i in range(0,10):
+	for i in range(0,12):
 		var size = GameLogic.random.randi_range(200,2000)
 		var places = GameLogic.random.randi_range(0,len(WorldData.Countries)-1)
 		var name = GenerateUniversityName(WorldData.Countries[places].Adjective)
 		if name in doNotDuplicate: continue
 		doNotDuplicate.append(name)
 		WorldData.Organizations.append(
-			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.UNIVERSITY, "Name": name, "Fixed": false, "Known": true, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-100,100), "Counterintelligence": GameLogic.random.randi_range(0,10), "Aggression": GameLogic.random.randi_range(0,5), "Countries": [places], "IntelValue": GameLogic.random.randi_range(-10,10), })
+			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.UNIVERSITY, "Name": name, "Fixed": false, "Known": true, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-100,100), "Counterintelligence": GameLogic.random.randi_range(10,50), "Aggression": GameLogic.random.randi_range(0,5), "Countries": [places], "IntelValue": GameLogic.random.randi_range(-10,10), })
 		)
 		WorldData.Organizations[-1].IntelIdentified = GameLogic.random.randi_range(1,10)  # officials
 		WorldData.Organizations[-1].Technology = GameLogic.random.randi_range(1, WorldData.Countries[places].SoftPower)
+	# offensive universities (wmd research etc)
+	for i in range(0,4):
+		var size = GameLogic.random.randi_range(200,2000)
+		var places = GameLogic.random.randi_range(0,len(WorldData.Countries)-1)
+		var name = GenerateUniversityName(WorldData.Countries[places].Adjective)
+		if name in doNotDuplicate: continue
+		doNotDuplicate.append(name)
+		WorldData.Organizations.append(
+			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.UNIVERSITY_OFFENSIVE, "Name": name, "Fixed": false, "Known": true, "Staff": size, "Budget": size*200+GameLogic.random.randi_range(-100,100), "Counterintelligence": GameLogic.random.randi_range(40,85), "Aggression": GameLogic.random.randi_range(15,50), "Countries": [places], "IntelValue": GameLogic.random.randi_range(-10,10), })
+		)
+		WorldData.Organizations[-1].IntelIdentified = GameLogic.random.randi_range(1,10)  # officials
+		WorldData.Organizations[-1].Technology = GameLogic.random.randi_range(WorldData.Countries[places].SoftPower, WorldData.Countries[places].SoftPower*2)
 	############################################################################
 	# filling in some organizatiions
 	for o in range(0, len(WorldData.Organizations)):

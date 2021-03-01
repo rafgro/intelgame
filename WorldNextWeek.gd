@@ -147,6 +147,8 @@ func Execute(past):
 				WorldData.Organizations[w].IntelValue += 10
 				if WorldData.Organizations[w].Type == WorldData.OrgType.GENERALTERROR:
 					GameLogic.AddWorldEvent("New suspected terrorist organization, " + WorldData.Organizations[w].Name + ", discovered in " + WorldData.Countries[WorldData.Organizations[w].Countries[0]].Name, past)
+				elif WorldData.Organizations[w].Type == WorldData.OrgType.ARMTRADER:
+					GameLogic.AddWorldEvent("New suspected arms dealer, " + WorldData.Organizations[w].Name + ", discovered in " + WorldData.Countries[WorldData.Organizations[w].Countries[0]].Name, past)
 		# staff and budget changes
 		if GameLogic.random.randi_range(1,4) == 2:  # ~one per month
 			WorldData.Organizations[w].Budget *= (1.0+GameLogic.random.randi_range(-1,1)*0.01)
@@ -162,6 +164,9 @@ func Execute(past):
 					# better technology leads to more frequent discoveries
 					WorldData.Organizations[w].Technology += GameLogic.random.randi_range(15,35)
 					GameLogic.AddWorldEvent(WorldData.TechnologicalPhrases[ randi() % WorldData.TechnologicalPhrases.size() ] + " in " + WorldData.Countries[WorldData.Organizations[w].Countries[0]].Name, past)
+		elif WorldData.Organizations[w].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE:
+			if GameLogic.random.randi_range(1,70) == 25:
+				WorldData.Organizations[w].Technology += GameLogic.random.randi_range(1,7)
 		# continuing existing operations
 		for u in range(0,len(WorldData.Organizations[w].OpsAgainstHomeland)):
 			if WorldData.Organizations[w].OpsAgainstHomeland[u].Active == false:
@@ -564,8 +569,23 @@ func Execute(past):
 			elif WorldData.Countries[WorldData.Organizations[w].Countries[0]].Station > 15: prob = 60
 			elif WorldData.Countries[WorldData.Organizations[w].Countries[0]].Station > 5: prob = 70
 			if GameLogic.random.randi_range(0, prob) == int(prob*0.5):
-				var qual = GameLogic.StaffSkill*0.5 + WorldData.Countries[WorldData.Organizations[w].Countries[0]].KnowhowLanguage*0.3 + WorldData.Countries[WorldData.Organizations[w].Countries[0]].KnowhowCustoms*0.2
+				var qual = GameLogic.StaffSkill*0.3 + WorldData.Countries[WorldData.Organizations[w].Countries[0]].KnowhowLanguage*0.3 + WorldData.Countries[WorldData.Organizations[w].Countries[0]].KnowhowCustoms*0.2 + GameLogic.random.randi(0,20)*0.01
 				WorldIntel.GatherOnOrg(w, qual, GameLogic.GiveDateWithYear())
+		# changing relations between arms dealers and terror orgs
+		if WorldData.Organizations[w].Type == WorldData.OrgType.ARMTRADER:
+			if GameLogic.random.randi_range(1,20) == 4:
+				if GameLogic.random.randi_range(1,2) == 1:
+					# connection loss
+					if len(WorldData.Organizations[w].ConnectedTo) > 0:
+						WorldData.Organizations[w].ConnectedTo.remove(GameLogic.random.randi_range(0, len(WorldData.Organizations[w].ConnectedTo)-1))
+				else:
+					# new connection
+					for f in range(0, len(WorldData.Organizations)):
+						if WorldData.Organizations[f].Type != WorldData.OrgType.GENERALTERROR: continue
+						if f in WorldData.Organizations[w].ConnectedTo: continue
+						if GameLogic.random.randi_range(1,4) != 2: continue
+						WorldData.Organizations[w].ConnectedTo.append(f)
+						break
 	############################################################################
 	# rare new organizations, no more than one per year
 	if GameLogic.random.randi_range(1,100) == 45:

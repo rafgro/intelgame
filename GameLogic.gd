@@ -337,10 +337,10 @@ func NextWeek():
 			doesItEndWithCall = true
 	############################################################################
 	# walk-ins or whistleblowers
-	if random.randi_range(1,30) == 16 and DistWalkinCounter < 1:
+	if random.randi_range(1,40) == 16 and DistWalkinCounter < 1:
 		var whichOrg = random.randi_range(0, len(WorldData.Organizations)-1)
 		var quality = random.randi_range(-65,65)
-		var content = "A source, claiming to be close to " + WorldData.Organizations[whichOrg].Name + " (" + WorldData.Countries[WorldData.Organizatiions[whichOrg].Countries[0]].Name + ") walked in into one our embassies. "
+		var content = "A source, claiming to be close to " + WorldData.Organizations[whichOrg].Name + " (" + WorldData.Countries[WorldData.Organizations[whichOrg].Countries[0]].Name + ") walked in into one our embassies. "
 		if WorldData.Organizations[whichOrg].IntelValue < 20 or WorldData.Organizations[whichOrg].IntelIdentified < 1:
 			content += "Due to lack of intelligence about the organization, officers cannot verify this story. "
 		else:
@@ -612,7 +612,7 @@ func ImplementOfficerRescue(adictionary):
 			if trustLoss > Trust: trustLoss = Trust
 			Trust -= trustLoss
 			WorldData.Countries[Operations[i].Country].Expelled += Operations[i].AbroadPlan.Officers + involvedInExf
-			content = "Exfiltration failed. Government officials of Homeland and " + WorldData.Countries[Operations[i].Country].Name + " learned about the situation. "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned, but bureau lost " + str(int(trustLoss)) + "% of trust. In addition, " + int(Operations[i].AbroadPlan.Officers + involvedInExf) + " were deemed persona non grata in " + WorldData.Countries[Operations[i].Country].Name + "."
+			content = "Exfiltration failed. Government officials of Homeland and " + WorldData.Countries[Operations[i].Country].Name + " learned about the situation. "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned, but bureau lost " + str(int(trustLoss)) + "% of trust. In addition, " + str(int(Operations[i].AbroadPlan.Officers + involvedInExf)) + " were deemed persona non grata in " + WorldData.Countries[Operations[i].Country].Name + "."
 			WorldData.DiplomaticRelations[0][Operations[i].Country] -= random.randi_range(5,15)
 			WorldData.DiplomaticRelations[Operations[i].Country][0] -= GameLogic.random.randi_range(5,15)
 			OfficersInHQ += Operations[i].AbroadPlan.Officers
