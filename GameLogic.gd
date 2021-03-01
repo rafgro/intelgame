@@ -20,7 +20,7 @@ var WorldEvents = []
 var IntensityHiring = 5
 var IntensityUpskill = 10
 var IntensityTech = 5
-var BudgetFull = 100  # in thousands
+var BudgetFull = 100  # in thousands, monthly
 var BudgetOngoingOperations = 0
 # Staff
 var StaffSkill = 10  # 0 to 100
@@ -34,6 +34,7 @@ var TechnologyMonthsAgo = []  # array of 13 last values, furthest is the first
 # Operations
 var Operations = []  # array of operation dictionaries
 var Directions = []  # array of simple operation-like dicts
+var Investigations = []  # array of simple operation-like dicts
 # Internal logic variables, always describe them
 var AllWeeks = 0  # noting all weeks for later summary
 var RecruitProgress = 0.0  # when reaches 1, a new officer arrives
@@ -53,6 +54,8 @@ var DistGovopCounter = 0
 var DistGovopMin = 6
 var DistSourcecheckCounter = 0
 var DistSourcecheckMin = 8
+var DistMolesearchCounter = 0
+var DistMolesearchMin = 12
 # Sort of constants but also internal, always describe them
 var NewOfficerCost = 80  # thousands needed to spend on a new officer
 var NewTechCost = 200  # thousands needed to spend on a new percent of technology
@@ -164,6 +167,7 @@ func NextWeek():
 	# budget-based changes
 	# hiring
 	var freeFund = FreeFundsWeekly()
+	if freeFund < 0: freeFund = 0
 	RecruitProgress += freeFund * (IntensityPercent(IntensityHiring)*0.01) / NewOfficerCost
 	if RecruitProgress >= 1.0 and FreeFundsWeekly() >= 4:
 		# currently always plus one, sort of weekly onboarding limit
@@ -367,7 +371,7 @@ func NextWeek():
 				"Show2": false,
 				"Show3": true,
 				"Show4": true,
-				"Text1": "Interrogate",
+				"Text1": "",
 				"Text2": "",
 				"Text3": "Reject intel",
 				"Text4": "Accept intel",
@@ -474,6 +478,62 @@ func NextWeek():
 				)
 				doesItEndWithCall = true
 	############################################################################
+	# investigations
+	for e in range(0, len(Investigations)):
+		if Investigations[e].FinishCounter > 0:
+			Investigations[e].FinishCounter -= 1
+			if Investigations[e].FinishCounter == 0:
+				# investigation finished, time to present results
+				var content = "Final Report after Investigation into:\n"
+				var org = Investigations[e].Organization
+				var op = Investigations[e].Operation
+				# investigation after firing a mole
+				if Investigations[e].Type == WorldData.ExtOpType.COUNTERINTEL:
+					content += "Possible Informant in Bureau\n\n"
+					# either successfully detected
+					if Investigations[e].Success == true:
+						content += "Investigation team concluded that fired officer have been leaking confidential information to " + WorldData.Organizations[org].Name + " for " + WorldData.Organizations[org].OpsAgainstHomeland[op].InvestigationData.Length + " weeks. As a result:\n"
+						if WorldData.Organizations[org].OpsAgainstHomeland[op].InvestigationData.CovertDamage > 0:
+							content += "- " + str(int(WorldData.Organizations[org].OpsAgainstHomeland[op].InvestigationData.CovertDamage)) + "% of covert travel know how and operations in " + WorldData.Countries[WorldData.Organizations[org].Countries[0]].Name + " were affected (some of the know how has to be rebuilt)\n"
+						if WorldData.Organizations[org].OpsAgainstHomeland[op].InvestigationData.NetworkDamage > 0:
+							content += "- " + str(int(WorldData.Organizations[org].OpsAgainstHomeland[op].InvestigationData.NetworkDamage)) + " agents in " + WorldData.Countries[WorldData.Organizations[org].Countries[0]].Adjective + " were compromised (in response, whole network was dissolved)\n"
+							WorldData.Countries[WorldData.Organizations[org].Countries[0]].Network = 0
+						if WorldData.Organizations[org].OpsAgainstHomeland[op].InvestigationData.TurnedSources > 0:
+							content += str(int(WorldData.Organizations[org].OpsAgainstHomeland[op].InvestigationData.NetworkDamage)) + " " + WorldData.Countries[WorldData.Organizations[org].Countries[0]].Adjective + " sources were turned into providing false intel (work continues on uncovering them)"
+					# or failure
+					else:
+						content += "Investigation team concluded that fired officer did not leak confidential information. "
+						if InternalMoles > 0:
+							content += "However, there are signals that the information is leaked by other officers. Bureau will continue the search for the mole."
+						else:
+							content += "It is highly likely that Bureau is currently not targeted by external organizations."
+				# debriefing user
+				CallManager.CallQueue.append(
+					{
+						"Header": "Important Information",
+						"Level": "Secret",
+						"Operation": "Purgatory",
+						"Content": content,
+						"Show1": false,
+						"Show2": false,
+						"Show3": false,
+						"Show4": true,
+						"Text1": "",
+						"Text2": "",
+						"Text3": "",
+						"Text4": "Understood",
+						"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision1Argument": null,
+						"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision2Argument": null,
+						"Decision3Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision3Argument": null,
+						"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision4Argument": null,
+					}
+				)
+				doesItEndWithCall = true
+	############################################################################
 	# final variable maintenance
 	# ticker label change
 	if AttackTicker != 0:
@@ -486,6 +546,7 @@ func NextWeek():
 	DistWalkinCounter -= 1
 	DistGovopCounter -= 1
 	DistSourcecheckCounter -= 1
+	DistMolesearchCounter -= 1
 	# physical limits or bug patches
 	if BudgetOngoingOperations < 0: BudgetOngoingOperations = 0
 	if StaffExperience > 100: StaffExperience = 100
@@ -605,7 +666,7 @@ func ImplementOfficerRescue(adictionary):
 			# successful
 			content = "Exfiltration was successful. "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned to Homeland."
 			OfficersInHQ += Operations[i].AbroadPlan.Officers
-		elif random.randi_range(0, 50) < WorldData.Countries[Operations[i].Country].Network:
+		elif random.randi_range(0, 50) < (WorldData.Countries[Operations[i].Country].Network - WorldData.Countries[Operations[i].Country].NetworkBlowup):
 			# successful
 			content = "Exfiltration was successful, largely due to support of local agent network. "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned to Homeland."
 			OfficersInHQ += Operations[i].AbroadPlan.Officers
@@ -616,7 +677,7 @@ func ImplementOfficerRescue(adictionary):
 			if trustLoss > Trust: trustLoss = Trust
 			Trust -= trustLoss
 			WorldData.Countries[Operations[i].Country].Expelled += Operations[i].AbroadPlan.Officers + involvedInExf
-			content = "Exfiltration failed. Government officials of Homeland and " + WorldData.Countries[Operations[i].Country].Name + " learned about the situation. "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned, but bureau lost " + str(int(trustLoss)) + "% of trust. In addition, " + str(int(Operations[i].AbroadPlan.Officers + involvedInExf)) + " were deemed persona non grata in " + WorldData.Countries[Operations[i].Country].Name + "."
+			content = "Exfiltration failed. Government officials of Homeland and " + WorldData.Countries[Operations[i].Country].Name + " learned about the situation. "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned, but bureau lost " + str(int(trustLoss)) + "% of trust. In addition, " + str(int(Operations[i].AbroadPlan.Officers + involvedInExf)) + " officer(s) were deemed persona non grata in " + WorldData.Countries[Operations[i].Country].Name + "."
 			WorldData.DiplomaticRelations[0][Operations[i].Country] -= random.randi_range(5,15)
 			WorldData.DiplomaticRelations[Operations[i].Country][0] -= GameLogic.random.randi_range(5,15)
 			OfficersInHQ += Operations[i].AbroadPlan.Officers
@@ -743,7 +804,7 @@ func ImplementDirectionDevelopment(aDict):
 			"Quality": quality,
 		}
 	)
-	BudgetOngoingOperations += aDict.Cost * 4
+	BudgetOngoingOperations += aDict.Cost * 4.0 / aDict.Length
 	OfficersInHQ -= aDict.Officers
 	OfficersAbroad += aDict.Officers
 	if aDict.Choice == 1:
@@ -767,17 +828,37 @@ func ImplementSourceTermination(aDict):
 	AddEvent('Bureau lost source in ' + WorldData.Organizations[aDict.Org].Name)
 
 func ImplementMoleTermination(aDict):
-	# {"Org"}
+	# {"Org", "Op"}
+	var ifSuccess = false
 	if WorldData.Organizations[aDict.Org].ActiveOpsAgainstHomeland > 0:
+		ifSuccess = true
 		InternalMoles -= 1
 		WorldData.Organizations[aDict.Org].ActiveOpsAgainstHomeland -= 1
 		for z in range(0,WorldData.Organizations[aDict.Org].OpsAgainstHomeland):
 			if WorldData.Organizations[aDict.Org].OpsAgainstHomeland[z].Active == true:
 				WorldData.Organizations[aDict.Org].OpsAgainstHomeland[z].Active = false
+		if WorldData.Organizations[aDict.Org].ActiveOpsAgainstHomeland == 0:
+			WorldData.Organizations[aDict.Org].OpsAgainstHomeland[aDict.Op].InvestigationData.CovertDamage = WorldData.Countries[WorldData.Organizations[aDict.Org].Countries[0]].CovertTravelBlowup
+			WorldData.Countries[WorldData.Organizations[aDict.Org].Countries[0]].CovertTravelBlowup = 0
+			WorldData.Countries[WorldData.Organizations[aDict.Org].Countries[0]].CovertTravel *= 0.7
+		else:
+			WorldData.Organizations[aDict.Org].OpsAgainstHomeland[aDict.Op].InvestigationData.CovertDamage = WorldData.Countries[WorldData.Organizations[aDict.Org].Countries[0]].CovertTravelBlowup * 0.5
+			WorldData.Countries[WorldData.Organizations[aDict.Org].Countries[0]].CovertTravelBlowup *= 0.5
+		WorldData.Organizations[aDict.Org].OpsAgainstHomeland[aDict.Op].InvestigationData.NetworkDamage = WorldData.Countries[WorldData.Organizations[aDict.Org].Countries[0]].NetworkBlowup
 	ActiveOfficers -= 1
+	OfficersInHQ -= 1
 	StaffSkill *= 0.9
 	StaffExperience *= 0.9
 	StaffTrust *= 0.9
+	Investigations.append(
+		{
+			"Type": WorldData.ExtOpType.COUNTERINTEL,
+			"FinishCounter": random.randi_range(5,10),
+			"Organization": aDict.Org,
+			"Operation": aDict.Op,
+			"Success": ifSuccess,
+		}
+	)
 
 func FinalQuit(anyArgument):
 	get_tree().quit()

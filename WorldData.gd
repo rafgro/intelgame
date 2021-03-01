@@ -18,10 +18,12 @@ class ACountry:
 	var Expelled = 0  # how many officers are persona non grata
 	var DiplomaticTravel = true  # if officers can travel officially
 	var CovertTravel = 50  # 0 (unavailable) to 100 (easy to conduct)
+	var CovertTravelBlowup = 0  # subtracted from above var but hidden from user, coming from moles
 	var OperationStats = 0  # how many operations performed here
 	var KnowhowLanguage = 0  # 0 (no knowledge) to 100 (native)
 	var KnowhowCustoms = 10  # 0 (no knowledge) to 100 (native)
 	var Network = 0  # number of members in a local asset network, supporting ops
+	var NetworkBlowup = 0  # subtracted from above var but hidden from user, coming from moles
 	var Station = 0  # number of employees in a local station, supporting ops
 	
 	func _init(aDictionary):
@@ -286,6 +288,7 @@ class AnExternalOperation:
 	var Active = false  # operations are not removed, only deactivated, to allow investigations
 	var FinishCounter = 0  # -1 every week until it is 0 and operation is launched
 	var IntelValue = 0  # 0 (uknown) to 100 (perfectly known)
+	var InvestigationData = null  # dict of various data, then used for investigation report
 	
 	func _init(adict):
 		Active = true

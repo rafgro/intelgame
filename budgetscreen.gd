@@ -3,7 +3,7 @@ extends Panel
 func _ready():
 	# general stats
 	$M/R/MonthlyBudget.text = "Monthly budget: €" + str(int(GameLogic.BudgetFull)) \
-		+ ",000 (€" + str(int(GameLogic.FreeFundsWeeklyWithoutOngoing()*4)) + "k free for operations)"
+		+ ",000 (€" + str(int(GameLogic.FreeFundsWeekly()*4)) + "k free for operations)"
 	# sliders
 	$M/R/CHiring/HiringLabel.text = "Hiring intensity: " + str(GameLogic.IntensityPercent(GameLogic.IntensityHiring)) + "%"
 	$M/R/CHiring/HiringSlider.max_value = 100

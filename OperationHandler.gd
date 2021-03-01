@@ -200,11 +200,11 @@ func ProgressOperations():
 				if ifDiplomaticTravel == false and ifAllRemote == false:
 					totalRisk += 10
 					if WorldData.Countries[whichCountry].CovertTravel < 20:
-						totalRisk += 0.6 * (100-WorldData.Countries[whichCountry].CovertTravel)
+						totalRisk += 0.6 * (100-WorldData.Countries[whichCountry].CovertTravel + WorldData.Countries[whichCountry].CovertTravelBlowup)
 					elif WorldData.Countries[whichCountry].CovertTravel < 40:
-						totalRisk += 0.4 * (100-WorldData.Countries[whichCountry].CovertTravel)
+						totalRisk += 0.4 * (100-WorldData.Countries[whichCountry].CovertTravel + WorldData.Countries[whichCountry].CovertTravelBlowup)
 					elif WorldData.Countries[whichCountry].CovertTravel < 70:
-						totalRisk += 0.2 * (100-WorldData.Countries[whichCountry].CovertTravel)
+						totalRisk += 0.2 * (100-WorldData.Countries[whichCountry].CovertTravel + WorldData.Countries[whichCountry].CovertTravelBlowup)
 				if totalRisk < 2: totalRisk = 2
 				var riskVsTime = totalRisk * predictedLength
 				var riskDesc = "no"
@@ -339,7 +339,7 @@ func ProgressOperations():
 				if GameLogic.Operations[i].AbroadProgress > 0:  # check to avoid doubling events
 					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": operation continues")
 			# second chance with help of a network
-			elif WorldData.Countries[GameLogic.Operations[i].Country].Network > 0 and GameLogic.random.randi_range(0,GameLogic.Operations[i].AbroadPlan.Risk*2) < WorldData.Countries[GameLogic.Operations[i].Country].Network:
+			elif (WorldData.Countries[GameLogic.Operations[i].Country].Network - WorldData.Countries[GameLogic.Operations[i].Country].NetworkBlowup) > 0 and GameLogic.random.randi_range(0,GameLogic.Operations[i].AbroadPlan.Risk*2) < (WorldData.Countries[GameLogic.Operations[i].Country].Network - WorldData.Countries[GameLogic.Operations[i].Country].Network):
 				GameLogic.Operations[i].AbroadProgress -= GameLogic.Operations[i].AbroadRateOfProgress
 				if GameLogic.Operations[i].AbroadProgress > 0:  # check to avoid doubling events
 					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": operation continues with support of local agent network")

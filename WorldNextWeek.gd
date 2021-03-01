@@ -541,7 +541,9 @@ func Execute(past):
 			for u in range(0,len(WorldData.Organizations[w].OpsAgainstHomeland)):
 				if WorldData.Organizations[w].OpsAgainstHomeland[u].Active == false:
 					continue
-				WorldIntel.LeakBureauInfo(WorldData.Organizations[w].Countries[0], WorldData.Organizations[w].OpsAgainstHomeland[u].Damage)
+				WorldData.Organizations[w].OpsAgainstHomeland[u].InvestigationData.Length += 1
+				if GameLogic.random.randi_range(1,6) == 5:
+					WorldIntel.LeakBureauInfo(WorldData.Organizations[w].Countries[0], WorldData.Organizations[w].OpsAgainstHomeland[u].Damage, w, u)
 			# possible new intel operations
 			var opFrequency = WorldData.Organizations[w].Aggression
 			if WorldData.Organizations[w].Staff < 100: opFrequency *= 0.1
@@ -549,7 +551,7 @@ func Execute(past):
 			elif WorldData.Organizations[w].Staff < 10000: opFrequency *= 0.4
 			elif WorldData.Organizations[w].Staff < 50000: opFrequency *= 0.6
 			elif WorldData.Organizations[w].Staff < 100000: opFrequency *= 0.8
-			var randFrequency = 140 - opFrequency  # max aggr->p=1/40, min aggr->p=1/140
+			var randFrequency = 240 - opFrequency  # max aggr->p=1/140, min aggr->p=1/240
 			if GameLogic.random.randi_range(0,randFrequency) == int(randFrequency*0.5):
 				# actual source acquisition happens here
 				# if successful, then operation of keeping it up begins
@@ -566,15 +568,27 @@ func Execute(past):
 							"FinishCounter": 120,
 						}
 					))
+					WorldData.Organizations[w].OpsAgainstHomeland[-1].InvestigationData = {
+						"Length": 0,
+						"CovertTravelDamage": 0,
+						"NetworkDamage": 0,
+						"TurnedSources": 0,
+					}
 					WorldData.Organizations[w].ActiveOpsAgainstHomeland += 1
 					GameLogic.InternalMoles += 1
 			# detecting moles
 			if GameLogic.InternalMoles > 0 and GameLogic.random.randi_range(1,8) == 4:
-				if len(WorldData.Organizations[w].OpsAgainstHomeland) > 0 or GameLogic.random.randi_range(1,10) == 3:
+				if (WorldData.Organizations[w].ActiveOpsAgainstHomeland > 0 or GameLogic.random.randi_range(1,10) == 3) and GameLogic.DistMolesearchCounter <= 0:
+					GameLogic.DistMolesearchCounter = GameLogic.DistMolesearchMin
 					var successProb = GameLogic.StaffExperience*0.1 + GameLogic.StaffSkill*0.3 + WorldData.Organizations[w].IntelValue*0.6
+					var whichOp = 0
+					for f in range(0, len(WorldData.Organizations[w].OpsAgainstHomeland)):
+						if WorldData.Organizations[w].OpsAgainstHomeland[f].Active == true:
+							whichOp = f
+							break
 					var content = ""
 					if GameLogic.random.randi_range(1,100) < successProb:
-						if len(WorldData.Organizations[w].OpsAgainstHomeland) > 0:
+						if WorldData.Organizations[w].ActiveOpsAgainstHomeland > 0:
 							content = "guilty"
 						else:
 							content = "innocent"
@@ -588,7 +602,7 @@ func Execute(past):
 							"Header": "Urgent Decision",
 							"Level": "Secret",
 							"Operation": "-//-",
-							"Content": "There is possibility that we have a mole inside Bureau. Some officers suggest that a single officer is leaking classified information to " + WorldData.Organizations[w].Name + ". Internal investigation, relying on skills and intel gather on that organization, suggests that the officers is probably " + content + ".\n\nDecide about his future fate.",
+							"Content": "There is possibility that we have a mole inside Bureau. Some officers suggest that a single officer is leaking classified information to " + WorldData.Organizations[w].Name + " from " + WorldData.Countries[WorldData.Organizations[w].Countries[0]].Name + ". Internal investigation, relying on skills and intel gather on that organization, suggests that the officers is probably " + content + ".\n\nDecide about their future fate.",
 							"Show1": false,
 							"Show2": false,
 							"Show3": true,
@@ -602,7 +616,7 @@ func Execute(past):
 							"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
 							"Decision2Argument": null,
 							"Decision3Callback": funcref(GameLogic, "ImplementMoleTermination"),
-							"Decision3Argument": {"Org":w},
+							"Decision3Argument": {"Org":w,"Op":whichOp},
 							"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 							"Decision4Argument": null,
 						}

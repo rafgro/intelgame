@@ -659,5 +659,35 @@ func RecruitInOrg(o, quality, date):
 		return levelOfSuccess
 
 # External intelligence gathering inside our bureau and eventual consequences
-func LeakBureauInfo(country, quality):
-	pass
+func LeakBureauInfo(country, quality, sourceOrg, sourceOp):
+	# covert travels and networks
+	if quality < 20:
+		WorldData.Countries[country].CovertTravelBlowup += 3
+		WorldData.Countries[country].NetworkBlowup += 0.01*WorldData.Countries[country].Network
+		if WorldData.Countries[country].NetworkBlowup > WorldData.Countries[country].Network:
+			WorldData.Countries[country].NetworkBlowup = WorldData.Countries[country].Network
+	elif quality < 50:
+		WorldData.Countries[country].CovertTravelBlowup += 6
+		WorldData.Countries[country].NetworkBlowup += 0.05*WorldData.Countries[country].Network
+		if WorldData.Countries[country].NetworkBlowup > WorldData.Countries[country].Network:
+			WorldData.Countries[country].NetworkBlowup = WorldData.Countries[country].Network
+	elif quality < 80:
+		WorldData.Countries[country].CovertTravelBlowup += 12
+		WorldData.Countries[country].NetworkBlowup += 0.2*WorldData.Countries[country].Network
+		if WorldData.Countries[country].NetworkBlowup > WorldData.Countries[country].Network:
+			WorldData.Countries[country].NetworkBlowup = WorldData.Countries[country].Network
+	else:
+		WorldData.Countries[country].CovertTravelBlowup = WorldData.Countries[country].CovertTravel
+		WorldData.Countries[country].NetworkBlowup = WorldData.Countries[country].Network
+	# turning around sources in orgs in their country and their org
+	if GameLogic.random.randi_range(20,100) < quality:
+		for o in range(0, len(WorldData.Organizations)):
+			if !(country in WorldData.Organizations[o].Countries): continue
+			if len(WorldData.Organizations[o].IntelSources) == 0: continue
+			if WorldData.Organizations[o].Type != WorldData.OrgType.COMPANY or WorldData.Organizations[o].Type != WorldData.OrgType.GOVERNMENT or WorldData.Organizations[o].Type != WorldData.OrgType.INTEL or WorldData.Organizations[o].Type != WorldData.OrgType.UNIVERSITY or WorldData.Organizations[o].Type != WorldData.OrgType.UNIVERSITY_OFFENSIVE: continue
+			if GameLogic.random.randi_range(1,3) != 2: continue
+			var chooseS = randi() % WorldData.Organizations[o].IntelSources.size()
+			if WorldData.Organizations[o].IntelSources[chooseS].Level > 0:
+				WorldData.Organizations[o].IntelSources[chooseS].Level *= -1
+				WorldData.Organizations[o].IntelSources[chooseS].Level -= GameLogic.random.randi_range(0,15)
+				WorldData.Organizations[sourceOrg].OpsAgainstHomeland[sourceOp].InvestigationData.TurnedSources += 1
