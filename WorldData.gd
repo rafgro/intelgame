@@ -273,6 +273,7 @@ enum ExtOpType {
 	EMBASSY_TERRORIST_ATTACK = 1,
 	PLANE_HIJACKING = 2,
 	LEADER_ASSASSINATION = 3,
+	COUNTERINTEL = 4,
 }
 
 class AnExternalOperation:

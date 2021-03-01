@@ -169,6 +169,8 @@ func Execute(past):
 				WorldData.Organizations[w].Technology += GameLogic.random.randi_range(1,7)
 		# continuing existing operations
 		for u in range(0,len(WorldData.Organizations[w].OpsAgainstHomeland)):
+			if WorldData.Organizations[w].Type != WorldData.OrgType.GENERALTERROR:
+				continue  # deal with non-terror in other places
 			if WorldData.Organizations[w].OpsAgainstHomeland[u].Active == false:
 				continue
 			WorldData.Organizations[w].OpsAgainstHomeland[u].FinishCounter -= 1
@@ -533,6 +535,79 @@ func Execute(past):
 							}
 						)
 						doesItEndWithCall = true
+		########################################################################
+		elif WorldData.Organizations[w].Type == WorldData.OrgType.INTEL and past == null:
+			# continuing existing intel operations
+			for u in range(0,len(WorldData.Organizations[w].OpsAgainstHomeland)):
+				if WorldData.Organizations[w].OpsAgainstHomeland[u].Active == false:
+					continue
+				WorldIntel.LeakBureauInfo(WorldData.Organizations[w].Countries[0], WorldData.Organizations[w].OpsAgainstHomeland[u].Damage)
+			# possible new intel operations
+			var opFrequency = WorldData.Organizations[w].Aggression
+			if WorldData.Organizations[w].Staff < 100: opFrequency *= 0.1
+			elif WorldData.Organizations[w].Staff < 1000: opFrequency *= 0.2
+			elif WorldData.Organizations[w].Staff < 10000: opFrequency *= 0.4
+			elif WorldData.Organizations[w].Staff < 50000: opFrequency *= 0.6
+			elif WorldData.Organizations[w].Staff < 100000: opFrequency *= 0.8
+			var randFrequency = 140 - opFrequency  # max aggr->p=1/40, min aggr->p=1/140
+			if GameLogic.random.randi_range(0,randFrequency) == int(randFrequency*0.5):
+				# actual source acquisition happens here
+				# if successful, then operation of keeping it up begins
+				# if not, nothing happens
+				var successProb = WorldData.Organizations[w].Counterintelligence - GameLogic.StaffTrust*0.5 - GameLogic.StaffSkill*0.2 - WorldData.Organizations[w].IntelValue*0.3
+				if GameLogic.random.randi_range(1,100) < successProb:
+					WorldData.Organizations[w].OpsAgainstHomeland.append(WorldData.AnExternalOperation.new(
+						{
+							"Type": WorldData.ExtOpType.COUNTERINTEL,
+							"Budget": int(WorldData.Organizations[w].Budget * 0.01),
+							"Persons": GameLogic.random.randi_range(3,10),
+							"Secrecy": int(WorldData.Organizations[w].Counterintelligence + GameLogic.random.randi_range(-20,2)),
+							"Damage": GameLogic.random.randi_range(WorldData.Organizations[w].Counterintelligence*0.3, WorldData.Organizations[w].Counterintelligence),
+							"FinishCounter": 120,
+						}
+					))
+					WorldData.Organizations[w].ActiveOpsAgainstHomeland += 1
+					GameLogic.InternalMoles += 1
+			# detecting moles
+			if GameLogic.InternalMoles > 0 and GameLogic.random.randi_range(1,8) == 4:
+				if len(WorldData.Organizations[w].OpsAgainstHomeland) > 0 or GameLogic.random.randi_range(1,10) == 3:
+					var successProb = GameLogic.StaffExperience*0.1 + GameLogic.StaffSkill*0.3 + WorldData.Organizations[w].IntelValue*0.6
+					var content = ""
+					if GameLogic.random.randi_range(1,100) < successProb:
+						if len(WorldData.Organizations[w].OpsAgainstHomeland) > 0:
+							content = "guilty"
+						else:
+							content = "innocent"
+					else:
+						if GameLogic.random.randi_range(1,2) == 2:
+							content = "guilty"
+						else:
+							content = "innocent"
+					CallManager.CallQueue.append(
+						{
+							"Header": "Urgent Decision",
+							"Level": "Secret",
+							"Operation": "-//-",
+							"Content": "There is possibility that we have a mole inside Bureau. Some officers suggest that a single officer is leaking classified information to " + WorldData.Organizations[w].Name + ". Internal investigation, relying on skills and intel gather on that organization, suggests that the officers is probably " + content + ".\n\nDecide about his future fate.",
+							"Show1": false,
+							"Show2": false,
+							"Show3": true,
+							"Show4": true,
+							"Text1": "",
+							"Text2": "",
+							"Text3": "Lay off and Arrest",
+							"Text4": "Keep the Officer",
+							"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
+							"Decision1Argument": null,
+							"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
+							"Decision2Argument": null,
+							"Decision3Callback": funcref(GameLogic, "ImplementMoleTermination"),
+							"Decision3Argument": {"Org":w},
+							"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
+							"Decision4Argument": null,
+						}
+					)
+					doesItEndWithCall = true
 		# sources
 		if len(WorldData.Organizations[w].IntelSources) > 0:
 			# modifying every source

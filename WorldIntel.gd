@@ -177,6 +177,10 @@ func GatherOnOrg(o, quality, date):
 		for z in range(0,len(WorldData.Organizations[o].OpsAgainstHomeland)):
 			if WorldData.Organizations[o].OpsAgainstHomeland[z].Active == false:
 				continue
+			# intelligence agency operations are different, have no expiration time etc
+			var ifCounterintel = false
+			if WorldData.Organizations[o].OpsAgainstHomeland[z].Type == WorldData.ExtOpType.COUNTERINTEL:
+				ifCounterintel = true
 			# most important logic change
 			var pastIntel = WorldData.Organizations[o].OpsAgainstHomeland[z].IntelValue
 			WorldData.Organizations[o].OpsAgainstHomeland[z].IntelValue += quality * ((100.0-WorldData.Organizations[o].OpsAgainstHomeland[z].Secrecy)*0.01)
@@ -185,59 +189,79 @@ func GatherOnOrg(o, quality, date):
 			if newIntel < 20:
 				var roundedD = WorldData.Organizations[o].OpsAgainstHomeland[z].FinishCounter/4 + GameLogic.random.randi_range(-2,2)
 				if roundedD < 1: roundedD = 1
-				opDescriptions.append("possible operation finishing in ~" + str(int(roundedD)) + " months")
+				if ifCounterintel == false:
+					opDescriptions.append("possible operation finishing in ~" + str(int(roundedD)) + " months")
+				else:
+					opDescriptions.append("possible operation against Bureau")
 			elif newIntel < 40:
-				var roundedD = WorldData.Organizations[o].OpsAgainstHomeland[z].FinishCounter + GameLogic.random.randi_range(-2,2)
-				if roundedD < 1: roundedD = 1
-				var theType = "terrorist operation inside Homeland"
-				if WorldData.Organizations[o].OpsAgainstHomeland[z].Type == WorldData.ExtOpType.EMBASSY_TERRORIST_ATTACK or WorldData.Organizations[o].OpsAgainstHomeland[z].Type == WorldData.ExtOpType.PLANE_HIJACKING:
-					theType = "terrorist operation targeting Homeland citizens abroad"
-				var damage = "large"
-				if WorldData.Organizations[o].OpsAgainstHomeland[z].Damage < 50: damage = "minor"
-				var people = "few"
-				if WorldData.Organizations[o].OpsAgainstHomeland[z].Persons > 20: people = "dozens of"
-				opDescriptions.append("probable " + damage + " " + theType + ", with " + people + " people involved, finishing in ~" + str(int(roundedD)) + " weeks")
+				if ifCounterintel == false:
+					var roundedD = WorldData.Organizations[o].OpsAgainstHomeland[z].FinishCounter + GameLogic.random.randi_range(-2,2)
+					if roundedD < 1: roundedD = 1
+					var theType = "terrorist operation inside Homeland"
+					if WorldData.Organizations[o].OpsAgainstHomeland[z].Type == WorldData.ExtOpType.EMBASSY_TERRORIST_ATTACK or WorldData.Organizations[o].OpsAgainstHomeland[z].Type == WorldData.ExtOpType.PLANE_HIJACKING:
+						theType = "terrorist operation targeting Homeland citizens abroad"
+					var damage = "large"
+					if WorldData.Organizations[o].OpsAgainstHomeland[z].Damage < 50: damage = "minor"
+					var people = "few"
+					if WorldData.Organizations[o].OpsAgainstHomeland[z].Persons > 20: people = "dozens of"
+					opDescriptions.append("probable " + damage + " " + theType + ", with " + people + " people involved, finishing in ~" + str(int(roundedD)) + " weeks")
+				else:
+					var damage = "deep"
+					if WorldData.Organizations[o].OpsAgainstHomeland[z].Damage < 50: damage = "shallow"
+					opDescriptions.append("probable " + damage + " operation targeting Bureau officers")
 			elif newIntel < 60:
-				var theType = "terrorist operation inside Homeland"
-				if WorldData.Organizations[o].OpsAgainstHomeland[z].Type == WorldData.ExtOpType.EMBASSY_TERRORIST_ATTACK:
-					theType = "terrorist operation targeting embassy"
-				elif WorldData.Organizations[o].OpsAgainstHomeland[z].Type == WorldData.ExtOpType.PLANE_HIJACKING:
-					theType = "terrorist operation using Homeland planes"
-				elif WorldData.Organizations[o].OpsAgainstHomeland[z].Type == WorldData.ExtOpType.LEADER_ASSASSINATION:
-					theType = "terrorist operation targeting Homeland leaders"
-				var damage = "large"
-				if WorldData.Organizations[o].OpsAgainstHomeland[z].Damage < 20: damage = "minor"
-				elif WorldData.Organizations[o].OpsAgainstHomeland[z].Damage < 60: damage = "medium-sized"
-				var roundedP = WorldData.Organizations[o].OpsAgainstHomeland[z].Persons * (1.0+0.1*GameLogic.random.randi_range(-4,4))
-				if roundedP < 1: roundedP = 1
-				var knownInvolvedValue = WorldData.Organizations[o].OpsAgainstHomeland[z].Persons * (WorldData.Organizations[o].IntelIdentified*1.0 / WorldData.Organizations[o].Staff)
-				if knownInvolvedValue < roundedP: knownInvolvedValue = roundedP
-				var knownInvolved = " [no identified participants]"
-				if knownInvolvedValue > 0:
-					knownInvolved = " ["+str(int(knownInvolvedValue))+" identified participants]"
-				opDescriptions.append(damage + " " + theType + ", with ~" + str(int(roundedP)) + " individuals involved"+knownInvolved+", finishing in " + str(WorldData.Organizations[o].OpsAgainstHomeland[z].FinishCounter) + " weeks")
+				if ifCounterintel == false:
+					var theType = "terrorist operation inside Homeland"
+					if WorldData.Organizations[o].OpsAgainstHomeland[z].Type == WorldData.ExtOpType.EMBASSY_TERRORIST_ATTACK:
+						theType = "terrorist operation targeting embassy"
+					elif WorldData.Organizations[o].OpsAgainstHomeland[z].Type == WorldData.ExtOpType.PLANE_HIJACKING:
+						theType = "terrorist operation using Homeland planes"
+					elif WorldData.Organizations[o].OpsAgainstHomeland[z].Type == WorldData.ExtOpType.LEADER_ASSASSINATION:
+						theType = "terrorist operation targeting Homeland leaders"
+					var damage = "large"
+					if WorldData.Organizations[o].OpsAgainstHomeland[z].Damage < 20: damage = "minor"
+					elif WorldData.Organizations[o].OpsAgainstHomeland[z].Damage < 60: damage = "medium-sized"
+					var roundedP = WorldData.Organizations[o].OpsAgainstHomeland[z].Persons * (1.0+0.1*GameLogic.random.randi_range(-4,4))
+					if roundedP < 1: roundedP = 1
+					var knownInvolvedValue = WorldData.Organizations[o].OpsAgainstHomeland[z].Persons * (WorldData.Organizations[o].IntelIdentified*1.0 / WorldData.Organizations[o].Staff)
+					if knownInvolvedValue < roundedP: knownInvolvedValue = roundedP
+					var knownInvolved = " [no identified participants]"
+					if knownInvolvedValue > 0:
+						knownInvolved = " ["+str(int(knownInvolvedValue))+" identified participants]"
+					opDescriptions.append(damage + " " + theType + ", with ~" + str(int(roundedP)) + " individuals involved"+knownInvolved+", finishing in " + str(WorldData.Organizations[o].OpsAgainstHomeland[z].FinishCounter) + " weeks")
+				else:
+					var damage = "deep"
+					if WorldData.Organizations[o].OpsAgainstHomeland[z].Damage < 20: damage = "shallow"
+					elif WorldData.Organizations[o].OpsAgainstHomeland[z].Damage < 60: damage = "moderate"
+					opDescriptions.append(damage + " operation targeting Bureau officers")
 			else:
-				var theType = "terrorist operation inside Homeland"
-				if WorldData.Organizations[o].OpsAgainstHomeland[z].Type == WorldData.ExtOpType.EMBASSY_TERRORIST_ATTACK:
-					theType = "terrorist operation against embassy"
-				elif WorldData.Organizations[o].OpsAgainstHomeland[z].Type == WorldData.ExtOpType.PLANE_HIJACKING:
-					theType = "terrorist operation using Homeland planes"
-				elif WorldData.Organizations[o].OpsAgainstHomeland[z].Type == WorldData.ExtOpType.LEADER_ASSASSINATION:
-					theType = "terrorist operation targeting Homeland leaders"
-				var damage = "huge"
-				if WorldData.Organizations[o].OpsAgainstHomeland[z].Damage < 20: damage = "minor"
-				elif WorldData.Organizations[o].OpsAgainstHomeland[z].Damage < 60: damage = "medium-sized"
-				elif WorldData.Organizations[o].OpsAgainstHomeland[z].Damage < 90: damage = "large"
-				var knownInvolvedValue = WorldData.Organizations[o].OpsAgainstHomeland[z].Persons * (WorldData.Organizations[o].IntelIdentified*1.0 / WorldData.Organizations[o].Staff)
-				if knownInvolvedValue > WorldData.Organizations[o].OpsAgainstHomeland[z].Persons:
-					knownInvolvedValue = WorldData.Organizations[o].OpsAgainstHomeland[z].Persons
-				var knownInvolved = " [no identified participants]"
-				if knownInvolvedValue > 0:
-					knownInvolved = " ["+str(int(knownInvolvedValue))+" identified participants]"
-				opDescriptions.append(damage + " " + theType + ", with " + WorldData.Organizations[o].OpsAgainstHomeland[z].Persons + " individuals involved" + knownInvolved + ", finishing in " + str(WorldData.Organizations[o].OpsAgainstHomeland[z].FinishCounter) + " weeks")
+				if ifCounterintel == false:
+					var theType = "terrorist operation inside Homeland"
+					if WorldData.Organizations[o].OpsAgainstHomeland[z].Type == WorldData.ExtOpType.EMBASSY_TERRORIST_ATTACK:
+						theType = "terrorist operation against embassy"
+					elif WorldData.Organizations[o].OpsAgainstHomeland[z].Type == WorldData.ExtOpType.PLANE_HIJACKING:
+						theType = "terrorist operation using Homeland planes"
+					elif WorldData.Organizations[o].OpsAgainstHomeland[z].Type == WorldData.ExtOpType.LEADER_ASSASSINATION:
+						theType = "terrorist operation targeting Homeland leaders"
+					var damage = "huge"
+					if WorldData.Organizations[o].OpsAgainstHomeland[z].Damage < 20: damage = "minor"
+					elif WorldData.Organizations[o].OpsAgainstHomeland[z].Damage < 60: damage = "medium-sized"
+					elif WorldData.Organizations[o].OpsAgainstHomeland[z].Damage < 90: damage = "large"
+					var knownInvolvedValue = WorldData.Organizations[o].OpsAgainstHomeland[z].Persons * (WorldData.Organizations[o].IntelIdentified*1.0 / WorldData.Organizations[o].Staff)
+					if knownInvolvedValue > WorldData.Organizations[o].OpsAgainstHomeland[z].Persons:
+						knownInvolvedValue = WorldData.Organizations[o].OpsAgainstHomeland[z].Persons
+					var knownInvolved = " [no identified participants]"
+					if knownInvolvedValue > 0:
+						knownInvolved = " ["+str(int(knownInvolvedValue))+" identified participants]"
+					opDescriptions.append(damage + " " + theType + ", with " + WorldData.Organizations[o].OpsAgainstHomeland[z].Persons + " individuals involved" + knownInvolved + ", finishing in " + str(WorldData.Organizations[o].OpsAgainstHomeland[z].FinishCounter) + " weeks")
+				else:
+					var damage = "deep"
+					if WorldData.Organizations[o].OpsAgainstHomeland[z].Damage < 20: damage = "shallow"
+					elif WorldData.Organizations[o].OpsAgainstHomeland[z].Damage < 60: damage = "moderate"
+					opDescriptions.append(damage + " operation targeting Bureau officers")
 			# comparing significant intel change and notifying user if possible
 			var diff = newIntel - pastIntel
-			if diff >= 20:
+			if diff >= 20 and ifCounterintel == false:
 				CallManager.CallQueue.append(
 					{
 						"Header": "Important Information",
@@ -633,3 +657,7 @@ func RecruitInOrg(o, quality, date):
 			GatherOnOrg(o, GameLogic.random.randi_range(5,15), date)
 		# returning for user notification
 		return levelOfSuccess
+
+# External intelligence gathering inside our bureau and eventual consequences
+func LeakBureauInfo(country, quality):
+	pass

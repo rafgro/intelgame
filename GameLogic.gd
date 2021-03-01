@@ -45,6 +45,7 @@ var CurrentOpsAgainstHomeland = 0  # internal counter to not overwhelm user, sim
 var YearlyOpsAgainstHomeland = 0  # internal counter as well, yearly ops, zeroed on 01/01
 var OpsLimit = 2  # max number of simulatenous ops against homeland, might be increased over time
 var UniversalClearance = false  # with high trust, bureau can target anything they want
+var InternalMoles = 0  # counter of officers that are passing info to other intel agencies
 # Distance counters: block anything that happens more frequently than limit
 var DistWalkinCounter = 0
 var DistWalkinMin = 10  # minimum ten weeks between those events
@@ -764,6 +765,19 @@ func ImplementSourceTermination(aDict):
 	# {"Org", "Source"}
 	WorldData.Organizations[aDict.Org].IntelSources.remove(aDict.Source)
 	AddEvent('Bureau lost source in ' + WorldData.Organizations[aDict.Org].Name)
+
+func ImplementMoleTermination(aDict):
+	# {"Org"}
+	if WorldData.Organizations[aDict.Org].ActiveOpsAgainstHomeland > 0:
+		InternalMoles -= 1
+		WorldData.Organizations[aDict.Org].ActiveOpsAgainstHomeland -= 1
+		for z in range(0,WorldData.Organizations[aDict.Org].OpsAgainstHomeland):
+			if WorldData.Organizations[aDict.Org].OpsAgainstHomeland[z].Active == true:
+				WorldData.Organizations[aDict.Org].OpsAgainstHomeland[z].Active = false
+	ActiveOfficers -= 1
+	StaffSkill *= 0.9
+	StaffExperience *= 0.9
+	StaffTrust *= 0.9
 
 func FinalQuit(anyArgument):
 	get_tree().quit()
