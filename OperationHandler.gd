@@ -113,28 +113,43 @@ func ProgressOperations():
 					continue
 				# adjusting number of officers
 				usedOfficers = GameLogic.random.randi_range(usedOfficers, maxOfficers)
-				# calculating cost and checking if it's possible
-				var singleOfficerCost = WorldData.Countries[GameLogic.Operations[i].Country].LocalCost \
-					+ (WorldData.Countries[GameLogic.Operations[i].Country].TravelCost / predictedLength / 2)
-				totalCost += singleOfficerCost * usedOfficers * predictedLength
+				# remote/nonremote
+				var ifAllRemote = true
 				for m in theMethods:
-					totalCost += WorldData.Methods[GameLogic.Operations[i].Type][m].Cost * predictedLength
-				if totalCost > GameLogic.FreeFundsWeekly()*predictedLength:
-					noPlanReasonCost += 1
-					continue
-				var expelled = WorldData.Countries[GameLogic.Operations[i].Country].Expelled
-				if usedOfficers > (GameLogic.OfficersInHQ-expelled):
-					noPlanReasonStaff += 1
-					continue
+					if WorldData.Methods[GameLogic.Operations[i].Type][m].Remote == false:
+						ifAllRemote = false
+						break
+				# calculating cost and checking if it's possible
 				var ifDiplomaticTravel = WorldData.Countries[whichCountry].DiplomaticTravel
-				if WorldData.Countries[whichCountry].DiplomaticTravel == false and WorldData.Countries[whichCountry].CovertTravel < 5:
-					noPlanReasonTravel += 1
-					continue
-				# means of travelling
+				if ifAllRemote == false:
+					var singleOfficerCost = WorldData.Countries[GameLogic.Operations[i].Country].LocalCost \
+						+ (WorldData.Countries[GameLogic.Operations[i].Country].TravelCost / predictedLength / 2)
+					totalCost += singleOfficerCost * usedOfficers * predictedLength
+					for m in theMethods:
+						totalCost += WorldData.Methods[GameLogic.Operations[i].Type][m].Cost * predictedLength
+					if totalCost > GameLogic.FreeFundsWeekly()*predictedLength:
+						noPlanReasonCost += 1
+						continue
+					var expelled = WorldData.Countries[GameLogic.Operations[i].Country].Expelled
+					if usedOfficers > (GameLogic.OfficersInHQ-expelled):
+						noPlanReasonStaff += 1
+						continue
+					if WorldData.Countries[whichCountry].DiplomaticTravel == false and WorldData.Countries[whichCountry].CovertTravel < 5:
+						noPlanReasonTravel += 1
+						continue
+					# means of travelling
+					else:
+						if WorldData.Countries[whichCountry].DiplomaticTravel == true and WorldData.Countries[whichCountry].CovertTravel >= 5:
+							if GameLogic.random.randi_range(1,2) == 1:
+								ifDiplomaticTravel = false
 				else:
-					if WorldData.Countries[whichCountry].DiplomaticTravel == true and WorldData.Countries[whichCountry].CovertTravel >= 5:
-						if GameLogic.random.randi_range(1,2) == 1:
-							ifDiplomaticTravel = false
+					var singleOfficerCost = 0
+					totalCost += singleOfficerCost * usedOfficers * predictedLength
+					for m in theMethods:
+						totalCost += WorldData.Methods[GameLogic.Operations[i].Type][m].Cost * predictedLength
+					if totalCost > GameLogic.FreeFundsWeekly()*predictedLength:
+						noPlanReasonCost += 1
+						continue
 				# calculating total operation parameters: clash of location and methods
 				# quality, slightly balanced
 				var totalQuality = 0
@@ -150,7 +165,7 @@ func ProgressOperations():
 				totalQuality *= 0.7+(1.0-WorldData.Organizations[which].Counterintelligence*0.01)
 				var staffPercent = WorldData.Organizations[which].IntelIdentified*1.0 / WorldData.Organizations[which].Staff
 				totalQuality += staffPercent * 30
-				if ifDiplomaticTravel == false:
+				if ifDiplomaticTravel == false and ifAllRemote == false:
 					totalQuality *= (1.0 + 0.002 * WorldData.Countries[whichCountry].CovertTravel)
 				totalQuality = totalQuality*1.0/len(WorldData.Organizations[which].Countries)
 				var officerFactor = 1.0 + usedOfficers*0.1
@@ -182,7 +197,7 @@ func ProgressOperations():
 				var potentialHostiliy = (-1.0)*WorldData.DiplomaticRelations[0][whichCountry]*0.03
 				if potentialHostiliy < 0: potentialHostiliy = 0
 				totalRisk *= 1.0 + (potentialHostiliy*0.5)
-				if ifDiplomaticTravel == false:
+				if ifDiplomaticTravel == false and ifAllRemote == false:
 					totalRisk += 10
 					if WorldData.Countries[whichCountry].CovertTravel < 20:
 						totalRisk += 0.6 * (100-WorldData.Countries[whichCountry].CovertTravel)
@@ -198,14 +213,17 @@ func ProgressOperations():
 				elif riskVsTime >= 40: riskDesc = "medium"
 				elif riskVsTime >= 10: riskDesc = "low"
 				# saving and describing
+				var ifCovertTravel = false
+				if ifDiplomaticTravel == false: ifCovertTravel = true
 				var theDescription = "€"+str(totalCost)+",000 | "+str(usedOfficers)+" officers | " \
 					+str(predictedLength)+" weeks | "+qualityDesc+" quality, "+riskDesc+" risk\n"
+				if ifAllRemote == true: theDescription += "no travel"
+				elif ifCovertTravel == true: theDescription += "covert travel"
+				else: theDescription += "overt travel to embassy"
 				for m in theMethods:
 					theDescription += WorldData.Methods[GameLogic.Operations[i].Type][m].Name+"\n"
 				if GameLogic.Operations[i].Type == OperationGenerator.Type.RECRUIT_SOURCE:
 					theDescription += "approach and recruit selected asset\n"
-				var ifCovertTravel = false
-				if ifDiplomaticTravel == false: ifCovertTravel = true
 				localPlans.append(
 					{
 						"OperationId": i,
@@ -218,6 +236,7 @@ func ProgressOperations():
 						"Methods": theMethods,
 						"Description": theDescription,
 						"Covert": ifCovertTravel,
+						"Remote": ifAllRemote,
 					}
 				)
 			if len(localPlans) == 0:
@@ -315,15 +334,15 @@ func ProgressOperations():
 		###########################################################################
 		elif GameLogic.Operations[i].Stage == OperationGenerator.Stage.ABROAD_OPERATION:
 			# operation progressing or not
-			if GameLogic.random.randi_range(0, 105) > GameLogic.Operations[i].AbroadPlan.Risk:
+			if GameLogic.random.randi_range(0, 105) > GameLogic.Operations[i].AbroadPlan.Risk or GameLogic.Operations[i].AbroadPlan.Remote == true:
 				GameLogic.Operations[i].AbroadProgress -= GameLogic.Operations[i].AbroadRateOfProgress
 				if GameLogic.Operations[i].AbroadProgress > 0:  # check to avoid doubling events
-					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": ground operation continues")
+					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": operation continues")
 			# second chance with help of a network
 			elif WorldData.Countries[GameLogic.Operations[i].Country].Network > 0 and GameLogic.random.randi_range(0,GameLogic.Operations[i].AbroadPlan.Risk*2) < WorldData.Countries[GameLogic.Operations[i].Country].Network:
 				GameLogic.Operations[i].AbroadProgress -= GameLogic.Operations[i].AbroadRateOfProgress
 				if GameLogic.Operations[i].AbroadProgress > 0:  # check to avoid doubling events
-					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": ground operation continues with support of local agent network")
+					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": operation continues with support of local agent network")
 			else:
 				# many shades of _something went wrong_
 				var whatHappened = GameLogic.random.randi_range(0, 100)
@@ -531,7 +550,8 @@ func ProgressOperations():
 						GameLogic.AddEvent("Government increased budget by €"+str(int(budgetIncrease))+"k")
 					content = "Government-designated operation was finished. Homeland " + govFeedbackDesc
 				# debriefing user
-				GameLogic.AddEvent(GameLogic.Operations[i].Name + ": "+str(GameLogic.Operations[i].AbroadPlan.Officers)+" officer(s) returned to homeland")
+				if GameLogic.Operations[i].AbroadPlan.Remote == false:
+					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": "+str(GameLogic.Operations[i].AbroadPlan.Officers)+" officer(s) returned to homeland")
 				GameLogic.AddEvent("Bureau finished operation "+GameLogic.Operations[i].Name)
 				CallManager.CallQueue.append(
 					{
@@ -656,7 +676,8 @@ func ProgressOperations():
 				# debriefing user
 				if sourceLevel != 0:
 					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": bureau acquired a new source")
-				GameLogic.AddEvent(GameLogic.Operations[i].Name + ": "+str(GameLogic.Operations[i].AbroadPlan.Officers)+" officer(s) returned to homeland")
+				if GameLogic.Operations[i].AbroadPlan.Remote == false:
+					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": "+str(GameLogic.Operations[i].AbroadPlan.Officers)+" officer(s) returned to homeland")
 				GameLogic.AddEvent("Bureau finished operation "+GameLogic.Operations[i].Name)
 				CallManager.CallQueue.append(
 					{
@@ -841,7 +862,8 @@ func ProgressOperations():
 				# debriefing user
 				if success == true:
 					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": bureau inflicted damage on the target")
-				GameLogic.AddEvent(GameLogic.Operations[i].Name + ": "+str(GameLogic.Operations[i].AbroadPlan.Officers)+" officer(s) returned to homeland")
+				if GameLogic.Operations[i].AbroadPlan.Remote == false:
+					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": "+str(GameLogic.Operations[i].AbroadPlan.Officers)+" officer(s) returned to homeland")
 				GameLogic.AddEvent("Bureau finished operation "+GameLogic.Operations[i].Name)
 				CallManager.CallQueue.append(
 					{

@@ -8,7 +8,7 @@ func UpdateMainScreen():
 	$M/R/CTrust/TrustPercent.value = GameLogic.Trust
 	$M/R/COfficer/Active.text = "Active officers: " + str(GameLogic.ActiveOfficers)
 	$M/R/COfficer/HQAbroad.text = str(GameLogic.OfficersInHQ) + " in HQ, " \
-		+ str(GameLogic.OfficersAbroad) + " on the ground"
+		+ str(GameLogic.OfficersAbroad) + " in action"
 	$M/R/COperations/Pursued.text = "Active operations: " + str(GameLogic.PursuedOperations)
 	if GameLogic.AttackTicker > 0:
 		$M/R/COperations/Ticker.text = str(GameLogic.AttackTicker) + " weeks to possible attack"

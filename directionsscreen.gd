@@ -61,10 +61,14 @@ func _on_List_item_selected(index):
 		$M/R/H/Network.disabled = false
 		if WorldData.Countries[c].Network > 0:
 			$M/R/H/Network.text = "Expand Network"
+	else:
+		$M/R/H/Network.disabled = true
 	if WorldData.Countries[c].KnowhowLanguage > 50 and WorldData.Countries[c].KnowhowCustoms > 50 and WorldData.Countries[c].DiplomaticTravel == true:
 		$M/R/H/Station.disabled = false
 		if WorldData.Countries[c].Station > 0:
 			$M/R/H/Station.text = "Expand Station"
+	else:
+		$M/R/H/Station.disabled = true
 
 func _on_Develop_pressed():
 	if lastSelectedCountry > 0:

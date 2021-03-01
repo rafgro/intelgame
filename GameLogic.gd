@@ -337,10 +337,10 @@ func NextWeek():
 			doesItEndWithCall = true
 	############################################################################
 	# walk-ins or whistleblowers
-	if random.randi_range(1,40) == 17 and DistWalkinMin < 1:  # one every ~6 months
+	if random.randi_range(1,30) == 16 and DistWalkinCounter < 1:
 		var whichOrg = random.randi_range(0, len(WorldData.Organizations)-1)
 		var quality = random.randi_range(-65,65)
-		var content = "A source, claiming to be close to " + WorldData.Organizations[whichOrg].Name + " walked in into one our embassies. "
+		var content = "A source, claiming to be close to " + WorldData.Organizations[whichOrg].Name + " (" + WorldData.Countries[WorldData.Organizatiions[whichOrg].Countries[0]].Name + ") walked in into one our embassies. "
 		if WorldData.Organizations[whichOrg].IntelValue < 20 or WorldData.Organizations[whichOrg].IntelIdentified < 1:
 			content += "Due to lack of intelligence about the organization, officers cannot verify this story. "
 		else:
@@ -518,7 +518,10 @@ func NextWeek():
 func ImplementAbroad(thePlan):
 	# in the meantime, situation could change, so we need to be sure about numbers
 	if OfficersInHQ >= thePlan.Officers:
-		AddEvent(Operations[thePlan.OperationId].Name + ": "+str(thePlan.Officers)+" officer(s) departed to "+thePlan.Country)
+		if thePlan.Remote == false:
+			AddEvent(Operations[thePlan.OperationId].Name + ": "+str(thePlan.Officers)+" officer(s) departed to "+thePlan.Country)
+		else:
+			AddEvent(Operations[thePlan.OperationId].Name + ": "+str(thePlan.Officers)+" officer(s) began operation")
 		# operation update
 		Operations[thePlan.OperationId].Stage = OperationGenerator.Stage.ABROAD_OPERATION
 		Operations[thePlan.OperationId].AbroadPlan = thePlan
@@ -541,7 +544,8 @@ func ImplementCallOff(i):
 		OfficersInHQ += Operations[i].AbroadPlan.Officers
 		OfficersAbroad -= Operations[i].AbroadPlan.Officers
 		BudgetOngoingOperations -= Operations[i].AbroadPlan.Cost
-		AddEvent(Operations[i].Name + ": "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned to homeland")
+		if Operations[i].AbroadPlan.Remote == false:
+			AddEvent(Operations[i].Name + ": "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned to homeland")
 	PursuedOperations -= 1
 	if Operations[i].Source == 1:
 		Trust = Trust*0.5  # huge loss of trust if calling off gov op
