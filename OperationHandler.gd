@@ -217,9 +217,9 @@ func ProgressOperations():
 				if ifDiplomaticTravel == false: ifCovertTravel = true
 				var theDescription = "€"+str(totalCost)+",000 | "+str(usedOfficers)+" officers | " \
 					+str(predictedLength)+" weeks | "+qualityDesc+" quality, "+riskDesc+" risk\n"
-				if ifAllRemote == true: theDescription += "no travel"
-				elif ifCovertTravel == true: theDescription += "covert travel"
-				else: theDescription += "overt travel to embassy"
+				if ifAllRemote == true: theDescription += "no travel\n"
+				elif ifCovertTravel == true: theDescription += "covert travel\n"
+				else: theDescription += "overt travel to embassy\n"
 				for m in theMethods:
 					theDescription += WorldData.Methods[GameLogic.Operations[i].Type][m].Name+"\n"
 				if GameLogic.Operations[i].Type == OperationGenerator.Type.RECRUIT_SOURCE:

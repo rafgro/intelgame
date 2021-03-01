@@ -157,7 +157,7 @@ func Execute(past):
 				if WorldData.Organizations[w].Staff < 1: WorldData.Organizations[w].Staff = 1
 		# technology changes
 		if WorldData.Organizations[w].Type == WorldData.OrgType.COMPANY or WorldData.Organizations[w].Type == WorldData.OrgType.UNIVERSITY:
-			if GameLogic.random.randi_range(1,200) == 123:  # seems rare but p*20
+			if GameLogic.random.randi_range(1,150) == 123:  # seems rare but p*20
 				if GameLogic.random.randi_range(20,100) < WorldData.Organizations[w].Technology:
 					# better technology leads to more frequent discoveries
 					WorldData.Organizations[w].Technology += GameLogic.random.randi_range(15,35)
@@ -568,12 +568,18 @@ func Execute(past):
 				WorldIntel.GatherOnOrg(w, qual, GameLogic.GiveDateWithYear())
 	############################################################################
 	# rare new organizations, no more than one per year
-	if GameLogic.random.randi_range(1,80) == 45:
-		var size = GameLogic.random.randi_range(2,10)
+	if GameLogic.random.randi_range(1,100) == 45:
+		var size = GameLogic.random.randi_range(2,100)
 		var places = GameLogic.random.randi_range(0,len(WorldData.Countries)-1)
 		WorldData.Organizations.append(
-			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.GENERALTERROR, "Name": WorldGenerator.GenerateHostileName(), "Fixed": false, "Known": false, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-50,150), "Counterintelligence": GameLogic.random.randi_range(5,50), "Aggression": GameLogic.random.randi_range(30,70), "Countries": [places], "IntelValue": GameLogic.random.randi_range(-50,-5), })
+			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.GENERALTERROR, "Name": WorldGenerator.GenerateHostileName(), "Fixed": false, "Known": false, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-50,150), "Counterintelligence": GameLogic.random.randi_range(5,70), "Aggression": GameLogic.random.randi_range(10,80), "Countries": [places], "IntelValue": GameLogic.random.randi_range(-50,-5), })
 		)
-		WorldData.Organizations[-1].UndercoverCounter = GameLogic.random.randi_range(5,60)
+		WorldData.Organizations[-1].UndercoverCounter = GameLogic.random.randi_range(5,120)
+		# tying to a movement
+		for j in range(0,len(WorldData.Organizations)):
+			if WorldData.Organizations[j].Type != WorldData.OrgType.MOVEMENT: continue
+			if WorldData.Organizations[j].Countries[0] != places: continue
+			if GameLogic.random.randi_range(1,2) == 1:
+				WorldData.Organizations[j].ConnectedTo.append(len(WorldData.Organizations)-1)
 	############################################################################
 	return doesItEndWithCall

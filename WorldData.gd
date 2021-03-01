@@ -74,6 +74,7 @@ enum OrgType {
 	ARMTRADER,
 	COMPANY,
 	UNIVERSITY,
+	MOVEMENT,
 }
 
 class AnOrganization:
@@ -99,6 +100,7 @@ class AnOrganization:
 	var OffensiveClearance = false  # gov-given clearance for using offensive methods
 	var Technology = 0  # for companies and universities only, 0 to 100
 	var IntelTechnology = 0  # updated with previous discovered technology, for discovering new one
+	var ConnectedTo = []  # ids of organizations supplied by this one (movement or armtrader)
 	
 	func _init(adictionary):
 		Type = adictionary.Type
@@ -150,6 +152,7 @@ class AMethod:
 	var MinimalTrust = 0  # minimal government trust level to use this method
 	var MinimalTech = 0  # minimal technology score to use this method
 	var MinimalLocal = 0  # 0 (no role of local skills) to 100 (perfect language and customs required)
+	var Remote = false  # if true, then officers do not have to travel
 	
 	func _init(aDictionary):
 		Name = aDictionary.Name
@@ -163,6 +166,7 @@ class AMethod:
 		MinimalTrust = aDictionary.MinimalTrust
 		MinimalTech = aDictionary.MinimalTech
 		MinimalLocal = aDictionary.MinimalLocal
+		Remote = aDictionary.Remote
 
 class AMethodOffensive:  # in future change to inheritance or something
 	# difference to normal methods: offensive ones are exclusive

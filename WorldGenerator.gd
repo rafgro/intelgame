@@ -3,7 +3,7 @@ extends Node
 func GenerateHostileName():
 	var wordsA = ["Leftist", "Right", "Proud", "Revolutionary", "Republican", "Combat", "Black", "Democratic", "Real"]
 	var wordsB = ["Tobiah","Yseut","Esther","Iphigenia","Yemima","Rexana","Amaterasu","Joslyn","Mattityahu","Karl","Izanami","Jemma","Lorinda","Avram","Ned","Trophimus","Isolde","Harvey","Marsha","Lyn","Shani","Anu","Marilyn","Montgomery","Davey","Leland","Crescens","Jordana","Vern","Bradford","Marianne","Adamu","Manahem","Earleen","Peronel","Enosh","Ryker","Adelle","Myrddin","Carver","Jody","Anat","Atarah","Capricia","Sidney","Cindra","Nik","Jehoash","Atarah","Iahel"]
-	var wordsC = ["Movement", "Brotherhood", "Force", "Action", "Militants", "Extremists"]
+	var wordsC = ["Group", "Brotherhood", "Force", "Action", "Militants", "Extremists"]
 	var content = ""
 	var length = GameLogic.random.randi_range(1,3)
 	if length == 1:
@@ -165,6 +165,18 @@ func NewGenerate():
 			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.GOVERNMENT, "Name": WorldData.Countries[i].Adjective + " Government", "Fixed": true, "Known": true, "Staff": WorldData.Countries[i].Size*300, "Budget": WorldData.Countries[i].Size*10000, "Counterintelligence": GameLogic.random.randi_range(45,65), "Aggression": GameLogic.random.randi_range(20,55), "Countries": [i], "IntelValue": 10, })
 		)
 		WorldData.Organizations[-1].IntelIdentified = GameLogic.random.randi_range(20,100)  # officials
+	# movements
+	var movNames = ["Religious", "Nationalist", "Anarchist"]
+	for i in range(0,3):
+		var doNotRepeat = []
+		for k in range(0,GameLogic.random.randi_range(3,6)):
+			var size = GameLogic.random.randi_range(100,15000)
+			var place = GameLogic.random.randi_range(1,len(WorldData.Countries)-1)
+			if place in doNotRepeat: continue
+			doNotRepeat.append(place)
+			WorldData.Organizations.append(
+				WorldData.AnOrganization.new({ "Type": WorldData.OrgType.MOVEMENT, "Name": WorldData.Countries[place].Adjective + " " + movNames[i] + " Movement", "Fixed": false, "Known": true, "Staff": size, "Budget": 0, "Counterintelligence": 0, "Aggression": GameLogic.random.randi_range(10,70), "Countries": [place], "IntelValue": GameLogic.random.randi_range(-50,10), })
+			)
 	# few general terror orgs
 	for i in range(0,5):
 		var size = GameLogic.random.randi_range(10,500)
@@ -179,6 +191,13 @@ func NewGenerate():
 		WorldData.Organizations.append(
 			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.GENERALTERROR, "Name": name, "Fixed": false, "Known": true, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-100,100), "Counterintelligence": GameLogic.random.randi_range(10,60), "Aggression": GameLogic.random.randi_range(30,95), "Countries": places, "IntelValue": GameLogic.random.randi_range(-50,10), })
 		)
+		# tying some terror orgs to movements
+		if GameLogic.random.randi_range(1,3) <= 2:
+			for j in range(0,len(WorldData.Organizations)):
+				if WorldData.Organizations[j].Type != WorldData.OrgType.MOVEMENT: continue
+				if !(WorldData.Organizations[j].Countries[0] in places): continue
+				if GameLogic.random.randi_range(1,2) == 1:
+					WorldData.Organizations[j].ConnectedTo.append(len(WorldData.Organizations)-1)
 	# hidden or emerging terror orgs
 	for i in range(0,2):
 		var size = GameLogic.random.randi_range(2,10)
@@ -190,6 +209,12 @@ func NewGenerate():
 			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.GENERALTERROR, "Name": name, "Fixed": false, "Known": false, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-50,150), "Counterintelligence": GameLogic.random.randi_range(5,50), "Aggression": GameLogic.random.randi_range(45,95), "Countries": [places], "IntelValue": GameLogic.random.randi_range(-50,-5), })
 		)
 		WorldData.Organizations[-1].UndercoverCounter = GameLogic.random.randi_range(30,130)
+		# tying some terror orgs to movements
+		for j in range(0,len(WorldData.Organizations)):
+			if WorldData.Organizations[j].Type != WorldData.OrgType.MOVEMENT: continue
+			if WorldData.Organizations[j].Countries[0] != places: continue
+			if GameLogic.random.randi_range(1,2) == 1:
+				WorldData.Organizations[j].ConnectedTo.append(len(WorldData.Organizations)-1)
 	# lone wolves
 	for i in range(0,2):
 		var size = 1
@@ -201,6 +226,12 @@ func NewGenerate():
 			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.GENERALTERROR, "Name": name, "Fixed": false, "Known": false, "Staff": size, "Budget": GameLogic.random.randi_range(25,150), "Counterintelligence": GameLogic.random.randi_range(20,80), "Aggression": GameLogic.random.randi_range(15,65), "Countries": [places], "IntelValue": GameLogic.random.randi_range(-10,0), })
 		)
 		WorldData.Organizations[-1].UndercoverCounter = GameLogic.random.randi_range(60,180)
+		# tying some terror orgs to movements
+		for j in range(0,len(WorldData.Organizations)):
+			if WorldData.Organizations[j].Type != WorldData.OrgType.MOVEMENT: continue
+			if WorldData.Organizations[j].Countries[0] != places: continue
+			if GameLogic.random.randi_range(1,2) == 1:
+				WorldData.Organizations[j].ConnectedTo.append(len(WorldData.Organizations)-1)
 	# companies
 	for i in range(0,10):
 		var size = GameLogic.random.randi_range(10,5000)

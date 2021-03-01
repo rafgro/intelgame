@@ -62,6 +62,8 @@ func GatherOnOrg(o, quality, date):
 		WorldData.Organizations[o].IntelDescType = "private corporation"
 	elif WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY:
 		WorldData.Organizations[o].IntelDescType = "scientific institution"
+	elif WorldData.Organizations[o].Type == WorldData.OrgType.MOVEMENT:
+		WorldData.Organizations[o].IntelDescType = "unorganized civilian movement"
 	############################################################################
 	# discrete intel descriptions, four stages
 	var discreteDesc = ""
@@ -318,7 +320,7 @@ func GatherOnOrg(o, quality, date):
 		var technologyWinCall = false
 		var techDesc = ""
 		var innerTechChange = 0
-		if quality < 5:
+		if quality < 10:
 			pass  # not enough
 		elif quality < 20:
 			techDesc = ", probably no interesting technology"
@@ -430,10 +432,40 @@ func GatherOnOrg(o, quality, date):
 				)
 				doesItEndWithCall = true
 		discreteDesc += techDesc
+	elif WorldData.Organizations[o].Type == WorldData.OrgType.MOVEMENT:
+		var movDesc = ""
+		if quality < 10:
+			pass  # not enough
+		elif quality < 25:
+			movDesc = ", probably not connected to terrorist organizations"
+			if len(WorldData.Organizations[o].ConnectedTo) > 0 and GameLogic.random.randi_range(1,2) == 1:
+				movDesc = ", potentially connected to a terrorist organization"
+		elif quality < 50:
+			movDesc = ", probably not connected to terrorist organizations"
+			if len(WorldData.Organizations[o].ConnectedTo) > 0:
+				movDesc = ", connected to at least one terrorist organization (" + WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].Name + ")"
+				if WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].Known == false:
+					WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].Known = true
+					GatherOnOrg(WorldData.Organizations[o].ConnectedTo[0], 5, date)
+					antihomeland = "[u]previously unknown terrorist organization, " + WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].Name + ", was discovered in connection the to movement[/u]"
+		else:
+			movDesc = ", not connected to terrorist organizations"
+			if len(WorldData.Organizations[o].ConnectedTo) == 1:
+				movDesc = ", connected to a terrorist organization (" + WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].Name + ")"
+			elif len(WorldData.Organizations[o].ConnectedTo) > 1:
+				var orgNames = []
+				for y in WorldData.Organizations[o].ConnectedTo:
+					orgNames.append(WorldData.Organizations[y].Name)
+					if WorldData.Organizations[y].Known == false:
+						WorldData.Organizations[y].Known = true
+						GatherOnOrg(y, 5, date)
+						antihomeland = "[u]previously unknown terrorist organization, " + WorldData.Organizations[y].Name + ", was discovered in connection the to movement[/u]"
+				movDesc = ", connected to terrorist organizations (" + PoolStringArray(orgNames).join(", ") + ")"
+		discreteDesc += movDesc
 	############################################################################
 	# result
 	if len(antihomeland) > 0 and WorldData.Organizations[o].Type != WorldData.OrgType.COMPANY and WorldData.Organizations[o].Type != WorldData.OrgType.UNIVERSITY:
-		WorldData.Organizations[o].IntelDescription.push_front("[b]"+date+"[/b] " + antihomeland + ", " + discreteDesc)
+		WorldData.Organizations[o].IntelDescription.push_front("[b]"+date+"[/b] " + antihomeland + "; " + discreteDesc)
 	else:
 		WorldData.Organizations[o].IntelDescription.push_front("[b]"+date+"[/b] " + discreteDesc)
 	############################################################################
