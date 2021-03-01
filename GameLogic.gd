@@ -50,6 +50,8 @@ var DistWalkinCounter = 0
 var DistWalkinMin = 10  # minimum ten weeks between those events
 var DistGovopCounter = 0
 var DistGovopMin = 6
+var DistSourcecheckCounter = 0
+var DistSourcecheckMin = 8
 # Sort of constants but also internal, always describe them
 var NewOfficerCost = 80  # thousands needed to spend on a new officer
 var NewTechCost = 200  # thousands needed to spend on a new percent of technology
@@ -482,6 +484,7 @@ func NextWeek():
 	# distance counters
 	DistWalkinCounter -= 1
 	DistGovopCounter -= 1
+	DistSourcecheckCounter -= 1
 	# physical limits or bug patches
 	if BudgetOngoingOperations < 0: BudgetOngoingOperations = 0
 	if StaffExperience > 100: StaffExperience = 100
@@ -756,6 +759,11 @@ func ImplementDirectionDevelopment(aDict):
 			AddEvent(str(aDict.Officers) + " officer(s) departed to " + WorldData.Countries[aDict.Country].Name + " to expand intelligence station")
 		else:
 			AddEvent(str(aDict.Officers) + " officer(s) departed to " + WorldData.Countries[aDict.Country].Name + " to establish a new intelligence station")
+
+func ImplementSourceTermination(aDict):
+	# {"Org", "Source"}
+	WorldData.Organizations[aDict.Org].IntelSources.remove(aDict.Source)
+	AddEvent('Bureau lost source in ' + WorldData.Organizations[aDict.Org].Name)
 
 func FinalQuit(anyArgument):
 	get_tree().quit()

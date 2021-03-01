@@ -418,7 +418,7 @@ func Execute(past):
 						"Show4": true,
 						"Text1": "",
 						"Text2": "",
-						"Text3": "Launch investigation",
+						"Text3": "",
 						"Text4": "Understood",
 						"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
 						"Decision1Argument": null,
@@ -548,18 +548,68 @@ func Execute(past):
 				# fluctuate level
 				if GameLogic.random.randi_range(1,3) == 2:
 					WorldData.Organizations[w].IntelSources[s].Level += GameLogic.random.randi_range(-1,1)
+				# flip by high enough counterintelligence
+				if GameLogic.random.randi_range(1,6) == 3 and WorldData.Organizations[w].Counterintelligence > GameLogic.random.randi_range(50,150) and WorldData.Organizations[w].IntelSources[s].Level > 0:
+					WorldData.Organizations[w].IntelSources[s].Level *= -1
 				# noting levels for joint intel
 				sumOfLevels += WorldData.Organizations[w].IntelSources[s].Level
-				if highestLevel < WorldData.Organizations[w].IntelSources[s].Level:
+				if abs(highestLevel) < abs(WorldData.Organizations[w].IntelSources[s].Level):
 					highestLevel = WorldData.Organizations[w].IntelSources[s].Level
 			# eventual source loss
 			if sourceLoss != -1:
 				WorldData.Organizations[w].IntelSources.remove(sourceLoss)
 				GameLogic.AddEvent('Bureau lost source in ' + WorldData.Organizations[w].Name)
-			# providing joint intel from all sources, every 8 weeks on average
-			if GameLogic.random.randi_range(1,8) == 4:
-				var localCall = WorldIntel.GatherOnOrg(w, highestLevel*(0.9+len(WorldData.Organizations[w].IntelSources)*0.1), GameLogic.GiveDateWithYear())
-				if localCall == true: doesItEndWithCall = true
+			if len(WorldData.Organizations[w].IntelSources) > 0:
+				# providing joint intel from all sources, every 8 weeks on average
+				if GameLogic.random.randi_range(1,8) == 4:
+					var localCall = WorldIntel.GatherOnOrg(w, highestLevel*(0.9+len(WorldData.Organizations[w].IntelSources)*0.1), GameLogic.GiveDateWithYear())
+					if localCall == true: doesItEndWithCall = true
+				# reversal check
+				var whichS = randi() % WorldData.Organizations[w].IntelSources.size()
+				var proxyQual = WorldData.Organizations[w].IntelSources[whichS].Level
+				if GameLogic.random.randi_range(1,3) == 2: proxyQual *= (-1)
+				if proxyQual < 0 and GameLogic.random.randi_range(1,12) == 6 and GameLogic.DistSourcecheckCounter < 0:
+					GameLogic.DistSourcecheckCounter = GameLogic.DistSourcecheckMin
+					var content = ""
+					var detectionProb = GameLogic.StaffSkill*0.6 + GameLogic.StaffExperience*0.4 + WorldData.Organizations[w].IntelValue*0.3 - (100-WorldData.Countries[WorldData.Organizations[w].Countries[0]].KnowhowCustoms)*0.2
+					if len(WorldData.Organizations[w].IntelSources) > 10: detectionProb += 50
+					elif len(WorldData.Organizations[w].IntelSources) > 5: detectionProb += 35
+					elif len(WorldData.Organizations[w].IntelSources) > 1: detectionProb += 20
+					if GameLogic.random.randi_range(1,100) < detectionProb:
+						if WorldData.Organizations[w].IntelSources[whichS].Level < 0:
+							content = "in fact unreliable"
+						else:
+							content = "still reliable"
+					else:
+						if GameLogic.random.randi_range(1,2) == 2:
+							content = "in fact unreliable"
+						else:
+							content = "still reliable"
+					CallManager.CallQueue.append(
+						{
+							"Header": "Urgent Decision",
+							"Level": "Secret",
+							"Operation": "-//-",
+							"Content": "Some officers voiced their concers over a single source inside " + WorldData.Organizations[w].Name + " (" + str(int(100.0/ len(WorldData.Organizations[w].IntelSources))) + "% of sources in this organization). Crosschecking and internal analysis, using skills and experience available in Bureau, suggests that the source is " + content + ".\n\nDecide if we terminate or continue the cooperation.",
+							"Show1": false,
+							"Show2": false,
+							"Show3": true,
+							"Show4": true,
+							"Text1": "",
+							"Text2": "",
+							"Text3": "Terminate\nCooperation",
+							"Text4": "Continue\nCooperation",
+							"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
+							"Decision1Argument": null,
+							"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
+							"Decision2Argument": null,
+							"Decision3Callback": funcref(GameLogic, "ImplementSourceTermination"),
+							"Decision3Argument": {"Org":w, "Source":whichS},
+							"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
+							"Decision4Argument": null,
+						}
+					)
+					doesItEndWithCall = true
 		# intel stations
 		if WorldData.Countries[WorldData.Organizations[w].Countries[0]].Station > 0:
 			var prob = 80  # one time in 80 weeks

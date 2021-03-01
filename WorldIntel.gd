@@ -15,6 +15,7 @@ func GatherOnOrg(o, quality, date):
 			"Counterintelligence": WorldData.Organizations[o].Counterintelligence,
 			"Type": WorldData.Organizations[o].Type,
 			"ActiveOpsAgainstHomeland": WorldData.Organizations[o].ActiveOpsAgainstHomeland,
+			"Technology": WorldData.Organizations[o].Technology,
 		}
 		WorldData.Organizations[o].Staff *= (1.0+GameLogic.random.randi_range(-1,1)*0.1)
 		WorldData.Organizations[o].Budget *= (1.0+GameLogic.random.randi_range(-1,1)*0.1)
@@ -22,10 +23,8 @@ func GatherOnOrg(o, quality, date):
 		if WorldData.Organizations[o].Type != WorldData.OrgType.GOVERNMENT and WorldData.Organizations[o].Type != WorldData.OrgType.INTEL:
 			# do not change type of obvious organizations
 			pass  # todo in the future, eg criminal showed as noncriminal
-		if GameLogic.random.randi_range(1,2) == 2:
-			WorldData.Organizations[o].ActiveOpsAgainstHomeland = 0
-		else:
-			WorldData.Organizations[o].ActiveOpsAgainstHomeland = GameLogic.random.randi_range(1,2)
+		WorldData.Organizations[o].ActiveOpsAgainstHomeland = 0  # always report no ops
+		WorldData.Organizations[o].Technology += GameLogic.random.randi_range(-40,40)
 	############################################################################
 	# continuous intel value
 	var noOfIdentified = 0
@@ -172,8 +171,6 @@ func GatherOnOrg(o, quality, date):
 		discreteDesc = desc1 + roundedStaff + " members, budget of " + roundedBudget + " millions monthly, " + str(roundedCounter) + "/100 counterintelligence measures"
 	############################################################################
 	# operation intel, both discrete descriptions and logic mechanics
-	# TODO: UPDATE TO HANDLE DECEPTION
-	# todo: update to handle postmortem investigations
 	var antihomeland = ""
 	if quality >= 10:
 		var opDescriptions = []
@@ -399,16 +396,17 @@ func GatherOnOrg(o, quality, date):
 				techDesc = ", " + ifNew + "significantly valuable technological documents acquired"
 				WorldData.Organizations[o].IntelTechnology = newIntelTech
 			# inner technology change
-			if WorldData.Organizations[o].Type == WorldData.OrgType.COMPANY or WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY:
-				# limited use of private tech
-				if GameLogic.Technology < 20: GameLogic.Technology += innerTechChange
-				elif GameLogic.Technology < 30: GameLogic.Technology += innerTechChange*0.5
-				elif GameLogic.Technology < 40: GameLogic.Technology += innerTechChange*0.1
-			elif WorldData.Organizations[o].Type == WorldData.OrgType.INTEL:
-				# huge use of intel tech
-				if GameLogic.Technology < 50: GameLogic.Technology += innerTechChange
-				elif GameLogic.Technology < 65: GameLogic.Technology += innerTechChange*0.5
-				elif GameLogic.Technology < 80: GameLogic.Technology += innerTechChange*0.1
+			if credible == true:
+				if WorldData.Organizations[o].Type == WorldData.OrgType.COMPANY or WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY:
+					# limited use of private tech
+					if GameLogic.Technology < 20: GameLogic.Technology += innerTechChange
+					elif GameLogic.Technology < 30: GameLogic.Technology += innerTechChange*0.5
+					elif GameLogic.Technology < 40: GameLogic.Technology += innerTechChange*0.1
+				elif WorldData.Organizations[o].Type == WorldData.OrgType.INTEL:
+					# huge use of intel tech
+					if GameLogic.Technology < 50: GameLogic.Technology += innerTechChange
+					elif GameLogic.Technology < 65: GameLogic.Technology += innerTechChange*0.5
+					elif GameLogic.Technology < 80: GameLogic.Technology += innerTechChange*0.1
 			# eventual user debriefing
 			if technologyWinCall == true:
 				var trustIncrease = quality*0.15
@@ -580,6 +578,7 @@ func GatherOnOrg(o, quality, date):
 		WorldData.Organizations[o].Counterintelligence = backup.Counterintelligence
 		WorldData.Organizations[o].Type = backup.Type
 		WorldData.Organizations[o].ActiveOpsAgainstHomeland = backup.ActiveOpsAgainstHomeland
+		WorldData.Organizations[o].Technology = backup.Technology
 	# finish
 	return doesItEndWithCall
 
