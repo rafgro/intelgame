@@ -7,7 +7,10 @@ func UpdateMainScreen():
 	# other
 	$M/R/CTrust/TrustPercent.value = GameLogic.Trust
 	$M/R/COfficer/Active.text = "Active officers: " + str(GameLogic.ActiveOfficers)
-	$M/R/COfficer/HQAbroad.text = str(GameLogic.OfficersInHQ) + " in HQ, " \
+	var hqtext = ""
+	if GameLogic.OfficersInHQ < 0: hqtext += "0"  # allowed in principle, because it sorts out itself
+	else: hqtext += str(GameLogic.OfficersInHQ)
+	$M/R/COfficer/HQAbroad.text = hqtext + " in HQ, " \
 		+ str(GameLogic.OfficersAbroad) + " in action"
 	$M/R/COperations/Pursued.text = "Active operations: " + str(GameLogic.PursuedOperations)
 	if GameLogic.AttackTicker > 0:

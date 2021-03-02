@@ -74,8 +74,10 @@ func Execute(past):
 			GameLogic.OfficersInHQ = GameLogic.OfficersAbroad
 			GameLogic.OfficersAbroad = 0
 			GameLogic.AddEvent(str(GameLogic.OfficersInHQ) + " returned to Homeland")
+		# the usual ordeal
 		var communicated = false  # to a void two world events in a week
 		var warFinished = false
+		var howWarFinished = -1  # for user, 0=peace, 1=c won, 2=c2 won
 		var power1 = WorldData.Countries[c].SoftPower + GameLogic.random.randi_range(-20,20)
 		var power2 = WorldData.Countries[c2].SoftPower + GameLogic.random.randi_range(-20,20)
 		var diff = WorldData.Countries[c].SoftPower - WorldData.Countries[c2].SoftPower
@@ -99,6 +101,7 @@ func Execute(past):
 			WorldData.Wars[v].Active = false
 			communicated = true
 			warFinished = true
+			howWarFinished = 0
 			# even
 			if WorldData.Wars[v].Result < 20 and WorldData.Wars[v].Result > -20:
 				GameLogic.AddWorldEvent(WorldData.Countries[c].Name + " signed peace treaty with " + WorldData.Countries[c2].Name, past)
@@ -130,9 +133,11 @@ func Execute(past):
 			communicated = true
 			warFinished = true
 			var won = c
+			howWarFinished = 1
 			var lost = c2
 			if WorldData.Wars[v].Result <= -100:
 				won = c2
+				howWarFinished = 2
 				lost = c
 			GameLogic.AddWorldEvent(WorldData.Countries[won].Name + " won war with " + WorldData.Countries[lost].Name, past)
 			WorldData.Wars[v].Active = false
@@ -150,8 +155,39 @@ func Execute(past):
 				GameLogic.AddWorldEvent("War between " + WorldData.Countries[c].Name + " and " + WorldData.Countries[c2].Name + ": slight progress of " + WorldData.Countries[c2].Name, past)
 			else:
 				GameLogic.AddWorldEvent("War between " + WorldData.Countries[c].Name + " and " + WorldData.Countries[c2].Name + ": stalemate", past)
-		# universal war finish debriefing
-		if warFinished == true:
+		# homeland wmd war finish
+		if WorldData.Wars[v].WeeksPassed == 1 and (c == 0 or c2 == 0):
+			var against = c
+			if c == 0: against = c2
+			if GameLogic.random.randi_range(50,90) < WorldData.Countries[against].WMDProgress:
+				# nuclear loss, game over
+				CallManager.CallQueue.append(
+					{
+						"Header": "Important Information",
+						"Level": "Unclassified",
+						"Operation": "-//-",
+						"Content": "[b]Homeland was annihilated by " + WorldData.Countries[against].Name + " with weapons of mass destruction.[/b]\n\nBureau did not foresee the danger and did not provide useful, reliable enough intel to inform decision about engaging in the war.",
+						"Show1": false,
+						"Show2": false,
+						"Show3": false,
+						"Show4": true,
+						"Text1": "",
+						"Text2": "",
+						"Text3": "",
+						"Text4": "Game Over",
+						"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision1Argument": null,
+						"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision2Argument": null,
+						"Decision3Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision3Argument": null,
+						"Decision4Callback": funcref(GameLogic, "FinalQuit"),
+						"Decision4Argument": null,
+					}
+				)
+				doesItEndWithCall = true
+		# homeland conventional war finish
+		elif warFinished == true:
 			if c == 0 or c2 == 0:
 				var against = c
 				if c == 0: against = c2
@@ -159,6 +195,51 @@ func Execute(past):
 				for x in range(0,len(WorldData.Organizations)):
 					if WorldData.Organizations[x].Countries[0] == against:
 						WorldData.Organizations[x].OffensiveClearance = false
+				var content = ""
+				if howWarFinished == 0:
+					# peace
+					content = "[b]Homeland reached peace agreement with " + WorldData.Countries[against].Name + ", finishing the war.[/b]\n\nDiplomatic ties were reestablished. Offensive clearance against all " + WorldData.Countries[against].Adjective + " targets was revoked."
+				elif (c == 0 and howWarFinished == 1) or (c2 == 0 and howWarFinished == 2):
+					# win
+					GameLogic.Trust += 10
+					for x in range(0,len(WorldData.Organizations)):
+						if WorldData.Organizations[x].Countries[0] == against:
+							if WorldData.Organizations[x].Type == WorldData.OrgType.GOVERNMENT or WorldData.Organizations[x].Type == WorldData.OrgType.INTEL or WorldData.Organizations[x].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE or WorldData.Organizations[x].Type == WorldData.OrgType.UNIVERSITY:
+								WorldIntel.GatherIntelOn(x, 100, GameLogic.GiveDateWithYear(), true)
+					content = "[b]Homeland won war with " + WorldData.Countries[against].Name + ".[/b]\n\n" + WorldData.Countries[against].Name + " continues existence as a smaller, independent country. Homeland authorities captured wealth of intel from all " + WorldData.Countries[against].Adjective + " institutions, increasing our technological capabilities and knowledge about other organizations existing in the world."
+				else:
+					# loss
+					GameLogic.BudgetFull *= 0.3
+					var half = int(GameLogic.ActiveOfficers*0.5)
+					GameLogic.ActiveOfficers -= half
+					GameLogic.OfficersInHQ -= half
+					GameLogic.Trust -= 10
+					content = "[b]Homeland lost war with " + WorldData.Countries[against].Name + ".[/b]\n\nOur country will continue existence as a smaller, independent state. " + WorldData.Countries[against].Adjective + " authorities captured all Bureau's intel, leading to loss of all networks and sources. In addition, budget was severely restricted and half of the staff was lost due to wartime turmoil, resignations, fleeing from the country, and other reasons."
+				CallManager.CallQueue.append(
+					{
+						"Header": "Important Information",
+						"Level": "Classified",
+						"Operation": "-//-",
+						"Content": content,
+						"Show1": false,
+						"Show2": false,
+						"Show3": false,
+						"Show4": true,
+						"Text1": "",
+						"Text2": "",
+						"Text3": "",
+						"Text4": "Understood",
+						"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision1Argument": null,
+						"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision2Argument": null,
+						"Decision3Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision3Argument": null,
+						"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision4Argument": null,
+					}
+				)
+				doesItEndWithCall = true
 	############################################################################
 	# countries
 	for c in range(0, len(WorldData.Countries)):
@@ -210,13 +291,33 @@ func Execute(past):
 				continue  # don't act on itself
 			if WorldData.DiplomaticRelations[c][c2] <= -85:
 				# war
+				# before engaging homeland, risk of war is defined by wmd
+				if c == 0 or c2 == 0:
+					if past != null: continue  # no wars in the past
+					var against = c
+					if c == 0: against = c2
+					if WorldData.Countries[against].WMDProgress < 50:
+						continue  # no real wmd
+					if WorldData.Countries[against].WMDIntel > 50:
+						WorldData.DiplomaticRelations[c][c2] += 15
+						WorldData.DiplomaticRelations[c2][c] += 15
+						continue  # never enter a war
+					elif WorldData.Countries[against].WMDIntel > 25:
+						WorldData.DiplomaticRelations[c][c2] += 10
+						WorldData.DiplomaticRelations[c2][c] += 10
+						if GameLogic.random.randi_range(1,5) == 2: continue  # rarely enter the war
+					elif WorldData.Countries[against].WMDIntel > 0:
+						WorldData.DiplomaticRelations[c][c2] += 5
+						WorldData.DiplomaticRelations[c2][c] += 5
+						if GameLogic.random.randi_range(1,2) == 1: continue  # sometimes enter the war
+				# actual war
 				if GameLogic.random.randi_range(1,5) == 4:
 					WorldData.Wars.append(WorldData.AWar.new({"CountryA": c, "CountryB": c2}))
 					GameLogic.AddWorldEvent("War began between " + WorldData.Countries[c].Name + " and " + WorldData.Countries[c2].Name, past)
 					WorldData.Countries[c].InStateOfWar = true
 					WorldData.Countries[c2].InStateOfWar = true
 					# homeland involved
-					if (c == 0 or c2 == 0) and past == null:
+					if c == 0 or c2 == 0:
 						var against = c
 						if c == 0: against = c2
 						WorldData.Countries[against].DiplomaticTravel = false
@@ -395,6 +496,8 @@ func Execute(past):
 					WorldData.Organizations[w].Technology += GameLogic.random.randi_range(15,35)
 					GameLogic.AddWorldEvent(WorldData.TechnologicalPhrases[ randi() % WorldData.TechnologicalPhrases.size() ] + " in " + WorldData.Countries[WorldData.Organizations[w].Countries[0]].Name, past)
 		elif WorldData.Organizations[w].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE:
+			# in addition to own tech changes, it also changes country's wmd capabilities
+			WorldData.Countries[WorldData.Organizations[w].Countries[0]].WMDProgress += WorldData.Organizations[w].Technology*0.005  # plus ~26% over a year
 			if GameLogic.random.randi_range(1,70) == 25:
 				WorldData.Organizations[w].Technology += GameLogic.random.randi_range(1,7)
 		elif WorldData.Organizations[w].Type == WorldData.OrgType.INTEL:
@@ -897,7 +1000,7 @@ func Execute(past):
 			if len(WorldData.Organizations[w].IntelSources) > 0:
 				# providing joint intel from all sources, every 8 weeks on average
 				if GameLogic.random.randi_range(1,8) == 4:
-					var localCall = WorldIntel.GatherOnOrg(w, highestLevel*(0.8+len(WorldData.Organizations[w].IntelSources)*0.2), GameLogic.GiveDateWithYear())
+					var localCall = WorldIntel.GatherOnOrg(w, highestLevel*(0.8+len(WorldData.Organizations[w].IntelSources)*0.2), GameLogic.GiveDateWithYear(), false)
 					if localCall == true: doesItEndWithCall = true
 				# reversal check
 				var whichS = randi() % WorldData.Organizations[w].IntelSources.size()
@@ -961,7 +1064,7 @@ func Execute(past):
 			elif WorldData.Countries[WorldData.Organizations[w].Countries[0]].Station > 5: prob = 70
 			if GameLogic.random.randi_range(0, prob) == int(prob*0.5):
 				var qual = GameLogic.StaffSkill*0.3 + WorldData.Countries[WorldData.Organizations[w].Countries[0]].KnowhowLanguage*0.3 + WorldData.Countries[WorldData.Organizations[w].Countries[0]].KnowhowCustoms*0.2 + GameLogic.random.randi_range(0,20)*0.01
-				WorldIntel.GatherOnOrg(w, qual, GameLogic.GiveDateWithYear())
+				WorldIntel.GatherOnOrg(w, qual, GameLogic.GiveDateWithYear(), false)
 		########################################################################
 		# changing relations between arms dealers and terror orgs
 		if WorldData.Organizations[w].Type == WorldData.OrgType.ARMTRADER:

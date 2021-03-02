@@ -297,7 +297,7 @@ func NewGenerate():
 	for o in range(0, len(WorldData.Organizations)):
 		if WorldData.Organizations[o].Type == WorldData.OrgType.INTEL:
 			WorldData.Organizations[o].Technology = WorldData.Organizations[o].Counterintelligence + GameLogic.random.randi_range(-15,15)
-			WorldIntel.GatherOnOrg(o, 0, "01/01/2021")
+			WorldIntel.GatherOnOrg(o, 0, "01/01/2021", false)
 			# updating initial country characterization
 			WorldData.Countries[WorldData.Organizations[o].Countries[0]].CovertTravel -= WorldData.Organizations[o].Counterintelligence * 0.3
 			if WorldData.Countries[WorldData.Organizations[o].Countries[0]].CovertTravel < 0:

@@ -26,6 +26,8 @@ class ACountry:
 	var Network = 0  # number of members in a local asset network, supporting ops
 	var NetworkBlowup = 0  # subtracted from above var but hidden from user, coming from moles
 	var Station = 0  # number of employees in a local station, supporting ops
+	var WMDProgress = 0  # 0 to 100 to have a wmd, produced only in university_offensive
+	var WMDIntel = 0  # knowledge of gov about wmd program, prevents from entering the war
 	
 	func _init(aDictionary):
 		Name = aDictionary.Name

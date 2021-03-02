@@ -544,7 +544,8 @@ func ProgressOperations():
 				var localCall = WorldIntel.GatherOnOrg(
 					GameLogic.Operations[i].Target,
 					GameLogic.Operations[i].AbroadPlan.Quality,
-					GameLogic.GiveDateWithYear()
+					GameLogic.GiveDateWithYear(),
+					false
 				)
 				if localCall == true: doesItEndWithCall = true
 				# debriefing variables
@@ -660,7 +661,8 @@ func ProgressOperations():
 					var localCall = WorldIntel.GatherOnOrg(
 						GameLogic.Operations[i].Target,
 						GameLogic.Operations[i].AbroadPlan.Quality,
-						GameLogic.GiveDateWithYear()
+						GameLogic.GiveDateWithYear(),
+						false
 					)
 					if localCall == true: doesItEndWithCall = true
 				# debriefing variables

@@ -1,7 +1,7 @@
 extends Node
 
 # Gathering intelligence information about organizations
-func GatherOnOrg(o, quality, date):
+func GatherOnOrg(o, quality, date, ifHideCalls):
 	var doesItEndWithCall = false
 	var credible = true
 	var backup = null
@@ -268,7 +268,7 @@ func GatherOnOrg(o, quality, date):
 					opDescriptions.append(damage + " operation targeting Bureau officers")
 			# comparing significant intel change and notifying user if possible
 			var diff = newIntel - pastIntel
-			if diff >= 20 and ifCounterintel == false:
+			if diff >= 20 and ifCounterintel == false and ifHideCalls == false:
 				CallManager.CallQueue.append(
 					{
 						"Header": "Important Information",
@@ -349,7 +349,7 @@ func GatherOnOrg(o, quality, date):
 				if WorldData.Organizations[whichOrg].Type == WorldData.OrgType.INTEL:
 					if GameLogic.random.randi_range(1,10) != 5:
 						continue  # to avoid too frequent recurency
-				var ifAnyCall = GatherOnOrg(whichOrg, GameLogic.random.randi_range(10,WorldData. Organizations[whichOrg].Counterintelligence*0.5), date)  # counter as upper, since it's directly proportional to quality of the agency
+				var ifAnyCall = GatherOnOrg(whichOrg, GameLogic.random.randi_range(10,WorldData. Organizations[whichOrg].Counterintelligence*0.5), date, ifHideCalls)  # counter as upper, since it's directly proportional to quality of the agency
 				orgNames.append(WorldData.Organizations[whichOrg].Name)
 				if ifAnyCall == true: doesItEndWithCall = true
 			if len(orgNames) > 0:
@@ -439,7 +439,7 @@ func GatherOnOrg(o, quality, date):
 					elif GameLogic.Technology < 65: GameLogic.Technology += innerTechChange*0.5
 					elif GameLogic.Technology < 80: GameLogic.Technology += innerTechChange*0.1
 			# eventual user debriefing
-			if technologyWinCall == true:
+			if technologyWinCall == true and ifHideCalls == false:
 				var trustIncrease = quality*0.15
 				if trustIncrease > 10: trustIncrease = 10
 				if (GameLogic.Trust+trustIncrease) > 100: trustIncrease = 101-GameLogic.Trust
@@ -486,35 +486,43 @@ func GatherOnOrg(o, quality, date):
 			if WorldData.Organizations[o].Technology > 50 and GameLogic.random.randi_range(1,2) == 1:
 				techDesc = ", potentially dangerous research"
 				WorldData.Organizations[o].IntelTechnology = WorldData.Organizations[o].Technology*0.1
+				WorldData.Countries[WorldData.Organizations[o].Countries[0]].WMDIntel += 5
 		elif quality < 40:
 			if WorldData.Organizations[o].Technology < 30:
 				techDesc = ", no dangerous research"
+				WorldData.Countries[WorldData.Organizations[o].Countries[0]].WMDIntel -= 5
 			elif WorldData.Organizations[o].Technology < 60:
 				techDesc = ", potentially conducting research on WMD"
 				WorldData.Organizations[o].IntelTechnology = WorldData.Organizations[o].Technology*0.3
+				WorldData.Countries[WorldData.Organizations[o].Countries[0]].WMDIntel += 5
 			else:
 				var newIntelTech = WorldData.Organizations[o].Technology*0.5
 				techDesc = ", conducts research on WMD"
 				WorldData.Organizations[o].IntelTechnology = newIntelTech
 				technologyWinCall = true
+				WorldData.Countries[WorldData.Organizations[o].Countries[0]].WMDIntel += 15
 		elif quality < 75:
 			if WorldData.Organizations[o].Technology < 30:
 				techDesc = ", no dangerous research"
+				WorldData.Countries[WorldData.Organizations[o].Countries[0]].WMDIntel -= 15
 			elif WorldData.Organizations[o].Technology < 60:
 				techDesc = ", conducts research on WMD, some details acquired"
 				var newIntelTech = WorldData.Organizations[o].Technology*0.6
 				WorldData.Organizations[o].IntelTechnology = newIntelTech
 				technologyWinCall = true
 				GameLogic.Trust += 1
+				WorldData.Countries[WorldData.Organizations[o].Countries[0]].WMDIntel += 25
 			else:
 				var newIntelTech = WorldData.Organizations[o].Technology*0.8
 				techDesc = ", conducts research on WMD, technological details acquired"
 				WorldData.Organizations[o].IntelTechnology = newIntelTech
 				technologyWinCall = true
 				GameLogic.Trust += 2
+				WorldData.Countries[WorldData.Organizations[o].Countries[0]].WMDIntel += 50
 		else:
 			if WorldData.Organizations[o].Technology < 30:
 				techDesc = ", no dangerous technology"
+				WorldData.Countries[WorldData.Organizations[o].Countries[0]].WMDIntel -= 20
 			elif WorldData.Organizations[o].Technology < 60:
 				var ifNew = ""
 				var newIntelTech = WorldData.Organizations[o].Technology*0.8
@@ -522,6 +530,7 @@ func GatherOnOrg(o, quality, date):
 				WorldData.Organizations[o].IntelTechnology = newIntelTech
 				technologyWinCall = true
 				GameLogic.Trust += 2
+				WorldData.Countries[WorldData.Organizations[o].Countries[0]].WMDIntel += 50
 			else:
 				var ifNew = ""
 				var newIntelTech = WorldData.Organizations[o].Technology
@@ -529,8 +538,9 @@ func GatherOnOrg(o, quality, date):
 				WorldData.Organizations[o].IntelTechnology = newIntelTech
 				technologyWinCall = true
 				GameLogic.Trust += 3
+				WorldData.Countries[WorldData.Organizations[o].Countries[0]].WMDIntel += 75
 			# eventual user debriefing
-			if technologyWinCall == true and WorldData.Organizations[o].OffensiveClearance == false:
+			if technologyWinCall == true and WorldData.Organizations[o].OffensiveClearance == false and ifHideCalls == false:
 				var trustIncrease = quality*0.15
 				if trustIncrease > 10: trustIncrease = 10
 				if (GameLogic.Trust+trustIncrease) > 100: trustIncrease = 101-GameLogic.Trust
@@ -581,7 +591,7 @@ func GatherOnOrg(o, quality, date):
 				movDesc = ", connected to at least one terrorist organization (" + WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].Name + ")"
 				if WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].Known == false:
 					WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].Known = true
-					GatherOnOrg(WorldData.Organizations[o].ConnectedTo[0], 5, date)
+					GatherOnOrg(WorldData.Organizations[o].ConnectedTo[0], 5, date, ifHideCalls)
 					antihomeland = "[u]previously unknown terrorist organization, " + WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].Name + ", was discovered in connection the to movement[/u]"
 		else:
 			movDesc = ", not connected to terrorist organizations"
@@ -593,7 +603,7 @@ func GatherOnOrg(o, quality, date):
 					orgNames.append(WorldData.Organizations[y].Name)
 					if WorldData.Organizations[y].Known == false:
 						WorldData.Organizations[y].Known = true
-						GatherOnOrg(y, 5, date)
+						GatherOnOrg(y, 5, date, ifHideCalls)
 						antihomeland = "[u]previously unknown terrorist organization, " + WorldData.Organizations[y].Name + ", was discovered in connection the to movement[/u]"
 				movDesc = ", connected to terrorist organizations (" + PoolStringArray(orgNames).join(", ") + ")"
 		discreteDesc += movDesc
@@ -683,7 +693,7 @@ func RecruitInOrg(o, quality, date):
 		WorldData.Organizations[o].IntelDescription.push_front(desc + "a new "+wordLevel+"-level source acquired")
 		# ensuring that some minimal intel is present
 		if len(WorldData.Organizations[o].IntelDescription) == 1:
-			GatherOnOrg(o, GameLogic.random.randi_range(5,15), date)
+			GatherOnOrg(o, GameLogic.random.randi_range(5,15), date, false)
 		# returning for user notification
 		return levelOfSuccess
 

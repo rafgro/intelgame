@@ -744,7 +744,7 @@ func ImplementWalkin(adict):
 	# accept
 	elif adict.Choice == 2:
 		var content = adict.Content
-		WorldIntel.GatherOnOrg(adict.Whichorg, adict.Quality, GiveDateWithYear())
+		WorldIntel.GatherOnOrg(adict.Whichorg, adict.Quality, GiveDateWithYear(), false)
 		content += "\n\nProvided intel:\n" + WorldData.Organizations[adict.Whichorg].IntelDescription[0].substr(18)
 		CallManager.CallQueue.append(
 			{
