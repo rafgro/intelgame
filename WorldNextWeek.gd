@@ -61,14 +61,16 @@ func Execute(past):
 					}
 				)
 				doesItEndWithCall = true
-	# dealing with country stats government stability
+	############################################################################
+	# countries
 	for c in range(0, len(WorldData.Countries)):
 		# parameter fluctations
-		if GameLogic.random.randi_range(1,4) == 2:  # ~one per month
+		if GameLogic.random.randi_range(1,5) == 2:  # ~one per month
 			WorldData.Countries[c].Size *= (1.0+GameLogic.random.randi_range(-1,1)*0.01)
 			WorldData.Countries[c].IntelFriendliness += GameLogic.random.randi_range(-1,1)
+			WorldData.Countries[c].SoftPower += GameLogic.random.randi_range(-1,1)
 		if WorldData.Countries[c].Network > 0:
-			if GameLogic.random.randi_range(1,10) == 6: WorldData.Countries[c].Network -= 1
+			if GameLogic.random.randi_range(1,20) == 6: WorldData.Countries[c].Network -= 1
 		# stability
 		var choice = GameLogic.random.randi_range(0,70)
 		if WorldData.Countries[c].PoliticsStability < 20:
@@ -76,14 +78,15 @@ func Execute(past):
 			if choice > WorldData.Countries[c].PoliticsStability and GameLogic.random.randi_range(0,20) == 1:
 				GameLogic.AddWorldEvent("Government resigned in " + WorldData.Countries[c].Name, past)
 				WorldData.Countries[c].ElectionProgress = 0
+				WorldData.Countries[c].SoftPower -= 1
 		elif choice > WorldData.Countries[c].PoliticsStability and GameLogic.random.randi_range(0,40) == 2:
 			if GameLogic.random.randi_range(1,3) == 2:
 				GameLogic.AddWorldEvent("Protests against government in " + WorldData.Countries[c].Name, past)
 			else:
 				GameLogic.AddWorldEvent("Internal tensions in " + WorldData.Countries[c].Name, past)
 			WorldData.Countries[c].PoliticsStability -= GameLogic.random.randi_range(5,15)
-	# individual diplomatic events
-	for c in range(0, len(WorldData.Countries)):
+			WorldData.Countries[c].SoftPower -= 0.5
+		# individual diplomatic events
 		if GameLogic.random.randi_range(0,4) == 0:
 			var affected = GameLogic.random.randi_range(0, len(WorldData.Countries)-1)
 			if c == affected:
@@ -92,6 +95,7 @@ func Execute(past):
 			if GameLogic.random.randi_range(0,15) == 9:  # rare larger change
 				change = GameLogic.random.randi_range((WorldData.DiplomaticRelations[c][affected]-30.0)/4, (WorldData.DiplomaticRelations[c][affected]+30.0)/4)
 			WorldData.DiplomaticRelations[c][affected] += change
+			WorldData.DiplomaticRelations[affected][c] += change
 			if GameLogic.random.randi_range(0,30) == 7:  # publicly known
 				if change < 0 and WorldData.DiplomaticRelations[c][affected] > -30:
 					GameLogic.AddWorldEvent(WorldData.Countries[c].Name + WorldData.DiplomaticPhrasesNegative[randi() % WorldData.DiplomaticPhrasesNegative.size()] + WorldData.Countries[affected].Name, past)
@@ -101,6 +105,7 @@ func Execute(past):
 					GameLogic.AddWorldEvent(WorldData.Countries[c].Name + WorldData.DiplomaticPhrasesPositive[randi() % WorldData.DiplomaticPhrasesPositive.size()] + WorldData.Countries[affected].Name, past)
 				elif change > 0 and WorldData.DiplomaticRelations[c][affected] >= 30:
 					GameLogic.AddWorldEvent(WorldData.Countries[c].Name + WorldData.DiplomaticPhrasesVeryPositive[randi() % WorldData.DiplomaticPhrasesPositive.size()] + WorldData.Countries[affected].Name, past)
+	############################################################################
 	# country summits
 	if GameLogic.random.randi_range(0,40) == 12:
 		# getting participants
@@ -126,9 +131,16 @@ func Execute(past):
 				WorldData.DiplomaticRelations[p][p2] += result
 		# public information
 		message = "Summit of " + message.substr(0, len(message)-2) + ": "
-		if theSum > 0: message += "governments issued a joint statement"
-		else: message += "governments could not reach consensus"
+		if theSum > 0:
+			message += "governments issued a joint statement"
+			for p in participants:
+				WorldData.Countries[p].SoftPower += 3
+		else:
+			message += "governments could not reach consensus"
+			for p in participants:
+				WorldData.Countries[p].SoftPower -= 1.5
 		GameLogic.AddWorldEvent(message, past)
+	############################################################################
 	# organization proceedings
 	for w in range(0,len(WorldData.Organizations)):
 		if WorldData.Organizations[w].Active == false:
@@ -167,6 +179,10 @@ func Execute(past):
 		elif WorldData.Organizations[w].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE:
 			if GameLogic.random.randi_range(1,70) == 25:
 				WorldData.Organizations[w].Technology += GameLogic.random.randi_range(1,7)
+		elif WorldData.Organizations[w].Type == WorldData.OrgType.INTEL:
+			if GameLogic.random.randi_range(1,100) < WorldData.Countries[WorldData.Organizations[w].Countries[0]].SoftPower and GameLogic.random.randi_range(1,9) == 3:
+				WorldData.Organizations[w].Technology += 1
+		########################################################################
 		# continuing existing operations
 		for u in range(0,len(WorldData.Organizations[w].OpsAgainstHomeland)):
 			if WorldData.Organizations[w].Type != WorldData.OrgType.GENERALTERROR:
@@ -405,6 +421,7 @@ func Execute(past):
 				# executing details and communicating them
 				if trustLoss > GameLogic.Trust: trustLoss = GameLogic.Trust
 				GameLogic.Trust -= trustLoss
+				WorldData.Countries[0].SoftPower -= 5
 				WorldData.Organizations[w].OpsAgainstHomeland[u].Active = false
 				WorldData.Organizations[w].ActiveOpsAgainstHomeland -= 1
 				GameLogic.AddWorldEvent(shortDesc+" in " + theCountry, past)
@@ -433,6 +450,7 @@ func Execute(past):
 					}
 				)
 				doesItEndWithCall = true
+		########################################################################
 		# new operations against countries
 		if WorldData.Organizations[w].Type == WorldData.OrgType.GENERALTERROR:
 			# number of attacks relies on budget*aggression
@@ -474,7 +492,9 @@ func Execute(past):
 								desc += ", local authorities point to " + WorldData.Organizations[w].Name + " as the perpetrator"
 							else:
 								desc += ", local authorities do not know the perpetrator"
+								WorldData.Countries[whichCountry].SoftPower -= 2
 						GameLogic.AddWorldEvent(desc, past)
+				################################################################
 				# against homeland: just planning for the future
 				elif past == null and GameLogic.CurrentOpsAgainstHomeland < GameLogic.OpsLimit and GameLogic.YearlyOpsAgainstHomeland < GameLogic.OpsLimit and GameLogic.random.randi_range(1,3) == 2:
 					var opSize = GameLogic.random.randi_range(1,10) * 0.1  # 0.0-1.0 of org resources
@@ -559,6 +579,8 @@ func Execute(past):
 					# if not, nothing happens
 					var successProb = WorldData.Organizations[w].Counterintelligence - GameLogic.StaffTrust*0.5 - GameLogic.StaffSkill*0.2 - WorldData.Organizations[w].IntelValue*0.3
 					if GameLogic.random.randi_range(1,100) < successProb:
+						WorldData.Countries[0].SoftPower -= 3
+						WorldData.Countries[WorldData.Organizations[w].Countries[0]].SoftPower += 3
 						WorldData.Organizations[w].OpsAgainstHomeland.append(WorldData.AnExternalOperation.new(
 							{
 								"Type": WorldData.ExtOpType.COUNTERINTEL,
@@ -577,6 +599,7 @@ func Execute(past):
 						}
 						WorldData.Organizations[w].ActiveOpsAgainstHomeland += 1
 						GameLogic.InternalMoles += 1
+			####################################################################
 			# detecting moles
 			if GameLogic.InternalMoles > 0 and GameLogic.random.randi_range(1,8) == 4:
 				if (WorldData.Organizations[w].ActiveOpsAgainstHomeland > 0 or GameLogic.random.randi_range(1,80) == 12) and GameLogic.DistMolesearchCounter <= 0:
@@ -623,6 +646,7 @@ func Execute(past):
 						}
 					)
 					doesItEndWithCall = true
+		########################################################################
 		# sources
 		if len(WorldData.Organizations[w].IntelSources) > 0:
 			# modifying every source
@@ -655,7 +679,7 @@ func Execute(past):
 			if len(WorldData.Organizations[w].IntelSources) > 0:
 				# providing joint intel from all sources, every 8 weeks on average
 				if GameLogic.random.randi_range(1,8) == 4:
-					var localCall = WorldIntel.GatherOnOrg(w, highestLevel*(0.9+len(WorldData.Organizations[w].IntelSources)*0.1), GameLogic.GiveDateWithYear())
+					var localCall = WorldIntel.GatherOnOrg(w, highestLevel*(0.8+len(WorldData.Organizations[w].IntelSources)*0.2), GameLogic.GiveDateWithYear())
 					if localCall == true: doesItEndWithCall = true
 				# reversal check
 				var whichS = randi() % WorldData.Organizations[w].IntelSources.size()
@@ -708,6 +732,7 @@ func Execute(past):
 						}
 					)
 					doesItEndWithCall = true
+		########################################################################
 		# intel stations
 		if WorldData.Countries[WorldData.Organizations[w].Countries[0]].Station > 0:
 			var prob = 80  # one time in 80 weeks
@@ -719,6 +744,7 @@ func Execute(past):
 			if GameLogic.random.randi_range(0, prob) == int(prob*0.5):
 				var qual = GameLogic.StaffSkill*0.3 + WorldData.Countries[WorldData.Organizations[w].Countries[0]].KnowhowLanguage*0.3 + WorldData.Countries[WorldData.Organizations[w].Countries[0]].KnowhowCustoms*0.2 + GameLogic.random.randi(0,20)*0.01
 				WorldIntel.GatherOnOrg(w, qual, GameLogic.GiveDateWithYear())
+		########################################################################
 		# changing relations between arms dealers and terror orgs
 		if WorldData.Organizations[w].Type == WorldData.OrgType.ARMTRADER:
 			if GameLogic.random.randi_range(1,20) == 4:

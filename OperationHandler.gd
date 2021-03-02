@@ -886,6 +886,7 @@ func ProgressOperations():
 					if destroyedOrg == true:
 						inflictedDamage = "As a result, the organization has been completely eliminated. "
 						WorldData.Organizations[whichOrg].Active = false
+						WorldData.Countries[0].SoftPower += GameLogic.random.randi_range(2,6)
 					else:
 						if destroyedOps > 0:
 							inflictedDamage = "As a result, danger of some of the attacks was eliminated. "

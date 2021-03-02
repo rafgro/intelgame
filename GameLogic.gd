@@ -543,6 +543,11 @@ func NextWeek():
 				)
 				doesItEndWithCall = true
 	############################################################################
+	# homeland-level stuff
+	Use *= 0.99  # -40% per year when starting from 100%
+	if Use > 0 and random.randi_range(1,3) == 2:
+		WorldData.Countries[0].SoftPower += Use*0.01  # 60% use -> +0.6% every 3rd week -> +10% in year
+	############################################################################
 	# final variable maintenance
 	# ticker label change
 	if AttackTicker != 0:
@@ -559,10 +564,17 @@ func NextWeek():
 	# physical limits or bug patches
 	if BudgetOngoingOperations < 0: BudgetOngoingOperations = 0
 	if StaffExperience > 100: StaffExperience = 100
+	elif StaffExperience < 0: StaffExperience = 0
 	if StaffSkill > 100: StaffSkill = 100
+	elif StaffSkill < 0: StaffSkill = 0
 	if StaffTrust > 100: StaffTrust = 100
+	elif StaffTrust < 0: StaffTrust = 0
 	if Trust > 100: Trust = 100
+	elif Trust < 0: Trust = 0
 	if Technology > 100: Technology = 100
+	elif Technology < 0: Technology = 0
+	if Use > 100: Use = 100
+	elif Use < 0: Use = 0
 	# histories of certain variables
 	if len(StaffSkillMonthsAgo) < 26:  # if this is under, all histories are under
 		# building initial history

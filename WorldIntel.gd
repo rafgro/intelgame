@@ -36,8 +36,15 @@ func GatherOnOrg(o, quality, date):
 		elif WorldData.Organizations[o].IntelValue < 35: theFactor = 0.6
 		elif WorldData.Organizations[o].IntelValue < 50: theFactor = 0.4
 		elif WorldData.Organizations[o].IntelValue < 70: theFactor = 0.2
-		WorldData.Organizations[o].IntelValue += quality*theFactor
-		if credible == false: WorldData.Organizations[o].IntelValue -= quality
+		if credible == true: WorldData.Organizations[o].IntelValue += quality*theFactor
+		else: WorldData.Organizations[o].IntelValue -= quality
+		# government use of intel
+		if WorldData.Organizations[o].Type == WorldData.OrgType.GOVERNMENT:
+			if credible == true: GameLogic.Use += quality*theFactor*0.1
+			else: GameLogic.Use -= quality*2*0.1  # huge impact of false intel on gov
+		elif WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE and quality >= 20:
+			if credible == true: GameLogic.Use += quality*theFactor*0.5
+			else: GameLogic.Use -= quality*2*0.5
 		# individual members identified
 		var infFactor = 0.001*quality  # eg, 30->0.03
 		var newIdentified = int(WorldData.Organizations[o].Staff*1.0*infFactor)
@@ -437,6 +444,7 @@ func GatherOnOrg(o, quality, date):
 				if trustIncrease > 10: trustIncrease = 10
 				if (GameLogic.Trust+trustIncrease) > 100: trustIncrease = 101-GameLogic.Trust
 				GameLogic.Trust += trustIncrease
+				WorldData.Countries[0].SoftPower += GameLogic.random.randi_range(1,3)
 				var budgetIncrease = quality*0.3
 				if budgetIncrease > 50: budgetIncrease = 50
 				GameLogic.BudgetFull += budgetIncrease
@@ -527,6 +535,7 @@ func GatherOnOrg(o, quality, date):
 				if trustIncrease > 10: trustIncrease = 10
 				if (GameLogic.Trust+trustIncrease) > 100: trustIncrease = 101-GameLogic.Trust
 				GameLogic.Trust += trustIncrease
+				WorldData.Countries[0].SoftPower += GameLogic.random.randi_range(10,30)
 				var budgetIncrease = quality*0.3
 				if budgetIncrease > 50: budgetIncrease = 50
 				GameLogic.BudgetFull += budgetIncrease
