@@ -62,6 +62,79 @@ func Execute(past):
 				)
 				doesItEndWithCall = true
 	############################################################################
+	# eventual wars
+	for v in range(0, len(WorldData.Wars)):
+		if WorldData.Wars[v].Active == false: continue
+		# progress
+		WorldData.Wars[v].WeeksPassed += 1
+		var communicated = false  # to a void two world events in a week
+		var c = WorldData.Wars[v].CountryA
+		var c2 = WorldData.Wars[v].CountryB
+		var power1 = WorldData.Countries[c].SoftPower + GameLogic.random.randi_range(-20,20)
+		var power2 = WorldData.Countries[c2].SoftPower + GameLogic.random.randi_range(-20,20)
+		var diff = WorldData.Countries[c].SoftPower - WorldData.Countries[c2].SoftPower
+		var pastResult = WorldData.Wars[v].Result
+		if power1 > power2:
+			if diff > 0: WorldData.Wars[v].Result += diff*(0.1*GameLogic.random.randi_range(5,10))
+			else: WorldData.Wars[v].Result += GameLogic.random.randi_range(1,15)
+		else:
+			if diff < 0: WorldData.Wars[v].Result += diff*(0.1*GameLogic.random.randi_range(5,10))
+			else: WorldData.Wars[v].Result += GameLogic.random.randi_range(-15,-1)
+		var newResult = WorldData.Wars[v].Result
+		if (newResult-pastResult) > 20:
+			GameLogic.AddWorldEvent(WorldData.Countries[c].Name + WorldData.WarPhrases[randi() % WorldData.WarPhrases.size()] + WorldData.Countries[c2].Name, past)
+			communicated = true
+		elif (newResult-pastResult) < -20:
+			GameLogic.AddWorldEvent(WorldData.Countries[c2].Name + WorldData.WarPhrases[randi() % WorldData.WarPhrases.size()] + WorldData.Countries[c].Name, past)
+			communicated = true
+		# eventual peace treaty
+		var sumOfAggression = WorldData.Countries[c].PoliticsAggression + WorldData.Countries[c2].PoliticsAggression  # max 200
+		if GameLogic.random.randi_range(1,200) > sumOfAggression and GameLogic.random.randi_range(1,5)==3:
+			WorldData.Wars[v].Active = false
+			communicated = true
+			# even
+			if WorldData.Wars[v].Result < 20 and WorldData.Wars[v].Result > -20:
+				GameLogic.AddWorldEvent(WorldData.Countries[c].Name + " signed peace treaty with " + WorldData.Countries[c2].Name, past)
+				WorldData.Countries[c].SoftPower *= 1.1
+				WorldData.Countries[c2].SoftPower *= 1.1
+				WorldData.DiplomaticRelations[c][c2] = 0
+				WorldData.DiplomaticRelations[c2][c] = 0
+			# uneven ones
+			elif WorldData.Wars[v].Result >= 20:
+				GameLogic.AddWorldEvent(WorldData.Countries[c2].Name + " signed peace agreement dictated by " + WorldData.Countries[c].Name, past)
+				WorldData.Countries[c].SoftPower *= 1.2
+				WorldData.Countries[c2].SoftPower *= 0.8
+				WorldData.DiplomaticRelations[c][c2] = -10
+				WorldData.DiplomaticRelations[c2][c] = -10
+			else:  # equivalent to elif WorldData.Wars[v].Result <= -20:
+				GameLogic.AddWorldEvent(WorldData.Countries[c].Name + " signed peace agreement dictated by " + WorldData.Countries[c2].Name, past)
+				WorldData.Countries[c].SoftPower *= 0.8
+				WorldData.Countries[c2].SoftPower *= 1.2
+				WorldData.DiplomaticRelations[c][c2] = -10
+				WorldData.DiplomaticRelations[c2][c] = -10
+		# conventional finish
+		if WorldData.Wars[v].Result >= 100 or WorldData.Wars[v].Result <= -100:
+			communicated = true
+			var won = c
+			var lost = c2
+			if WorldData.Wars[v].Result <= -100:
+				won = c2
+				lost = c
+			GameLogic.AddWorldEvent(WorldData.Countries[won].Name + " won war with " + WorldData.Countries[lost].Name, past)
+			WorldData.Wars[v].Active = false
+			WorldData.Countries[won].SoftPower *= 1.3
+			WorldData.Countries[lost].SoftPower *= 0.6
+			WorldData.DiplomaticRelations[won][lost] = -20
+			WorldData.DiplomaticRelations[lost][won] = -20
+		# eventual communicate
+		if communicated == false and GameLogic.random.randi_range(1,3) <= 2:
+			if (newResult-pastResult) > 5:
+				GameLogic.AddWorldEvent("War between " + WorldData.Countries[c].Name + " and " + WorldData.Countries[c2].Name + ": slight progress of " + WorldData.Countries[c].Name, past)
+			elif (newResult-pastResult) < -5:
+				GameLogic.AddWorldEvent("War between " + WorldData.Countries[c].Name + " and " + WorldData.Countries[c2].Name + ": slight progress of " + WorldData.Countries[c2].Name, past)
+			else:
+				GameLogic.AddWorldEvent("War between " + WorldData.Countries[c].Name + " and " + WorldData.Countries[c2].Name + ": stalemate", past)
+	############################################################################
 	# countries
 	for c in range(0, len(WorldData.Countries)):
 		# parameter fluctations
@@ -110,12 +183,16 @@ func Execute(past):
 			var c2 = GameLogic.random.randi_range(0, len(WorldData.Countries)-1)
 			if c == c2:
 				continue  # don't act on itself
-			if WorldData.DiplomaticRelations[c][c2] < -85:
+			if WorldData.DiplomaticRelations[c][c2] <= -85:
 				# war
 				if GameLogic.random.randi_range(1,5) == 4:
-					# three types of war: minor, all-out conventional, wmd
-					pass
+					WorldData.Wars.append(WorldData.AWar.new({"CountryA": c, "CountryB": c2}))
+					GameLogic.AddWorldEvent("War began between " + WorldData.Countries[c].Name + " and " + WorldData.Countries[c2].Name, past)
+					# call off all operations to perform evacuations?
 			elif WorldData.DiplomaticRelations[c][c2] < -30:
+				# pre-war
+				if WorldData.DiplomaticRelations[c][c2] <= -80 and GameLogic.random.randi_range(1,3)==2:
+					GameLogic.AddWorldEvent(WorldData.Countries[c].Name + " and " + WorldData.Countries[c2].Name + " are on the brink of war", past)
 				# hostile
 				if GameLogic.random.randi_range(1,4) == 1:
 					var power1 = WorldData.Countries[c].SoftPower + GameLogic.random.randi_range(-10,10)

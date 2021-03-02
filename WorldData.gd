@@ -299,9 +299,24 @@ class AnExternalOperation:
 		Damage = adict.Damage
 		FinishCounter = adict.FinishCounter
 
+class AWar:
+	var Active = true
+	var CountryA = 0
+	var CountryB = 0
+	var Result = 0  # positive into direction A, negative into direction B
+	var WeeksPassed = 0
+	
+	func _init(adict):
+		Active = true
+		CountryA = adict.CountryA
+		CountryB = adict.CountryB
+
+var Wars = []
+
 # <countryA> phrase <countryB>
 var DiplomaticPhrasesPositive = ["'s officials visited ", " expressed will to improve relations with "]
 var DiplomaticPhrasesVeryPositive = [" signed a treaty with ", " held joint military exercise with ", " formed bilateral committee "]
 var DiplomaticPhrasesNegative = [" condemned actions of ", " withdraw from a treaty with ", " expressed concern about changes in "]
 var DiplomaticPhrasesVeryNegative = [" refused to meet with officials of ", " expelled some citizens of ", " attributed destabilization of the region to ", "'s military officials threatened "]
 var TechnologicalPhrases = ["New discovery reported by scientists", "Significant technological breakthrough made by engineers", "Scientific innovation presented"]
+var WarPhrases = [" made significant advances in war with ", " won critical battle with ", " gained theater superiority over ", " forces breached territory of "]
