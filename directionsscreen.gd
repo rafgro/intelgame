@@ -77,27 +77,50 @@ func _on_Develop_pressed():
 		var planAofficers = GameLogic.random.randi_range(1, GameLogic.OfficersInHQ)
 		var planAlength = GameLogic.random.randi_range(1,8)
 		var planAcost = planAofficers*5*planAlength
-		content += "[b]Plan A[/b]\n€" + str(planAcost) + ",000 | " + str(planAofficers) + " officers | " + str(planAlength) + " weeks\nlanguage training"
+		var planAshow = true
+		var planAdesc = ""
+		if (planAcost*1.0/planAlength) > GameLogic.FreeFundsWeeklyWithoutOngoing():
+			planAshow = false
+			planAdesc = " (financially unavailable)"
+		content += "[b]Plan A"+planAdesc+"[/b]\n€" + str(planAcost) + ",000 | " + str(planAofficers) + " officers | " + str(planAlength) + " weeks\nlanguage training"
 		# plan b
 		var planBofficers = GameLogic.random.randi_range(1, GameLogic.OfficersInHQ)
 		var planBlength = GameLogic.random.randi_range(4,18)
 		var planBcost = planBofficers*2*planBlength
-		content += "\n\n[b]Plan B[/b]\n€" + str(planBcost) + ",000 | " + str(planBofficers) + " officers | " + str(planBlength) + " weeks\nembassy residency\nlanguage immersion\nengagement with local culture"
-		if WorldData.Countries[lastSelectedCountry].DiplomaticTravel == false:
+		var planBshow = true
+		var planBdesc = ""
+		if WorldData.Countries[lastSelectedCountry].DiplomaticTravel == true:
+			if (planBcost*1.0/planBlength) > GameLogic.FreeFundsWeeklyWithoutOngoing():
+				planBshow = false
+				planBdesc = " (financially unavailable)"
+			content += "\n\n[b]Plan B"+planBdesc+"[/b]\n€" + str(planBcost) + ",000 | " + str(planBofficers) + " officers | " + str(planBlength) + " weeks\nembassy residency\nlanguage immersion\nengagement with local culture"
+		else:
 			planBofficers = GameLogic.random.randi_range(1, GameLogic.OfficersInHQ)
 			planBlength = GameLogic.random.randi_range(6,26)
 			planBcost = planBofficers*6*planBlength
-			content += "\n\n[b]Plan B[/b]\n€" + str(planBcost) + ",000 | " + str(planBofficers) + " officers | " + str(planBlength) + " weeks\nresidency in closest possible country\nacquitance with local emmigrants from targeted country"
+			if (planBcost*1.0/planBlength) > GameLogic.FreeFundsWeeklyWithoutOngoing():
+				planBshow = false
+				planBdesc = " (financially unavailable)"
+			content += "\n\n[b]Plan B"+planBdesc+"[/b]\n€" + str(planBcost) + ",000 | " + str(planBofficers) + " officers | " + str(planBlength) + " weeks\nresidency in closest possible country\nacquitance with local emmigrants from targeted country"
 		# plan c
 		var planCofficers = GameLogic.random.randi_range(1, GameLogic.OfficersInHQ)
 		var planClength = GameLogic.random.randi_range(4,8)
 		var planCcost = planCofficers*10*planClength
-		content += "\n\n[b]Plan C[/b]\n€" + str(planCcost) + ",000 | " + str(planCofficers) + " officers | " + str(planClength) + " weeks\ndevelop passport forging system\ntest and correct covert travel procedures"
-		if WorldData.Countries[lastSelectedCountry].CovertTravel > 35:
+		var planCshow = true
+		var planCdesc = ""
+		if WorldData.Countries[lastSelectedCountry].CovertTravel < 35:
+			if (planCcost*1.0/planClength) > GameLogic.FreeFundsWeeklyWithoutOngoing():
+				planCshow = false
+				planCdesc = " (financially unavailable)"
+			content += "\n\n[b]Plan C"+planCdesc+"[/b]\n€" + str(planCcost) + ",000 | " + str(planCofficers) + " officers | " + str(planClength) + " weeks\ndevelop passport forging system\ntest and correct covert travel procedures"
+		else:
 			planCofficers = GameLogic.random.randi_range(1, GameLogic.OfficersInHQ)
 			planClength = GameLogic.random.randi_range(6,12)
 			planCcost = planCofficers*5*planClength
-			content += "\n\n[b]Plan C[/b]\n€" + str(planCcost) + ",000 | " + str(planCofficers) + " officers | " + str(planClength) + " weeks\ncorrect covert travel procedures\nlive as a covert local"
+			if (planCcost*1.0/planClength) > GameLogic.FreeFundsWeeklyWithoutOngoing():
+				planCshow = false
+				planCdesc = " (financially unavailable)"
+			content += "\n\n[b]Plan C"+planCdesc+"[/b]\n€" + str(planCcost) + ",000 | " + str(planCofficers) + " officers | " + str(planClength) + " weeks\ncorrect covert travel procedures\nlive as a covert local"
 		content += "\n\nChoose appropriate plan or wait for new plans. Be aware that officers involved in these operations generally will not be in contact with the HQ, and therefore cannot be called off.\n"
 		# call
 		CallManager.CallQueue.append(
@@ -106,9 +129,9 @@ func _on_Develop_pressed():
 				"Level": "Confidential",
 				"Operation": "-//-",
 				"Content": content,
-				"Show1": true,
-				"Show2": true,
-				"Show3": true,
+				"Show1": planAshow,
+				"Show2": planBshow,
+				"Show3": planCshow,
 				"Show4": true,
 				"Text1": "Plan A",
 				"Text2": "Plan B",
@@ -133,7 +156,12 @@ func _on_Network_pressed():
 		var planCost = planOfficers*5*planLength
 		var content = "Establishing"
 		if WorldData.Countries[lastSelectedCountry].Network > 0: content = "Expanding"
-		content += " local agent network in " + WorldData.Countries[lastSelectedCountry].Name + " will require €" + str(planCost) + ",000 and " + str(planOfficers) + " officers. The operation will last " + str(planLength) + " weeks.\n\nNote that its effects are strictly correlated with familiarity with the country.\n\nConfirm if you want to start this operation."
+		var planShow = true
+		var planAvailability = ""
+		if (planCost*1.0/planLength) > GameLogic.FreeFundsWeeklyWithoutOngoing():
+			planShow = false
+			planAvailability = " Currently, it is financially unavailable."
+		content += " local agent network in " + WorldData.Countries[lastSelectedCountry].Name + " will require €" + str(planCost) + ",000 and " + str(planOfficers) + " officers. The operation will last " + str(planLength) + " weeks."+planAvailability+"\n\nNote that its effects are strictly correlated with familiarity with the country."
 		# call
 		CallManager.CallQueue.append(
 			{
@@ -143,7 +171,7 @@ func _on_Network_pressed():
 				"Content": content,
 				"Show1": false,
 				"Show2": false,
-				"Show3": true,
+				"Show3": planShow,
 				"Show4": true,
 				"Text1": "",
 				"Text2": "",
@@ -167,8 +195,13 @@ func _on_Station_pressed():
 		var planLength = GameLogic.random.randi_range(8,26)
 		var planCost = planOfficers*10*planLength
 		var content = "Establishing"
-		if WorldData.Countries[lastSelectedCountry].Network > 0: content = "Expanding"
-		content += " intelligence station in " + WorldData.Countries[lastSelectedCountry].Name + " will require €" + str(planCost) + ",000 and " + str(planOfficers) + " officers. The operation will last " + str(planLength) + " weeks.\n\nConfirm if you want to start this operation."
+		if WorldData.Countries[lastSelectedCountry].Station > 0: content = "Expanding"
+		var planShow = true
+		var planAvailability = ""
+		if (planCost*1.0/planLength) > GameLogic.FreeFundsWeeklyWithoutOngoing():
+			planShow = false
+			planAvailability = " Currently, it is financially unavailable."
+		content += " intelligence station in " + WorldData.Countries[lastSelectedCountry].Name + " will require €" + str(planCost) + ",000 and " + str(planOfficers) + " officers. The operation will last " + str(planLength) + " weeks."+planAvailability
 		# call
 		CallManager.CallQueue.append(
 			{
@@ -178,7 +211,7 @@ func _on_Station_pressed():
 				"Content": content,
 				"Show1": false,
 				"Show2": false,
-				"Show3": true,
+				"Show3": planShow,
 				"Show4": true,
 				"Text1": "",
 				"Text2": "",

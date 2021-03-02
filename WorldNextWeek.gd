@@ -83,7 +83,7 @@ func Execute(past):
 			if GameLogic.random.randi_range(1,3) == 2:
 				GameLogic.AddWorldEvent("Protests against government in " + WorldData.Countries[c].Name, past)
 			else:
-				GameLogic.AddWorldEvent("Internal tensions in " + WorldData.Countries[c].Name, past)
+				GameLogic.AddWorldEvent("Decrease of government stability in " + WorldData.Countries[c].Name, past)
 			WorldData.Countries[c].PoliticsStability -= GameLogic.random.randi_range(5,15)
 			WorldData.Countries[c].SoftPower -= 0.5
 		# individual diplomatic events
@@ -105,6 +105,47 @@ func Execute(past):
 					GameLogic.AddWorldEvent(WorldData.Countries[c].Name + WorldData.DiplomaticPhrasesPositive[randi() % WorldData.DiplomaticPhrasesPositive.size()] + WorldData.Countries[affected].Name, past)
 				elif change > 0 and WorldData.DiplomaticRelations[c][affected] >= 30:
 					GameLogic.AddWorldEvent(WorldData.Countries[c].Name + WorldData.DiplomaticPhrasesVeryPositive[randi() % WorldData.DiplomaticPhrasesPositive.size()] + WorldData.Countries[affected].Name, past)
+		# conflict situations
+		if GameLogic.random.randi_range(0,4) == 3:
+			var c2 = GameLogic.random.randi_range(0, len(WorldData.Countries)-1)
+			if c == c2:
+				continue  # don't act on itself
+			if WorldData.DiplomaticRelations[c][c2] < -85:
+				# war
+				if GameLogic.random.randi_range(1,5) == 4:
+					# three types of war: minor, all-out conventional, wmd
+					pass
+			elif WorldData.DiplomaticRelations[c][c2] < -30:
+				# hostile
+				if GameLogic.random.randi_range(1,4) == 1:
+					var power1 = WorldData.Countries[c].SoftPower + GameLogic.random.randi_range(-10,10)
+					var power2 = WorldData.Countries[c2].SoftPower + GameLogic.random.randi_range(-10,10)
+					# features of gov with more soft power decide
+					var d = c
+					if power1 < power2: d = c2
+					if GameLogic.random.randi_range(0,100) > WorldData.Countries[d].PoliticsStability and GameLogic.random.randi_range(0,100) < WorldData.Countries[d].PoliticsAggression:
+						WorldData.DiplomaticRelations[c][c2] -= 5
+						WorldData.DiplomaticRelations[c2][c] -= 5
+						if GameLogic.random.randi_range(1,2) == 2 or c == 0 or c2 == 0:
+							GameLogic.AddWorldEvent("Tensions rise between " + WorldData.Countries[c].Name + " and " + WorldData.Countries[c2].Name, past)
+					else:
+						WorldData.DiplomaticRelations[c][c2] += 5
+						WorldData.DiplomaticRelations[c2][c] += 5
+			else:
+				# normal relations: negotiations etc
+				var power1 = WorldData.Countries[c].SoftPower + GameLogic.random.randi_range(-10,10)
+				var power2 = WorldData.Countries[c2].SoftPower + GameLogic.random.randi_range(-10,10)
+				var toLower = c
+				var toIncrease = c2
+				if power1 > power2:
+					toLower = c2
+					toIncrease = c
+					WorldData.Countries[c].SoftPower += 1
+				for y in range(0, len(WorldData.Countries)):
+					WorldData.DiplomaticRelations[toLower][y] -= 1
+					WorldData.DiplomaticRelations[y][toLower] -= 1
+					WorldData.DiplomaticRelations[toIncrease][y] += 1
+					WorldData.DiplomaticRelations[y][toIncrease] += 1
 	############################################################################
 	# country summits
 	if GameLogic.random.randi_range(0,40) == 12:
@@ -742,7 +783,7 @@ func Execute(past):
 			elif WorldData.Countries[WorldData.Organizations[w].Countries[0]].Station > 15: prob = 60
 			elif WorldData.Countries[WorldData.Organizations[w].Countries[0]].Station > 5: prob = 70
 			if GameLogic.random.randi_range(0, prob) == int(prob*0.5):
-				var qual = GameLogic.StaffSkill*0.3 + WorldData.Countries[WorldData.Organizations[w].Countries[0]].KnowhowLanguage*0.3 + WorldData.Countries[WorldData.Organizations[w].Countries[0]].KnowhowCustoms*0.2 + GameLogic.random.randi(0,20)*0.01
+				var qual = GameLogic.StaffSkill*0.3 + WorldData.Countries[WorldData.Organizations[w].Countries[0]].KnowhowLanguage*0.3 + WorldData.Countries[WorldData.Organizations[w].Countries[0]].KnowhowCustoms*0.2 + GameLogic.random.randi_range(0,20)*0.01
 				WorldIntel.GatherOnOrg(w, qual, GameLogic.GiveDateWithYear())
 		########################################################################
 		# changing relations between arms dealers and terror orgs
