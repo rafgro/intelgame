@@ -492,11 +492,11 @@ func NextWeek():
 					content += "Possible Informant in Bureau\n\n"
 					# either successfully detected
 					if Investigations[e].Success == true:
-						content += "Investigation team concluded that fired officer have been leaking confidential information to " + WorldData.Organizations[org].Name + " for " + WorldData.Organizations[org].OpsAgainstHomeland[op].InvestigationData.Length + " weeks. As a result:\n"
+						content += "Investigation team concluded that fired officer have been leaking confidential information to " + WorldData.Organizations[org].Name + " for " + WorldData.Organizations[org].OpsAgainstHomeland[op].InvestigationData.Length + " weeks. As a result:\n\n"
 						if WorldData.Organizations[org].OpsAgainstHomeland[op].InvestigationData.CovertDamage > 0:
-							content += "- " + str(int(WorldData.Organizations[org].OpsAgainstHomeland[op].InvestigationData.CovertDamage)) + "% of covert travel know how and operations in " + WorldData.Countries[WorldData.Organizations[org].Countries[0]].Name + " were affected (some of the know how has to be rebuilt)\n"
+							content += "- " + str(int(WorldData.Organizations[org].OpsAgainstHomeland[op].InvestigationData.CovertDamage)) + "% of covert travel know how and operations in " + WorldData.Countries[WorldData.Organizations[org].Countries[0]].Name + " were affected (some of the know how has to be rebuilt)\n\n"
 						if WorldData.Organizations[org].OpsAgainstHomeland[op].InvestigationData.NetworkDamage > 0:
-							content += "- " + str(int(WorldData.Organizations[org].OpsAgainstHomeland[op].InvestigationData.NetworkDamage)) + " agents in " + WorldData.Countries[WorldData.Organizations[org].Countries[0]].Adjective + " were compromised (in response, whole network was dissolved)\n"
+							content += "- " + str(int(WorldData.Organizations[org].OpsAgainstHomeland[op].InvestigationData.NetworkDamage)) + " agents in " + WorldData.Countries[WorldData.Organizations[org].Countries[0]].Adjective + " were compromised (in response, whole network was dissolved)\n\n"
 							WorldData.Countries[WorldData.Organizations[org].Countries[0]].Network = 0
 						if WorldData.Organizations[org].OpsAgainstHomeland[op].InvestigationData.TurnedSources > 0:
 							content += str(int(WorldData.Organizations[org].OpsAgainstHomeland[op].InvestigationData.NetworkDamage)) + " " + WorldData.Countries[WorldData.Organizations[org].Countries[0]].Adjective + " sources were turned into providing false intel (work continues on uncovering them)"
@@ -507,6 +507,9 @@ func NextWeek():
 							content += "However, there are signals that the information is leaked by other officers. Bureau will continue the search for the mole."
 						else:
 							content += "It is highly likely that Bureau is currently not targeted by external organizations."
+				# investigation with content already provided
+				if Investigations[e].Type == 100:
+					content += Investigations[e].Content
 				# debriefing user
 				CallManager.CallQueue.append(
 					{
@@ -588,6 +591,7 @@ func ImplementAbroad(thePlan):
 		else:
 			AddEvent(Operations[thePlan.OperationId].Name + ": "+str(thePlan.Officers)+" officer(s) began operation")
 		# operation update
+		Operations[thePlan.OperationId].AbroadProgress = 100
 		Operations[thePlan.OperationId].Stage = OperationGenerator.Stage.ABROAD_OPERATION
 		Operations[thePlan.OperationId].AbroadPlan = thePlan
 		Operations[thePlan.OperationId].AbroadRateOfProgress = 99.0/thePlan.Length
@@ -823,9 +827,18 @@ func ImplementDirectionDevelopment(aDict):
 			AddEvent(str(aDict.Officers) + " officer(s) departed to " + WorldData.Countries[aDict.Country].Name + " to establish a new intelligence station")
 
 func ImplementSourceTermination(aDict):
-	# {"Org", "Source"}
+	# {"Org", "Source", "InvestigationDetails"}
+	GameLogic.Investigations.append(
+		{
+			"Type": 100,
+			"FinishCounter": GameLogic.random.randi_range(3,6),
+			"Organization": aDict.Org,
+			"Operation": null,
+			"Success": null,
+			"Content": "Source Loss in " + str(WorldData.Organizations[aDict.Org].Name) + "\n\n" + aDict.InvestigationDetails,
+		}
+	)
 	WorldData.Organizations[aDict.Org].IntelSources.remove(aDict.Source)
-	AddEvent('Bureau lost source in ' + WorldData.Organizations[aDict.Org].Name)
 
 func ImplementMoleTermination(aDict):
 	# {"Org", "Op"}
@@ -834,7 +847,7 @@ func ImplementMoleTermination(aDict):
 		ifSuccess = true
 		InternalMoles -= 1
 		WorldData.Organizations[aDict.Org].ActiveOpsAgainstHomeland -= 1
-		for z in range(0,WorldData.Organizations[aDict.Org].OpsAgainstHomeland):
+		for z in range(0,len(WorldData.Organizations[aDict.Org].OpsAgainstHomeland)):
 			if WorldData.Organizations[aDict.Org].OpsAgainstHomeland[z].Active == true:
 				WorldData.Organizations[aDict.Org].OpsAgainstHomeland[z].Active = false
 		if WorldData.Organizations[aDict.Org].ActiveOpsAgainstHomeland == 0:

@@ -545,40 +545,41 @@ func Execute(past):
 				if GameLogic.random.randi_range(1,6) == 5:
 					WorldIntel.LeakBureauInfo(WorldData.Organizations[w].Countries[0], WorldData.Organizations[w].OpsAgainstHomeland[u].Damage, w, u)
 			# possible new intel operations
-			var opFrequency = WorldData.Organizations[w].Aggression
-			if WorldData.Organizations[w].Staff < 100: opFrequency *= 0.1
-			elif WorldData.Organizations[w].Staff < 1000: opFrequency *= 0.2
-			elif WorldData.Organizations[w].Staff < 10000: opFrequency *= 0.4
-			elif WorldData.Organizations[w].Staff < 50000: opFrequency *= 0.6
-			elif WorldData.Organizations[w].Staff < 100000: opFrequency *= 0.8
-			var randFrequency = 240 - opFrequency  # max aggr->p=1/140, min aggr->p=1/240
-			if GameLogic.random.randi_range(0,randFrequency) == int(randFrequency*0.5):
-				# actual source acquisition happens here
-				# if successful, then operation of keeping it up begins
-				# if not, nothing happens
-				var successProb = WorldData.Organizations[w].Counterintelligence - GameLogic.StaffTrust*0.5 - GameLogic.StaffSkill*0.2 - WorldData.Organizations[w].IntelValue*0.3
-				if GameLogic.random.randi_range(1,100) < successProb:
-					WorldData.Organizations[w].OpsAgainstHomeland.append(WorldData.AnExternalOperation.new(
-						{
-							"Type": WorldData.ExtOpType.COUNTERINTEL,
-							"Budget": int(WorldData.Organizations[w].Budget * 0.01),
-							"Persons": GameLogic.random.randi_range(3,10),
-							"Secrecy": int(WorldData.Organizations[w].Counterintelligence + GameLogic.random.randi_range(-20,2)),
-							"Damage": GameLogic.random.randi_range(WorldData.Organizations[w].Counterintelligence*0.3, WorldData.Organizations[w].Counterintelligence),
-							"FinishCounter": 120,
+			if GameLogic.random.randi_range(1,20) == 15:
+				var opFrequency = WorldData.Organizations[w].Aggression
+				if WorldData.Organizations[w].Staff < 100: opFrequency *= 0.1
+				elif WorldData.Organizations[w].Staff < 1000: opFrequency *= 0.2
+				elif WorldData.Organizations[w].Staff < 10000: opFrequency *= 0.4
+				elif WorldData.Organizations[w].Staff < 50000: opFrequency *= 0.6
+				elif WorldData.Organizations[w].Staff < 100000: opFrequency *= 0.8
+				var randFrequency = 240 - opFrequency  # max aggr->p=1/140, min aggr->p=1/240
+				if GameLogic.random.randi_range(0,randFrequency) == int(randFrequency*0.5):
+					# actual source acquisition happens here
+					# if successful, then operation of keeping it up begins
+					# if not, nothing happens
+					var successProb = WorldData.Organizations[w].Counterintelligence - GameLogic.StaffTrust*0.5 - GameLogic.StaffSkill*0.2 - WorldData.Organizations[w].IntelValue*0.3
+					if GameLogic.random.randi_range(1,100) < successProb:
+						WorldData.Organizations[w].OpsAgainstHomeland.append(WorldData.AnExternalOperation.new(
+							{
+								"Type": WorldData.ExtOpType.COUNTERINTEL,
+								"Budget": int(WorldData.Organizations[w].Budget * 0.01),
+								"Persons": GameLogic.random.randi_range(3,10),
+								"Secrecy": int(WorldData.Organizations[w].Counterintelligence + GameLogic.random.randi_range(-20,2)),
+								"Damage": GameLogic.random.randi_range(WorldData.Organizations[w].Counterintelligence*0.3, WorldData.Organizations[w].Counterintelligence),
+								"FinishCounter": 120,
+							}
+						))
+						WorldData.Organizations[w].OpsAgainstHomeland[-1].InvestigationData = {
+							"Length": 0,
+							"CovertTravelDamage": 0,
+							"NetworkDamage": 0,
+							"TurnedSources": 0,
 						}
-					))
-					WorldData.Organizations[w].OpsAgainstHomeland[-1].InvestigationData = {
-						"Length": 0,
-						"CovertTravelDamage": 0,
-						"NetworkDamage": 0,
-						"TurnedSources": 0,
-					}
-					WorldData.Organizations[w].ActiveOpsAgainstHomeland += 1
-					GameLogic.InternalMoles += 1
+						WorldData.Organizations[w].ActiveOpsAgainstHomeland += 1
+						GameLogic.InternalMoles += 1
 			# detecting moles
 			if GameLogic.InternalMoles > 0 and GameLogic.random.randi_range(1,8) == 4:
-				if (WorldData.Organizations[w].ActiveOpsAgainstHomeland > 0 or GameLogic.random.randi_range(1,10) == 3) and GameLogic.DistMolesearchCounter <= 0:
+				if (WorldData.Organizations[w].ActiveOpsAgainstHomeland > 0 or GameLogic.random.randi_range(1,80) == 12) and GameLogic.DistMolesearchCounter <= 0:
 					GameLogic.DistMolesearchCounter = GameLogic.DistMolesearchMin
 					var successProb = GameLogic.StaffExperience*0.1 + GameLogic.StaffSkill*0.3 + WorldData.Organizations[w].IntelValue*0.6
 					var whichOp = 0
@@ -629,6 +630,9 @@ func Execute(past):
 			var highestLevel = 0
 			var sourceLoss = -1
 			for s in range(0,len(WorldData.Organizations[w].IntelSources)):
+				# note double source data
+				if WorldData.Organizations[w].IntelSources[s].TurnedHowLong > 0:
+					WorldData.Organizations[w].IntelSources[s].TurnedHowLong += 1
 				# fluctuate trust
 				WorldData.Organizations[w].IntelSources[s].Trust += GameLogic.random.randi_range(-1,1)
 				if WorldData.Organizations[w].IntelSources[s].Trust < 1:
@@ -664,6 +668,11 @@ func Execute(past):
 					if len(WorldData.Organizations[w].IntelSources) > 10: detectionProb += 50
 					elif len(WorldData.Organizations[w].IntelSources) > 5: detectionProb += 35
 					elif len(WorldData.Organizations[w].IntelSources) > 1: detectionProb += 20
+					var investigationDetails = "Investigation team concluded that the source "
+					if WorldData.Organizations[w].IntelSources[whichS].Level < 0:
+						investigationDetails += "provided false intel for approximately " + str(WorldData.Organizations[w].IntelSources[whichS].TurnedHowLong) + " weeks. Officers suspect that " + WorldData.Organizations[w].IntelSources[whichS].TurnedByWho + " was responsible for compromising the asset. Termination of cooperation was good decision."
+					else:
+						investigationDetails += "have not been compromised. Termination of cooperation was unnecessary."
 					if GameLogic.random.randi_range(1,100) < detectionProb:
 						if WorldData.Organizations[w].IntelSources[whichS].Level < 0:
 							content = "in fact unreliable"
@@ -693,7 +702,7 @@ func Execute(past):
 							"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
 							"Decision2Argument": null,
 							"Decision3Callback": funcref(GameLogic, "ImplementSourceTermination"),
-							"Decision3Argument": {"Org":w, "Source":whichS},
+							"Decision3Argument": {"Org":w, "Source":whichS, "InvestigationDetails": investigationDetails},
 							"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 							"Decision4Argument": null,
 						}

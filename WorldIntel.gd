@@ -646,6 +646,8 @@ func RecruitInOrg(o, quality, date):
 			{
 				"Level": levelOfSuccess,
 				"Trust": GameLogic.random.randi_range(5,25),
+				"TurnedHowLong": 0,
+				"TurnedByWho": "unknown organization",
 			}
 		)
 		var wordLevel = "low"
@@ -690,4 +692,6 @@ func LeakBureauInfo(country, quality, sourceOrg, sourceOp):
 			if WorldData.Organizations[o].IntelSources[chooseS].Level > 0:
 				WorldData.Organizations[o].IntelSources[chooseS].Level *= -1
 				WorldData.Organizations[o].IntelSources[chooseS].Level -= GameLogic.random.randi_range(0,15)
+				WorldData.Organizations[o].IntelSources[chooseS].TurnedHowLong = 1
+				WorldData.Organizations[o].IntelSources[chooseS].TurnedByWho = WorldData.Organizations[sourceOrg].Name
 				WorldData.Organizations[sourceOrg].OpsAgainstHomeland[sourceOp].InvestigationData.TurnedSources += 1

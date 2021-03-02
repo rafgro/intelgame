@@ -182,11 +182,13 @@ func ProgressOperations():
 				# risk, slightly balanced
 				var totalRisk = 0
 				var methodRisk = 0
-				var highestRisk = 0
+				var highestRisk = -1
+				var highestRiskName = ""  # for eventual investigation into failures
 				for m in theMethods:
 					methodRisk += WorldData.Methods[GameLogic.Operations[i].Type][m].Risk
 					if highestRisk < WorldData.Methods[GameLogic.Operations[i].Type][m].Risk:
 						highestRisk = WorldData.Methods[GameLogic.Operations[i].Type][m].Risk
+						highestRiskName = WorldData.Methods[GameLogic.Operations[i].Type][m].Name
 				methodRisk -= highestRisk
 				# this one is clever: average of highest risk method and all other
 				totalRisk += (highestRisk+(methodRisk*1.0/len(theMethods)))*0.7
@@ -234,6 +236,8 @@ func ProgressOperations():
 						"Risk": totalRisk,
 						"Quality": totalQuality,
 						"Methods": theMethods,
+						"HighestRiskVal": highestRisk,
+						"HighestRiskName": highestRiskName,
 						"Description": theDescription,
 						"Covert": ifCovertTravel,
 						"Remote": ifAllRemote,
@@ -339,11 +343,12 @@ func ProgressOperations():
 				if GameLogic.Operations[i].AbroadProgress > 0:  # check to avoid doubling events
 					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": operation continues")
 			# second chance with help of a network
-			elif (WorldData.Countries[GameLogic.Operations[i].Country].Network - WorldData.Countries[GameLogic.Operations[i].Country].NetworkBlowup) > 0 and GameLogic.random.randi_range(0,GameLogic.Operations[i].AbroadPlan.Risk*2) < (WorldData.Countries[GameLogic.Operations[i].Country].Network - WorldData.Countries[GameLogic.Operations[i].Country].Network):
+			elif (WorldData.Countries[GameLogic.Operations[i].Country].Network - WorldData.Countries[GameLogic.Operations[i].Country].NetworkBlowup) > 0 and GameLogic.random.randi_range(0,GameLogic.Operations[i].AbroadPlan.Risk*2) < (WorldData.Countries[GameLogic.Operations[i].Country].Network - WorldData.Countries[GameLogic.Operations[i].Country].NetworkBlowup):
 				GameLogic.Operations[i].AbroadProgress -= GameLogic.Operations[i].AbroadRateOfProgress
 				if GameLogic.Operations[i].AbroadProgress > 0:  # check to avoid doubling events
 					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": operation continues with support of local agent network")
 			else:
+				var which = GameLogic.Operations[i].Target
 				# many shades of _something went wrong_
 				var whatHappened = GameLogic.random.randi_range(0, 100)
 				# first week - travel problems
@@ -367,7 +372,43 @@ func ProgressOperations():
 						GameLogic.Trust -= 1
 				# base p=10/100: arrest or shooting
 				elif whatHappened <= 10:
-					var which = GameLogic.Operations[i].Target
+					# prepare reasons for postmortem investigation, common for all failures
+					var contentReasons = []
+					contentReasons.append("- overall risk level of " + str(int(GameLogic.Operations[i].AbroadPlan.Risk)) + "%")
+					if GameLogic.Operations[i].AbroadPlan.HighestRiskVal > 15:
+						contentReasons.append("- use of a risky method (" + GameLogic.Operations[i].AbroadPlan.HighestRiskName + ")")
+					elif GameLogic.Operations[i].AbroadPlan.HighestRiskVal > 30:
+						contentReasons.append("- use of a high risk method (" + GameLogic.Operations[i].AbroadPlan.HighestRiskName + ")")
+					elif GameLogic.Operations[i].AbroadPlan.HighestRiskVal > 45:
+						contentReasons.append("- use of an extremely high risk method (" + GameLogic.Operations[i].AbroadPlan.HighestRiskName + ")")
+					if (GameLogic.Operations[i].AbroadPlan.Length * GameLogic.Operations[i].AbroadPlan.Risk) > 70 and GameLogic.Operations[i].AbroadPlan.Length > 3:
+						contentReasons.append("- long period of time abroad (" + str(GameLogic.Operations[i].AbroadPlan.Length) + " weeks)")
+					if GameLogic.StaffExperience < 20:
+						contentReasons.append("- low experience of officers")
+					elif GameLogic.StaffExperience < 40:
+						contentReasons.append("- not enough experience of officers")
+					if WorldData.Organizations[which].Counterintelligence > 70:
+						contentReasons.append("- significant counterintelligence efforts by " + WorldData.Organizations[which].Name)
+					elif WorldData.Organizations[which].Counterintelligence > 30:
+						contentReasons.append("- underestimating counterintelligence protection of " + WorldData.Organizations[which].Name)
+					if WorldData.Organizations[which].IntelValue < 5:
+						contentReasons.append("- almost no intel gathered on " + WorldData.Organizations[which].Name)
+					elif WorldData.Organizations[which].IntelValue < 30:
+						contentReasons.append("- not enough intel gathered on " + WorldData.Organizations[which].Name)
+					if WorldData.Countries[GameLogic.Operations[i].Country].NetworkBlowup > 0:
+						contentReasons.append("- compromised agents in local network (they were identified and removed)")
+						WorldData.Countries[GameLogic.Operations[i].Country].NetworkBlowup = 0
+					if WorldData.Countries[GameLogic.Operations[i].Country].IntelFriendliness < 30:
+						contentReasons.append("- difficult theater of operation (" + GameLogic.Operations[i].Country.Name + ")")
+					if WorldData.DiplomaticRelations[0][GameLogic.Operations[i].Country] < -30:
+						contentReasons.append("- hostile relations between Homeland and " + WorldData.Countries[GameLogic.Operations[i].Country].Name)
+					if GameLogic.Operations[i].AbroadPlan.Covert == true:
+						if WorldData.Countries[GameLogic.Operations[i].Country].CovertTravel < 20:
+							contentReasons.append("- poor ability to travel and execute operations under cover in " + WorldData.Countries[GameLogic.Operations[i].Country].Name)
+						elif WorldData.Countries[GameLogic.Operations[i].Country].CovertTravel < 40:
+							contentReasons.append("- low ability to travel and execute operations under cover in " + WorldData.Countries[GameLogic.Operations[i].Country].Name)
+						if WorldData.Countries[GameLogic.Operations[i].Country].CovertTravelBlowup > 0:
+							contentReasons.append("- compromised means of covert actions in " + WorldData.Countries[GameLogic.Operations[i].Country].Name)
 					# kill if cannot arrest and aggression*risk permits
 					if WorldData.Organizations[which].Type != WorldData.OrgType.GOVERNMENT and WorldData.Organizations[which].Type != WorldData.OrgType.INTEL and (WorldData.Organizations[which].Aggression > GameLogic.random.randi_range(50,70)) and (GameLogic.Operations[i].AbroadPlan.Risk > GameLogic.random.randi_range(75,95)):
 						# debriefing variables
@@ -384,18 +425,28 @@ func ProgressOperations():
 						GameLogic.Trust *= 0.1
 						# diplomatic event
 						var ifDipl = ""
-						if (WorldData.Organizations[which].Type == WorldData.OrgType.GOVERNMENT or WorldData.Organizations[which].Type == WorldData.OrgType.INTEL):
+						if (WorldData.Organizations[which].Type == WorldData.OrgType.GOVERNMENT or WorldData.Organizations[which].Type == WorldData.OrgType.INTEL or WorldData.Organizations[which].Type == WorldData.OrgType.UNIVERSITY or WorldData.Organizations[which].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE):
 							ifDipl = " In addition, diplomatic relations between Homeland and " + WorldData.Countries[GameLogic.Operations[i].Country].Name + " suffered due to evident attack on a national asset."
 							WorldData.DiplomaticRelations[0][GameLogic.Operations[i].Country] -= GameLogic.random.randi_range(10,30)
 							WorldData.DiplomaticRelations[GameLogic.Operations[i].Country][0] -= GameLogic.random.randi_range(10,30)
 						# user briefing
+						GameLogic.Investigations.append(
+							{
+								"Type": 100,
+								"FinishCounter": GameLogic.random.randi_range(3,6),
+								"Organization": which,
+								"Operation": i,
+								"Success": null,
+								"Content": "Death of " + str(GameLogic.Operations[i].AbroadPlan.Officers) + " Officers in Operation " + str(GameLogic.Operations[i].Name) + "\n\nInvestigation team concluded that the operation failed due to:\n\n" + PoolStringArray(contentReasons).join("\n"),
+							}
+						)
 						GameLogic.AddEvent(GameLogic.Operations[i].Name + ": " + str(GameLogic.Operations[i].AbroadPlan.Officers) + " officers were caught and killed")
 						CallManager.CallQueue.append(
 							{
 								"Header": "Important Information",
 								"Level": GameLogic.Operations[i].Level,
 								"Operation": GameLogic.Operations[i].Name + "\nagainst " + WorldData.Organizations[GameLogic.Operations[i].Target].Name,
-								"Content": str(GameLogic.Operations[i].AbroadPlan.Officers) + " officers executing the operation were fatally wounded. Bureau lost expertise, experience, and huge part of homeland government's trust." + ifDipl,
+								"Content": str(GameLogic.Operations[i].AbroadPlan.Officers) + " officers executing the operation were fatally wounded. Bureau lost expertise, experience, and huge part of homeland government's trust." + ifDipl + "\n\nBureau launched internal investigation in the causes of failure. Its results will be present in a few weeks.",
 								"Show1": false,
 								"Show2": false,
 								"Show3": false,
@@ -420,6 +471,17 @@ func ProgressOperations():
 							GameLogic.Trust -= GameLogic.random.randi_range(5,15)
 					# otherwise, arrest
 					else:
+						# prepare investigation early, because it's about op, not rescue
+						GameLogic.Investigations.append(
+							{
+								"Type": 100,
+								"FinishCounter": GameLogic.random.randi_range(3,6),
+								"Organization": which,
+								"Operation": i,
+								"Success": null,
+								"Content": "Arrest of " + str(GameLogic.Operations[i].AbroadPlan.Officers) + " Officers in Operation " + str(GameLogic.Operations[i].Name) + "\n\nInvestigation team concluded that the operation failed due to:\n\n" + PoolStringArray(contentReasons).join("\n"),
+							}
+						)
 						# asking user for action
 						var ifExfiltrationAvailable = false
 						if GameLogic.OfficersInHQ > 0: ifExfiltrationAvailable = true
@@ -428,7 +490,7 @@ func ProgressOperations():
 								"Header": "Urgent Decision",
 								"Level": GameLogic.Operations[i].Level,
 								"Operation": GameLogic.Operations[i].Name + "\nagainst " + WorldData.Organizations[GameLogic.Operations[i].Target].Name,
-								"Content": str(GameLogic.Operations[i].AbroadPlan.Officers) + " officers executing the action were arrested by " + WorldData.Countries[GameLogic.Operations[i].Country].Adjective + " authorities. Decide on appropriate reaction.\n\nPossibilities:\n- engaging government will return officers, but significantly decrease government's trust\n- expelling will happen between intelligence services only, but these officers will never be allowed to enter this country again\n- denying affiliation will result in officer imprisonment and their de facto loss, affecting internal trust, but not affecting any external instituions\n- exfiltration is a risky, covert rescue operation performed by the rest of the officers (" +str(GameLogic.OfficersInHQ) + " available) and eventual agent network (" +str(WorldData.Countries[GameLogic.Operations[i].Country].Network) + " available), which returns officers intact in case of success but leads to both huge trust loss and expulsion in case of failure",
+								"Content": str(GameLogic.Operations[i].AbroadPlan.Officers) + " officers executing the action were arrested by " + WorldData.Countries[GameLogic.Operations[i].Country].Adjective + " authorities. Decide on appropriate reaction.\n\nPossibilities:\n- engaging government will return officers, but significantly decrease government's trust\n- expelling will happen between intelligence services only, but these officers will never be allowed to enter this country again\n- denying affiliation will result in officer imprisonment and their de facto loss, affecting internal trust, but not affecting any external institutions\n- exfiltration is a risky, covert rescue operation performed by the rest of the officers (" +str(GameLogic.OfficersInHQ) + " available) and eventual agent network (" +str(WorldData.Countries[GameLogic.Operations[i].Country].Network) + " available), which returns officers intact in case of success but leads to both huge trust loss and expulsion in case of failure",
 								"Show1": true,
 								"Show2": true,
 								"Show3": true,
