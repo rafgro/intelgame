@@ -199,8 +199,9 @@ func ProgressOperations():
 				var potentialHostiliy = (-1.0)*WorldData.DiplomaticRelations[0][whichCountry]*0.03
 				if potentialHostiliy < 0: potentialHostiliy = 0
 				totalRisk *= 1.0 + (potentialHostiliy*0.5)
+				if WorldData.Countries[whichCountry].InStateOfWar == true: totalRisk += 30
 				if ifDiplomaticTravel == false and ifAllRemote == false:
-					totalRisk += 10
+					if WorldData.Countries[whichCountry].InStateOfWar == false: totalRisk += 10
 					if WorldData.Countries[whichCountry].CovertTravel < 20:
 						totalRisk += 0.6 * (100-WorldData.Countries[whichCountry].CovertTravel + WorldData.Countries[whichCountry].CovertTravelBlowup)
 					elif WorldData.Countries[whichCountry].CovertTravel < 40:
@@ -410,7 +411,7 @@ func ProgressOperations():
 						if WorldData.Countries[GameLogic.Operations[i].Country].CovertTravelBlowup > 0:
 							contentReasons.append("- compromised means of covert actions in " + WorldData.Countries[GameLogic.Operations[i].Country].Name)
 					# kill if cannot arrest and aggression*risk permits
-					if WorldData.Organizations[which].Type != WorldData.OrgType.GOVERNMENT and WorldData.Organizations[which].Type != WorldData.OrgType.INTEL and (WorldData.Organizations[which].Aggression > GameLogic.random.randi_range(50,70)) and (GameLogic.Operations[i].AbroadPlan.Risk > GameLogic.random.randi_range(75,95)):
+					if WorldData.Countries[GameLogic.Operations[i].Country].InStateOfWar == true or (WorldData.Organizations[which].Type != WorldData.OrgType.GOVERNMENT and WorldData.Organizations[which].Type != WorldData.OrgType.INTEL and (WorldData.Organizations[which].Aggression > GameLogic.random.randi_range(50,70)) and (GameLogic.Operations[i].AbroadPlan.Risk > GameLogic.random.randi_range(75,95))):
 						# debriefing variables
 						var staffPerecent = GameLogic.ActiveOfficers * 1.0 / GameLogic.Operations[i].AbroadPlan.Officers
 						GameLogic.PursuedOperations -= 1
@@ -883,7 +884,7 @@ func ProgressOperations():
 								continue
 				var inflictedDamage = ""
 				if success == true:
-					if destroyedOrg == true:
+					if destroyedOrg == true and WorldData.Organizations[whichOrg].Fixed == false:
 						inflictedDamage = "As a result, the organization has been completely eliminated. "
 						WorldData.Organizations[whichOrg].Active = false
 						WorldData.Countries[0].SoftPower += GameLogic.random.randi_range(2,6)
@@ -913,10 +914,35 @@ func ProgressOperations():
 						if methodId >= 9:
 							WorldData.Countries[WorldData.Organizations[whichOrg].Countries[0]].PoliticsStability -= GameLogic.random.randint(10,30)
 					# attribution can lead to diplomatic scandal
-					if GameLogic.random.randi_range(0,100) < WorldData.Methods[2][methodId].Attribution:
+					if GameLogic.random.randi_range(0,100) < WorldData.Methods[2][methodId].Attribution and WorldData.Countries[0].InStateOfWar == false:
 						attributionDesc = "Unfortunately, the operation was publicly associated with Bureau, which led to international diplomatic scandal. "
 						WorldData.DiplomaticRelations[0][GameLogic.Operations[i].Country] -= GameLogic.random.randi_range(30,60)
 						WorldData.DiplomaticRelations[GameLogic.Operations[i].Country][0] -= GameLogic.random.randi_range(30,60)
+				# wartime offensive op
+				var whichC = WorldData.Organizations[whichOrg].Countries[0]
+				if WorldData.Countries[whichC].InStateOfWar == true and WorldData.Countries[0].InStateOfWar == true:
+					# dont assume conflict yet, be prepared for more complicated situations
+					var conflict = -1
+					for b in range(0, len(WorldData.Wars)):
+						if WorldData.Wars[b].Active == false: continue
+						if WorldData.Wars[b].CountryA != 0 and WorldData.Wars[b].CountryB != 0:
+							continue
+						if WorldData.Wars[b].CountryA != whichC and WorldData.Wars[b].CountryB != whichC:
+							continue
+						conflict = b
+						break
+					if conflict > -1:
+						if WorldData.Organizations[whichOrg].Type == WorldData.OrgType.GOVERNMENT or WorldData.Organizations[whichOrg].Type == WorldData.OrgType.INTEL or WorldData.Organizations[whichOrg].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE:
+							var amount = 0
+							if success == true: amount = 5
+							amount += WorldData.Methods[2][methodId].DamageToOps*0.1
+							amount += casualties * 0.1
+							amount += funds * 0.001
+							if destroyedOrg == true: amount += 20
+							if WorldData.Wars[conflict].CountryA == 0: # positive is into homeland direction
+								WorldData.Wars[conflict].Result += amount
+							else:  # negative is our direction
+								WorldData.Wars[conflict].Result -= amount
 				# debriefing user and results of the intel
 				var content = ""
 				var methodDesc = WorldData.Methods[2][GameLogic.Operations[i].AbroadPlan.Methods[0]].Name.replace("(remote) ", "")

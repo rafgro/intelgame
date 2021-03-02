@@ -17,12 +17,12 @@ enum Type {
 }
 
 enum Stage {
-	NOT_STARTED,
-	PLANNING_OPERATION,
-	ABROAD_OPERATION,
-	FINISHED,
-	CALLED_OFF,
-	FAILED,
+	NOT_STARTED = 0,
+	PLANNING_OPERATION = 1,
+	ABROAD_OPERATION = 2,
+	FINISHED = 3,
+	CALLED_OFF = 4,
+	FAILED = 5,
 }
 
 func NewOperation(source, againstOrg, whatType):

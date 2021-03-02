@@ -37,6 +37,7 @@ func _on_List_item_selected(index):
 	elif WorldData.Countries[c].SoftPower > 20: desc += "low"
 	else: desc += "minimal"
 	desc += " soft power\n\n"
+	if WorldData.Countries[c].InStateOfWar == true: desc += "[b]In state of war[/b]\n"
 	if WorldData.Countries[c].DiplomaticTravel == true: desc += "Embassy present, "
 	else: desc += "Diplomatic travel unavailable, "
 	if WorldData.Countries[c].CovertTravel < 5: desc += "covert travel unavailable"

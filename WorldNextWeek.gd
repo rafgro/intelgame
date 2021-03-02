@@ -65,11 +65,17 @@ func Execute(past):
 	# eventual wars
 	for v in range(0, len(WorldData.Wars)):
 		if WorldData.Wars[v].Active == false: continue
-		# progress
-		WorldData.Wars[v].WeeksPassed += 1
-		var communicated = false  # to a void two world events in a week
 		var c = WorldData.Wars[v].CountryA
 		var c2 = WorldData.Wars[v].CountryB
+		# progress
+		WorldData.Wars[v].WeeksPassed += 1
+		# after first week of external war, officers should return
+		if WorldData.Wars[v].WeeksPassed == 1 and c != 0 and c2 != 0:
+			GameLogic.OfficersInHQ = GameLogic.OfficersAbroad
+			GameLogic.OfficersAbroad = 0
+			GameLogic.AddEvent(str(GameLogic.OfficersInHQ) + " returned to Homeland")
+		var communicated = false  # to a void two world events in a week
+		var warFinished = false
 		var power1 = WorldData.Countries[c].SoftPower + GameLogic.random.randi_range(-20,20)
 		var power2 = WorldData.Countries[c2].SoftPower + GameLogic.random.randi_range(-20,20)
 		var diff = WorldData.Countries[c].SoftPower - WorldData.Countries[c2].SoftPower
@@ -92,11 +98,14 @@ func Execute(past):
 		if GameLogic.random.randi_range(1,200) > sumOfAggression and GameLogic.random.randi_range(1,5)==3:
 			WorldData.Wars[v].Active = false
 			communicated = true
+			warFinished = true
 			# even
 			if WorldData.Wars[v].Result < 20 and WorldData.Wars[v].Result > -20:
 				GameLogic.AddWorldEvent(WorldData.Countries[c].Name + " signed peace treaty with " + WorldData.Countries[c2].Name, past)
 				WorldData.Countries[c].SoftPower *= 1.1
 				WorldData.Countries[c2].SoftPower *= 1.1
+				WorldData.Countries[c].InStateOfWar = false
+				WorldData.Countries[c2].InStateOfWar = false
 				WorldData.DiplomaticRelations[c][c2] = 0
 				WorldData.DiplomaticRelations[c2][c] = 0
 			# uneven ones
@@ -104,17 +113,22 @@ func Execute(past):
 				GameLogic.AddWorldEvent(WorldData.Countries[c2].Name + " signed peace agreement dictated by " + WorldData.Countries[c].Name, past)
 				WorldData.Countries[c].SoftPower *= 1.2
 				WorldData.Countries[c2].SoftPower *= 0.8
+				WorldData.Countries[c].InStateOfWar = false
+				WorldData.Countries[c2].InStateOfWar = false
 				WorldData.DiplomaticRelations[c][c2] = -10
 				WorldData.DiplomaticRelations[c2][c] = -10
 			else:  # equivalent to elif WorldData.Wars[v].Result <= -20:
 				GameLogic.AddWorldEvent(WorldData.Countries[c].Name + " signed peace agreement dictated by " + WorldData.Countries[c2].Name, past)
 				WorldData.Countries[c].SoftPower *= 0.8
 				WorldData.Countries[c2].SoftPower *= 1.2
+				WorldData.Countries[c].InStateOfWar = false
+				WorldData.Countries[c2].InStateOfWar = false
 				WorldData.DiplomaticRelations[c][c2] = -10
 				WorldData.DiplomaticRelations[c2][c] = -10
 		# conventional finish
 		if WorldData.Wars[v].Result >= 100 or WorldData.Wars[v].Result <= -100:
 			communicated = true
+			warFinished = true
 			var won = c
 			var lost = c2
 			if WorldData.Wars[v].Result <= -100:
@@ -124,9 +138,11 @@ func Execute(past):
 			WorldData.Wars[v].Active = false
 			WorldData.Countries[won].SoftPower *= 1.3
 			WorldData.Countries[lost].SoftPower *= 0.6
+			WorldData.Countries[won].InStateOfWar = false
+			WorldData.Countries[lost].InStateOfWar = false
 			WorldData.DiplomaticRelations[won][lost] = -20
 			WorldData.DiplomaticRelations[lost][won] = -20
-		# eventual communicate
+		# eventual communicates
 		if communicated == false and GameLogic.random.randi_range(1,3) <= 2:
 			if (newResult-pastResult) > 5:
 				GameLogic.AddWorldEvent("War between " + WorldData.Countries[c].Name + " and " + WorldData.Countries[c2].Name + ": slight progress of " + WorldData.Countries[c].Name, past)
@@ -134,6 +150,15 @@ func Execute(past):
 				GameLogic.AddWorldEvent("War between " + WorldData.Countries[c].Name + " and " + WorldData.Countries[c2].Name + ": slight progress of " + WorldData.Countries[c2].Name, past)
 			else:
 				GameLogic.AddWorldEvent("War between " + WorldData.Countries[c].Name + " and " + WorldData.Countries[c2].Name + ": stalemate", past)
+		# universal war finish debriefing
+		if warFinished == true:
+			if c == 0 or c2 == 0:
+				var against = c
+				if c == 0: against = c2
+				WorldData.Countries[against].DiplomaticTravel = true
+				for x in range(0,len(WorldData.Organizations)):
+					if WorldData.Organizations[x].Countries[0] == against:
+						WorldData.Organizations[x].OffensiveClearance = false
 	############################################################################
 	# countries
 	for c in range(0, len(WorldData.Countries)):
@@ -188,7 +213,82 @@ func Execute(past):
 				if GameLogic.random.randi_range(1,5) == 4:
 					WorldData.Wars.append(WorldData.AWar.new({"CountryA": c, "CountryB": c2}))
 					GameLogic.AddWorldEvent("War began between " + WorldData.Countries[c].Name + " and " + WorldData.Countries[c2].Name, past)
-					# call off all operations to perform evacuations?
+					WorldData.Countries[c].InStateOfWar = true
+					WorldData.Countries[c2].InStateOfWar = true
+					# homeland involved
+					if (c == 0 or c2 == 0) and past == null:
+						var against = c
+						if c == 0: against = c2
+						WorldData.Countries[against].DiplomaticTravel = false
+						WorldData.Countries[against].Station = 0
+						for x in range(0,len(WorldData.Organizations)):
+							if WorldData.Organizations[x].Countries[0] == against:
+								WorldData.Organizations[x].OffensiveClearance = true
+						CallManager.CallQueue.append(
+							{
+								"Header": "Important Information",
+								"Level": "Classified",
+								"Operation": "-//-",
+								"Content": "[b]Homeland entered war with " + WorldData.Countries[against].Name + ".[/b]\n\nDiplomatic ties were severed, travel to embassy is no longer possible.\n\nBureau received offensive clearance against all " + WorldData.Countries[against].Adjective + " targets. Any damage inflicted on their organizations will be extremely valuable in war effort. Bureau should focus on civilian targets, such as the government or high-technology organizations.\n\nBe aware that operations inside war theater are extraordinarily risky.",
+								"Show1": false,
+								"Show2": false,
+								"Show3": false,
+								"Show4": true,
+								"Text1": "",
+								"Text2": "",
+								"Text3": "",
+								"Text4": "Understood",
+								"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
+								"Decision1Argument": null,
+								"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
+								"Decision2Argument": null,
+								"Decision3Callback": funcref(GameLogic, "EmptyFunc"),
+								"Decision3Argument": null,
+								"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
+								"Decision4Argument": null,
+							}
+						)
+						doesItEndWithCall = true
+					# external war
+					else:
+						for q in range(0, len(GameLogic.Operations)):
+							if GameLogic.Operations[q].Stage <= 2:
+								GameLogic.Operations[q].Stage = OperationGenerator.Stage.CALLED_OFF
+								GameLogic.Operations[q].Result = "CALLED OFF"
+								if GameLogic.Operations[q].AbroadPlan != null:
+									GameLogic.OfficersInHQ += GameLogic.Operations[q].AbroadPlan.Officers
+									GameLogic.OfficersAbroad -= GameLogic.Operations[q].AbroadPlan.Officers
+									GameLogic.BudgetOngoingOperations -= GameLogic.Operations[q].AbroadPlan.Cost
+								GameLogic.PursuedOperations -= 1
+						GameLogic.OfficersAbroad = GameLogic.OfficersInHQ
+						GameLogic.OfficersInHQ = 0
+						GameLogic.AddEvent("All operations were called off")
+						GameLogic.AddEvent(str(GameLogic.OfficersAbroad) + " departed to assist in wartime evacuation")
+						CallManager.CallQueue.append(
+							{
+								"Header": "Important Information",
+								"Level": "Classified",
+								"Operation": "-//-",
+								"Content": WorldData.Countries[c].Name + " and " + WorldData.Countries[c2].Name + " began military conflict.\n\nAll ongoing operations were called off and the officers were send for a week to assist the evacuation of our personnel.\n\nAvoid further operations in this theater until the end of war.",
+								"Show1": false,
+								"Show2": false,
+								"Show3": false,
+								"Show4": true,
+								"Text1": "",
+								"Text2": "",
+								"Text3": "",
+								"Text4": "Understood",
+								"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
+								"Decision1Argument": null,
+								"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
+								"Decision2Argument": null,
+								"Decision3Callback": funcref(GameLogic, "EmptyFunc"),
+								"Decision3Argument": null,
+								"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
+								"Decision4Argument": null,
+							}
+						)
+						doesItEndWithCall = true
 			elif WorldData.DiplomaticRelations[c][c2] < -30:
 				# pre-war
 				if WorldData.DiplomaticRelations[c][c2] <= -80 and GameLogic.random.randi_range(1,3)==2:

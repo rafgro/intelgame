@@ -8,6 +8,7 @@ class ACountry:
 	var IntelFriendliness = 100  # towards all operations, 0 to 100
 	var Size = 2 # population in millions
 	var ElectionPeriod = 52*4  # almost-fixed weeks of governance
+	var InStateOfWar = false  # severely increases risk of operations
 	# generated below
 	var ElectionProgress = 52*4  # counter to the next election
 	var PoliticsIntel = 50  # attitude towards own intel agency, 0 to 100

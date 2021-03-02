@@ -598,6 +598,24 @@ func GatherOnOrg(o, quality, date):
 				movDesc = ", connected to terrorist organizations (" + PoolStringArray(orgNames).join(", ") + ")"
 		discreteDesc += movDesc
 	############################################################################
+	# wartime intel
+	if WorldData.Organizations[o].Type == WorldData.OrgType.GOVERNMENT or WorldData.Organizations[o].Type == WorldData.OrgType.INTEL or WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE:
+		var whichC = WorldData.Organizations[o].Countries[0]
+		if WorldData.Countries[whichC].InStateOfWar == true and WorldData.Countries[0].InStateOfWar == true:
+			# dont assume conflict yet, be prepared for more complicated situations
+			var conflict = -1
+			for b in range(0, len(WorldData.Wars)):
+				if WorldData.Wars[b].Active == false: continue
+				if WorldData.Wars[b].CountryA != 0 and WorldData.Wars[b].CountryB != 0: continue
+				if WorldData.Wars[b].CountryA != whichC and WorldData.Wars[b].CountryB != whichC: continue
+				conflict = b
+				break
+			if conflict > -1:
+				if WorldData.Wars[conflict].CountryA == 0: # positive is into homeland direction
+					WorldData.Wars[conflict].Result += 5
+				else:  # negative is our direction
+					WorldData.Wars[conflict].Result -= 5
+	############################################################################
 	# result
 	if len(antihomeland) > 0 and WorldData.Organizations[o].Type != WorldData.OrgType.COMPANY and WorldData.Organizations[o].Type != WorldData.OrgType.UNIVERSITY:
 		WorldData.Organizations[o].IntelDescription.push_front("[b]"+date+"[/b] " + antihomeland + "; " + discreteDesc)
