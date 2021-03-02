@@ -33,6 +33,7 @@ func GenerateUniversityName(adjective):
 func NewGenerate():
 	GameLogic.random.randomize()
 	randomize()
+	var homelandSoftPowerLastMonths = []  # will be returned
 	############################################################################
 	# divide countries into few blocks
 	var blockA = []
@@ -331,4 +332,12 @@ func NewGenerate():
 		localDate += str(pastMonth) + "/" + str(pastYear)
 		# actual next week
 		WorldNextWeek.Execute(localDate)
-
+		# stats
+		if i > 20:
+			if len(homelandSoftPowerLastMonths) < 26:
+				homelandSoftPowerLastMonths.append(WorldData.Countries[0].SoftPower)
+			else:
+				homelandSoftPowerLastMonths.remove(0)
+				homelandSoftPowerLastMonths.append(WorldData.Countries[0].SoftPower)
+	############################################################################
+	return homelandSoftPowerLastMonths

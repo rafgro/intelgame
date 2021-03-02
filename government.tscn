@@ -72,52 +72,158 @@ rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 
-[node name="Trust" type="Label" parent="M/R"]
+[node name="CTrust" type="HBoxContainer" parent="M/R"]
 margin_top = 128.0
 margin_right = 680.0
 margin_bottom = 168.0
-rect_min_size = Vector2( 0, 40 )
-size_flags_horizontal = 3
-custom_fonts/font = ExtResource( 1 )
-text = "Current Trust: X%"
 
-[node name="Empty" type="Label" parent="M/R"]
+[node name="Label" type="Label" parent="M/R/CTrust"]
+margin_top = 4.0
+margin_right = 338.0
+margin_bottom = 35.0
+size_flags_horizontal = 3
+size_flags_vertical = 6
+custom_fonts/font = ExtResource( 1 )
+text = "Government Trust in Bureau:"
+
+[node name="Bar" type="ProgressBar" parent="M/R/CTrust"]
+margin_left = 342.0
+margin_right = 680.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 150, 40 )
+size_flags_horizontal = 3
+size_flags_vertical = 2
+custom_fonts/font = ExtResource( 1 )
+
+[node name="TrustChange" type="Label" parent="M/R"]
 margin_top = 172.0
 margin_right = 680.0
 margin_bottom = 212.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
+text = "-//-"
+align = 2
 
-[node name="Politics" type="Label" parent="M/R"]
+[node name="Empty4" type="Label" parent="M/R"]
 margin_top = 216.0
 margin_right = 680.0
 margin_bottom = 256.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
-text = "Government Politics: ."
 
-[node name="Empty2" type="Label" parent="M/R"]
+[node name="CUse" type="HBoxContainer" parent="M/R"]
 margin_top = 260.0
 margin_right = 680.0
 margin_bottom = 300.0
-rect_min_size = Vector2( 0, 40 )
+
+[node name="Label" type="Label" parent="M/R/CUse"]
+margin_top = 4.0
+margin_right = 338.0
+margin_bottom = 35.0
 size_flags_horizontal = 3
+size_flags_vertical = 6
+custom_fonts/font = ExtResource( 1 )
+text = "Intel Usefulness for Government:"
+
+[node name="Bar" type="ProgressBar" parent="M/R/CUse"]
+margin_left = 342.0
+margin_right = 680.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 150, 40 )
+size_flags_horizontal = 3
+size_flags_vertical = 2
 custom_fonts/font = ExtResource( 1 )
 
-[node name="Empty3" type="Label" parent="M/R"]
+[node name="UseChange" type="Label" parent="M/R"]
 margin_top = 304.0
 margin_right = 680.0
 margin_bottom = 344.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
+text = "-//-"
+align = 2
 
-[node name="CReturn" type="HBoxContainer" parent="M/R"]
+[node name="Empty" type="Label" parent="M/R"]
 margin_top = 348.0
 margin_right = 680.0
-margin_bottom = 468.0
+margin_bottom = 388.0
+rect_min_size = Vector2( 0, 40 )
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 1 )
+
+[node name="CPower" type="HBoxContainer" parent="M/R"]
+margin_top = 392.0
+margin_right = 680.0
+margin_bottom = 432.0
+
+[node name="Label" type="Label" parent="M/R/CPower"]
+margin_top = 4.0
+margin_right = 338.0
+margin_bottom = 35.0
+size_flags_horizontal = 3
+size_flags_vertical = 6
+custom_fonts/font = ExtResource( 1 )
+text = "Homeland Soft Power:"
+
+[node name="Bar" type="ProgressBar" parent="M/R/CPower"]
+margin_left = 342.0
+margin_right = 680.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 150, 40 )
+size_flags_horizontal = 3
+size_flags_vertical = 2
+custom_fonts/font = ExtResource( 1 )
+
+[node name="PowerChange" type="Label" parent="M/R"]
+margin_top = 436.0
+margin_right = 680.0
+margin_bottom = 476.0
+rect_min_size = Vector2( 0, 40 )
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 1 )
+text = "-//-"
+align = 2
+
+[node name="Empty6" type="Label" parent="M/R"]
+margin_top = 480.0
+margin_right = 680.0
+margin_bottom = 520.0
+rect_min_size = Vector2( 0, 40 )
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 1 )
+
+[node name="Politics" type="Label" parent="M/R"]
+margin_top = 524.0
+margin_right = 680.0
+margin_bottom = 564.0
+rect_min_size = Vector2( 0, 40 )
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 1 )
+text = "Government Politics: ."
+
+[node name="Empty2" type="Label" parent="M/R"]
+margin_top = 568.0
+margin_right = 680.0
+margin_bottom = 608.0
+rect_min_size = Vector2( 0, 40 )
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 1 )
+
+[node name="Empty3" type="Label" parent="M/R"]
+margin_top = 612.0
+margin_right = 680.0
+margin_bottom = 652.0
+rect_min_size = Vector2( 0, 40 )
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 1 )
+
+[node name="CReturn" type="HBoxContainer" parent="M/R"]
+margin_top = 656.0
+margin_right = 680.0
+margin_bottom = 776.0
 
 [node name="Label" type="Label" parent="M/R/CReturn"]
 margin_top = 53.0

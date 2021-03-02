@@ -10,6 +10,10 @@ var DateDay = 1
 var DateMonth = 1
 var DateYear = 2021
 var Trust = 51
+var TrustMonthsAgo = []  # array of 13 last values, furthest is the first
+var Use = 0  # usefulness of intel for gov
+var UseMonthsAgo = []  # array of 13 last values, furthest is the first
+var SoftPowerMonthsAgo = []  # array of 13 last values, furthest is the first
 var ActiveOfficers = 5
 var OfficersInHQ = 5
 var OfficersAbroad = 0
@@ -103,7 +107,7 @@ func _init():
 
 func _ready():
 	# past and current world situation
-	WorldGenerator.NewGenerate()
+	SoftPowerMonthsAgo = WorldGenerator.NewGenerate()
 	# initial craft availabililty
 	for t in range(0, len(WorldData.Methods)):
 		for m in range(0, len(WorldData.Methods[t])):
@@ -121,6 +125,8 @@ func _ready():
 				# change from false to criterions fulfilled
 				WorldData.Methods[t][m].Available = true
 	# initial change counters
+	TrustMonthsAgo.append(Trust)
+	UseMonthsAgo.append(Use)
 	StaffSkillMonthsAgo.append(StaffSkill)
 	StaffExperienceMonthsAgo.append(StaffExperience)
 	StaffTrustMonthsAgo.append(StaffTrust)
@@ -558,14 +564,22 @@ func NextWeek():
 	if Trust > 100: Trust = 100
 	if Technology > 100: Technology = 100
 	# histories of certain variables
-	if len(StaffSkillMonthsAgo) < 13:  # if this is under, all histories are under
+	if len(StaffSkillMonthsAgo) < 26:  # if this is under, all histories are under
 		# building initial history
+		TrustMonthsAgo.append(Trust)
+		UseMonthsAgo.append(Use)
 		StaffSkillMonthsAgo.append(StaffSkill)
 		StaffExperienceMonthsAgo.append(StaffExperience)
 		StaffTrustMonthsAgo.append(StaffTrust)
 		TechnologyMonthsAgo.append(Technology)
 	else:
 		# first out, last in
+		TrustMonthsAgo.remove(0)
+		TrustMonthsAgo.append(Trust)
+		UseMonthsAgo.remove(0)
+		UseMonthsAgo.append(Use)
+		SoftPowerMonthsAgo.remove(0)
+		SoftPowerMonthsAgo.append(WorldData.Countries[0].SoftPower)
 		StaffSkillMonthsAgo.remove(0)
 		StaffSkillMonthsAgo.append(StaffSkill)
 		StaffExperienceMonthsAgo.remove(0)

@@ -2,11 +2,25 @@ extends Panel
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	# bars
+	$M/R/CTrust/Bar.value = GameLogic.Trust
+	var diff = int(GameLogic.Trust - GameLogic.TrustMonthsAgo[0])
+	if diff > 0: $M/R/TrustChange.text = "+" + str(diff) + "% in the last six months"
+	else: $M/R/TrustChange.text = str(diff) + "% in the last three months"
+	$M/R/CUse/Bar.value = GameLogic.Use
+	diff = int(GameLogic.Use - GameLogic.UseMonthsAgo[0])
+	if diff > 0: $M/R/UseChange.text = "+" + str(diff) + "% in the last six months"
+	else: $M/R/UseChange.text = str(diff) + "% in the last three months"
+	$M/R/CPower/Bar.value = WorldData.Countries[0].SoftPower
+	diff = int(WorldData.Countries[0].SoftPower - GameLogic.SoftPowerMonthsAgo[0])
+	if diff > 0: $M/R/PowerChange.text = "+" + str(diff) + "% in the last six months"
+	else: $M/R/PowerChange.text = str(diff) + "% in the last three months"
+	# text
 	var approach = "unfavourable"
 	if WorldData.Countries[0].PoliticsIntel > 60: approach = "friendly"
 	elif WorldData.Countries[0].PoliticsIntel > 30: approach = "neutral"
-	$M/R/Trust.text = "Current Trust: " + str(GameLogic.Trust) + "%\nAttitude towards intelligence: " + approach
 	var desc = "Government Politics:\n"
+	desc += approach + " towards intelligence services\n"
 	if WorldData.Countries[0].PoliticsStability > 40: desc += "stable"
 	elif WorldData.Countries[0].PoliticsStability > 20: desc += "unstable"
 	else: desc += "very unstable"
