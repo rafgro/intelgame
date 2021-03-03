@@ -72,10 +72,10 @@ func Execute(past):
 		# progress
 		WorldData.Wars[v].WeeksPassed += 1
 		# after first week of external war, officers should return
-		if WorldData.Wars[v].WeeksPassed == 1 and c != 0 and c2 != 0:
+		if WorldData.Wars[v].WeeksPassed == 1 and c != 0 and c2 != 0 and past == null:
 			GameLogic.OfficersInHQ = GameLogic.OfficersAbroad
 			GameLogic.OfficersAbroad = 0
-			GameLogic.AddEvent(str(GameLogic.OfficersInHQ) + " returned to Homeland")
+			GameLogic.AddEvent(str(GameLogic.OfficersInHQ) + " officers returned to Homeland")
 		# the usual ordeal
 		var communicated = false  # to a void two world events in a week
 		var warFinished = false
@@ -353,7 +353,7 @@ func Execute(past):
 						)
 						doesItEndWithCall = true
 					# external war
-					elif (c == 0 or c2 == 0) and past == null:
+					elif c != 0 and c2 != 0 and past == null:
 						for q in range(0, len(GameLogic.Operations)):
 							if GameLogic.Operations[q].Stage <= 2:
 								GameLogic.Operations[q].Stage = OperationGenerator.Stage.CALLED_OFF
@@ -541,8 +541,8 @@ func Execute(past):
 						reason += "Plans of the attack, obtained by Bureau, helped to secure potential targets. "
 					WorldData.Organizations[w].OpsAgainstHomeland[u].Active = false
 					WorldData.Organizations[w].ActiveOpsAgainstHomeland -= 1
-					var trustIncrease = WorldData.Organizations[w].OpsAgainstHomeland[u].Damage
-					if trustIncrease < 20: trustIncrease = GameLogic.random.randi_range(21,25)
+					var trustIncrease = WorldData.Organizations[w].OpsAgainstHomeland[u].Damage * GameLogic.PriorityTerrorism*0.01
+					if trustIncrease < (20 * GameLogic.PriorityTerrorism*0.01): trustIncrease = GameLogic.random.randi_range(21,25) * GameLogic.PriorityTerrorism*0.01
 					if (trustIncrease+GameLogic.Trust) > 100: trustIncrease = 100-GameLogic.Trust
 					GameLogic.Trust += trustIncrease
 					var budgetIncrease = GameLogic.BudgetFull*(0.01*GameLogic.Trust)
@@ -610,57 +610,57 @@ func Execute(past):
 					if WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 98:
 						shortDesc = "Large terrorist attack with many casualties"
 						casualties = GameLogic.random.randi_range(5000,100000)
-						trustLoss = GameLogic.Trust
+						trustLoss = GameLogic.Trust * GameLogic.PriorityTerrorism*0.01
 						# generate a detailed story about specifics later
 						longDesc = "Homeland suffered from a largest terrorist attack in the world history, executed inside our country. There were "+str(casualties)+" casualties. "
 					elif WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 90:
 						shortDesc = "Large terrorist attack with many casualties"
 						casualties = GameLogic.random.randi_range(1000,5000)
-						trustLoss = GameLogic.Trust*0.95
-						if trustLoss < 25: trustLoss = 25
+						trustLoss = GameLogic.Trust*0.95 * GameLogic.PriorityTerrorism*0.01
+						if trustLoss < (25 * GameLogic.PriorityTerrorism*0.01): trustLoss = 25 * GameLogic.PriorityTerrorism*0.01
 						longDesc = "Homeland suffered from a large terrorist attack inside our country. There were "+str(casualties)+" casualties. "
 					elif WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 75:
 						shortDesc = "Large terrorist attack with many casualties"
 						casualties = GameLogic.random.randi_range(200,1000)
-						trustLoss = GameLogic.Trust*0.9
-						if trustLoss < 25: trustLoss = 25
+						trustLoss = GameLogic.Trust*0.9 * GameLogic.PriorityTerrorism*0.01
+						if trustLoss < (25 * GameLogic.PriorityTerrorism*0.01): trustLoss = 25 * GameLogic.PriorityTerrorism*0.01
 						longDesc = "Homeland suffered from a large terrorist attack inside our country. There were "+str(casualties)+" casualties. "
 					elif WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 55:
 						shortDesc = "Terrorist attack"
 						casualties = GameLogic.random.randi_range(100,200)
-						trustLoss = GameLogic.Trust*0.9
-						if trustLoss < 25: trustLoss = 25
+						trustLoss = GameLogic.Trust*0.9 * GameLogic.PriorityTerrorism*0.01
+						if trustLoss < (25 * GameLogic.PriorityTerrorism*0.01): trustLoss = 25 * GameLogic.PriorityTerrorism*0.01
 						longDesc = "Homeland suffered from a terrorist attack inside our country. There were "+str(casualties)+" casualties. "
 					elif WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 40:
 						shortDesc = "Terrorist attack"
 						casualties = GameLogic.random.randi_range(50,100)
-						trustLoss = GameLogic.Trust*0.9
-						if trustLoss < 25: trustLoss = 25
+						trustLoss = GameLogic.Trust*0.9 * GameLogic.PriorityTerrorism*0.01
+						if trustLoss < (25 * GameLogic.PriorityTerrorism*0.01): trustLoss = 25 * GameLogic.PriorityTerrorism*0.01
 						longDesc = "Homeland suffered from a terrorist attack inside our country. There were "+str(casualties)+" casualties. "
 					elif WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 30:
 						shortDesc = "Terrorist attack"
 						casualties = GameLogic.random.randi_range(10,50)
-						trustLoss = GameLogic.Trust*0.9
-						if trustLoss < 25: trustLoss = 25
+						trustLoss = GameLogic.Trust*0.9 * GameLogic.PriorityTerrorism*0.01
+						if trustLoss < (25 * GameLogic.PriorityTerrorism*0.01): trustLoss = 25 * GameLogic.PriorityTerrorism*0.01
 						longDesc = "Homeland suffered from a terrorist attack inside our country. There were "+str(casualties)+" casualties. "
 					elif WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 20:
 						shortDesc = "Minor terrorist incident"
 						casualties = GameLogic.random.randi_range(5,10)
-						trustLoss = GameLogic.Trust*0.8
-						if trustLoss < 15: trustLoss = 15
+						trustLoss = GameLogic.Trust*0.8 * GameLogic.PriorityTerrorism*0.01
+						if trustLoss < (15 * GameLogic.PriorityTerrorism*0.01): trustLoss = 15 * GameLogic.PriorityTerrorism*0.01
 						longDesc = "Homeland suffered from a terrorist attack inside our country. There were "+str(casualties)+" casualties. "
 					elif WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 10:
 						shortDesc = "Minor terrorist incident"
 						casualties = GameLogic.random.randi_range(2,5)
-						trustLoss = GameLogic.Trust*0.6
-						if trustLoss < 15: trustLoss = 15
+						trustLoss = GameLogic.Trust*0.6 * GameLogic.PriorityTerrorism*0.01
+						if trustLoss < (15 * GameLogic.PriorityTerrorism*0.01): trustLoss = 15 * GameLogic.PriorityTerrorism*0.01
 						longDesc = "Homeland suffered from a minor terrorist incident inside our country. There were "+str(casualties)+" casualties. "
 					else:
 						shortDesc = "Minor terrorist incident"
 						var cas = "was 1 casualty"
 						if GameLogic.random.randi_range(0,1) == 0: casualties = "were no casualties"
-						trustLoss = GameLogic.Trust*0.5
-						if trustLoss < 15: trustLoss = 15
+						trustLoss = GameLogic.Trust*0.5 * GameLogic.PriorityTerrorism*0.01
+						if trustLoss < (15 * GameLogic.PriorityTerrorism*0.01): trustLoss = 15 * GameLogic.PriorityTerrorism*0.01
 						longDesc = "Homeland suffered from a minor terrorist incident inside our country. There "+cas+". "
 				################################################################
 				# mundane ifs but had to be done
@@ -669,34 +669,34 @@ func Execute(past):
 					if WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 90:
 						shortDesc = "Large terrorist attack with many casualties"
 						casualties = GameLogic.random.randi_range(500,1000)
-						trustLoss = GameLogic.Trust*0.9
-						if trustLoss < 25: trustLoss = 25
+						trustLoss = GameLogic.Trust*0.9 * GameLogic.PriorityTerrorism*0.01
+						if trustLoss < (25 * GameLogic.PriorityTerrorism*0.01): trustLoss = 25 * GameLogic.PriorityTerrorism*0.01
 						# generate a detailed story about specifics later
 						longDesc = "Homeland suffered from a large terrorist attack, which wiped out our embassy in " + theCountry + ". There were "+str(casualties)+" casualties. "
 					elif WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 75:
 						shortDesc = "Large terrorist attack with many casualties"
 						casualties = GameLogic.random.randi_range(100,500)
-						trustLoss = GameLogic.Trust*0.7
-						if trustLoss < 25: trustLoss = 25
+						trustLoss = GameLogic.Trust*0.7 * GameLogic.PriorityTerrorism*0.01
+						if trustLoss < (25 * GameLogic.PriorityTerrorism*0.01): trustLoss = 25 * GameLogic.PriorityTerrorism*0.01
 						longDesc = "Homeland suffered from a large terrorist attack, which destroyed our embassy in " + theCountry + ". There were "+str(casualties)+" casualties. "
 					elif WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 40:
 						shortDesc = "Terrorist attack"
 						casualties = GameLogic.random.randi_range(10,100)
-						trustLoss = GameLogic.Trust*0.6
-						if trustLoss < 25: trustLoss = 25
+						trustLoss = GameLogic.Trust*0.6 * GameLogic.PriorityTerrorism*0.01
+						if trustLoss < (25 * GameLogic.PriorityTerrorism*0.01): trustLoss = 25 * GameLogic.PriorityTerrorism*0.01
 						longDesc = "Homeland suffered from a terrorist attack on our embassy in " + theCountry + ". There were "+str(casualties)+" casualties. "
 					elif WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 20:
 						shortDesc = "Minor terrorist incident"
 						casualties = GameLogic.random.randi_range(1,10)
-						trustLoss = GameLogic.Trust*0.5
-						if trustLoss < 15: trustLoss = 15
+						trustLoss = GameLogic.Trust*0.5 * GameLogic.PriorityTerrorism*0.01
+						if trustLoss < (15 * GameLogic.PriorityTerrorism*0.01): trustLoss = 15 * GameLogic.PriorityTerrorism*0.01
 						longDesc = "Homeland suffered from a terrorist attack on our embassy in " + theCountry + ". There were "+str(casualties)+" casualties. "
 					else:
 						shortDesc = "Minor terrorist incident"
 						var cas = "was 1 casualty"
 						if GameLogic.random.randi_range(0,1) == 0: casualties = "were no casualties"
-						trustLoss = GameLogic.Trust*0.5
-						if trustLoss < 15: trustLoss = 15
+						trustLoss = GameLogic.Trust*0.5 * GameLogic.PriorityTerrorism*0.01
+						if trustLoss < (15 * GameLogic.PriorityTerrorism*0.01): trustLoss = 15 * GameLogic.PriorityTerrorism*0.01
 						longDesc = "Homeland suffered from a minor terrorist incident near our embassy in " + theCountry + ". There "+cas+". "
 				################################################################
 				# mundane ifs but had to be done
@@ -705,26 +705,26 @@ func Execute(past):
 					if WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 90:
 						shortDesc = "Large terrorist attack with many casualties"
 						casualties = GameLogic.random.randi_range(400,1500)
-						trustLoss = GameLogic.Trust
+						trustLoss = GameLogic.Trust * GameLogic.PriorityTerrorism*0.01
 						theCountry = "Homeland"
 						longDesc = "Passenger plane with our citizens was hijacked and crashed into a building in Homeland. There were "+str(casualties)+" casualties. "
 					elif WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 50:
 						shortDesc = "Large terrorist attack with many casualties"
 						casualties = GameLogic.random.randi_range(125,400)
-						trustLoss = GameLogic.Trust*0.9
-						if trustLoss < 25: trustLoss = 25
+						trustLoss = GameLogic.Trust*0.9 * GameLogic.PriorityTerrorism*0.01
+						if trustLoss < (25 * GameLogic.PriorityTerrorism*0.01): trustLoss = 25 * GameLogic.PriorityTerrorism*0.01
 						longDesc = "Passenger plane with Homeland citizens was hijacked and crashed in " + theCountry + ". There were "+str(casualties)+" casualties. "
 					elif WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 30:
 						shortDesc = "Terrorist attack"
 						casualties = GameLogic.random.randi_range(25,125)
-						trustLoss = GameLogic.Trust*0.8
-						if trustLoss < 25: trustLoss = 25
+						trustLoss = GameLogic.Trust*0.8 * GameLogic.PriorityTerrorism*0.01
+						if trustLoss < (25 * GameLogic.PriorityTerrorism*0.01): trustLoss = 25 * GameLogic.PriorityTerrorism*0.01
 						longDesc = "Passenger plane with Homeland citizens was hijacked and crashed in " + theCountry + ". There were "+str(casualties)+" casualties. "
 					else:
 						shortDesc = "Minor terrorist incident"
 						casualties = GameLogic.random.randi_range(3,25)
-						trustLoss = GameLogic.Trust*0.7
-						if trustLoss < 15: trustLoss = 15
+						trustLoss = GameLogic.Trust*0.7 * GameLogic.PriorityTerrorism*0.01
+						if trustLoss < (15 * GameLogic.PriorityTerrorism*0.01): trustLoss = 15 * GameLogic.PriorityTerrorism*0.01
 						longDesc = "Small airplane with Homeland citizens was hijacked and crashed in " + theCountry + ". There were "+str(casualties)+" casualties. "
 				################################################################
 				# mundane ifs but had to be done
@@ -1035,7 +1035,7 @@ func Execute(past):
 							"Header": "Urgent Decision",
 							"Level": "Secret",
 							"Operation": "-//-",
-							"Content": "Some officers voiced their concers over a single source inside " + WorldData.Organizations[w].Name + " (" + str(int(100.0/ len(WorldData.Organizations[w].IntelSources))) + "% of sources in this organization). Crosschecking and internal analysis, using skills and experience available in Bureau, suggests that the source is " + content + ".\n\nDecide if we terminate or continue the cooperation.",
+							"Content": "Some officers voiced their concerns over a single source inside " + WorldData.Organizations[w].Name + " (" + str(int(100.0/ len(WorldData.Organizations[w].IntelSources))) + "% of sources in this organization). Crosschecking and internal analysis, using skills and experience available in Bureau, suggests that the source is " + content + ".\n\nDecide if we terminate or continue the cooperation.",
 							"Show1": false,
 							"Show2": false,
 							"Show3": true,

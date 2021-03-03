@@ -172,7 +172,7 @@ func NextWeek():
 				DateMonth = 1
 				DateYear += 1
 				# new-year budget increase
-				var budgetIncrease = GameLogic.BudgetFull*(0.01*GameLogic.Trust)
+				var budgetIncrease = BudgetFull*(0.01*Trust)
 				if budgetIncrease > 200: budgetIncrease = 200
 				BudgetFull += budgetIncrease
 				AddEvent("New year budget increase: +€"+str(int(budgetIncrease))+"k")
@@ -300,7 +300,7 @@ func NextWeek():
 					whichOrg = check
 					break
 			# or any techie
-			if whichOrg == -1:
+			if whichOrg == -1 and PriorityTech > 40:
 				for f in range(0,5):  # max six attempts
 					var check = random.randi_range(0, len(WorldData.Organizations)-1)
 					if WorldData.Organizations[check].Type == WorldData.OrgType.COMPANY or WorldData.Organizations[check].Type == WorldData.OrgType.UNIVERSITY:
@@ -326,17 +326,17 @@ func NextWeek():
 				opType = OperationGenerator.Type.RECRUIT_SOURCE
 			OperationGenerator.NewOperation(1, whichOrg, opType)
 			# if possible, start fast
-			if GameLogic.OfficersInHQ > 0:
-				GameLogic.Operations[-1].AnalyticalOfficers = GameLogic.OfficersInHQ
-				GameLogic.Operations[-1].Stage = OperationGenerator.Stage.PLANNING_OPERATION
-				GameLogic.Operations[-1].Started = GameLogic.GiveDateWithYear()
-				GameLogic.Operations[-1].Result = "ONGOING (PLANNING)"
+			if OfficersInHQ > 0:
+				Operations[-1].AnalyticalOfficers = OfficersInHQ
+				Operations[-1].Stage = OperationGenerator.Stage.PLANNING_OPERATION
+				Operations[-1].Started = GiveDateWithYear()
+				Operations[-1].Result = "ONGOING (PLANNING)"
 			CallManager.CallQueue.append(
 				{
 					"Header": "Important Information",
-					"Level": GameLogic.Operations[-1].Level,
-					"Operation": GameLogic.Operations[-1].Name  + "\nagainst " + WorldData.Organizations[GameLogic.Operations[-1].Target].Name,
-					"Content": "Homeland government designated a new operation.\n\nGoal:\n" + GameLogic.Operations[-1].GoalDescription,
+					"Level": Operations[-1].Level,
+					"Operation": Operations[-1].Name  + "\nagainst " + WorldData.Organizations[Operations[-1].Target].Name,
+					"Content": "Homeland government designated a new operation.\n\nGoal:\n" + Operations[-1].GoalDescription,
 					"Show1": false,
 					"Show2": false,
 					"Show3": false,
@@ -584,6 +584,8 @@ func NextWeek():
 	elif Technology < 0: Technology = 0
 	if Use > 100: Use = 100
 	elif Use < 0: Use = 0
+	if ActiveOfficers != (OfficersAbroad+OfficersInHQ):
+		OfficersInHQ = ActiveOfficers - OfficersAbroad
 	# histories of certain variables
 	if len(StaffSkillMonthsAgo) < 26:  # if this is under, all histories are under
 		# building initial history
@@ -664,10 +666,21 @@ class MyCustomSorter:
 
 func ListPriorities(delimeter):
 	# why func? to provide nice semi-sorted list
+	# sorted priorities
 	var options = [[PriorityGovernments, "gathering intelligence on other governments (" + str(PriorityGovernments) + "%)"], [PriorityTerrorism, "war on terrorism (" + str(PriorityTerrorism) + "%)"], [PriorityTech, "technological and industrial espionage (" + str(PriorityTech) + "%)"], [PriorityWMD, "proliferation of weapons of mass destruction (" + str(PriorityWMD) + "%)"], [PriorityPublic, "public opinion (" + str(PriorityPublic) + "%)"]]
 	options.sort_custom(MyCustomSorter, "sort_descending")
 	var toPool = []
 	for p in options: toPool.append(p[1])
+	# country priorities
+	var targetedNames = []
+	for t in PriorityTargetCountries: targetedNames.append(WorldData.Countries[t].Name)
+	var targeted = "important targets: " + PoolStringArray(targetedNames).join(" | ")
+	if len(PriorityTargetCountries) > 0: toPool.append(targeted)
+	var offlimitedNames = []
+	for t in PriorityOfflimitCountries: offlimitedNames.append(WorldData.Countries[t].Name)
+	var offlimited = "off-limits countries: " + PoolStringArray(offlimitedNames).join(" | ")
+	if len(PriorityOfflimitCountries) > 0: toPool.append(offlimited)
+	# joining all
 	return PoolStringArray(toPool).join(delimeter)
 
 # Below: callbacks called after decision screen
@@ -706,15 +719,15 @@ func ImplementCallOff(i):
 			AddEvent(Operations[i].Name + ": "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned to homeland")
 	PursuedOperations -= 1
 	if Operations[i].Source == 1:
-		Trust = Trust*0.5  # huge loss of trust if calling off gov op
-	AddEvent("Bureau called off operation "+GameLogic.Operations[i].Name)
+		Trust = Trust*0.67  # huge loss of trust if calling off gov op
+	AddEvent("Bureau called off operation "+Operations[i].Name)
 
 func ImplementOfficerRescue(adictionary):
 	var i = adictionary.Operation
 	# debriefing variables
 	PursuedOperations -= 1
 	Operations[i].Stage = OperationGenerator.Stage.FAILED
-	Operations[i].Result = "FAILED, " + str(GameLogic.Operations[i].AbroadPlan.Officers) + " officers arrested"
+	Operations[i].Result = "FAILED, " + str(Operations[i].AbroadPlan.Officers) + " officers arrested"
 	OfficersAbroad -= Operations[i].AbroadPlan.Officers
 	BudgetOngoingOperations -= Operations[i].AbroadPlan.Cost
 	# choice-based changes
@@ -725,12 +738,14 @@ func ImplementOfficerRescue(adictionary):
 		StaffTrust *= 1.1
 		StaffSkill *= 1.01
 		StaffExperience *= 1.03
-		var trustLoss = Trust * 0.4
-		if trustLoss < 20: trustLoss = 20
+		var trustLoss = Trust * 0.4 * PriorityPublic*0.01
+		if Operations[i].Country in PriorityTargetCountries: trustLoss *= 0.5
+		elif Operations[i].Country in PriorityOfflimitCountries: trustLoss += 10
+		if trustLoss < (20*PriorityPublic*0.01): trustLoss = 20*PriorityPublic*0.01
 		if trustLoss > Trust: trustLoss = Trust
 		Trust -= trustLoss
 		WorldData.DiplomaticRelations[0][Operations[i].Country] -= random.randi_range(5,15)
-		WorldData.DiplomaticRelations[Operations[i].Country][0] -= GameLogic.random.randi_range(5,15)
+		WorldData.DiplomaticRelations[Operations[i].Country][0] -= random.randi_range(5,15)
 	# "expelling will happen between intelligence services only, but these officers will never be allowed to enter this country again"
 	elif adictionary.Choice == 2:
 		AddEvent(Operations[i].Name + ": "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned to homeland after being arrested")
@@ -753,7 +768,7 @@ func ImplementOfficerRescue(adictionary):
 		StaffSkill *= 1.02
 		StaffExperience *= 1.02
 		var involvedInExf = OfficersInHQ
-		if involvedInExf > 15: involvedInExf = GameLogic.random.randi_range(14,18)
+		if involvedInExf > 15: involvedInExf = random.randi_range(14,18)
 		var content = ""
 		if random.randi_range(0, Operations[i].AbroadPlan.Officers) < involvedInExf and random.randi_range(1,3) < 3:  # second condition to ensure variability even if we sent 100 officers
 			# successful
@@ -765,21 +780,23 @@ func ImplementOfficerRescue(adictionary):
 			OfficersInHQ += Operations[i].AbroadPlan.Officers
 		else:
 			# unsuccessful
-			var trustLoss = Trust * 0.5
-			if trustLoss < 25: trustLoss = 25
+			var trustLoss = Trust * 0.5 * PriorityPublic*0.01
+			if Operations[i].Country in PriorityTargetCountries: trustLoss *= 0.5
+			elif Operations[i].Country in PriorityOfflimitCountries: trustLoss += 10
+			if trustLoss < (25*PriorityPublic*0.01): trustLoss = 25*PriorityPublic*0.01
 			if trustLoss > Trust: trustLoss = Trust
 			Trust -= trustLoss
 			WorldData.Countries[Operations[i].Country].Expelled += Operations[i].AbroadPlan.Officers + involvedInExf
 			content = "Exfiltration failed. Government officials of Homeland and " + WorldData.Countries[Operations[i].Country].Name + " learned about the situation. "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned, but bureau lost " + str(int(trustLoss)) + "% of trust. In addition, " + str(int(Operations[i].AbroadPlan.Officers + involvedInExf)) + " officer(s) were deemed persona non grata in " + WorldData.Countries[Operations[i].Country].Name + "."
 			WorldData.DiplomaticRelations[0][Operations[i].Country] -= random.randi_range(5,15)
-			WorldData.DiplomaticRelations[Operations[i].Country][0] -= GameLogic.random.randi_range(5,15)
+			WorldData.DiplomaticRelations[Operations[i].Country][0] -= random.randi_range(5,15)
 			OfficersInHQ += Operations[i].AbroadPlan.Officers
 		# user debriefing
 		CallManager.CallQueue.append(
 			{
 				"Header": "Important Information",
-				"Level": GameLogic.Operations[i].Level,
-				"Operation": GameLogic.Operations[i].Name  + "\nagainst " + WorldData.Organizations[GameLogic.Operations[i].Target].Name,
+				"Level": Operations[i].Level,
+				"Operation": Operations[i].Name  + "\nagainst " + WorldData.Organizations[Operations[i].Target].Name,
 				"Content": content,
 				"Show1": false,
 				"Show2": false,
@@ -806,6 +823,7 @@ func ImplementWalkin(adict):
 		pass
 	# accept
 	elif adict.Choice == 2:
+		# {"Choice", "Content", "Whichorg", "Quality",}
 		var content = adict.Content
 		WorldIntel.GatherOnOrg(adict.Whichorg, adict.Quality, GiveDateWithYear(), false)
 		content += "\n\nProvided intel:\n" + WorldData.Organizations[adict.Whichorg].IntelDescription[0].substr(18)
@@ -831,6 +849,18 @@ func ImplementWalkin(adict):
 				"Decision3Argument": null,
 				"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 				"Decision4Argument": null,
+			}
+		)
+		var invDetail = "Investigation team concluded that intel provided by the source is highly credible and advances our knowledge about " + str(WorldData.Organizations[adict.Whichorg].Name) + "."
+		if adict.Quality < 0: invDetail = "Investigation team concluded that intel provided by the source is false and reduced our knowledge about " + str(WorldData.Organizations[adict.Whichorg].Name) + "."
+		Investigations.append(
+			{
+				"Type": 100,
+				"FinishCounter": random.randi_range(2,3),
+				"Organization": adict.Whichorg,
+				"Operation": null,
+				"Success": null,
+				"Content": "Walk-in Source from " + str(WorldData.Organizations[adict.Whichorg].Name) + "\n\n" + invDetail,
 			}
 		)
 
@@ -914,13 +944,14 @@ func ImplementDirectionDevelopment(aDict):
 			AddEvent(str(aDict.Officers) + " officer(s) departed to " + WorldData.Countries[aDict.Country].Name + " to expand intelligence station")
 		else:
 			AddEvent(str(aDict.Officers) + " officer(s) departed to " + WorldData.Countries[aDict.Country].Name + " to establish a new intelligence station")
+	if aDict.Country in PriorityTargetCountries: Trust += 1
 
 func ImplementSourceTermination(aDict):
 	# {"Org", "Source", "InvestigationDetails"}
-	GameLogic.Investigations.append(
+	Investigations.append(
 		{
 			"Type": 100,
-			"FinishCounter": GameLogic.random.randi_range(3,6),
+			"FinishCounter": random.randi_range(3,6),
 			"Organization": aDict.Org,
 			"Operation": null,
 			"Success": null,

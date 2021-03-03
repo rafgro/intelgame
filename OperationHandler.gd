@@ -423,7 +423,7 @@ func ProgressOperations():
 						GameLogic.StaffTrust *= 0.2
 						GameLogic.StaffSkill -= GameLogic.StaffSkill*staffPerecent
 						GameLogic.StaffExperience -= GameLogic.StaffExperience*staffPerecent
-						GameLogic.Trust *= 0.1
+						GameLogic.Trust *= (100-GameLogic.PriorityPublic)*0.01
 						# diplomatic event
 						var ifDipl = ""
 						if (WorldData.Organizations[which].Type == WorldData.OrgType.GOVERNMENT or WorldData.Organizations[which].Type == WorldData.OrgType.INTEL or WorldData.Organizations[which].Type == WorldData.OrgType.UNIVERSITY or WorldData.Organizations[which].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE):
@@ -513,7 +513,7 @@ func ProgressOperations():
 						doesItEndWithCall = true
 						# also, if this was gov op, then we loose trust
 						if GameLogic.Operations[i].Source == 1:
-							GameLogic.Trust -= GameLogic.random.randi_range(5,15)
+							GameLogic.Trust -= GameLogic.random.randi_range(1,10)
 				# base p=25/100: escape
 				elif whatHappened <= 35:
 					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": officers were almost caught and had to flee to homeland")
@@ -531,7 +531,7 @@ func ProgressOperations():
 					WorldData.DiplomaticRelations[0][GameLogic.Operations[i].Country] -= 2
 					if (WorldData.Countries[0].PoliticsIntel+GameLogic.random.randi_range(-15,15)) > 50:
 						# changing only if government cares
-						GameLogic.Trust -= 5
+						GameLogic.Trust -= GameLogic.PriorityPublic*0.05
 				# base p=65/100: slowdown
 				else:
 					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": counterintelligence slowed down operation")
@@ -562,6 +562,11 @@ func ProgressOperations():
 					WorldData.Countries[GameLogic.Operations[i].Country].CovertTravel += 2
 					if WorldData.Countries[GameLogic.Operations[i].Country].CovertTravel > 98:
 						WorldData.Countries[GameLogic.Operations[i].Country].CovertTravel = 98
+				# always success because always some intel gathered
+				if GameLogic.Operations[i].Country in GameLogic.PriorityTargetCountries:
+					GameLogic.Trust += GameLogic.random.randi_range(1,3)
+				elif GameLogic.Operations[i].Country in GameLogic.PriorityOfflimitCountries:
+					GameLogic.Trust -= GameLogic.random.randi_range(1,3)
 				# quality as the main outcome
 				var qualityDiff = (0.0 + GameLogic.Operations[i].AbroadPlan.Quality - GameLogic.Operations[i].ExpectedQuality) / GameLogic.Operations[i].ExpectedQuality
 				if qualityDiff > 2.0: qualityDiff = 2.0
@@ -571,17 +576,20 @@ func ProgressOperations():
 					content = "Operation was sucessfully executed. "
 					content += "Intel gathered on " + WorldData.Organizations[GameLogic.Operations[i].Target].Name + ":\n" + WorldData.Organizations[GameLogic.Operations[i].Target].IntelDescription[0].substr(18)
 					GameLogic.Operations[i].Result = "SUCCESS"
-					if (WorldData.Countries[0].PoliticsIntel+GameLogic.random.randi_range(-15,15)) > 50:
-						# increasing more if government cares
-						GameLogic.Trust += 2
-					else:
-						GameLogic.Trust += 1
 					# special gov feedbacks
 					var whichO = GameLogic.Operations[i].Target
 					if WorldData.Organizations[whichO].Type == WorldData.OrgType.COMPANY or WorldData.Organizations[whichO].Type == WorldData.OrgType.UNIVERSITY:
 						if GameLogic.Operations[i].AbroadPlan.Quality >= 40:
 							if WorldData.Organizations[whichO].Technology >= 60:
-								GameLogic.Trust += GameLogic.random.randi_range(5,12)
+								GameLogic.Trust += GameLogic.random.randi_range(5,15) * (GameLogic.PriorityTech*0.01)
+					elif WorldData.Organizations[whichO].Type == WorldData.OrgType.GENERALTERROR:
+						GameLogic.Trust += GameLogic.random.randi_range(1,5) * (GameLogic.PriorityTerrorism*0.01)
+					elif WorldData.Organizations[whichO].Type == WorldData.OrgType.GOVERNMENT:
+						GameLogic.Trust += GameLogic.random.randi_range(1,5) * (GameLogic.PriorityGovernments*0.01)
+					elif WorldData.Organizations[whichO].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE:
+						GameLogic.Trust += GameLogic.random.randi_range(1,5) * (GameLogic.PriorityWMD*0.01)
+					else:
+						GameLogic.Trust += 0.25
 				# debriefing government and effect on the user
 				elif GameLogic.Operations[i].Source == 1:
 					# standard gov feedback
@@ -599,9 +607,13 @@ func ProgressOperations():
 					if WorldData.Organizations[whichO].Type == WorldData.OrgType.COMPANY or WorldData.Organizations[whichO].Type == WorldData.OrgType.UNIVERSITY:
 						if GameLogic.Operations[i].AbroadPlan.Quality >= 20:
 							if WorldData.Organizations[whichO].Technology > 30:
-								govFeedback = GameLogic.random.randi_range(4,8)
+								govFeedback = GameLogic.random.randi_range(4,8) * (GameLogic.PriorityTech*0.01)
 							elif WorldData.Organizations[whichO].Technology > 60:
-								govFeedback = GameLogic.random.randi_range(7,15)
+								govFeedback = GameLogic.random.randi_range(7,15) * (GameLogic.PriorityTech*0.01)
+					elif WorldData.Organizations[whichO].Type == WorldData.OrgType.GOVERNMENT:
+						govFeedback *= (GameLogic.PriorityGovernments*0.01)
+					elif WorldData.Organizations[whichO].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE:
+						govFeedback *= (GameLogic.PriorityWMD*0.01)
 					GameLogic.Trust += govFeedback
 					var govFeedbackDesc = "negatively rated its execution. Bureau lost "+str((-1)*govFeedback)+"% of trust."
 					GameLogic.Operations[i].Result = "COMPLETED, negative feedback"
@@ -679,6 +691,11 @@ func ProgressOperations():
 					WorldData.Countries[GameLogic.Operations[i].Country].CovertTravel += 2
 					if WorldData.Countries[GameLogic.Operations[i].Country].CovertTravel > 98:
 						WorldData.Countries[GameLogic.Operations[i].Country].CovertTravel = 98
+				# targeting is what matters here, not the result
+				if GameLogic.Operations[i].Country in GameLogic.PriorityTargetCountries:
+					GameLogic.Trust += GameLogic.random.randi_range(4,10)
+				elif GameLogic.Operations[i].Country in GameLogic.PriorityOfflimitCountries:
+					GameLogic.Trust -= GameLogic.random.randi_range(3,6)
 				# debriefing user and results of the intel
 				var difficulty = WorldData.Organizations[GameLogic.Operations[i].Target].Counterintelligence
 				var content = ""
@@ -701,7 +718,7 @@ func ProgressOperations():
 						GameLogic.StaffTrust = GameLogic.StaffTrust*(1.05+difficulty*0.0025)
 						if (WorldData.Countries[0].PoliticsIntel+GameLogic.random.randi_range(-15,15)) > 50:
 							# increasing more if government cares
-							GameLogic.Trust += 3
+							GameLogic.Trust += 2
 						else:
 							GameLogic.Trust += 1
 						# special gov feedbacks
@@ -709,7 +726,15 @@ func ProgressOperations():
 						if WorldData.Organizations[whichO].Type == WorldData.OrgType.COMPANY or WorldData.Organizations[whichO].Type == WorldData.OrgType.UNIVERSITY:
 							if GameLogic.Operations[i].AbroadPlan.Quality >= 40:
 								if WorldData.Organizations[whichO].Technology >= 60:
-									GameLogic.Trust += GameLogic.random.randi_range(4,8)
+									GameLogic.Trust += GameLogic.random.randi_range(4,8) * (GameLogic.PriorityTechnology*0.01)
+						elif WorldData.Organizations[whichO].Type == WorldData.OrgType.GENERALTERROR:
+							GameLogic.Trust += GameLogic.random.randi_range(1,5) * (GameLogic.PriorityTerrorism*0.01)
+						elif WorldData.Organizations[whichO].Type == WorldData.OrgType.GOVERNMENT:
+							GameLogic.Trust += GameLogic.random.randi_range(1,5) * (GameLogic.PriorityGovernments*0.01)
+						elif WorldData.Organizations[whichO].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE:
+							GameLogic.Trust += GameLogic.random.randi_range(1,5) * (GameLogic.PriorityWMD*0.01)
+						else:
+							GameLogic.Trust += 0.5
 				# debriefing government and effect on the user
 				elif GameLogic.Operations[i].Source == 1:
 					var govFeedback = sourceLevel*(1.0+(difficulty*0.05))
@@ -727,6 +752,10 @@ func ProgressOperations():
 								govFeedback = GameLogic.random.randi_range(4,9)
 							elif WorldData.Organizations[whichO].Technology > 60:
 								govFeedback = GameLogic.random.randi_range(9,16)
+					elif WorldData.Organizations[whichO].Type == WorldData.OrgType.GOVERNMENT:
+						govFeedback *= (GameLogic.PriorityGovernments*0.01)
+					elif WorldData.Organizations[whichO].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE:
+						govFeedback *= (GameLogic.PriorityWMD*0.01)
 					GameLogic.Trust += govFeedback
 					var govFeedbackDesc = "Officers failed at acquiring a new source in an organization indicated by the government. Bureau lost "+str((-1)*govFeedback)+"% of trust."
 					GameLogic.Operations[i].Result = "COMPLETED, negative feedback"
@@ -792,6 +821,11 @@ func ProgressOperations():
 						WorldData.Countries[GameLogic.Operations[i].Country].CovertTravel = 98
 				var whichOrg = GameLogic.Operations[i].Target
 				WorldData.Organizations[whichOrg].IntelValue += 2
+				# targeting is what matters here, not the result
+				if GameLogic.Operations[i].Country in GameLogic.PriorityTargetCountries:
+					GameLogic.Trust += GameLogic.random.randi_range(8,15)
+				elif GameLogic.Operations[i].Country in GameLogic.PriorityOfflimitCountries:
+					GameLogic.Trust -= GameLogic.random.randi_range(15,30)
 				# actual result and influence on organization
 				var success = false
 				var casualties = 0
@@ -957,7 +991,7 @@ func ProgressOperations():
 						if (WorldData.Countries[0].PoliticsIntel+GameLogic.random.randi_range(-15,15)) > 50:
 							# changing after own operation only if government cares
 							GameLogic.Trust *= 0.95
-							if len(attributionDesc) > 1: GameLogic.Trust *= 0.2
+							if len(attributionDesc) > 1: GameLogic.Trust *= (100-GameLogic.PriorityPublic)*0.01
 					else:
 						content = "Operation was successfully executed. Officers damaged " + WorldData.Organizations[GameLogic.Operations[i].Target].Name + ", they were able to successfully " + methodDesc + ". " + inflictedDamage + attributionDesc
 						GameLogic.Operations[i].Result = "SUCCESS"
@@ -965,10 +999,14 @@ func ProgressOperations():
 						GameLogic.StaffTrust = GameLogic.StaffTrust*1.1
 						if (WorldData.Countries[0].PoliticsIntel+GameLogic.random.randi_range(-15,15)) > 50:
 							# increasing more if government cares
-							GameLogic.Trust += 5
+							GameLogic.Trust += 2
 						else:
-							GameLogic.Trust += 3
-						if len(attributionDesc) > 1: GameLogic.Trust *= 0.2
+							GameLogic.Trust += 1
+						# special gov feedbacks
+						var whichO = GameLogic.Operations[i].Target
+						if WorldData.Organizations[whichO].Type == WorldData.OrgType.GENERALTERROR:
+							GameLogic.Trust += GameLogic.random.randi_range(5,15) * (GameLogic.PriorityTerrorism*0.01)
+						if len(attributionDesc) > 1: GameLogic.Trust *= (100-GameLogic.PriorityPublic)*0.01
 				# debriefing government and effect on the user
 				elif GameLogic.Operations[i].Source == 1:
 					var govFeedback = GameLogic.random.randi_range(10,30)

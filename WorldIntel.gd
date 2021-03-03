@@ -48,7 +48,7 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 		# individual members identified
 		var infFactor = 0.001*quality  # eg, 30->0.03
 		var newIdentified = int(WorldData.Organizations[o].Staff*1.0*infFactor)
-		if newIdentified == 0 and quality > 20: newIdentified = 1
+		if newIdentified <= 1 and quality > 20: newIdentified = 1
 		if newIdentified > 50: newIdentified = GameLogic.random.randi_range(40,60)
 		noOfIdentified = newIdentified
 		WorldData.Organizations[o].IntelIdentified += newIdentified
@@ -440,7 +440,7 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 					elif GameLogic.Technology < 80: GameLogic.Technology += innerTechChange*0.1
 			# eventual user debriefing
 			if technologyWinCall == true and ifHideCalls == false:
-				var trustIncrease = quality*0.15
+				var trustIncrease = quality*0.15*GameLogic.PriorityTech*0.01
 				if trustIncrease > 10: trustIncrease = 10
 				if (GameLogic.Trust+trustIncrease) > 100: trustIncrease = 101-GameLogic.Trust
 				GameLogic.Trust += trustIncrease
@@ -510,14 +510,14 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 				var newIntelTech = WorldData.Organizations[o].Technology*0.6
 				WorldData.Organizations[o].IntelTechnology = newIntelTech
 				technologyWinCall = true
-				GameLogic.Trust += 1
+				GameLogic.Trust += 5*GameLogic.PriorityWMD*0.01
 				WorldData.Countries[WorldData.Organizations[o].Countries[0]].WMDIntel += 25
 			else:
 				var newIntelTech = WorldData.Organizations[o].Technology*0.8
 				techDesc = ", conducts research on WMD, technological details acquired"
 				WorldData.Organizations[o].IntelTechnology = newIntelTech
 				technologyWinCall = true
-				GameLogic.Trust += 2
+				GameLogic.Trust += 10*GameLogic.PriorityWMD*0.01
 				WorldData.Countries[WorldData.Organizations[o].Countries[0]].WMDIntel += 50
 		else:
 			if WorldData.Organizations[o].Technology < 30:
@@ -529,7 +529,7 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 				techDesc = ", conducts research on WMD, technological details acquired"
 				WorldData.Organizations[o].IntelTechnology = newIntelTech
 				technologyWinCall = true
-				GameLogic.Trust += 2
+				GameLogic.Trust += 10*GameLogic.PriorityWMD*0.01
 				WorldData.Countries[WorldData.Organizations[o].Countries[0]].WMDIntel += 50
 			else:
 				var ifNew = ""
@@ -537,11 +537,11 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 				techDesc = ", conducts research on WMD, significantly valuable details acquired"
 				WorldData.Organizations[o].IntelTechnology = newIntelTech
 				technologyWinCall = true
-				GameLogic.Trust += 3
+				GameLogic.Trust += 20*GameLogic.PriorityWMD*0.01
 				WorldData.Countries[WorldData.Organizations[o].Countries[0]].WMDIntel += 75
 			# eventual user debriefing
 			if technologyWinCall == true and WorldData.Organizations[o].OffensiveClearance == false and ifHideCalls == false:
-				var trustIncrease = quality*0.15
+				var trustIncrease = quality*0.15*GameLogic.PriorityWMD*0.01
 				if trustIncrease > 10: trustIncrease = 10
 				if (GameLogic.Trust+trustIncrease) > 100: trustIncrease = 101-GameLogic.Trust
 				GameLogic.Trust += trustIncrease
@@ -621,13 +621,15 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 				conflict = b
 				break
 			if conflict > -1:
+				var howMuch = 5
+				if WorldData.Organizations[o].Type == WorldData.OrgType.GOVERNMENT: howMuch += 10
 				if WorldData.Wars[conflict].CountryA == 0: # positive is into homeland direction
-					WorldData.Wars[conflict].Result += 5
+					WorldData.Wars[conflict].Result += howMuch
 				else:  # negative is our direction
-					WorldData.Wars[conflict].Result -= 5
+					WorldData.Wars[conflict].Result -= howMuch
 	############################################################################
 	# result
-	if len(antihomeland) > 0 and WorldData.Organizations[o].Type != WorldData.OrgType.COMPANY and WorldData.Organizations[o].Type != WorldData.OrgType.UNIVERSITY:
+	if len(antihomeland) > 0 and WorldData.Organizations[o].Type != WorldData.OrgType.COMPANY and WorldData.Organizations[o].Type != WorldData.OrgType.UNIVERSITY and WorldData.Organizations[o].Type != WorldData.OrgType.GOVERNMENT:
 		WorldData.Organizations[o].IntelDescription.push_front("[b]"+date+"[/b] " + antihomeland + "; " + discreteDesc)
 	else:
 		WorldData.Organizations[o].IntelDescription.push_front("[b]"+date+"[/b] " + discreteDesc)
