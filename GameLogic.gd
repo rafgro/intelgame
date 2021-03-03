@@ -61,19 +61,20 @@ var YearlyOpsAgainstHomeland = 0  # internal counter as well, yearly ops, zeroed
 var OpsLimit = 2  # max number of simulatenous ops against homeland, might be increased over time
 var UniversalClearance = false  # with high trust, bureau can target anything they want
 var InternalMoles = 0  # counter of officers that are passing info to other intel agencies
+var YearlyWars = 0  # internal counter, ensuring that there's no more than 1 war per year
 # Distance counters: block anything that happens more frequently than limit
 var DistWalkinCounter = 0
-var DistWalkinMin = 10  # minimum ten weeks between those events
+var DistWalkinMin = 16  # minimum four months between those events
 var DistGovopCounter = 0
-var DistGovopMin = 6
+var DistGovopMin = 8
 var DistSourcecheckCounter = 0
-var DistSourcecheckMin = 8
+var DistSourcecheckMin = 20
 var DistMolesearchCounter = 0
 var DistMolesearchMin = 12
 # Sort of constants but also internal, always describe them
 var NewOfficerCost = 80  # thousands needed to spend on a new officer
-var NewTechCost = 200  # thousands needed to spend on a new percent of technology
-var SkillMaintenanceCost = 5  # thousands needed to maintain skills for an officer
+var NewTechCost = 25  # thousands needed to spend on a new percent of technology
+var SkillMaintenanceCost = 0.5  # thousands needed to maintain skills for an officer
 
 func GiveDateWithYear():
 	var dateString = ""
@@ -183,6 +184,7 @@ func NextWeek():
 				AddEvent("New year budget increase: +€"+str(int(budgetIncrease))+"k")
 				# other new-year game logic
 				YearlyOpsAgainstHomeland = 0
+				YearlyWars = 0
 	############################################################################
 	# budget-based changes
 	# hiring
@@ -298,25 +300,33 @@ func NextWeek():
 	if ifCall == true: doesItEndWithCall = true
 	############################################################################
 	# eventual government assigned operations
-	if random.randi_range(1,40) == 30 and DistGovopCounter < 1:  # one every few months
+	if random.randi_range(1,20) == 11 and DistGovopCounter < 1:  # one every few months
 		# choosing organization
 		var whichOrg = -1
-		if random.randi_range(1,4) == 1:
+		if random.randi_range(1,2) == 1:
 			# any government
-			for f in range(0,4):  # max four attempts
+			for f in range(0,20):  # twenty attempts
 				var check = random.randi_range(0, len(WorldData.Organizations)-1)
 				if WorldData.Organizations[check].Type == WorldData.OrgType.GOVERNMENT:
 					whichOrg = check
 					break
 			# or any techie
 			if whichOrg == -1 and PriorityTech > 40:
-				for f in range(0,5):  # max six attempts
+				for f in range(0,20):  # max twenty attempts
 					var check = random.randi_range(0, len(WorldData.Organizations)-1)
-					if WorldData.Organizations[check].Type == WorldData.OrgType.COMPANY or WorldData.Organizations[check].Type == WorldData.OrgType.UNIVERSITY:
+					if WorldData.Organizations[check].Type == WorldData.OrgType.COMPANY or WorldData.Organizations[check].Type == WorldData.OrgType.UNIVERSITY or WorldData.Organizations[check].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE:
 						whichOrg = check
 						break
 		else:
-			# diplomatic priorities
+			# country from target list
+			for j in range(0, len(WorldData.Organizations)):
+				if WorldData.Organizations[j].Type == WorldData.OrgType.GOVERNMENT or WorldData.Organizations[j].Type == WorldData.OrgType.INTEL:
+					if WorldData.Organizations[j].Countries[0] in PriorityTargetCountries:
+						if random.randi_range(1,2) == 1:
+							whichOrg = j
+							break
+		if whichOrg == -1:
+			# worst diplomatic enemy
 			var lowestVal = 50
 			var lowestId = 0
 			for g in range(1, len(WorldData.Countries)):
@@ -324,10 +334,11 @@ func NextWeek():
 					lowestVal = WorldData.DiplomaticRelations[0][g]
 					lowestId = g
 			for j in range(0, len(WorldData.Organizations)):
-				if WorldData.Organizations[j].Type == WorldData.OrgType.GOVERNMENT or WorldData.Organizations[j].Type == WorldData.OrgType.INTEL or WorldData.Organizations[j].Type == WorldData.OrgType.COMPANY or WorldData.Organizations[j].Type == WorldData.OrgType.UNIVERSITY:
+				if WorldData.Organizations[j].Type == WorldData.OrgType.GOVERNMENT:
 					if WorldData.Organizations[j].Countries[0] == lowestId:
-						whichOrg = j
-						break
+						if random.randi_range(1,3) <= 2:
+							whichOrg = j
+							break
 		# assigning the operation
 		if whichOrg != -1:
 			var opType = OperationGenerator.Type.MORE_INTEL
@@ -516,7 +527,7 @@ func NextWeek():
 					content += "Possible Informant in Bureau\n\n"
 					# either successfully detected
 					if Investigations[e].Success == true:
-						content += "Investigation team concluded that fired officer have been leaking confidential information to " + WorldData.Organizations[org].Name + " for " + WorldData.Organizations[org].OpsAgainstHomeland[op].InvestigationData.Length + " weeks. As a result:\n\n"
+						content += "Investigation team concluded that fired officer have been leaking confidential information to " + WorldData.Organizations[org].Name + " for " + str(WorldData.Organizations[org].OpsAgainstHomeland[op].InvestigationData.Length) + " weeks. As a result:\n"
 						if WorldData.Organizations[org].OpsAgainstHomeland[op].InvestigationData.CovertDamage > 0:
 							content += "- " + str(int(WorldData.Organizations[org].OpsAgainstHomeland[op].InvestigationData.CovertDamage)) + "% of covert travel know how and operations in " + WorldData.Countries[WorldData.Organizations[org].Countries[0]].Name + " were affected (some of the know how has to be rebuilt)\n\n"
 						if WorldData.Organizations[org].OpsAgainstHomeland[op].InvestigationData.NetworkDamage > 0:

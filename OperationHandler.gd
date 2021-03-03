@@ -113,6 +113,9 @@ func ProgressOperations():
 						noPlanReasonLocal += 1
 					continue
 				# adjusting number of officers
+				var proxyMaxOfficers = maxOfficers
+				if (proxyMaxOfficers-usedOfficers) > 5:
+					proxyMaxOfficers = usedOfficers + GameLogic.random.randi_range(2,5)
 				usedOfficers = GameLogic.random.randi_range(usedOfficers, maxOfficers)
 				# remote/nonremote
 				var ifAllRemote = true
@@ -615,13 +618,13 @@ func ProgressOperations():
 					elif WorldData.Organizations[whichO].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE:
 						govFeedback *= (GameLogic.PriorityWMD*0.01)
 					GameLogic.Trust += govFeedback
-					var govFeedbackDesc = "negatively rated its execution. Bureau lost "+str((-1)*govFeedback)+"% of trust."
+					var govFeedbackDesc = "negatively rated its execution. Bureau lost "+str(int((-1)*govFeedback))+"% of trust."
 					GameLogic.Operations[i].Result = "COMPLETED, negative feedback"
 					if govFeedback > 0:
 						var budgetIncrease = GameLogic.BudgetFull*(0.01*GameLogic.Trust*0.5)
 						if budgetIncrease > 50: budgetIncrease = 50
 						GameLogic.BudgetFull += budgetIncrease
-						govFeedbackDesc = "positively rated its execution. Bureau gained "+str(govFeedback)+"% of trust. As a confirmation, government increases bureau's budget by €"+str(int(budgetIncrease))+",000.\n"
+						govFeedbackDesc = "positively rated its execution. Bureau gained "+str(int(govFeedback))+"% of trust. As a confirmation, government increases bureau's budget by €"+str(int(budgetIncrease))+",000.\n"
 						GameLogic.Operations[i].Result = "SUCCESS, positive feedback"
 						GameLogic.AddEvent("Government increased budget by €"+str(int(budgetIncrease))+"k")
 					content = "Government-designated operation was finished. Homeland " + govFeedbackDesc
@@ -757,13 +760,13 @@ func ProgressOperations():
 					elif WorldData.Organizations[whichO].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE:
 						govFeedback *= (GameLogic.PriorityWMD*0.01)
 					GameLogic.Trust += govFeedback
-					var govFeedbackDesc = "Officers failed at acquiring a new source in an organization indicated by the government. Bureau lost "+str((-1)*govFeedback)+"% of trust."
+					var govFeedbackDesc = "Officers failed at acquiring a new source in an organization indicated by the government. Bureau lost "+str(int((-1)*govFeedback))+"% of trust."
 					GameLogic.Operations[i].Result = "COMPLETED, negative feedback"
 					if sourceLevel != 0:
 						var budgetIncrease = GameLogic.BudgetFull*(0.01*GameLogic.Trust*0.5)
 						if budgetIncrease > 50: budgetIncrease = 50
 						GameLogic.BudgetFull += budgetIncrease
-						govFeedbackDesc = "Officers acquired a new source in an organization indicated by the government. Bureau gained "+str(govFeedback)+"% of trust. As a confirmation, government increases bureau's budget by €"+str(int(budgetIncrease))+",000.\n"
+						govFeedbackDesc = "Officers acquired a new source in an organization indicated by the government. Bureau gained "+str(int(govFeedback))+"% of trust. As a confirmation, government increases bureau's budget by €"+str(int(budgetIncrease))+",000.\n"
 						GameLogic.Operations[i].Result = "SUCCESS, positive feedback"
 						GameLogic.AddEvent("Government increased budget by €"+str(int(budgetIncrease))+"k")
 					content = "Operation has been finished. " + govFeedbackDesc
@@ -1018,13 +1021,13 @@ func ProgressOperations():
 					if len(attributionDesc) > 1: govFeedback -= 30
 					if (GameLogic.Trust-govFeedback) < 0: govFeedback = (-1)*GameLogic.Trust
 					GameLogic.Trust += govFeedback
-					var govFeedbackDesc = "Officers failed at damaging an organization indicated by the government. Bureau lost "+str((-1)*govFeedback)+"% of trust. "
+					var govFeedbackDesc = "Officers failed at damaging an organization indicated by the government. Bureau lost "+str(int((-1)*govFeedback))+"% of trust. "
 					GameLogic.Operations[i].Result = "COMPLETED, negative feedback"
 					if success == true:
 						var budgetIncrease = GameLogic.BudgetFull*(0.01*GameLogic.Trust*0.5)
 						if budgetIncrease > 100: budgetIncrease = 100
 						GameLogic.BudgetFull += budgetIncrease
-						govFeedbackDesc = "Officers damaged an organization indicated by the government. " + inflictedDamage + " Bureau gained "+str(govFeedback)+"% of trust. As a confirmation, government increases bureau's budget by €"+str(int(budgetIncrease))+",000.\n"
+						govFeedbackDesc = "Officers damaged an organization indicated by the government. " + inflictedDamage + " Bureau gained "+str(int(govFeedback))+"% of trust. As a confirmation, government increases bureau's budget by €"+str(int(budgetIncrease))+",000.\n"
 						GameLogic.Operations[i].Result = "SUCCESS, positive feedback"
 						GameLogic.AddEvent("Government increased budget by €"+str(int(budgetIncrease))+"k")
 					content = "Operation has been finished. " + govFeedbackDesc + attributionDesc

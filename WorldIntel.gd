@@ -96,8 +96,10 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 	elif quality < 30:
 		if WorldData.Organizations[o].Type == WorldData.OrgType.GENERALTERROR:
 			WorldData.Organizations[o].IntelDescType = "terrorist organization"
+			WorldData.Organizations[o].OffensiveClearance = true
 		elif WorldData.Organizations[o].Type == WorldData.OrgType.ARMTRADER:
 			WorldData.Organizations[o].IntelDescType = "illegal arms dealer"
+			WorldData.Organizations[o].OffensiveClearance = true
 		elif WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE:
 			WorldData.Organizations[o].IntelDescType = "well-protected scientific institution"
 		# rounding example:
@@ -122,8 +124,10 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 	elif quality < 50:
 		if WorldData.Organizations[o].Type == WorldData.OrgType.GENERALTERROR:
 			WorldData.Organizations[o].IntelDescType = "terrorist organization"
+			WorldData.Organizations[o].OffensiveClearance = true
 		elif WorldData.Organizations[o].Type == WorldData.OrgType.ARMTRADER:
 			WorldData.Organizations[o].IntelDescType = "illegal arms dealer"
+			WorldData.Organizations[o].OffensiveClearance = true
 		elif WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE:
 			WorldData.Organizations[o].IntelDescType = "well-protected scientific institution"
 		var desc1 = ""
@@ -143,8 +147,10 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 	elif quality < 70:
 		if WorldData.Organizations[o].Type == WorldData.OrgType.GENERALTERROR:
 			WorldData.Organizations[o].IntelDescType = "terrorist organization"
+			WorldData.Organizations[o].OffensiveClearance = true
 		elif WorldData.Organizations[o].Type == WorldData.OrgType.ARMTRADER:
 			WorldData.Organizations[o].IntelDescType = "illegal arms dealer"
+			WorldData.Organizations[o].OffensiveClearance = true
 		elif WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE:
 			WorldData.Organizations[o].IntelDescType = "well-protected scientific institution"
 		var desc1 = ""
@@ -164,8 +170,10 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 	else:
 		if WorldData.Organizations[o].Type == WorldData.OrgType.GENERALTERROR:
 			WorldData.Organizations[o].IntelDescType = "terrorist organization"
+			WorldData.Organizations[o].OffensiveClearance = true
 		elif WorldData.Organizations[o].Type == WorldData.OrgType.ARMTRADER:
 			WorldData.Organizations[o].IntelDescType = "illegal arms dealer"
+			WorldData.Organizations[o].OffensiveClearance = true
 		elif WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE:
 			WorldData.Organizations[o].IntelDescType = "well-protected scientific institution"
 		var desc1 = ""

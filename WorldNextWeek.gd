@@ -296,6 +296,10 @@ func Execute(past):
 				continue  # don't act on itself
 			if WorldData.DiplomaticRelations[c][c2] <= -85:
 				# war
+				# only one external war per year
+				if GameLogic.YearlyWars != 0 and c != 0 and c2 != 0:
+					continue
+				GameLogic.YearlyWars += 1
 				# before engaging homeland, risk of war is defined by wmd
 				if c == 0 or c2 == 0:
 					if past != null: continue  # no wars in the past
@@ -367,10 +371,11 @@ func Execute(past):
 									GameLogic.OfficersAbroad -= GameLogic.Operations[q].AbroadPlan.Officers
 									GameLogic.BudgetOngoingOperations -= GameLogic.Operations[q].AbroadPlan.Cost
 								GameLogic.PursuedOperations -= 1
-						GameLogic.OfficersAbroad = GameLogic.OfficersInHQ
-						GameLogic.OfficersInHQ = 0
-						GameLogic.AddEvent("All operations were called off")
-						GameLogic.AddEvent(str(GameLogic.OfficersAbroad) + " departed to assist in wartime evacuation")
+						if GameLogic.OfficersInHQ > 0:
+							GameLogic.AddEvent("All operations were called off")
+							GameLogic.AddEvent(str(GameLogic.OfficersInHQ) + " officer(s) departed to assist in wartime evacuation")
+							GameLogic.OfficersAbroad = GameLogic.OfficersInHQ
+							GameLogic.OfficersInHQ = 0
 						CallManager.CallQueue.append(
 							{
 								"Header": "Important Information",
@@ -1011,7 +1016,7 @@ func Execute(past):
 				# reversal check
 				var whichS = randi() % WorldData.Organizations[w].IntelSources.size()
 				var proxyQual = WorldData.Organizations[w].IntelSources[whichS].Level
-				if GameLogic.random.randi_range(1,3) == 2: proxyQual *= (-1)
+				if GameLogic.random.randi_range(1,6) == 2: proxyQual *= (-1)
 				if proxyQual < 0 and GameLogic.random.randi_range(1,12) == 6 and GameLogic.DistSourcecheckCounter < 0:
 					GameLogic.DistSourcecheckCounter = GameLogic.DistSourcecheckMin
 					var content = ""
