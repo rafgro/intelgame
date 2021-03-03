@@ -1,25 +1,25 @@
-extends Panel
+extends Control
 
 # Not only refreshing but also initiating all data on the main screen
 func UpdateMainScreen():
 	# date formatting
-	$M/R/CDate/Date.text = GameLogic.GiveDateWithYear()
+	$C/M/R/CDate/Date.text = GameLogic.GiveDateWithYear()
 	# other
-	$M/R/CTrust/TrustPercent.value = GameLogic.Trust
-	$M/R/COfficer/Active.text = "Active officers: " + str(GameLogic.ActiveOfficers)
+	$C/M/R/CTrust/TrustPercent.value = GameLogic.Trust
+	$C/M/R/COfficer/Active.text = "Active officers: " + str(GameLogic.ActiveOfficers)
 	var hqtext = ""
 	if GameLogic.OfficersInHQ < 0: hqtext += "0"  # allowed in principle, because it sorts out itself
 	else: hqtext += str(GameLogic.OfficersInHQ)
-	$M/R/COfficer/HQAbroad.text = hqtext + " in HQ, " \
+	$C/M/R/COfficer/HQAbroad.text = hqtext + " in HQ, " \
 		+ str(GameLogic.OfficersAbroad) + " in action"
-	$M/R/COperations/Pursued.text = "Active operations: " + str(GameLogic.PursuedOperations)
+	$C/M/R/COperations/Pursued.text = "Active operations: " + str(GameLogic.PursuedOperations)
 	if GameLogic.AttackTicker > 0:
-		$M/R/COperations/Ticker.text = str(GameLogic.AttackTicker) + " weeks to possible attack"
+		$C/M/R/COperations/Ticker.text = str(GameLogic.AttackTicker) + " weeks to possible attack"
 	elif GameLogic.UltimatumTicker > 0:
-		$M/R/COperations/Ticker.text = str(GameLogic.UltimatumTicker) + " weeks of ultimatum left"
-	else: $M/R/COperations/Ticker.text = ""
-	$M/R/CEvents2/RichTextLabel.bbcode_text = PoolStringArray(GameLogic.BureauEvents).join("\n")
-	$M/R/CEvents4/RichTextLabel.bbcode_text = PoolStringArray(GameLogic.WorldEvents).join("\n")
+		$C/M/R/COperations/Ticker.text = str(GameLogic.UltimatumTicker) + " weeks of ultimatum left"
+	else: $C/M/R/COperations/Ticker.text = ""
+	$C/M/R/CEvents2/RichTextLabel.bbcode_text = PoolStringArray(GameLogic.BureauEvents).join("\n")
+	$C/M/R/CEvents4/RichTextLabel.bbcode_text = PoolStringArray(GameLogic.WorldEvents).join("\n")
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -41,15 +41,15 @@ func _on_Panel_tree_entered():
 				GameLogic.AddEvent("Due to decrease of trust, bureau lost the universal clearance")
 				GameLogic.UniversalClearance = false
 		GameLogic.PreviousTrust = GameLogic.Trust
-	$M/R/CDate/C/TrustChange.text = trustDesc
+	$C/M/R/CDate/C/TrustChange.text = trustDesc
 
 # Main event: moving a week forwad
 func _on_NextWeek_pressed():
-	$M/R/Buttons3/NextWeek.disabled = true
-	$M/R/CDate/C/TrustChange.text = ""
+	$C/M/R/Buttons3/NextWeek.disabled = true
+	$C/M/R/CDate/C/TrustChange.text = ""
 	GameLogic.NextWeek()
 	UpdateMainScreen()
-	$M/R/Buttons3/NextWeek.disabled = false
+	$C/M/R/Buttons3/NextWeek.disabled = false
 
 func _on_Government_pressed():
 	get_tree().change_scene("res://government.tscn")

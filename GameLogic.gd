@@ -112,9 +112,9 @@ func IntensityPercent(which):
 func _init():
 	random.randomize()
 	randomize()
-	AddEvent("The bureau has opened")
 
-func _ready():
+func StartAll():
+	AddEvent("The bureau has opened")
 	# past and current world situation
 	SoftPowerMonthsAgo = WorldGenerator.NewGenerate()
 	# initial craft availabililty
