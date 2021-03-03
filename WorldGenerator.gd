@@ -3,7 +3,7 @@ extends Node
 func GenerateHostileName():
 	var wordsA = ["Leftist", "Right", "Proud", "Revolutionary", "Republican", "Combat", "Black", "Democratic", "Real"]
 	var wordsB = ["Tobiah","Yseut","Esther","Iphigenia","Yemima","Rexana","Amaterasu","Joslyn","Mattityahu","Karl","Izanami","Jemma","Lorinda","Avram","Ned","Trophimus","Isolde","Harvey","Marsha","Lyn","Shani","Anu","Marilyn","Montgomery","Davey","Leland","Crescens","Jordana","Vern","Bradford","Marianne","Adamu","Manahem","Earleen","Peronel","Enosh","Ryker","Adelle","Myrddin","Carver","Jody","Anat","Atarah","Capricia","Sidney","Cindra","Nik","Jehoash","Atarah","Iahel"]
-	var wordsC = ["Group", "Brotherhood", "Force", "Action", "Militants", "Extremists", "Gang"]
+	var wordsC = ["Group", "Brotherhood", "Force", "Action", "Militants", "Extremists", "Gang", "Separatists"]
 	var content = ""
 	var length = GameLogic.random.randi_range(1,3)
 	if length == 1:
@@ -339,5 +339,8 @@ func NewGenerate():
 			else:
 				homelandSoftPowerLastMonths.remove(0)
 				homelandSoftPowerLastMonths.append(WorldData.Countries[0].SoftPower)
+	############################################################################
+	# last government setups
+	GameLogic.SetUpNewPriorities(true)
 	############################################################################
 	return homelandSoftPowerLastMonths

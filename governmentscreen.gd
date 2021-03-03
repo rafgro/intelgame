@@ -6,44 +6,46 @@ func _ready():
 	$M/R/CTrust/Bar.value = GameLogic.Trust
 	var diff = int(GameLogic.Trust - GameLogic.TrustMonthsAgo[0])
 	if diff > 0: $M/R/TrustChange.text = "+" + str(diff) + "% in the last six months"
-	else: $M/R/TrustChange.text = str(diff) + "% in the last three months"
+	else: $M/R/TrustChange.text = str(diff) + "% in the last six months"
 	$M/R/CUse/Bar.value = GameLogic.Use
 	diff = int(GameLogic.Use - GameLogic.UseMonthsAgo[0])
 	if diff > 0: $M/R/UseChange.text = "+" + str(diff) + "% in the last six months"
-	else: $M/R/UseChange.text = str(diff) + "% in the last three months"
+	else: $M/R/UseChange.text = str(diff) + "% in the last six months"
 	$M/R/CPower/Bar.value = WorldData.Countries[0].SoftPower
 	diff = int(WorldData.Countries[0].SoftPower - GameLogic.SoftPowerMonthsAgo[0])
 	if diff > 0: $M/R/PowerChange.text = "+" + str(diff) + "% in the last six months"
-	else: $M/R/PowerChange.text = str(diff) + "% in the last three months"
+	else: $M/R/PowerChange.text = str(diff) + "% in the last six months"
 	# text
 	var approach = "unfavourable"
 	if WorldData.Countries[0].PoliticsIntel > 60: approach = "friendly"
 	elif WorldData.Countries[0].PoliticsIntel > 30: approach = "neutral"
-	var desc = "Government Politics:\n"
-	desc += approach + " towards intelligence services\n"
+	var desc = "Government stance towards intelligence services:\n"
+	desc += approach + " approach\n"
+	desc += "priorities: " + GameLogic.ListPriorities(", ") + "\n\n"
+	desc += "Government Politics:\n"
 	if WorldData.Countries[0].PoliticsStability > 40: desc += "stable"
 	elif WorldData.Countries[0].PoliticsStability > 20: desc += "unstable"
 	else: desc += "very unstable"
 	desc += ", "+str(WorldData.Countries[0].ElectionProgress) \
-		+" weeks to the next election\n\nGovernment Foreign Policy:"
-	desc += "\n\npositive relations with\n"
+		+" weeks to the next election\n"
+	desc += "positive relations with: "
 	var c = 0
-	var counted = 0
+	var positiveList = []
 	while c < len(WorldData.DiplomaticRelations[0]):
 		if WorldData.DiplomaticRelations[0][c] > 30:
-			desc += WorldData.Countries[c].Name + "\n"
-			counted += 1
+			positiveList.append(WorldData.Countries[c].Name)
 		c += 1
-	if counted == 0: desc += "-\n"
-	desc += "\nnegative relations with\n"
+	if len(positiveList) == 0: desc += "-\n"
+	else: desc += PoolStringArray(positiveList).join(", ") + "\n"
+	desc += "negative relations with: "
 	c = 0
-	counted = 0
+	var negativeList = []
 	while c < len(WorldData.DiplomaticRelations[0]):
 		if WorldData.DiplomaticRelations[0][c] < -30:
-			desc += WorldData.Countries[c].Name + "\n"
-			counted += 1
+			negativeList.append(WorldData.Countries[c].Name)
 		c += 1
-	if counted == 0: desc += "-\n"
+	if len(negativeList) == 0: desc += "-\n"
+	else: desc += PoolStringArray(negativeList).join(", ") + "\n"
 	$M/R/Politics.text = desc
 
 func _on_Return_pressed():

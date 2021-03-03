@@ -16,7 +16,8 @@ func Execute(past):
 				WorldData.Countries[c].PoliticsAggression += GameLogic.random.randi_range(-5,5)
 				WorldData.Countries[c].PoliticsStability += GameLogic.random.randi_range(10,won)
 				if c == 0:
-					eventualDesc = "Incumbent won, achieving "+str(won)+"%. Government will largely stay in the same shape, continuing similar foreign policy, and preserving existing approach to intelligence services."
+					GameLogic.SetUpNewPriorities(false)
+					eventualDesc = "Incumbent won, achieving "+str(won)+"%. Government will largely stay in the same shape, continuing similar foreign policy, and preserving existing approach to intelligence services.\n\nUpdated list of priorities given by the government:\n- " + GameLogic.ListPriorities("\n- ")
 			else:
 				GameLogic.AddWorldEvent("Elections in " + WorldData.Countries[c].Name + ": New government formed, achieving "+str(won)+"%", past)
 				WorldData.Countries[c].ElectionProgress = WorldData.Countries[c].ElectionPeriod
@@ -26,6 +27,7 @@ func Execute(past):
 				for d in range(0, len(WorldData.Countries)):
 					WorldData.DiplomaticRelations[c][d] += GameLogic.random.randi_range(-10,10)
 				if c == 0:
+					GameLogic.SetUpNewPriorities(true)
 					var newApproach = "unfavourable"
 					var eventualIncrease = ""
 					if WorldData.Countries[c].PoliticsIntel > 60:
@@ -33,7 +35,7 @@ func Execute(past):
 						eventualIncrease = "As a mark of a new start, bureau's budget is increased by €" + str(int(GameLogic.BudgetFull*0.2)) + ",000."
 						GameLogic.BudgetFull *= 1.2
 					elif WorldData.Countries[c].PoliticsIntel > 30: newApproach = "neutral"
-					eventualDesc = "New government formed, achieving "+str(won)+"%. Its approach towards intelligence services can be described as " + newApproach + ". " + eventualIncrease
+					eventualDesc = "New government formed, achieving "+str(won)+"%. Its approach towards intelligence services can be described as " + newApproach + ". " + eventualIncrease + "\n\nNew list of priorities given by the government:\n- " + GameLogic.ListPriorities("\n- ")
 			# notifying user if that's homeland
 			if c == 0 and past == null:
 				CallManager.CallQueue.append(
@@ -351,7 +353,7 @@ func Execute(past):
 						)
 						doesItEndWithCall = true
 					# external war
-					else:
+					elif (c == 0 or c2 == 0) and past == null:
 						for q in range(0, len(GameLogic.Operations)):
 							if GameLogic.Operations[q].Stage <= 2:
 								GameLogic.Operations[q].Stage = OperationGenerator.Stage.CALLED_OFF

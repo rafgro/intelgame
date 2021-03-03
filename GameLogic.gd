@@ -35,6 +35,15 @@ var StaffTrust = 50  # 0 to 100
 var StaffTrustMonthsAgo = []  # array of 13 last values, furthest is the first
 var Technology = 5  # 0 to 100
 var TechnologyMonthsAgo = []  # array of 13 last values, furthest is the first
+# Government-assigned priorities, 0 to 100
+# Usually directly translated to trust increase/decrease (e.g. 50->+50% after ideal op)
+var PriorityGovernments = 0  # targeting other governments, always very high
+var PriorityTerrorism = 0  # chasing criminal orgs and preventing terrorist attacks
+var PriorityTech = 0  # stealing non-wmd technology
+var PriorityWMD = 0  # stealing or at least getting to know about WMD
+var PriorityPublic = 0  # public reception, influences by loud events (e.g. deaths)
+var PriorityTargetCountries = []  # ids of countries treated as important targets
+var PriorityOfflimitCountries = []  # ids of countries where gov doesn't want targeting
 # Operations
 var Operations = []  # array of operation dictionaries
 var Directions = []  # array of simple operation-like dicts
@@ -606,6 +615,60 @@ func NextWeek():
 		get_tree().change_scene("res://call.tscn")
 	# finish
 
+
+# Below: useful game logic funcs
+
+func SetUpNewPriorities(completelyNew):
+	if completelyNew == true:
+		PriorityGovernments = random.randi_range(70,100)
+		PriorityTerrorism = random.randi_range(5,100)
+		PriorityTech = random.randi_range(5,100)
+		PriorityWMD = random.randi_range(5,100)
+		PriorityPublic = random.randi_range(5,100)
+		PriorityTargetCountries.clear()
+		PriorityOfflimitCountries.clear()
+		for x in range(1, len(WorldData.DiplomaticRelations[0])):
+			if WorldData.DiplomaticRelations[0][x] < -30:
+				PriorityTargetCountries.append(x)
+			elif WorldData.DiplomaticRelations[0][x] > 30:
+				if random.randi_range(1,3) == 2:
+					PriorityOfflimitCountries.append(x)
+			else:
+				if random.randi_range(1,8) == 3:
+					PriorityTargetCountries.append(x)
+	else:
+		PriorityGovernments += random.randi_range(-5,5)
+		PriorityTerrorism += random.randi_range(-15,15)
+		PriorityTech += random.randi_range(-15,15)
+		PriorityWMD += random.randi_range(-15,15)
+		PriorityPublic += random.randi_range(-15,15)
+		for x in range(1, len(WorldData.DiplomaticRelations[0])):
+			if WorldData.DiplomaticRelations[0][x] < -30 and !(x in PriorityTargetCountries):
+				PriorityTargetCountries.append(x)
+		if PriorityGovernments < 1: PriorityGovernments = 1
+		if PriorityGovernments > 100: PriorityGovernments = 100
+		if PriorityTerrorism < 1: PriorityTerrorism = 1
+		if PriorityTerrorism > 100: PriorityTerrorism = 100
+		if PriorityTech < 1: PriorityTech = 1
+		if PriorityTech > 100: PriorityTech = 100
+		if PriorityWMD < 1: PriorityWMD = 1
+		if PriorityWMD > 100: PriorityWMD = 100
+		if PriorityPublic < 1: PriorityPublic = 1
+		if PriorityPublic > 100: PriorityPublic = 100
+
+class MyCustomSorter:
+	static func sort_descending(a, b):
+		if a[0] > b[0]:
+			return true
+		return false
+
+func ListPriorities(delimeter):
+	# why func? to provide nice semi-sorted list
+	var options = [[PriorityGovernments, "gathering intelligence on other governments (" + str(PriorityGovernments) + "%)"], [PriorityTerrorism, "war on terrorism (" + str(PriorityTerrorism) + "%)"], [PriorityTech, "technological and industrial espionage (" + str(PriorityTech) + "%)"], [PriorityWMD, "proliferation of weapons of mass destruction (" + str(PriorityWMD) + "%)"], [PriorityPublic, "public opinion (" + str(PriorityPublic) + "%)"]]
+	options.sort_custom(MyCustomSorter, "sort_descending")
+	var toPool = []
+	for p in options: toPool.append(p[1])
+	return PoolStringArray(toPool).join(delimeter)
 
 # Below: callbacks called after decision screen
 
