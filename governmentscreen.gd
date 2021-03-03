@@ -1,20 +1,20 @@
-extends Panel
+extends Control
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	# bars
-	$M/R/CTrust/Bar.value = GameLogic.Trust
+	$C/M/R/CTrust/Bar.value = GameLogic.Trust
 	var diff = int(GameLogic.Trust - GameLogic.TrustMonthsAgo[0])
-	if diff > 0: $M/R/TrustChange.text = "+" + str(diff) + "% in the last six months"
-	else: $M/R/TrustChange.text = str(diff) + "% in the last six months"
-	$M/R/CUse/Bar.value = GameLogic.Use
+	if diff > 0: $C/M/R/TrustChange.text = "+" + str(diff) + "% in the last six months"
+	else: $C/M/R/TrustChange.text = str(diff) + "% in the last six months"
+	$C/M/R/CUse/Bar.value = GameLogic.Use
 	diff = int(GameLogic.Use - GameLogic.UseMonthsAgo[0])
-	if diff > 0: $M/R/UseChange.text = "+" + str(diff) + "% in the last six months"
-	else: $M/R/UseChange.text = str(diff) + "% in the last six months"
-	$M/R/CPower/Bar.value = WorldData.Countries[0].SoftPower
+	if diff > 0: $C/M/R/UseChange.text = "+" + str(diff) + "% in the last six months"
+	else: $C/M/R/UseChange.text = str(diff) + "% in the last six months"
+	$C/M/R/CPower/Bar.value = WorldData.Countries[0].SoftPower
 	diff = int(WorldData.Countries[0].SoftPower - GameLogic.SoftPowerMonthsAgo[0])
-	if diff > 0: $M/R/PowerChange.text = "+" + str(diff) + "% in the last six months"
-	else: $M/R/PowerChange.text = str(diff) + "% in the last six months"
+	if diff > 0: $C/M/R/PowerChange.text = "+" + str(diff) + "% in the last six months"
+	else: $C/M/R/PowerChange.text = str(diff) + "% in the last six months"
 	# text
 	var approach = "unfavourable"
 	if WorldData.Countries[0].PoliticsIntel > 60: approach = "friendly"
@@ -46,7 +46,7 @@ func _ready():
 		c += 1
 	if len(negativeList) == 0: desc += "-\n"
 	else: desc += PoolStringArray(negativeList).join(", ") + "\n"
-	$M/R/Politics.text = desc
+	$C/M/R/Politics.text = desc
 
 func _on_Return_pressed():
 	get_tree().change_scene("res://main.tscn")

@@ -10,164 +10,81 @@
 size = 24
 font_data = ExtResource( 4 )
 
-[node name="Panel" type="Panel"]
-margin_right = 720.0
-margin_bottom = 1480.0
+[node name="Panel" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
 script = ExtResource( 3 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="M" type="MarginContainer" parent="."]
-margin_right = 720.0
-margin_bottom = 1480.0
+[node name="C" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-custom_constants/margin_right = 20
+color = Color( 0.145098, 0.145098, 0.164706, 1 )
+
+[node name="M" type="MarginContainer" parent="C"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/margin_right = 30
 custom_constants/margin_top = 40
-custom_constants/margin_left = 20
-custom_constants/margin_bottom = 60
+custom_constants/margin_left = 30
+custom_constants/margin_bottom = 40
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="R" type="VBoxContainer" parent="M"]
-margin_left = 20.0
+[node name="R" type="VBoxContainer" parent="C/M"]
+margin_left = 30.0
 margin_top = 40.0
 margin_right = 700.0
-margin_bottom = 1420.0
+margin_bottom = 1440.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
-[node name="CHeader" type="HBoxContainer" parent="M/R"]
-margin_right = 680.0
+[node name="CHeader" type="HBoxContainer" parent="C/M/R"]
+margin_right = 670.0
 margin_bottom = 80.0
 rect_min_size = Vector2( 0, 80 )
 size_flags_horizontal = 3
 
-[node name="CenterContainer" type="CenterContainer" parent="M/R/CHeader"]
-margin_right = 680.0
+[node name="CenterContainer" type="CenterContainer" parent="C/M/R/CHeader"]
+margin_right = 670.0
 margin_bottom = 80.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="HBoxContainer" type="HBoxContainer" parent="M/R/CHeader/CenterContainer"]
-margin_left = 257.0
+[node name="HBoxContainer" type="HBoxContainer" parent="C/M/R/CHeader/CenterContainer"]
+margin_left = 247.0
 margin_top = 20.0
-margin_right = 422.0
+margin_right = 423.0
 margin_bottom = 60.0
 custom_constants/separation = 10
 
-[node name="TextureRect" type="TextureRect" parent="M/R/CHeader/CenterContainer/HBoxContainer"]
+[node name="TextureRect" type="TextureRect" parent="C/M/R/CHeader/CenterContainer/HBoxContainer"]
 margin_right = 38.0
 margin_bottom = 40.0
 rect_min_size = Vector2( 38, 40 )
 texture = ExtResource( 2 )
 
-[node name="Label" type="Label" parent="M/R/CHeader/CenterContainer/HBoxContainer"]
+[node name="Label" type="Label" parent="C/M/R/CHeader/CenterContainer/HBoxContainer"]
 margin_left = 48.0
-margin_top = 4.0
-margin_right = 165.0
-margin_bottom = 35.0
+margin_top = 3.0
+margin_right = 176.0
+margin_bottom = 37.0
 custom_fonts/font = ExtResource( 1 )
 text = "Intelligence"
 
-[node name="Tabs" type="TabContainer" parent="M/R"]
+[node name="Empty5" type="Label" parent="C/M/R"]
 margin_top = 84.0
-margin_right = 680.0
-margin_bottom = 382.0
-size_flags_horizontal = 3
-size_flags_vertical = 0
-custom_fonts/font = ExtResource( 1 )
-
-[node name="Amount" type="Tabs" parent="M/R/Tabs"]
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = 4.0
-margin_top = 49.0
-margin_right = -4.0
-margin_bottom = -4.0
-rect_min_size = Vector2( 0, 245 )
-size_flags_horizontal = 12
-size_flags_vertical = 12
-custom_fonts/font = ExtResource( 1 )
-scrolling_enabled = false
-
-[node name="List" type="ItemList" parent="M/R/Tabs/Amount"]
-margin_left = -7.0
-margin_top = -10.0
-margin_right = 680.0
-margin_bottom = 255.0
-rect_min_size = Vector2( 0, 250 )
-mouse_filter = 1
-size_flags_horizontal = 3
-size_flags_vertical = 0
-custom_fonts/font = ExtResource( 1 )
-script = ExtResource( 5 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Type" type="Tabs" parent="M/R/Tabs"]
-visible = false
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = 4.0
-margin_top = 49.0
-margin_right = -4.0
-margin_bottom = -4.0
-rect_min_size = Vector2( 0, 245 )
-size_flags_horizontal = 12
-size_flags_vertical = 12
-custom_fonts/font = ExtResource( 1 )
-scrolling_enabled = false
-
-[node name="List" type="ItemList" parent="M/R/Tabs/Type"]
-margin_left = -7.0
-margin_top = -10.0
-margin_right = 680.0
-margin_bottom = 255.0
-rect_min_size = Vector2( 0, 250 )
-mouse_filter = 1
-size_flags_horizontal = 3
-size_flags_vertical = 0
-custom_fonts/font = ExtResource( 1 )
-script = ExtResource( 5 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Countries" type="Tabs" parent="M/R/Tabs"]
-visible = false
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = 4.0
-margin_top = 49.0
-margin_right = -4.0
-margin_bottom = -4.0
-rect_min_size = Vector2( 0, 245 )
-size_flags_horizontal = 12
-size_flags_vertical = 12
-custom_fonts/font = ExtResource( 1 )
-scrolling_enabled = false
-
-[node name="List" type="ItemList" parent="M/R/Tabs/Countries"]
-margin_left = -7.0
-margin_top = -10.0
-margin_right = 680.0
-margin_bottom = 255.0
-rect_min_size = Vector2( 0, 250 )
-mouse_filter = 1
-size_flags_horizontal = 3
-size_flags_vertical = 0
-custom_fonts/font = ExtResource( 1 )
-script = ExtResource( 5 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Empty4" type="Label" parent="M/R"]
-margin_top = 386.0
-margin_right = 680.0
-margin_bottom = 426.0
+margin_right = 670.0
+margin_bottom = 124.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
@@ -175,19 +92,122 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Empty" type="Label" parent="M/R"]
-margin_top = 430.0
-margin_right = 680.0
-margin_bottom = 470.0
+[node name="Tabs" type="TabContainer" parent="C/M/R"]
+margin_top = 128.0
+margin_right = 670.0
+margin_bottom = 429.0
+size_flags_horizontal = 3
+size_flags_vertical = 0
+custom_fonts/font = ExtResource( 1 )
+
+[node name="Amount" type="Tabs" parent="C/M/R/Tabs"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 52.0
+margin_right = -4.0
+margin_bottom = -4.0
+rect_min_size = Vector2( 0, 245 )
+size_flags_horizontal = 12
+size_flags_vertical = 12
+custom_fonts/font = ExtResource( 1 )
+scrolling_enabled = false
+
+[node name="List" type="ItemList" parent="C/M/R/Tabs/Amount"]
+anchor_left = -0.010574
+anchor_top = -0.0408163
+anchor_right = 1.01057
+anchor_bottom = 1.04082
+rect_min_size = Vector2( 0, 250 )
+mouse_filter = 1
+size_flags_horizontal = 3
+size_flags_vertical = 0
+custom_fonts/font = ExtResource( 1 )
+script = ExtResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="Type" type="Tabs" parent="C/M/R/Tabs"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 52.0
+margin_right = -4.0
+margin_bottom = -4.0
+rect_min_size = Vector2( 0, 245 )
+size_flags_horizontal = 12
+size_flags_vertical = 12
+custom_fonts/font = ExtResource( 1 )
+scrolling_enabled = false
+
+[node name="List" type="ItemList" parent="C/M/R/Tabs/Type"]
+anchor_left = -0.010574
+anchor_top = -0.0408163
+anchor_right = 1.01057
+anchor_bottom = 1.04082
+rect_min_size = Vector2( 0, 250 )
+mouse_filter = 1
+size_flags_horizontal = 3
+size_flags_vertical = 0
+custom_fonts/font = ExtResource( 1 )
+script = ExtResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="Countries" type="Tabs" parent="C/M/R/Tabs"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 52.0
+margin_right = -4.0
+margin_bottom = -4.0
+rect_min_size = Vector2( 0, 245 )
+size_flags_horizontal = 12
+size_flags_vertical = 12
+custom_fonts/font = ExtResource( 1 )
+scrolling_enabled = false
+
+[node name="List" type="ItemList" parent="C/M/R/Tabs/Countries"]
+anchor_left = -0.010574
+anchor_top = -0.0408163
+anchor_right = 1.01057
+anchor_bottom = 1.04082
+rect_min_size = Vector2( 0, 250 )
+mouse_filter = 1
+size_flags_horizontal = 3
+size_flags_vertical = 0
+custom_fonts/font = ExtResource( 1 )
+script = ExtResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="Empty4" type="Label" parent="C/M/R"]
+margin_top = 433.0
+margin_right = 670.0
+margin_bottom = 473.0
+rect_min_size = Vector2( 0, 40 )
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Empty" type="Label" parent="C/M/R"]
+margin_top = 477.0
+margin_right = 670.0
+margin_bottom = 517.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 text = "Organizations:"
 
-[node name="Organizations" type="ItemList" parent="M/R"]
-margin_top = 474.0
-margin_right = 680.0
-margin_bottom = 624.0
+[node name="Organizations" type="ItemList" parent="C/M/R"]
+margin_top = 521.0
+margin_right = 670.0
+margin_bottom = 671.0
 rect_min_size = Vector2( 0, 150 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
@@ -196,18 +216,18 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Empty3" type="Label" parent="M/R"]
-margin_top = 628.0
-margin_right = 680.0
-margin_bottom = 668.0
+[node name="Empty3" type="Label" parent="C/M/R"]
+margin_top = 675.0
+margin_right = 670.0
+margin_bottom = 715.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 
-[node name="Details" type="RichTextLabel" parent="M/R"]
-margin_top = 672.0
-margin_right = 680.0
-margin_bottom = 1044.0
+[node name="Details" type="RichTextLabel" parent="C/M/R"]
+margin_top = 719.0
+margin_right = 670.0
+margin_bottom = 1064.0
 rect_min_size = Vector2( 0, 200 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -215,33 +235,34 @@ custom_fonts/bold_font = SubResource( 1 )
 custom_fonts/normal_font = ExtResource( 1 )
 bbcode_enabled = true
 
-[node name="Empty8" type="Label" parent="M/R"]
-margin_top = 1048.0
-margin_right = 680.0
-margin_bottom = 1088.0
+[node name="Empty8" type="Label" parent="C/M/R"]
+margin_top = 1068.0
+margin_right = 670.0
+margin_bottom = 1108.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 
-[node name="H" type="HBoxContainer" parent="M/R"]
-margin_top = 1092.0
-margin_right = 680.0
-margin_bottom = 1212.0
+[node name="H" type="HBoxContainer" parent="C/M/R"]
+margin_top = 1112.0
+margin_right = 670.0
+margin_bottom = 1232.0
+size_flags_horizontal = 3
 custom_constants/separation = 20
 
-[node name="Gather" type="Button" parent="M/R/H"]
-margin_right = 213.0
+[node name="Gather" type="Button" parent="C/M/R/H"]
+margin_right = 210.0
 margin_bottom = 120.0
 rect_min_size = Vector2( 210, 120 )
 size_flags_horizontal = 3
 size_flags_vertical = 0
 custom_fonts/font = ExtResource( 1 )
 disabled = true
-text = "Gather More Intel"
+text = "Gather Intel"
 
-[node name="Recruit" type="Button" parent="M/R/H"]
-margin_left = 233.0
-margin_right = 446.0
+[node name="Recruit" type="Button" parent="C/M/R/H"]
+margin_left = 230.0
+margin_right = 440.0
 margin_bottom = 120.0
 rect_min_size = Vector2( 210, 120 )
 size_flags_horizontal = 3
@@ -250,50 +271,50 @@ custom_fonts/font = ExtResource( 1 )
 disabled = true
 text = "Recruit Source"
 
-[node name="Offensive" type="Button" parent="M/R/H"]
-margin_left = 466.0
-margin_right = 680.0
+[node name="Offensive" type="Button" parent="C/M/R/H"]
+margin_left = 460.0
+margin_right = 670.0
 margin_bottom = 120.0
 rect_min_size = Vector2( 210, 120 )
 size_flags_horizontal = 3
 size_flags_vertical = 0
 custom_fonts/font = ExtResource( 1 )
 disabled = true
-text = "Offensive Operation"
+text = "Offensive Op"
 
-[node name="Empty7" type="Label" parent="M/R"]
-margin_top = 1216.0
-margin_right = 680.0
-margin_bottom = 1256.0
+[node name="Empty7" type="Label" parent="C/M/R"]
+margin_top = 1236.0
+margin_right = 670.0
+margin_bottom = 1276.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 
-[node name="CReturn" type="HBoxContainer" parent="M/R"]
-margin_top = 1260.0
-margin_right = 680.0
-margin_bottom = 1380.0
+[node name="CReturn" type="HBoxContainer" parent="C/M/R"]
+margin_top = 1280.0
+margin_right = 670.0
+margin_bottom = 1400.0
 
-[node name="Label" type="Label" parent="M/R/CReturn"]
+[node name="Label" type="Label" parent="C/M/R/CReturn"]
 margin_top = 53.0
-margin_right = 466.0
+margin_right = 456.0
 margin_bottom = 67.0
 size_flags_horizontal = 3
 
-[node name="Return" type="Button" parent="M/R/CReturn"]
-margin_left = 470.0
-margin_right = 680.0
+[node name="Return" type="Button" parent="C/M/R/CReturn"]
+margin_left = 460.0
+margin_right = 670.0
 margin_bottom = 120.0
 rect_min_size = Vector2( 210, 120 )
 size_flags_horizontal = 0
 custom_fonts/font = ExtResource( 1 )
 text = "Return"
-[connection signal="tab_changed" from="M/R/Tabs" to="." method="_on_Tabs_tab_changed"]
-[connection signal="item_selected" from="M/R/Tabs/Amount/List" to="." method="_on_AmountList_item_selected"]
-[connection signal="item_selected" from="M/R/Tabs/Type/List" to="." method="_on_TypeList_item_selected"]
-[connection signal="item_selected" from="M/R/Tabs/Countries/List" to="." method="_on_CountriesList_item_selected"]
-[connection signal="item_selected" from="M/R/Organizations" to="." method="_on_Organizations_item_selected"]
-[connection signal="pressed" from="M/R/H/Gather" to="." method="_on_Gather_pressed"]
-[connection signal="pressed" from="M/R/H/Recruit" to="." method="_on_Recruit_pressed"]
-[connection signal="pressed" from="M/R/H/Offensive" to="." method="_on_Offensive_pressed"]
-[connection signal="pressed" from="M/R/CReturn/Return" to="." method="_on_Return_pressed"]
+[connection signal="tab_changed" from="C/M/R/Tabs" to="." method="_on_Tabs_tab_changed"]
+[connection signal="item_selected" from="C/M/R/Tabs/Amount/List" to="." method="_on_AmountList_item_selected"]
+[connection signal="item_selected" from="C/M/R/Tabs/Type/List" to="." method="_on_TypeList_item_selected"]
+[connection signal="item_selected" from="C/M/R/Tabs/Countries/List" to="." method="_on_CountriesList_item_selected"]
+[connection signal="item_selected" from="C/M/R/Organizations" to="." method="_on_Organizations_item_selected"]
+[connection signal="pressed" from="C/M/R/H/Gather" to="." method="_on_Gather_pressed"]
+[connection signal="pressed" from="C/M/R/H/Recruit" to="." method="_on_Recruit_pressed"]
+[connection signal="pressed" from="C/M/R/H/Offensive" to="." method="_on_Offensive_pressed"]
+[connection signal="pressed" from="C/M/R/CReturn/Return" to="." method="_on_Return_pressed"]

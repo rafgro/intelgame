@@ -4,100 +4,109 @@
 [ext_resource path="res://icons/compass.png" type="Texture" id=2]
 [ext_resource path="res://governmentscreen.gd" type="Script" id=3]
 
-[node name="Panel" type="Panel"]
-margin_right = 720.0
-margin_bottom = 1480.0
+[node name="Panel" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
 script = ExtResource( 3 )
+
+[node name="C" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+color = Color( 0.145098, 0.145098, 0.164706, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="M" type="MarginContainer" parent="."]
-margin_right = 720.0
-margin_bottom = 1480.0
+[node name="M" type="MarginContainer" parent="C"]
+anchor_right = 1.0
+anchor_bottom = 1.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-custom_constants/margin_right = 20
+custom_constants/margin_right = 30
 custom_constants/margin_top = 40
-custom_constants/margin_left = 20
+custom_constants/margin_left = 30
 custom_constants/margin_bottom = 40
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="R" type="VBoxContainer" parent="M"]
-margin_left = 20.0
+[node name="R" type="VBoxContainer" parent="C/M"]
+margin_left = 30.0
 margin_top = 40.0
-margin_right = 700.0
+margin_right = 690.0
 margin_bottom = 1440.0
 
-[node name="CHeader" type="HBoxContainer" parent="M/R"]
-margin_right = 680.0
+[node name="CHeader" type="HBoxContainer" parent="C/M/R"]
+margin_right = 660.0
 margin_bottom = 80.0
 rect_min_size = Vector2( 0, 80 )
 size_flags_horizontal = 3
 
-[node name="CenterContainer" type="CenterContainer" parent="M/R/CHeader"]
-margin_right = 680.0
+[node name="CenterContainer" type="CenterContainer" parent="C/M/R/CHeader"]
+margin_right = 660.0
 margin_bottom = 80.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="HBoxContainer" type="HBoxContainer" parent="M/R/CHeader/CenterContainer"]
-margin_left = 191.0
+[node name="HBoxContainer" type="HBoxContainer" parent="C/M/R/CHeader/CenterContainer"]
+margin_left = 171.0
 margin_top = 20.0
 margin_right = 489.0
 margin_bottom = 60.0
 custom_constants/separation = 10
 
-[node name="TextureRect" type="TextureRect" parent="M/R/CHeader/CenterContainer/HBoxContainer"]
+[node name="TextureRect" type="TextureRect" parent="C/M/R/CHeader/CenterContainer/HBoxContainer"]
 margin_right = 53.0
 margin_bottom = 40.0
 rect_min_size = Vector2( 38, 40 )
 texture = ExtResource( 2 )
 
-[node name="Label" type="Label" parent="M/R/CHeader/CenterContainer/HBoxContainer"]
+[node name="Label" type="Label" parent="C/M/R/CHeader/CenterContainer/HBoxContainer"]
 margin_left = 63.0
-margin_top = 4.0
-margin_right = 298.0
-margin_bottom = 35.0
+margin_top = 3.0
+margin_right = 318.0
+margin_bottom = 37.0
 custom_fonts/font = ExtResource( 1 )
 text = "Homeland Government"
 
-[node name="Empty5" type="Label" parent="M/R"]
+[node name="Empty5" type="Label" parent="C/M/R"]
 margin_top = 84.0
-margin_right = 680.0
+margin_right = 660.0
 margin_bottom = 124.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 
-[node name="CTrust" type="HBoxContainer" parent="M/R"]
+[node name="CTrust" type="HBoxContainer" parent="C/M/R"]
 margin_top = 128.0
-margin_right = 680.0
+margin_right = 660.0
 margin_bottom = 168.0
 
-[node name="Label" type="Label" parent="M/R/CTrust"]
-margin_top = 4.0
-margin_right = 338.0
-margin_bottom = 35.0
+[node name="Label" type="Label" parent="C/M/R/CTrust"]
+margin_top = 3.0
+margin_right = 328.0
+margin_bottom = 37.0
 size_flags_horizontal = 3
 size_flags_vertical = 6
 custom_fonts/font = ExtResource( 1 )
 text = "Government Trust in Bureau:"
 
-[node name="Bar" type="ProgressBar" parent="M/R/CTrust"]
-margin_left = 342.0
-margin_right = 680.0
+[node name="Bar" type="ProgressBar" parent="C/M/R/CTrust"]
+margin_left = 332.0
+margin_right = 660.0
 margin_bottom = 40.0
 rect_min_size = Vector2( 150, 40 )
 size_flags_horizontal = 3
 size_flags_vertical = 2
 custom_fonts/font = ExtResource( 1 )
 
-[node name="TrustChange" type="Label" parent="M/R"]
+[node name="TrustChange" type="Label" parent="C/M/R"]
 margin_top = 172.0
-margin_right = 680.0
+margin_right = 660.0
 margin_bottom = 212.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
@@ -105,40 +114,40 @@ custom_fonts/font = ExtResource( 1 )
 text = "-//-"
 align = 2
 
-[node name="Empty4" type="Label" parent="M/R"]
+[node name="Empty4" type="Label" parent="C/M/R"]
 margin_top = 216.0
-margin_right = 680.0
+margin_right = 660.0
 margin_bottom = 256.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 
-[node name="CUse" type="HBoxContainer" parent="M/R"]
+[node name="CUse" type="HBoxContainer" parent="C/M/R"]
 margin_top = 260.0
-margin_right = 680.0
+margin_right = 660.0
 margin_bottom = 300.0
 
-[node name="Label" type="Label" parent="M/R/CUse"]
-margin_top = 4.0
-margin_right = 338.0
-margin_bottom = 35.0
+[node name="Label" type="Label" parent="C/M/R/CUse"]
+margin_top = 3.0
+margin_right = 328.0
+margin_bottom = 37.0
 size_flags_horizontal = 3
 size_flags_vertical = 6
 custom_fonts/font = ExtResource( 1 )
-text = "Intel Usefulness for Government:"
+text = "Intel Usefulness:"
 
-[node name="Bar" type="ProgressBar" parent="M/R/CUse"]
-margin_left = 342.0
-margin_right = 680.0
+[node name="Bar" type="ProgressBar" parent="C/M/R/CUse"]
+margin_left = 332.0
+margin_right = 660.0
 margin_bottom = 40.0
 rect_min_size = Vector2( 150, 40 )
 size_flags_horizontal = 3
 size_flags_vertical = 2
 custom_fonts/font = ExtResource( 1 )
 
-[node name="UseChange" type="Label" parent="M/R"]
+[node name="UseChange" type="Label" parent="C/M/R"]
 margin_top = 304.0
-margin_right = 680.0
+margin_right = 660.0
 margin_bottom = 344.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
@@ -146,40 +155,40 @@ custom_fonts/font = ExtResource( 1 )
 text = "-//-"
 align = 2
 
-[node name="Empty" type="Label" parent="M/R"]
+[node name="Empty" type="Label" parent="C/M/R"]
 margin_top = 348.0
-margin_right = 680.0
+margin_right = 660.0
 margin_bottom = 388.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 
-[node name="CPower" type="HBoxContainer" parent="M/R"]
+[node name="CPower" type="HBoxContainer" parent="C/M/R"]
 margin_top = 392.0
-margin_right = 680.0
+margin_right = 660.0
 margin_bottom = 432.0
 
-[node name="Label" type="Label" parent="M/R/CPower"]
-margin_top = 4.0
-margin_right = 338.0
-margin_bottom = 35.0
+[node name="Label" type="Label" parent="C/M/R/CPower"]
+margin_top = 3.0
+margin_right = 328.0
+margin_bottom = 37.0
 size_flags_horizontal = 3
 size_flags_vertical = 6
 custom_fonts/font = ExtResource( 1 )
 text = "Homeland Soft Power:"
 
-[node name="Bar" type="ProgressBar" parent="M/R/CPower"]
-margin_left = 342.0
-margin_right = 680.0
+[node name="Bar" type="ProgressBar" parent="C/M/R/CPower"]
+margin_left = 332.0
+margin_right = 660.0
 margin_bottom = 40.0
 rect_min_size = Vector2( 150, 40 )
 size_flags_horizontal = 3
 size_flags_vertical = 2
 custom_fonts/font = ExtResource( 1 )
 
-[node name="PowerChange" type="Label" parent="M/R"]
+[node name="PowerChange" type="Label" parent="C/M/R"]
 margin_top = 436.0
-margin_right = 680.0
+margin_right = 660.0
 margin_bottom = 476.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
@@ -187,17 +196,17 @@ custom_fonts/font = ExtResource( 1 )
 text = "-//-"
 align = 2
 
-[node name="Empty6" type="Label" parent="M/R"]
+[node name="Empty6" type="Label" parent="C/M/R"]
 margin_top = 480.0
-margin_right = 680.0
+margin_right = 660.0
 margin_bottom = 520.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 
-[node name="Politics" type="RichTextLabel" parent="M/R"]
+[node name="Politics" type="RichTextLabel" parent="C/M/R"]
 margin_top = 524.0
-margin_right = 680.0
+margin_right = 660.0
 margin_bottom = 1188.0
 rect_min_size = Vector2( 0, 100 )
 size_flags_horizontal = 3
@@ -205,39 +214,39 @@ size_flags_vertical = 3
 custom_fonts/normal_font = ExtResource( 1 )
 text = "Government Politics: ."
 
-[node name="Empty2" type="Label" parent="M/R"]
+[node name="Empty2" type="Label" parent="C/M/R"]
 margin_top = 1192.0
-margin_right = 680.0
+margin_right = 660.0
 margin_bottom = 1232.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 
-[node name="Empty3" type="Label" parent="M/R"]
+[node name="Empty3" type="Label" parent="C/M/R"]
 margin_top = 1236.0
-margin_right = 680.0
+margin_right = 660.0
 margin_bottom = 1276.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 
-[node name="CReturn" type="HBoxContainer" parent="M/R"]
+[node name="CReturn" type="HBoxContainer" parent="C/M/R"]
 margin_top = 1280.0
-margin_right = 680.0
+margin_right = 660.0
 margin_bottom = 1400.0
 
-[node name="Label" type="Label" parent="M/R/CReturn"]
+[node name="Label" type="Label" parent="C/M/R/CReturn"]
 margin_top = 53.0
-margin_right = 466.0
+margin_right = 446.0
 margin_bottom = 67.0
 size_flags_horizontal = 3
 
-[node name="Return" type="Button" parent="M/R/CReturn"]
-margin_left = 470.0
-margin_right = 680.0
+[node name="Return" type="Button" parent="C/M/R/CReturn"]
+margin_left = 450.0
+margin_right = 660.0
 margin_bottom = 120.0
 rect_min_size = Vector2( 210, 120 )
 size_flags_horizontal = 0
 custom_fonts/font = ExtResource( 1 )
 text = "Return"
-[connection signal="pressed" from="M/R/CReturn/Return" to="." method="_on_Return_pressed"]
+[connection signal="pressed" from="C/M/R/CReturn/Return" to="." method="_on_Return_pressed"]

@@ -47,7 +47,7 @@ margin_right = 690.0
 margin_bottom = 1440.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-custom_constants/separation = 15
+custom_constants/separation = 20
 
 [node name="CDate" type="HBoxContainer" parent="C/M/R"]
 margin_right = 660.0
@@ -73,9 +73,9 @@ custom_fonts/font = ExtResource( 2 )
 text = "21/01/2021"
 
 [node name="CTrust" type="HBoxContainer" parent="C/M/R"]
-margin_top = 49.0
+margin_top = 54.0
 margin_right = 660.0
-margin_bottom = 89.0
+margin_bottom = 94.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 size_flags_vertical = 0
@@ -100,9 +100,9 @@ value = 60.0
 rounded = true
 
 [node name="COfficer" type="HBoxContainer" parent="C/M/R"]
-margin_top = 104.0
+margin_top = 114.0
 margin_right = 660.0
-margin_bottom = 144.0
+margin_bottom = 154.0
 size_flags_horizontal = 3
 custom_constants/separation = 15
 
@@ -130,9 +130,9 @@ custom_fonts/font = ExtResource( 2 )
 text = "Y in HQ, Z abroad"
 
 [node name="COperations" type="HBoxContainer" parent="C/M/R"]
-margin_top = 159.0
+margin_top = 174.0
 margin_right = 660.0
-margin_bottom = 199.0
+margin_bottom = 214.0
 size_flags_horizontal = 3
 custom_constants/separation = 11
 
@@ -162,9 +162,9 @@ text = "3 weeks to possible attack"
 align = 2
 
 [node name="CEvents" type="HBoxContainer" parent="C/M/R"]
-margin_top = 214.0
+margin_top = 234.0
 margin_right = 660.0
-margin_bottom = 244.0
+margin_bottom = 264.0
 
 [node name="RichTextLabel" type="RichTextLabel" parent="C/M/R/CEvents"]
 margin_right = 660.0
@@ -177,16 +177,16 @@ text = "Internal Events:"
 scroll_active = false
 
 [node name="CEvents2" type="HBoxContainer" parent="C/M/R"]
-margin_top = 259.0
+margin_top = 284.0
 margin_right = 660.0
-margin_bottom = 530.0
+margin_bottom = 523.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="RichTextLabel" type="RichTextLabel" parent="C/M/R/CEvents2"]
 margin_right = 660.0
-margin_bottom = 271.0
-rect_min_size = Vector2( 0, 200 )
+margin_bottom = 239.0
+rect_min_size = Vector2( 0, 150 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_fonts/bold_font = ExtResource( 6 )
@@ -196,18 +196,18 @@ bbcode_text = "[b]21/01[/b] Test"
 text = "21/01 Test"
 
 [node name="Label" type="Label" parent="C/M/R"]
-margin_top = 545.0
+margin_top = 543.0
 margin_right = 660.0
-margin_bottom = 579.0
+margin_bottom = 577.0
 custom_fonts/font = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Buttons" type="HBoxContainer" parent="C/M/R"]
-margin_top = 594.0
+margin_top = 597.0
 margin_right = 660.0
-margin_bottom = 714.0
+margin_bottom = 717.0
 size_flags_horizontal = 3
 custom_constants/separation = 20
 
@@ -238,9 +238,9 @@ custom_fonts/font = ExtResource( 2 )
 text = "Government"
 
 [node name="Buttons2" type="HBoxContainer" parent="C/M/R"]
-margin_top = 729.0
+margin_top = 737.0
 margin_right = 660.0
-margin_bottom = 849.0
+margin_bottom = 857.0
 size_flags_horizontal = 3
 custom_constants/separation = 20
 
@@ -271,18 +271,18 @@ custom_fonts/font = ExtResource( 2 )
 text = "Intelligence"
 
 [node name="Label3" type="Label" parent="C/M/R"]
-margin_top = 864.0
+margin_top = 877.0
 margin_right = 660.0
-margin_bottom = 898.0
+margin_bottom = 911.0
 custom_fonts/font = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="CEvents3" type="HBoxContainer" parent="C/M/R"]
-margin_top = 913.0
+margin_top = 931.0
 margin_right = 660.0
-margin_bottom = 943.0
+margin_bottom = 961.0
 
 [node name="RichTextLabel" type="RichTextLabel" parent="C/M/R/CEvents3"]
 margin_right = 660.0
@@ -295,16 +295,16 @@ text = "World Events:"
 scroll_active = false
 
 [node name="CEvents4" type="HBoxContainer" parent="C/M/R"]
-margin_top = 958.0
+margin_top = 981.0
 margin_right = 660.0
-margin_bottom = 1230.0
+margin_bottom = 1220.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="RichTextLabel" type="RichTextLabel" parent="C/M/R/CEvents4"]
 margin_right = 660.0
-margin_bottom = 272.0
-rect_min_size = Vector2( 0, 200 )
+margin_bottom = 239.0
+rect_min_size = Vector2( 0, 150 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_fonts/bold_font = ExtResource( 6 )
@@ -314,9 +314,9 @@ bbcode_text = "[b]21/01[/b] Test"
 text = "21/01 Test"
 
 [node name="Label2" type="Label" parent="C/M/R"]
-margin_top = 1245.0
+margin_top = 1240.0
 margin_right = 660.0
-margin_bottom = 1275.0
+margin_bottom = 1270.0
 rect_min_size = Vector2( 0, 30 )
 __meta__ = {
 "_edit_use_anchors_": false

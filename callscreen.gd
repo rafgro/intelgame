@@ -1,18 +1,19 @@
-extends Panel
+extends Control
 
 func LoadFirstFromQueue():
-	$M/R/CHeader/R/D/Label.text = CallManager.CallQueue[0].Header
-	$M/R/T/Level.text = "Clearance: " + CallManager.CallQueue[0].Level
-	$M/R/T/Operation.text = "Operation " + CallManager.CallQueue[0].Operation
-	$M/R/Content.bbcode_text = CallManager.CallQueue[0].Content
-	$M/R/CButtons/Decision1/C/Label.text = CallManager.CallQueue[0].Text1
-	$M/R/CButtons/Decision1.disabled = !CallManager.CallQueue[0].Show1
-	$M/R/CButtons/Decision2/C/Label.text = CallManager.CallQueue[0].Text2
-	$M/R/CButtons/Decision2.disabled = !CallManager.CallQueue[0].Show2
-	$M/R/CButtons2/Decision3/C/Label.text = CallManager.CallQueue[0].Text3
-	$M/R/CButtons2/Decision3.disabled = !CallManager.CallQueue[0].Show3
-	$M/R/CButtons2/Decision4/C/Label.text = CallManager.CallQueue[0].Text4
-	$M/R/CButtons2/Decision4.disabled = !CallManager.CallQueue[0].Show4
+	if len(CallManager.CallQueue) > 0:
+		$C/M/R/CHeader/R/D/Label.text = CallManager.CallQueue[0].Header
+		$C/M/R/T/Level.text = "Clearance: " + CallManager.CallQueue[0].Level
+		$C/M/R/T/Operation.text = "Operation " + CallManager.CallQueue[0].Operation
+		$C/M/R/Content.bbcode_text = CallManager.CallQueue[0].Content
+		$C/M/R/CButtons/Decision1/C/Label.text = CallManager.CallQueue[0].Text1
+		$C/M/R/CButtons/Decision1.disabled = !CallManager.CallQueue[0].Show1
+		$C/M/R/CButtons/Decision2/C/Label.text = CallManager.CallQueue[0].Text2
+		$C/M/R/CButtons/Decision2.disabled = !CallManager.CallQueue[0].Show2
+		$C/M/R/CButtons2/Decision3/C/Label.text = CallManager.CallQueue[0].Text3
+		$C/M/R/CButtons2/Decision3.disabled = !CallManager.CallQueue[0].Show3
+		$C/M/R/CButtons2/Decision4/C/Label.text = CallManager.CallQueue[0].Text4
+		$C/M/R/CButtons2/Decision4.disabled = !CallManager.CallQueue[0].Show4
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

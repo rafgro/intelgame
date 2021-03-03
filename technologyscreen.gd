@@ -1,4 +1,4 @@
-extends Panel
+extends Control
 
 var mapOfMethods = []  # maps to 2d array to with [first index, second index]
 
@@ -19,7 +19,7 @@ func _ready():
 					desc = "--- (will be discovered in the future)"
 				else:
 					desc += " (unavailable)"
-			$M/R/ItemList.add_item(desc)
+			$C/M/R/ItemList.add_item(desc)
 			mapOfMethods.append([t,m])
 
 func _on_Return_pressed():
@@ -69,4 +69,4 @@ func _on_ItemList_item_selected(index):
 			if GameLogic.Technology < WorldData.Methods[t][m].MinimalTech:
 				desc += "Minimal technology level required: " + str(WorldData.Methods[t][m].MinimalTech) + "%"
 				desc += " (" + str(int(WorldData.Methods[t][m].MinimalTech-GameLogic.Technology)) + "% more required)\n"
-	$M/R/Details.text = desc
+	$C/M/R/Details.text = desc

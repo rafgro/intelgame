@@ -1,4 +1,4 @@
-extends Panel
+extends Control
 
 var mapOfCountries = [[],[],[]]  # hostile, neutral, friendly
 var lastSelectedCategory = 0
@@ -10,16 +10,16 @@ func _ready():
 	mapOfCountries = [[],[],[]]
 	for c in range(1, len(WorldData.Countries)):
 		if WorldData.DiplomaticRelations[0][c] < -30:
-			$M/R/Tabs/Hostile/List.add_item(WorldData.Countries[c].Name)
+			$C/M/R/Tabs/Hostile/List.add_item(WorldData.Countries[c].Name)
 			mapOfCountries[0].append(c)
 		elif WorldData.DiplomaticRelations[0][c] > 30:
-			$M/R/Tabs/Friendly/List.add_item(WorldData.Countries[c].Name)
+			$C/M/R/Tabs/Friendly/List.add_item(WorldData.Countries[c].Name)
 			mapOfCountries[2].append(c)
 		else:
-			$M/R/Tabs/Neutral/List.add_item(WorldData.Countries[c].Name)
+			$C/M/R/Tabs/Neutral/List.add_item(WorldData.Countries[c].Name)
 			mapOfCountries[1].append(c)
 	if len(mapOfCountries[0]) == 0:
-		$M/R/Tabs.set_current_tab(1)
+		$C/M/R/Tabs.set_current_tab(1)
 
 func _on_Return_pressed():
 	get_tree().change_scene("res://main.tscn")
@@ -56,20 +56,20 @@ func _on_List_item_selected(index):
 	desc += "Familiarity with local customs: " + str(int(WorldData.Countries[c].KnowhowCustoms)) + "%\n"
 	if WorldData.Countries[c].Expelled > 0:
 		desc += "\n" + str(WorldData.Countries[c].Expelled) + " officers were expelled and are persona non grata"
-	$M/R/Details.bbcode_text = desc
-	$M/R/H/Develop.disabled = false
+	$C/M/R/Details.bbcode_text = desc
+	$C/M/R/H/Develop.disabled = false
 	if WorldData.Countries[c].KnowhowLanguage > 25 and WorldData.Countries[c].KnowhowCustoms > 25:
-		$M/R/H/Network.disabled = false
+		$C/M/R/H/Network.disabled = false
 		if WorldData.Countries[c].Network > 0:
-			$M/R/H/Network.text = "Expand Network"
+			$C/M/R/H/Network.text = "Expand Network"
 	else:
-		$M/R/H/Network.disabled = true
+		$C/M/R/H/Network.disabled = true
 	if WorldData.Countries[c].KnowhowLanguage > 50 and WorldData.Countries[c].KnowhowCustoms > 50 and WorldData.Countries[c].DiplomaticTravel == true:
-		$M/R/H/Station.disabled = false
+		$C/M/R/H/Station.disabled = false
 		if WorldData.Countries[c].Station > 0:
-			$M/R/H/Station.text = "Expand Station"
+			$C/M/R/H/Station.text = "Expand Station"
 	else:
-		$M/R/H/Station.disabled = true
+		$C/M/R/H/Station.disabled = true
 
 func _on_Develop_pressed():
 	if lastSelectedCountry > 0:

@@ -5,77 +5,86 @@
 [ext_resource path="res://operationsscreen.gd" type="Script" id=3]
 [ext_resource path="res://itemlistscroll.gd" type="Script" id=4]
 
-[node name="Panel" type="Panel"]
-margin_right = 720.0
-margin_bottom = 1480.0
+[node name="Panel" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
 script = ExtResource( 3 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="M" type="MarginContainer" parent="."]
-margin_right = 720.0
-margin_bottom = 1480.0
+[node name="C" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-custom_constants/margin_right = 20
+color = Color( 0.145098, 0.145098, 0.164706, 1 )
+
+[node name="M" type="MarginContainer" parent="C"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/margin_right = 30
 custom_constants/margin_top = 40
-custom_constants/margin_left = 20
-custom_constants/margin_bottom = 60
+custom_constants/margin_left = 30
+custom_constants/margin_bottom = 40
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="R" type="VBoxContainer" parent="M"]
-margin_left = 20.0
+[node name="R" type="VBoxContainer" parent="C/M"]
+margin_left = 30.0
 margin_top = 40.0
-margin_right = 700.0
-margin_bottom = 1420.0
+margin_right = 690.0
+margin_bottom = 1440.0
 
-[node name="CHeader" type="HBoxContainer" parent="M/R"]
-margin_right = 680.0
+[node name="CHeader" type="HBoxContainer" parent="C/M/R"]
+margin_right = 660.0
 margin_bottom = 80.0
 rect_min_size = Vector2( 0, 80 )
 size_flags_horizontal = 3
 
-[node name="CenterContainer" type="CenterContainer" parent="M/R/CHeader"]
-margin_right = 680.0
+[node name="CenterContainer" type="CenterContainer" parent="C/M/R/CHeader"]
+margin_right = 660.0
 margin_bottom = 80.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="HBoxContainer" type="HBoxContainer" parent="M/R/CHeader/CenterContainer"]
-margin_left = 267.0
+[node name="HBoxContainer" type="HBoxContainer" parent="C/M/R/CHeader/CenterContainer"]
+margin_left = 252.0
 margin_top = 20.0
-margin_right = 413.0
+margin_right = 407.0
 margin_bottom = 60.0
 custom_constants/separation = 10
 
-[node name="TextureRect" type="TextureRect" parent="M/R/CHeader/CenterContainer/HBoxContainer"]
+[node name="TextureRect" type="TextureRect" parent="C/M/R/CHeader/CenterContainer/HBoxContainer"]
 margin_right = 25.0
 margin_bottom = 40.0
 rect_min_size = Vector2( 25, 40 )
 texture = ExtResource( 2 )
 
-[node name="Label" type="Label" parent="M/R/CHeader/CenterContainer/HBoxContainer"]
+[node name="Label" type="Label" parent="C/M/R/CHeader/CenterContainer/HBoxContainer"]
 margin_left = 35.0
-margin_top = 4.0
-margin_right = 146.0
-margin_bottom = 35.0
+margin_top = 3.0
+margin_right = 155.0
+margin_bottom = 37.0
 custom_fonts/font = ExtResource( 1 )
 text = "Operations"
 
-[node name="Empty5" type="Label" parent="M/R"]
+[node name="Empty5" type="Label" parent="C/M/R"]
 margin_top = 84.0
-margin_right = 680.0
+margin_right = 660.0
 margin_bottom = 124.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 
-[node name="ItemList" type="ItemList" parent="M/R"]
+[node name="ItemList" type="ItemList" parent="C/M/R"]
 margin_top = 128.0
-margin_right = 680.0
+margin_right = 660.0
 margin_bottom = 328.0
 rect_min_size = Vector2( 0, 200 )
 size_flags_horizontal = 3
@@ -83,45 +92,45 @@ custom_fonts/font = ExtResource( 1 )
 auto_height = true
 script = ExtResource( 4 )
 
-[node name="Empty4" type="Label" parent="M/R"]
+[node name="Empty4" type="Label" parent="C/M/R"]
 margin_top = 332.0
-margin_right = 680.0
+margin_right = 660.0
 margin_bottom = 372.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 
-[node name="ItemDetails" type="RichTextLabel" parent="M/R"]
+[node name="ItemDetails" type="RichTextLabel" parent="C/M/R"]
 margin_top = 376.0
-margin_right = 680.0
-margin_bottom = 1168.0
+margin_right = 660.0
+margin_bottom = 1188.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_fonts/normal_font = ExtResource( 1 )
 
-[node name="Empty3" type="Label" parent="M/R"]
-margin_top = 1172.0
-margin_right = 680.0
-margin_bottom = 1212.0
+[node name="Empty3" type="Label" parent="C/M/R"]
+margin_top = 1192.0
+margin_right = 660.0
+margin_bottom = 1232.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 
-[node name="Empty6" type="Label" parent="M/R"]
-margin_top = 1216.0
-margin_right = 680.0
-margin_bottom = 1256.0
+[node name="Empty6" type="Label" parent="C/M/R"]
+margin_top = 1236.0
+margin_right = 660.0
+margin_bottom = 1276.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 
-[node name="CReturn" type="HBoxContainer" parent="M/R"]
-margin_top = 1260.0
-margin_right = 680.0
-margin_bottom = 1380.0
+[node name="CReturn" type="HBoxContainer" parent="C/M/R"]
+margin_top = 1280.0
+margin_right = 660.0
+margin_bottom = 1400.0
 
-[node name="CallOff" type="Button" parent="M/R/CReturn"]
+[node name="CallOff" type="Button" parent="C/M/R/CReturn"]
 margin_right = 210.0
 margin_bottom = 120.0
 rect_min_size = Vector2( 210, 120 )
@@ -129,21 +138,21 @@ custom_fonts/font = ExtResource( 1 )
 disabled = true
 text = "Call Off"
 
-[node name="Label" type="Label" parent="M/R/CReturn"]
+[node name="Label" type="Label" parent="C/M/R/CReturn"]
 margin_left = 214.0
 margin_top = 53.0
-margin_right = 466.0
+margin_right = 446.0
 margin_bottom = 67.0
 size_flags_horizontal = 3
 
-[node name="Return" type="Button" parent="M/R/CReturn"]
-margin_left = 470.0
-margin_right = 680.0
+[node name="Return" type="Button" parent="C/M/R/CReturn"]
+margin_left = 450.0
+margin_right = 660.0
 margin_bottom = 120.0
 rect_min_size = Vector2( 210, 120 )
 size_flags_horizontal = 0
 custom_fonts/font = ExtResource( 1 )
 text = "Return"
-[connection signal="item_selected" from="M/R/ItemList" to="." method="_on_ItemList_item_selected"]
-[connection signal="pressed" from="M/R/CReturn/CallOff" to="." method="_on_CallOff_pressed"]
-[connection signal="pressed" from="M/R/CReturn/Return" to="." method="_on_Return_pressed"]
+[connection signal="item_selected" from="C/M/R/ItemList" to="." method="_on_ItemList_item_selected"]
+[connection signal="pressed" from="C/M/R/CReturn/CallOff" to="." method="_on_CallOff_pressed"]
+[connection signal="pressed" from="C/M/R/CReturn/Return" to="." method="_on_Return_pressed"]
