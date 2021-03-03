@@ -252,6 +252,9 @@ func Execute(past):
 			WorldData.Countries[c].SoftPower += GameLogic.random.randi_range(-1,1)
 		if WorldData.Countries[c].Network > 0:
 			if GameLogic.random.randi_range(1,20) == 6: WorldData.Countries[c].Network -= 1
+			if WorldData.Countries[c].Network == 0:
+				GameLogic.AddEvent("Bureau lost agent network in " + WorldData.Countries[c].Name)
+				GameLogic.BudgetExtras *= 0.95
 		# stability
 		var choice = GameLogic.random.randi_range(0,70)
 		if WorldData.Countries[c].PoliticsStability < 20:
@@ -323,6 +326,7 @@ func Execute(past):
 						var against = c
 						if c == 0: against = c2
 						WorldData.Countries[against].DiplomaticTravel = false
+						if WorldData.Countries[against].Station > 0: GameLogic.BudgetExtras *= 0.8
 						WorldData.Countries[against].Station = 0
 						for x in range(0,len(WorldData.Organizations)):
 							if WorldData.Organizations[x].Countries[0] == against:

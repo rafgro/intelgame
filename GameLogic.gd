@@ -26,6 +26,7 @@ var IntensityUpskill = 10
 var IntensityTech = 5
 var BudgetFull = 100  # in thousands, monthly
 var BudgetOngoingOperations = 0
+var BudgetExtras = 0  # sources, stations
 # Staff
 var StaffSkill = 10  # 0 to 100
 var StaffSkillMonthsAgo = []  # array of 13 last values, furthest is the first
@@ -100,10 +101,10 @@ func AddWorldEvent(text, past):
 		WorldEvents.push_front("[b]"+past+"[/b] " + text)
 
 func FreeFundsWeekly():
-	return (BudgetFull - (ActiveOfficers*4+ActiveOfficers*1+BudgetOngoingOperations)) / 4
+	return (BudgetFull - (ActiveOfficers*4+ActiveOfficers*1+BudgetOngoingOperations+BudgetExtras)) / 4
 
 func FreeFundsWeeklyWithoutOngoing():
-	return (BudgetFull - (ActiveOfficers*4+ActiveOfficers*1)) / 4
+	return (BudgetFull - (ActiveOfficers*4+ActiveOfficers*1+BudgetExtras)) / 4
 
 func IntensityPercent(which):
 	return int(which * 1.0 / (IntensityHiring + IntensityUpskill + IntensityTech) * 100)
@@ -130,6 +131,10 @@ func StartAll():
 				if Trust < WorldData.Methods[t][m].MinimalTrust:
 					continue
 				if Technology < WorldData.Methods[t][m].MinimalTech:
+					continue
+				if DateYear < WorldData.Methods[t][m].StartYear:
+					continue
+				if DateYear > WorldData.Methods[t][m].EndYear:
 					continue
 				# change from false to criterions fulfilled
 				WorldData.Methods[t][m].Available = true
@@ -268,17 +273,21 @@ func NextWeek():
 					if WorldData.Countries[Directions[t].Country].Network > 0:
 						WorldData.Countries[Directions[t].Country].Network *= (1.0 + Directions[t].Quality*0.01)
 						AddEvent(str(Directions[t].Officers) + " officer(s) came back after expanding agent network in " + WorldData.Countries[Directions[t].Country].Name)
+						BudgetExtras += Directions[t].MonthlyCost * 0.05
 					else:
 						WorldData.Countries[Directions[t].Country].Network = int(Directions[t].Quality)
 						AddEvent(str(Directions[t].Officers) + " officer(s) came back after establishing agent network in " + WorldData.Countries[Directions[t].Country].Name)
+						BudgetExtras += Directions[t].MonthlyCost * 0.3
 				# station
 				elif Directions[t].Type == 5:
 					if WorldData.Countries[Directions[t].Country].Station > 0:
 						WorldData.Countries[Directions[t].Country].Station *= (1.0 + Directions[t].Quality*0.01)
 						AddEvent(str(Directions[t].Officers) + " officer(s) came back after expanding station in " + WorldData.Countries[Directions[t].Country].Name)
+						BudgetExtras += Directions[t].MonthlyCost * 0.2
 					else:
 						WorldData.Countries[Directions[t].Country].Station = int(Directions[t].Quality)
 						AddEvent(str(Directions[t].Officers) + " officer(s) came back after establishing station in " + WorldData.Countries[Directions[t].Country].Name)
+						BudgetExtras += Directions[t].MonthlyCost
 	############################################################################
 	# operations
 	var ifCall = OperationHandler.ProgressOperations()
@@ -584,6 +593,7 @@ func NextWeek():
 	elif Technology < 0: Technology = 0
 	if Use > 100: Use = 100
 	elif Use < 0: Use = 0
+	if BudgetExtras < 0: BudgetExtras = 0
 	if ActiveOfficers != (OfficersAbroad+OfficersInHQ):
 		OfficersInHQ = ActiveOfficers - OfficersAbroad
 	# histories of certain variables

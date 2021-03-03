@@ -162,6 +162,11 @@ func _on_Network_pressed():
 		if (planCost*1.0/planLength) > GameLogic.FreeFundsWeeklyWithoutOngoing():
 			planShow = false
 			planAvailability = " Currently, it is financially unavailable."
+		else:
+			if WorldData.Countries[lastSelectedCountry].Network > 0:
+				planAvailability = " After the operation, monthly cost of network maintenance will increase by €" + str(int(planCost*1.0/planLength*4*0.05)) + ",000."
+			else:
+				planAvailability = " After the operation, monthly cost of network maintenance will be equal to €" + str(int(planCost*1.0/planLength*0.3)) + ",000."
 		content += " local agent network in " + WorldData.Countries[lastSelectedCountry].Name + " will require €" + str(planCost) + ",000 and " + str(planOfficers) + " officers. The operation will last " + str(planLength) + " weeks."+planAvailability+"\n\nNote that its effects are strictly correlated with familiarity with the country."
 		# call
 		CallManager.CallQueue.append(
@@ -202,6 +207,11 @@ func _on_Station_pressed():
 		if (planCost*1.0/planLength) > GameLogic.FreeFundsWeeklyWithoutOngoing():
 			planShow = false
 			planAvailability = " Currently, it is financially unavailable."
+		else:
+			if WorldData.Countries[lastSelectedCountry].Station > 0:
+				planAvailability = " After the operation, monthly cost of station maintenance will increase by €" + str(int(planCost*1.0/planLength*4*0.2)) + ",000."
+			else:
+				planAvailability = " After the operation, monthly cost of station maintenance will be equal to €" + str(int(planCost*1.0/planLength*4)) + ",000."
 		content += " intelligence station in " + WorldData.Countries[lastSelectedCountry].Name + " will require €" + str(planCost) + ",000 and " + str(planOfficers) + " officers. The operation will last " + str(planLength) + " weeks."+planAvailability
 		# call
 		CallManager.CallQueue.append(

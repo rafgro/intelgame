@@ -11,7 +11,14 @@ func _ready():
 			elif t == 2: desc += "offensive: "
 			desc += WorldData.Methods[t][m].Name
 			if WorldData.Methods[t][m].Available == false:
-				desc += " (unavailable)"
+				# special case: expired
+				if GameLogic.DateYear > WorldData.Methods[t][m].EndYear:
+					desc += " (expired)"
+				# special case: future
+				elif GameLogic.DateYear < WorldData.Methods[t][m].StartYear:
+					desc = "--- (will be discovered in the future)"
+				else:
+					desc += " (unavailable)"
 			$M/R/ItemList.add_item(desc)
 			mapOfMethods.append([t,m])
 
@@ -40,19 +47,26 @@ func _on_ItemList_item_selected(index):
 		elif WorldData.Methods[t][m].MinimalIntel > 3: localDesc = "negligible"
 		desc += "Required language and local custom knowledge: " + localDesc + "\n"
 	else:
-		desc += "Cost: €" + str(WorldData.Methods[t][m].Cost) + ",000 weekly"
-		if GameLogic.FreeFundsWeeklyWithoutOngoing() < WorldData.Methods[t][m].Cost:
-			desc += " (€" + str(int(WorldData.Methods[t][m].Cost-GameLogic.FreeFundsWeeklyWithoutOngoing())) + "k more to enable)"
-		desc += "\nOfficers involved: " + str(WorldData.Methods[t][m].OfficersRequired)
-		if GameLogic.ActiveOfficers < WorldData.Methods[t][m].OfficersRequired:
-			desc += " (" + str(int(WorldData.Methods[t][m].OfficersRequired-GameLogic.ActiveOfficers)) + " officers more to enable)"
-		desc += "\nMinimal skill required: " + str(WorldData.Methods[t][m].MinimalSkill) + "%"
-		if GameLogic.StaffSkill < WorldData.Methods[t][m].MinimalSkill:
-			desc += " (" + str(int(WorldData.Methods[t][m].MinimalSkill-GameLogic.StaffSkill)) + "% more required)\n"
-		if WorldData.Methods[t][m].MinimalTrust > 0 and WorldData.Methods[t][m].MinimalTrust > GameLogic.Trust:
-			desc += "Minimal government trust required: " + str(WorldData.Methods[t][m].MinimalTrust) + "%"
-			desc += " (" + str(int(WorldData.Methods[t][m].MinimalTrust-GameLogic.Trust)) + "% more required)\n"
-		if GameLogic.Technology < WorldData.Methods[t][m].MinimalTech:
-			desc += "Minimal technology level required: " + str(WorldData.Methods[t][m].MinimalTech) + "%"
-			desc += " (" + str(int(WorldData.Methods[t][m].MinimalTech-GameLogic.Technology)) + "% more required)\n"
+		# special case: expired
+		if GameLogic.DateYear > WorldData.Methods[t][m].EndYear:
+			desc += "This method is expired due to world technological progress."
+		# special case: future
+		elif GameLogic.DateYear < WorldData.Methods[t][m].StartYear:
+			desc = "This method will be discovered in the future."
+		else:
+			desc += "Cost: €" + str(WorldData.Methods[t][m].Cost) + ",000 weekly"
+			if GameLogic.FreeFundsWeeklyWithoutOngoing() < WorldData.Methods[t][m].Cost:
+				desc += " (€" + str(int(WorldData.Methods[t][m].Cost-GameLogic.FreeFundsWeeklyWithoutOngoing())) + "k more to enable)"
+			desc += "\nOfficers involved: " + str(WorldData.Methods[t][m].OfficersRequired)
+			if GameLogic.ActiveOfficers < WorldData.Methods[t][m].OfficersRequired:
+				desc += " (" + str(int(WorldData.Methods[t][m].OfficersRequired-GameLogic.ActiveOfficers)) + " officers more to enable)"
+			desc += "\nMinimal skill required: " + str(WorldData.Methods[t][m].MinimalSkill) + "%"
+			if GameLogic.StaffSkill < WorldData.Methods[t][m].MinimalSkill:
+				desc += " (" + str(int(WorldData.Methods[t][m].MinimalSkill-GameLogic.StaffSkill)) + "% more required)\n"
+			if WorldData.Methods[t][m].MinimalTrust > 0 and WorldData.Methods[t][m].MinimalTrust > GameLogic.Trust:
+				desc += "Minimal government trust required: " + str(WorldData.Methods[t][m].MinimalTrust) + "%"
+				desc += " (" + str(int(WorldData.Methods[t][m].MinimalTrust-GameLogic.Trust)) + "% more required)\n"
+			if GameLogic.Technology < WorldData.Methods[t][m].MinimalTech:
+				desc += "Minimal technology level required: " + str(WorldData.Methods[t][m].MinimalTech) + "%"
+				desc += " (" + str(int(WorldData.Methods[t][m].MinimalTech-GameLogic.Technology)) + "% more required)\n"
 	$M/R/Details.text = desc

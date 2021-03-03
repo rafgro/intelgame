@@ -1,0 +1,15 @@
+# Generated using https://godot-build-options-generator.github.io
+
+disable_3d = "yes"
+optimize = "size"
+module_bullet_enabled = "no"
+module_camera_enabled = "no"
+module_csg_enabled = "no"
+module_enet_enabled = "no"
+module_mobile_vr_enabled = "no"
+module_ogg_enabled = "no"
+module_opus_enabled = "no"
+module_theora_enabled = "no"
+module_vorbis_enabled = "no"
+module_webm_enabled = "no"
+module_webp_enabled = "no"
