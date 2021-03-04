@@ -76,7 +76,7 @@ func _on_Develop_pressed():
 	if lastSelectedCountry > 0:
 		var content = "Officers designed following plans concerning skill development into the direction of " + WorldData.Countries[lastSelectedCountry].Name + ".\n\n"
 		# plan a
-		var planAofficers = GameLogic.random.randi_range(1, GameLogic.OfficersInHQ)
+		var planAofficers = GameLogic.random.randi_range(1, min(GameLogic.OfficersInHQ, 6))
 		var planAlength = GameLogic.random.randi_range(1,8)
 		var planAcost = planAofficers*5*planAlength
 		var planAshow = true
@@ -86,7 +86,7 @@ func _on_Develop_pressed():
 			planAdesc = " (financially unavailable)"
 		content += "[b]Plan A"+planAdesc+"[/b]\n€" + str(planAcost) + ",000 | " + str(planAofficers) + " officers | " + str(planAlength) + " weeks\nlanguage training"
 		# plan b
-		var planBofficers = GameLogic.random.randi_range(1, GameLogic.OfficersInHQ)
+		var planBofficers = GameLogic.random.randi_range(1, min(GameLogic.OfficersInHQ, 6))
 		var planBlength = GameLogic.random.randi_range(4,18)
 		var planBcost = planBofficers*2*planBlength
 		var planBshow = true
@@ -97,7 +97,7 @@ func _on_Develop_pressed():
 				planBdesc = " (financially unavailable)"
 			content += "\n\n[b]Plan B"+planBdesc+"[/b]\n€" + str(planBcost) + ",000 | " + str(planBofficers) + " officers | " + str(planBlength) + " weeks\nembassy residency\nlanguage immersion\nengagement with local culture"
 		else:
-			planBofficers = GameLogic.random.randi_range(1, GameLogic.OfficersInHQ)
+			planBofficers = GameLogic.random.randi_range(1, min(GameLogic.OfficersInHQ, 6))
 			planBlength = GameLogic.random.randi_range(6,26)
 			planBcost = planBofficers*6*planBlength
 			if (planBcost*1.0/planBlength) > GameLogic.FreeFundsWeeklyWithoutOngoing():
@@ -105,7 +105,7 @@ func _on_Develop_pressed():
 				planBdesc = " (financially unavailable)"
 			content += "\n\n[b]Plan B"+planBdesc+"[/b]\n€" + str(planBcost) + ",000 | " + str(planBofficers) + " officers | " + str(planBlength) + " weeks\nresidency in closest possible country\nacquitance with local emmigrants from targeted country"
 		# plan c
-		var planCofficers = GameLogic.random.randi_range(1, GameLogic.OfficersInHQ)
+		var planCofficers = GameLogic.random.randi_range(1, min(GameLogic.OfficersInHQ, 6))
 		var planClength = GameLogic.random.randi_range(4,8)
 		var planCcost = planCofficers*10*planClength
 		var planCshow = true
@@ -116,7 +116,7 @@ func _on_Develop_pressed():
 				planCdesc = " (financially unavailable)"
 			content += "\n\n[b]Plan C"+planCdesc+"[/b]\n€" + str(planCcost) + ",000 | " + str(planCofficers) + " officers | " + str(planClength) + " weeks\ndevelop passport forging system\ntest and correct covert travel procedures"
 		else:
-			planCofficers = GameLogic.random.randi_range(1, GameLogic.OfficersInHQ)
+			planCofficers = GameLogic.random.randi_range(1, min(GameLogic.OfficersInHQ, 6))
 			planClength = GameLogic.random.randi_range(6,12)
 			planCcost = planCofficers*5*planClength
 			if (planCcost*1.0/planClength) > GameLogic.FreeFundsWeeklyWithoutOngoing():
@@ -153,7 +153,7 @@ func _on_Develop_pressed():
 	
 func _on_Network_pressed():
 	if lastSelectedCountry > 0:
-		var planOfficers = GameLogic.random.randi_range(1, GameLogic.OfficersInHQ)
+		var planOfficers = GameLogic.random.randi_range(1, min(GameLogic.OfficersInHQ, 9))
 		var planLength = GameLogic.random.randi_range(8,26)
 		var planCost = planOfficers*5*planLength
 		var content = "Establishing"
@@ -198,7 +198,7 @@ func _on_Network_pressed():
 
 func _on_Station_pressed():
 	if lastSelectedCountry > 0:
-		var planOfficers = GameLogic.random.randi_range(1, GameLogic.OfficersInHQ)
+		var planOfficers = GameLogic.random.randi_range(1, min(GameLogic.OfficersInHQ, 9))
 		var planLength = GameLogic.random.randi_range(8,26)
 		var planCost = planOfficers*10*planLength
 		var content = "Establishing"

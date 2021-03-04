@@ -209,7 +209,7 @@ func NewGenerate():
 					WorldData.Organizations[j].ConnectedTo.append(len(WorldData.Organizations)-1)
 		# target homeland more often
 		if !(0 in WorldData.Organizations[-1].TargetCountries):
-			if GameLogic.random.randi_range(1,6) == 3:
+			if GameLogic.random.randi_range(1,3) == 3:
 				WorldData.Organizations[-1].TargetCountries.append(0)
 	# hidden or emerging terror orgs
 	for i in range(0,3):

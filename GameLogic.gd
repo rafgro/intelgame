@@ -50,7 +50,7 @@ var Operations = []  # array of operation dictionaries
 var Directions = []  # array of simple operation-like dicts
 var Investigations = []  # array of simple operation-like dicts
 # Internal logic variables, always describe them
-var AllWeeks = 0  # noting all weeks for later summary
+var AllWeeks = 0  # weeks passed for summaries and increasng difficulty
 var RecruitProgress = 0.0  # when reaches 1, a new officer arrives
 var PreviousTrust = 0  # trust from previous week, to write show the change week to week
 var AttackTicker = 0  # race against time in preventing a terrorist attack, shown if >0
@@ -58,7 +58,7 @@ var AttackTickerOp = {"Org":0,"Op":0}  # which organization and operation it is 
 var UltimatumTicker = 0  # weeks to actual lay off if user doesn't bring back trust
 var CurrentOpsAgainstHomeland = 0  # internal counter to not overwhelm user, simultaneous
 var YearlyOpsAgainstHomeland = 0  # internal counter as well, yearly ops, zeroed on 01/01
-var OpsLimit = 1  # max number of terror ops against homeland, might be increased over time
+var OpsLimit = 0  # max number of terror ops against homeland,  increased over time
 var UniversalClearance = false  # with high trust, bureau can target anything they want
 var InternalMoles = 0  # counter of officers that are passing info to other intel agencies
 var YearlyWars = 0  # internal counter, ensuring that there's no more than 1 war per year
@@ -154,6 +154,15 @@ func StartAll():
 
 func NextWeek():
 	############################################################################
+	# scaling difficulty
+	if AllWeeks == 26:  # half a year to get into the game
+		OpsLimit = 1
+	if AllWeeks % 52 == 0 and AllWeeks != 0:  # roughly a year
+		YearlyOpsAgainstHomeland = 0
+		OpsLimit = random.randi_range(1, 1+int(AllWeeks*1.0/52))
+		YearlyWars = 0
+	############################################################################
+	# date proceedings
 	var doesItEndWithCall = false
 	# clearing u-tags in events
 	var i = 0
@@ -184,12 +193,10 @@ func NextWeek():
 				DateYear += 1
 				# new-year budget increase
 				var budgetIncrease = BudgetFull*(0.01*Trust)
-				if budgetIncrease > 200: budgetIncrease = 200
+				if budgetIncrease > 150: budgetIncrease = 150
 				BudgetFull += budgetIncrease
 				AddEvent("New year budget increase: +€"+str(int(budgetIncrease))+"k")
 				# other new-year game logic
-				YearlyOpsAgainstHomeland = 0
-				YearlyWars = 0
 	############################################################################
 	# budget-based changes
 	# hiring

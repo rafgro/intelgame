@@ -333,7 +333,7 @@ var Wars = []
 # <countryA> phrase <countryB>
 var DiplomaticPhrasesPositive = ["'s officials visited ", " expressed will to improve relations with "]
 var DiplomaticPhrasesVeryPositive = [" signed a treaty with ", " held joint military exercise with ", " formed bilateral committee "]
-var DiplomaticPhrasesNegative = [" condemned actions of ", " withdraw from a treaty with ", " expressed concern about changes in "]
+var DiplomaticPhrasesNegative = [" condemned actions of ", " withdrew from a treaty with ", " expressed concern about changes in "]
 var DiplomaticPhrasesVeryNegative = [" refused to meet with officials of ", " expelled some citizens of ", " attributed destabilization of the region to ", "'s military officials threatened "]
 var TechnologicalPhrases = ["New discovery reported by scientists", "Significant technological breakthrough made by engineers", "Scientific innovation presented"]
 var WarPhrases = [" made significant advances in war with ", " won critical battle with ", " gained theater superiority over ", " forces breached territory of "]
