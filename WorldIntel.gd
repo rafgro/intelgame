@@ -96,6 +96,11 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 	elif quality < 30:
 		if WorldData.Organizations[o].Type == WorldData.OrgType.GENERALTERROR:
 			WorldData.Organizations[o].IntelDescType = "terrorist organization"
+			if WorldData.Organizations[o].TargetConsistency > 60 and len(WorldData.Organizations[o].TargetCountries) > 0:
+				var cnames = []
+				for v in WorldData.Organizations[o].TargetCountries:
+					cnames.append(WorldData.Countries[v].Adjective)
+				WorldData.Organizations[o].IntelDescType += " (anti-" + PoolStringArray(cnames).join(", anti-") + ")"
 			WorldData.Organizations[o].OffensiveClearance = true
 		elif WorldData.Organizations[o].Type == WorldData.OrgType.ARMTRADER:
 			WorldData.Organizations[o].IntelDescType = "illegal arms dealer"
@@ -124,6 +129,11 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 	elif quality < 50:
 		if WorldData.Organizations[o].Type == WorldData.OrgType.GENERALTERROR:
 			WorldData.Organizations[o].IntelDescType = "terrorist organization"
+			if WorldData.Organizations[o].TargetConsistency > 60 and len(WorldData.Organizations[o].TargetCountries) > 0:
+				var cnames = []
+				for v in WorldData.Organizations[o].TargetCountries:
+					cnames.append(WorldData.Countries[v].Adjective)
+				WorldData.Organizations[o].IntelDescType += " (anti-" + PoolStringArray(cnames).join(", anti-") + ")"
 			WorldData.Organizations[o].OffensiveClearance = true
 		elif WorldData.Organizations[o].Type == WorldData.OrgType.ARMTRADER:
 			WorldData.Organizations[o].IntelDescType = "illegal arms dealer"
@@ -147,6 +157,11 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 	elif quality < 70:
 		if WorldData.Organizations[o].Type == WorldData.OrgType.GENERALTERROR:
 			WorldData.Organizations[o].IntelDescType = "terrorist organization"
+			if WorldData.Organizations[o].TargetConsistency > 60 and len(WorldData.Organizations[o].TargetCountries) > 0:
+				var cnames = []
+				for v in WorldData.Organizations[o].TargetCountries:
+					cnames.append(WorldData.Countries[v].Adjective)
+				WorldData.Organizations[o].IntelDescType += " (anti-" + PoolStringArray(cnames).join(", anti-") + ")"
 			WorldData.Organizations[o].OffensiveClearance = true
 		elif WorldData.Organizations[o].Type == WorldData.OrgType.ARMTRADER:
 			WorldData.Organizations[o].IntelDescType = "illegal arms dealer"
@@ -170,6 +185,11 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 	else:
 		if WorldData.Organizations[o].Type == WorldData.OrgType.GENERALTERROR:
 			WorldData.Organizations[o].IntelDescType = "terrorist organization"
+			if WorldData.Organizations[o].TargetConsistency > 60 and len(WorldData.Organizations[o].TargetCountries) > 0:
+				var cnames = []
+				for v in WorldData.Organizations[o].TargetCountries:
+					cnames.append(WorldData.Countries[v].Adjective)
+				WorldData.Organizations[o].IntelDescType += " (anti-" + PoolStringArray(cnames).join(", anti-") + ")"
 			WorldData.Organizations[o].OffensiveClearance = true
 		elif WorldData.Organizations[o].Type == WorldData.OrgType.ARMTRADER:
 			WorldData.Organizations[o].IntelDescType = "illegal arms dealer"
@@ -364,7 +384,7 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 				discreteDesc += ", in addition officers tapped into intel gathered by this agency about " + PoolStringArray(orgNames).join(", ")
 	############################################################################
 	# organization-type-specific intels
-	elif WorldData.Organizations[o].Type == WorldData.OrgType.COMPANY or WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY or WorldData.Organizations[o].Type == WorldData.OrgType.INTEL:
+	elif WorldData.Organizations[o].Type == WorldData.OrgType.COMPANY or WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY or WorldData.Organizations[o].Type == WorldData.OrgType.INTEL or (GameLogic.TurnOnWMD == true and WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE):
 		var technologyWinCall = false
 		var techDesc = ""
 		var innerTechChange = 0
@@ -482,7 +502,7 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 				)
 				doesItEndWithCall = true
 		discreteDesc += techDesc
-	elif WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE:
+	elif GameLogic.TurnOnWMD == true and WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE:
 		# will call user only if clearance is off
 		# this is trick/shortcut to have one-time wmd notification
 		var technologyWinCall = false

@@ -1,14 +1,24 @@
 extends Node
 
 # testing module
-var maxSteps = 200
+var maxSteps = 1600
 var elapsedSteps = 0
 signal timeout
-const TIME_PERIOD = 0.5 # 1000ms
+const TIME_PERIOD = 0.1 # 1000ms
 var time = 0
 var availableButtons = []
 var availableItemLists = []
 var availableHSliders = []
+
+func FinishSummary():
+	print("Finished on " + str(GameLogic.DateDay) + "/" + str(GameLogic.DateMonth) + "/" + str(GameLogic.DateYear) + " (" + str(GameLogic.AllWeeks) + " weeks)")
+	print("Trust " + str(int(GameLogic.Trust)) + " | Use " + str(int(GameLogic.Use)) + " | Budget " + str(int(GameLogic.BudgetFull)) + " | Tech " + str(int(GameLogic.Technology)))
+	print(str(len(GameLogic.Operations)) + " operations | " + str(GameLogic.ActiveOfficers) + " officers")
+	var __my_file := File.new()
+	__my_file.open("res://Test.txt", __my_file.WRITE)
+	assert(__my_file.is_open())
+	__my_file.store_string(PoolStringArray(GameLogic.BureauEvents).join("\n") + "\n\n" + PoolStringArray(GameLogic.WorldEvents).join("\n"))
+	__my_file.close()
 
 func RecursiveClickSearch(current):
 	for x in current.get_children():
@@ -50,9 +60,7 @@ func TestStep():
 	# metacontrol
 	elapsedSteps += 1
 	if elapsedSteps >= maxSteps:
-		print("Finished on " + str(GameLogic.DateDay) + "/" + str(GameLogic.DateMonth) + "/" + str(GameLogic.DateYear) + " (" + str(GameLogic.AllWeeks) + " weeks)")
-		print("Trust " + str(int(GameLogic.Trust)) + " | Use " + str(int(GameLogic.Use)) + " | Budget " + str(int(GameLogic.BudgetFull)) + " | Tech " + str(int(GameLogic.Technology)))
-		print(str(len(GameLogic.Operations)) + " operations | " + str(GameLogic.ActiveOfficers) + " officers")
+		FinishSummary()
 		get_tree().quit()
 
 func _process(delta):

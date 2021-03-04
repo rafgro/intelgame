@@ -1,0 +1,309 @@
+[u][b]24/08[/b] New officer joined the bureau[/u]
+[b]17/08[/b] 5 officer(s) came back with improved knowledge about Israel
+[b]20/07[/b] Bureau started a new operation: Animal Farm
+[b]13/07[/b] Canticle: 5 officer(s) arrested and imprisoned for many years
+[b]06/07[/b] Canticle: 5 officer(s) departed to Germany
+[b]29/06[/b] Germany (Canticle): officers were almost caught and had to flee to Homeland
+[b]22/06[/b] Germany (Canticle): counterintelligence slowed down operation
+[b]15/06[/b] Germany (Canticle): counterintelligence slowed down operation
+[b]08/06[/b] Germany (Canticle): counterintelligence slowed down operation
+[b]01/06[/b] Germany (Canticle): counterintelligence slowed down operation
+[b]25/05[/b] Canticle: 4 officer(s) departed to Germany
+[b]25/05[/b] New officer joined the bureau
+[b]11/05[/b] Government designated a new operation: Canticle
+[b]27/04[/b] 5 officer(s) departed to Israel to develop new skills
+[b]30/03[/b] Bureau finished operation Dark Matter
+[b]30/03[/b] Belgium (Dark Matter): 5 officer(s) returned to Homeland
+[b]23/03[/b] Belgium (Dark Matter): operation continues
+[b]23/03[/b] New officer joined the bureau
+[b]16/03[/b] Belgium (Dark Matter): operation continues
+[b]09/03[/b] Belgium (Dark Matter): counterintelligence slowed down operation
+[b]02/03[/b] Belgium (Dark Matter): operation continues
+[b]23/02[/b] Belgium (Dark Matter): operation continues
+[b]16/02[/b] Dark Matter: 5 officer(s) departed to Belgium
+[b]16/02[/b] New officer joined the bureau and brought in some knowledge about Russia
+[b]09/02[/b] Bureau finished operation Clarissa
+[b]09/02[/b] China (Clarissa): 3 officer(s) returned to Homeland
+[b]02/02[/b] Bureau started a new operation: Dark Matter
+[b]02/02[/b] China (Clarissa): operation continues
+[b]26/01[/b] China (Clarissa): operation continues
+[b]19/01[/b] China (Clarissa): counterintelligence slowed down operation
+[b]12/01[/b] China (Clarissa): counterintelligence slowed down operation
+[b]12/01[/b] New officer joined the bureau
+[b]05/01[/b] Clarissa: 3 officer(s) departed to China
+[b]05/01[/b] New year budget increase: +€86k
+[b]22/12[/b] Sign of Four: 1 officer(s) returned to Homeland after being arrested
+[b]15/12[/b] Iraq (Sign of Four): operation continues
+[b]08/12[/b] Sign of Four: 1 officer(s) departed to Iraq
+[b]01/12[/b] Government designated a new operation: Sign of Four
+[b]01/12[/b] China (Clarissa): officers were almost caught and had to flee to Homeland
+[b]24/11[/b] Clarissa: 6 officer(s) departed to China
+[b]17/11[/b] China (Clarissa): officers were almost caught and had to flee to Homeland
+[b]17/11[/b] New officer joined the bureau and brought in some knowledge about Germany
+[b]10/11[/b] China (Clarissa): operation continues
+[b]03/11[/b] China (Clarissa): operation continues
+[b]27/10[/b] China (Clarissa): operation continues
+[b]20/10[/b] Clarissa: 5 officer(s) departed to China
+[b]20/10[/b] Bureau finished operation Frankenstein
+[b]20/10[/b] Government increased budget by €41k
+[b]13/10[/b] France (Frankenstein): operation continues
+[b]06/10[/b] France (Frankenstein): operation continues
+[b]29/09[/b] France (Frankenstein): operation continues
+[b]22/09[/b] France (Frankenstein): operation continues
+[b]15/09[/b] Frankenstein: 4 officer(s) began operation
+[b]08/09[/b] Bureau started a new operation: Clarissa
+[b]01/09[/b] France (Frankenstein): officers were almost caught and had to flee to Homeland
+[b]25/08[/b] Bureau called off operation Harsh Mistress
+[b]25/08[/b] France (Frankenstein): counterintelligence slowed down operation
+[b]18/08[/b] France (Frankenstein): operation continues
+[b]11/08[/b] France (Frankenstein): operation continues
+[b]11/08[/b] Bureau finished operation Bell Jar
+[b]11/08[/b] Iraq (Bell Jar): 2 officer(s) returned to Homeland
+[b]04/08[/b] France (Frankenstein): counterintelligence slowed down operation
+[b]04/08[/b] Iraq (Bell Jar): operation continues
+[b]28/07[/b] France (Frankenstein): counterintelligence slowed down operation
+[b]28/07[/b] Iraq (Bell Jar): counterintelligence slowed down operation
+[b]21/07[/b] Frankenstein: 3 officer(s) departed to France
+[b]21/07[/b] Iraq (Bell Jar): operation continues
+[b]14/07[/b] Iraq (Bell Jar): counterintelligence slowed down operation
+[b]07/07[/b] Bureau started a new operation: Harsh Mistress
+[b]07/07[/b] Iraq (Bell Jar): counterintelligence slowed down operation
+[b]07/07[/b] 1 officer(s) came back with improved knowledge about France
+[b]30/06[/b] Iraq (Bell Jar): counterintelligence slowed down operation
+[b]30/06[/b] New officer joined the bureau
+[b]23/06[/b] Government designated a new operation: Frankenstein
+[b]23/06[/b] Iraq (Bell Jar): operation continues
+[b]16/06[/b] Bell Jar: 2 officer(s) departed to Iraq
+[b]16/06[/b] Bureau finished operation Hyperion
+[b]09/06[/b] United States (Hyperion): operation continues
+[b]09/06[/b] Bureau finished operation Lord of the Flies
+[b]02/06[/b] Hyperion: 1 officer(s) began operation
+[b]02/06[/b] Afghanistan (Lord of the Flies): operation continues
+[b]26/05[/b] Bureau started a new operation: Hyperion
+[b]26/05[/b] Bureau started a new operation: Bell Jar
+[b]26/05[/b] Lord of the Flies: 2 officer(s) began operation
+[b]19/05[/b] 1 officer(s) departed to France to develop new skills
+[b]05/05[/b] Bureau started a new operation: Lord of the Flies
+[b]21/04[/b] Bureau finished operation Lolly Willowes
+[b]14/04[/b] China (Lolly Willowes): operation continues
+[b]14/04[/b] Bureau finished operation Beginning of Spring
+[b]07/04[/b] China (Lolly Willowes): operation continues
+[b]07/04[/b] Israel (Beginning of Spring): operation continues
+[b]31/03[/b] All the King’s Men: 3 officer(s) arrested and imprisoned for many years
+[b]31/03[/b] China (Lolly Willowes): operation continues
+[b]31/03[/b] Israel (Beginning of Spring): operation continues
+[b]24/03[/b] Bureau called off operation Mockingbird
+[b]24/03[/b] Beginning of Spring: 2 officer(s) began operation
+[b]24/03[/b] China (Lolly Willowes): operation continues
+[b]24/03[/b] Germany (All the King’s Men): counterintelligence slowed down operation
+[b]17/03[/b] Lolly Willowes: 2 officer(s) began operation
+[b]17/03[/b] All the King’s Men: 3 officer(s) departed to Germany
+[b]17/03[/b] Bureau finished operation Swim-Two-Birds
+[b]17/03[/b] Russia (Swim-Two-Birds): 4 officer(s) returned to Homeland
+[b]10/03[/b] Russia (Swim-Two-Birds): operation continues
+[b]10/03[/b] China (Lolly Willowes): officers were almost caught and had to flee to Homeland
+[b]03/03[/b] Bureau started a new operation: Mockingbird
+[b]03/03[/b] Lolly Willowes: 3 officer(s) departed to China
+[b]03/03[/b] Russia (Swim-Two-Birds): operation continues
+[b]24/02[/b] Swim-Two-Birds: 4 officer(s) departed to Russia
+[b]17/02[/b] Bureau started a new operation: Swim-Two-Birds
+[b]17/02[/b] Government designated a new operation: Lolly Willowes
+[b]03/02[/b] Israel (Beginning of Spring): officers were almost caught and had to flee to Homeland
+[b]27/01[/b] Israel (Beginning of Spring): operation continues
+[b]27/01[/b] Germany (All the King’s Men): covert travel did not succeed, officers were turned back at the border
+[b]20/01[/b] Israel (Beginning of Spring): counterintelligence slowed down operation
+[b]20/01[/b] Germany (All the King’s Men): counterintelligence slowed down operation
+[b]13/01[/b] Beginning of Spring: 6 officer(s) departed to Israel
+[b]13/01[/b] Germany (All the King’s Men): operation continues
+[b]06/01[/b] Germany (All the King’s Men): counterintelligence slowed down operation
+[b]06/01[/b] New year budget increase: +€43k
+[b]30/12[/b] All the King’s Men: 1 officer(s) departed to Germany
+[b]23/12[/b] Bureau started a new operation: Beginning of Spring
+[b]09/12[/b] Germany (All the King’s Men): officers were almost caught and had to flee to Homeland
+[b]02/12[/b] Germany (All the King’s Men): counterintelligence slowed down operation
+[b]25/11[/b] Germany (All the King’s Men): counterintelligence slowed down operation
+[b]18/11[/b] All the King’s Men: 1 officer(s) departed to Germany
+[b]04/11[/b] Bureau started a new operation: All the King’s Men
+[b]19/08[/b] Portnoy's Complaint: 1 officer(s) returned to Homeland after being arrested
+[b]12/08[/b] Portnoy's Complaint: 1 officer(s) departed to Afghanistan
+[b]22/07[/b] Bureau started a new operation: Portnoy's Complaint
+[b]22/07[/b] Bureau finished operation Adventures of Augie
+[b]22/07[/b] Afghanistan (Adventures of Augie): 1 officer(s) returned to Homeland
+[b]15/07[/b] Bureau called off operation Tristram Shandy
+[b]15/07[/b] Afghanistan (Adventures of Augie): operation continues
+[b]08/07[/b] Afghanistan (Adventures of Augie): operation continues
+[b]01/07[/b] Government designated a new operation: Tristram Shandy
+[b]01/07[/b] Afghanistan (Adventures of Augie): counterintelligence slowed down operation
+[b]24/06[/b] Afghanistan (Adventures of Augie): counterintelligence slowed down operation
+[b]17/06[/b] Afghanistan (Adventures of Augie): operation continues
+[b]10/06[/b] Adventures of Augie: 1 officer(s) departed to Afghanistan
+[b]10/06[/b] Bureau finished operation Good Soldier
+[b]10/06[/b] New officer joined the bureau
+[b]03/06[/b] Belgium (Good Soldier): operation continues
+[b]03/06[/b] 2 officer(s) came back after establishing station in United States
+[b]27/05[/b] Belgium (Good Soldier): operation continues
+[b]20/05[/b] Bureau started a new operation: Adventures of Augie
+[b]20/05[/b] Belgium (Good Soldier): operation continues
+[b]13/05[/b] Belgium (Good Soldier): operation continues
+[b]13/05[/b] Bureau finished operation Consider Phlebas
+[b]06/05[/b] Good Soldier: 2 officer(s) began operation
+[b]06/05[/b] Afghanistan (Consider Phlebas): operation continues
+[b]29/04[/b] Consider Phlebas: 2 officer(s) began operation
+[b]15/04[/b] Bureau started a new operation: Good Soldier
+[b]25/03[/b] New officer joined the bureau
+[b]11/03[/b] Bureau started a new operation: Consider Phlebas
+[b]11/03[/b] Bureau finished operation Leviathan
+[b]11/03[/b] China (Leviathan): 1 officer(s) returned to Homeland
+[b]04/03[/b] China (Leviathan): operation continues
+[b]25/02[/b] China (Leviathan): operation continues
+[b]18/02[/b] 2 officer(s) departed to United States to establish a new intelligence station
+[b]18/02[/b] Bureau finished operation Heat of the Day
+[b]18/02[/b] United Kingdom (Heat of the Day): 3 officer(s) returned to Homeland
+[b]18/02[/b] China (Leviathan): operation continues
+[b]11/02[/b] United Kingdom (Heat of the Day): operation continues
+[b]11/02[/b] China (Leviathan): operation continues
+[b]04/02[/b] United Kingdom (Heat of the Day): operation continues
+[b]04/02[/b] China (Leviathan): operation continues
+[b]28/01[/b] Leviathan: 1 officer(s) departed to China
+[b]28/01[/b] United Kingdom (Heat of the Day): counterintelligence slowed down operation
+[b]21/01[/b] United Kingdom (Heat of the Day): operation continues
+[b]21/01[/b] China (Leviathan): officers were almost caught and had to flee to Homeland
+[b]14/01[/b] Leviathan: 1 officer(s) departed to China
+[b]14/01[/b] United Kingdom (Heat of the Day): operation continues
+[b]07/01[/b] United Kingdom (Heat of the Day): operation continues
+[b]07/01[/b] New year budget increase: +€43k
+[b]31/12[/b] Heat of the Day: 3 officer(s) departed to United Kingdom
+[b]31/12[/b] Bureau called off operation Strange Land
+[b]31/12[/b] China (Leviathan): officers were almost caught and had to flee to Homeland
+[b]24/12[/b] Bureau started a new operation: Heat of the Day
+[b]24/12[/b] Leviathan: 4 officer(s) departed to China
+[b]24/12[/b] 4 officer(s) came back with improved knowledge about Russia
+[b]17/12[/b] Electric Sheep: 1 officer(s) returned to Homeland after being arrested
+[b]10/12[/b] United States (Electric Sheep): counterintelligence slowed down operation
+[b]03/12[/b] United States (Electric Sheep): counterintelligence slowed down operation
+[b]26/11[/b] Electric Sheep: 1 officer(s) departed to United States
+[b]19/11[/b] New officer joined the bureau and brought in some knowledge about Russia
+[b]22/10[/b] Bureau started a new operation: Electric Sheep
+[b]08/10[/b] Bureau did not prevent terrorist attack with 48 casualties on Homeland
+[b]03/09[/b] 4 officer(s) departed to Russia to develop new skills
+[b]03/09[/b] Israel (Strange Land): officers were almost caught and had to flee to Homeland
+[b]27/08[/b] Bureau started a new operation: Leviathan
+[b]27/08[/b] Strange Land: 4 officer(s) departed to Israel
+[b]06/08[/b] Bureau started a new operation: Strange Land
+[b]23/07[/b] 1 officer(s) came back with improved knowledge about United States
+[b]25/06[/b] Bureau called off operation Moby Dick
+[b]25/06[/b] Moby Dick: 3 officer(s) returned to Homeland
+[b]25/06[/b] United Kingdom (Moby Dick): operation continues
+[b]18/06[/b] Moby Dick: 3 officer(s) departed to United Kingdom
+[b]11/06[/b] United Kingdom (Moby Dick): officers were almost caught and had to flee to Homeland
+[b]04/06[/b] United Kingdom (Moby Dick): operation continues
+[b]28/05[/b] United Kingdom (Moby Dick): operation continues
+[b]21/05[/b] United Kingdom (Moby Dick): operation continues
+[b]14/05[/b] Moby Dick: 3 officer(s) departed to United Kingdom
+[b]14/05[/b] Bureau finished operation Engine of God
+[b]07/05[/b] 1 officer(s) departed to United States to develop new skills
+[b]07/05[/b] Turkey (Engine of God): operation continues
+[b]07/05[/b] New craft is available: rent house for observation
+[b]30/04[/b] Engine of God: 3 officer(s) began operation
+[b]23/04[/b] United Kingdom (Moby Dick): officers were almost caught and had to flee to Homeland
+[b]16/04[/b] United Kingdom (Moby Dick): operation continues
+[b]09/04[/b] Moby Dick: 5 officer(s) departed to United Kingdom
+[b]09/04[/b] Turkey (Engine of God): officers were almost caught and had to flee to Homeland
+[b]02/04[/b] Turkey (Engine of God): counterintelligence slowed down operation
+[b]26/03[/b] Bureau started a new operation: Moby Dick
+[b]26/03[/b] Turkey (Engine of God): counterintelligence slowed down operation
+[b]19/03[/b] Turkey (Engine of God): operation continues
+[b]12/03[/b] Turkey (Engine of God): operation continues
+[b]05/03[/b] Engine of God: 2 officer(s) departed to Turkey
+[b]19/02[/b] Bureau started a new operation: Engine of God
+[b]01/01[/b] The bureau has opened
+
+[u][b]24/08/2024[/b] War began between Belgium and Homeland[/u]
+[u][b]24/08/2024[/b] Homeland won critical battle with Belgium[/u]
+[b]17/08/2024[/b] War began between Belgium and Homeland
+[b]13/07/2024[/b] Minor terrorist incident in Afghanistan, local authorities do not know the perpetrator
+[b]06/07/2024[/b] Israel and Poland are on the brink of war
+[b]06/07/2024[/b] Belgium refused to meet with officials of United Kingdom
+[b]06/07/2024[/b] Elections in Poland: New government formed, achieving 42%
+[b]29/06/2024[/b] Significant technological breakthrough made by engineers in United Kingdom
+[b]29/06/2024[/b] Germany attributed destabilization of the region to China
+[b]22/06/2024[/b] Minor terrorist incident in Iraq, local authorities point to Montgomery as the perpetrator
+[b]08/06/2024[/b] Scientific innovation presented in China
+[b]08/06/2024[/b] Summit of Germany, Iraq, United Kingdom: governments could not reach consensus
+[b]04/05/2024[/b] Iraq refused to meet with officials of Germany
+[b]20/04/2024[/b] Terrorist attack in Israel, local authorities point to Real Crescens Force as the perpetrator
+[b]13/04/2024[/b] Minor terrorist incident in Germany, local authorities point to Peronel as the perpetrator
+[b]02/03/2024[/b] New suspected terrorist organization, Revolutionary Sidney Group, discovered in Afghanistan
+[b]02/03/2024[/b] Elections in Israel: New government formed, achieving 33%
+[b]23/02/2024[/b] Israel attributed destabilization of the region to Turkey
+[b]23/02/2024[/b] Elections in Russia: New government formed, achieving 45%
+[b]16/02/2024[/b] Minor terrorist incident in Ireland, Real Crescens Force claimed responsibility
+[b]16/02/2024[/b] Government resigned in Russia
+[b]05/01/2024[/b] Tensions rise between Turkey and Homeland
+[b]05/01/2024[/b] Homeland's officials visited United Kingdom
+[b]29/12/2023[/b] Elections in Homeland: New government formed, achieving 30%
+[b]20/10/2023[/b] New suspected arms dealer, Zeuspoly, discovered in Israel
+[b]06/10/2023[/b] New discovery reported by scientists in China
+[b]22/09/2023[/b] Terrorist attack in Ireland, local authorities do not know the perpetrator
+[b]08/09/2023[/b] New suspected arms dealer, Icecaproductions, discovered in Iraq
+[b]16/06/2023[/b] Minor terrorist incident in Ireland, local authorities do not know the perpetrator
+[b]02/06/2023[/b] Elections in France: New government formed, achieving 53%
+[b]02/06/2023[/b] Elections in Ireland: New government formed, achieving 49%
+[b]26/05/2023[/b] Germany and Homeland are on the brink of war
+[b]12/05/2023[/b] Elections in Afghanistan: Incumbent won, achieving 46%
+[b]21/04/2023[/b] Terrorist attack in France, local authorities do not know the perpetrator
+[b]14/04/2023[/b] New suspected terrorist organization, Bradford, discovered in Russia
+[b]10/03/2023[/b] Decrease of government stability in Ireland
+[b]27/01/2023[/b] New suspected arms dealer, Cliffoods, discovered in Ireland
+[b]20/01/2023[/b] New suspected terrorist organization, Proud Ryker, discovered in Germany
+[b]20/01/2023[/b] Summit of United Kingdom, Belgium, Homeland, Ireland: governments could not reach consensus
+[b]09/12/2022[/b] Summit of Russia, Poland, France, Israel, United Kingdom: governments could not reach consensus
+[b]04/11/2022[/b] Elections in United States: Incumbent won, achieving 46%
+[b]30/09/2022[/b] Homeland expelled some citizens of United States
+[b]23/09/2022[/b] New suspected terrorist organization, Leftist Adamu Group, discovered in Afghanistan
+[b]16/09/2022[/b] New discovery reported by scientists in United Kingdom
+[b]03/06/2022[/b] New suspected terrorist organization, Combat Manahem, discovered in United Kingdom
+[b]03/06/2022[/b] Summit of Turkey, Israel, United States, United Kingdom, France: governments could not reach consensus
+[b]20/05/2022[/b] Summit of United States, Belgium, United Kingdom, Turkey, Ireland, Iraq: governments could not reach consensus
+[b]13/05/2022[/b] Protests against government in Ireland
+[b]29/04/2022[/b] Summit of Ireland, Russia, Iraq, Afghanistan, Belgium, Germany: governments could not reach consensus
+[b]25/03/2022[/b] Summit of France, Ireland, Belgium, Afghanistan, Iraq, United Kingdom: governments could not reach consensus
+[b]25/02/2022[/b] New suspected terrorist organization, Leftist Marilyn Force, discovered in Turkey
+[b]11/02/2022[/b] Afghanistan expressed will to improve relations with United States
+[b]21/01/2022[/b] New discovery reported by scientists in United Kingdom
+[b]14/01/2022[/b] Decrease of government stability in France
+[b]31/12/2021[/b] Elections in Germany: Incumbent won, achieving 45%
+[b]29/10/2021[/b] Terrorist attack in France, local authorities do not know the perpetrator
+[b]29/10/2021[/b] Summit of China, Germany, Russia: governments could not reach consensus
+[b]29/10/2021[/b] Tensions rise between Israel and Germany
+[b]08/10/2021[/b] Terrorist attack in Israel
+[b]01/10/2021[/b] Elections in Belgium: New government formed, achieving 36%
+[b]23/07/2021[/b] Summit of Afghanistan, Israel, Poland, Belgium, Germany, United Kingdom: governments could not reach consensus
+[b]04/06/2021[/b] China attributed destabilization of the region to Ireland
+[b]28/05/2021[/b] New suspected arms dealer, Phantasm Intelligence, discovered in Ireland
+[b]07/05/2021[/b] Terrorist attack in France, Islamic State claimed responsibility
+[b]19/03/2021[/b] Tensions rise between France and Iraq
+[b]26/02/2021[/b] Minor terrorist incident in Poland, local authorities do not know the perpetrator
+[b]19/02/2021[/b] Elections in United Kingdom: New government formed, achieving 34%
+[b]12/02/2021[/b] New suspected terrorist organization, Real Crescens Force, discovered in Russia
+[b]12/02/2021[/b] Elections in Iraq: New government formed, achieving 31%
+[b]05/02/2021[/b] Tensions rise between Afghanistan and Turkey
+[b]05/02/2021[/b] Government resigned in Iraq
+[b]29/01/2021[/b] Protests against government in Iraq
+[b]31/12/2020[/b] Scientific innovation presented in United Kingdom
+[b]26/11/2020[/b] Terrorist attack in Germany, local authorities point to Peronel as the perpetrator
+[b]26/11/2020[/b] Decrease of government stability in Belgium
+[b]12/11/2020[/b] Summit of Homeland, Iraq, United States, Russia, Israel: governments could not reach consensus
+[b]17/09/2020[/b] China refused to meet with officials of Belgium
+[b]03/09/2020[/b] Tensions rise between Afghanistan and Poland
+[b]09/07/2020[/b] Elections in Poland: New government formed, achieving 47%
+[b]25/06/2020[/b] Tensions rise between Afghanistan and Turkey
+[b]11/06/2020[/b] Minor terrorist incident in Turkey, local authorities do not know the perpetrator
+[b]04/06/2020[/b] Afghanistan withdraw from a treaty with Israel
+[b]04/06/2020[/b] Decrease of government stability in Belgium
+[b]30/04/2020[/b] Summit of France, China, Belgium: governments could not reach consensus
+[b]23/04/2020[/b] New discovery reported by scientists in United Kingdom
+[b]26/03/2020[/b] Iraq expressed concern about changes in China
+[b]26/03/2020[/b] Ireland and Iraq are on the brink of war
+[b]05/03/2020[/b] Elections in Israel: New government formed, achieving 44%
+[b]12/02/2020[/b] New discovery reported by scientists in United Kingdom

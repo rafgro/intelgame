@@ -26,6 +26,7 @@ func _ready():
 	mapOfCountries.clear()
 	var descs = []
 	for c in range(1, len(WorldData.Countries)):
+		if WorldData.Countries[c].Size == 0: continue
 		var desc = WorldData.Countries[c].Name
 		if WorldData.DiplomaticRelations[0][c] < -30:
 			desc += " (hostile country)"

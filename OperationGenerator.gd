@@ -72,7 +72,7 @@ func NewOperation(source, againstOrg, whatType):
 			"AbroadProgress": 100,
 			"WeeksPassed": 0,
 			"ExpectedWeeks": GameLogic.random.randi_range(2,9),
-			"ExpectedQuality": GameLogic.random.randi_range(0,40),
+			"ExpectedQuality": GameLogic.random.randi_range(1,40),
 			"Started": "-//-",
 			"Result": "NOT STARTED",
 		}

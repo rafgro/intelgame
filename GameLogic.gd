@@ -58,7 +58,7 @@ var AttackTickerOp = {"Org":0,"Op":0}  # which organization and operation it is 
 var UltimatumTicker = 0  # weeks to actual lay off if user doesn't bring back trust
 var CurrentOpsAgainstHomeland = 0  # internal counter to not overwhelm user, simultaneous
 var YearlyOpsAgainstHomeland = 0  # internal counter as well, yearly ops, zeroed on 01/01
-var OpsLimit = 2  # max number of simulatenous ops against homeland, might be increased over time
+var OpsLimit = 1  # max number of terror ops against homeland, might be increased over time
 var UniversalClearance = false  # with high trust, bureau can target anything they want
 var InternalMoles = 0  # counter of officers that are passing info to other intel agencies
 var YearlyWars = 0  # internal counter, ensuring that there's no more than 1 war per year
@@ -75,6 +75,11 @@ var DistMolesearchMin = 12
 var NewOfficerCost = 80  # thousands needed to spend on a new officer
 var NewTechCost = 25  # thousands needed to spend on a new percent of technology
 var SkillMaintenanceCost = 0.5  # thousands needed to maintain skills for an officer
+# Options
+var TurnOnTerrorist = true
+var TurnOnWars = true
+var TurnOnWMD = true
+var TurnOnInfiltration = true
 
 func GiveDateWithYear():
 	var dateString = ""
@@ -678,6 +683,8 @@ func SetUpNewPriorities(completelyNew):
 		if PriorityWMD > 100: PriorityWMD = 100
 		if PriorityPublic < 1: PriorityPublic = 1
 		if PriorityPublic > 100: PriorityPublic = 100
+	if TurnOnTerrorist == false: PriorityTerrorism = 50
+	if TurnOnWMD == false: PriorityWMD = 50
 
 class MyCustomSorter:
 	static func sort_descending(a, b):
@@ -688,7 +695,9 @@ class MyCustomSorter:
 func ListPriorities(delimeter):
 	# why func? to provide nice semi-sorted list
 	# sorted priorities
-	var options = [[PriorityGovernments, "gathering intelligence on other governments (" + str(PriorityGovernments) + "%)"], [PriorityTerrorism, "war on terrorism (" + str(PriorityTerrorism) + "%)"], [PriorityTech, "technological and industrial espionage (" + str(PriorityTech) + "%)"], [PriorityWMD, "proliferation of weapons of mass destruction (" + str(PriorityWMD) + "%)"], [PriorityPublic, "public opinion (" + str(PriorityPublic) + "%)"]]
+	var options = [[PriorityGovernments, "gathering intelligence on other governments (" + str(PriorityGovernments) + "%)"], [PriorityTech, "technological and industrial espionage (" + str(PriorityTech) + "%)"], [PriorityPublic, "public opinion (" + str(PriorityPublic) + "%)"]]
+	if TurnOnTerrorist == true: options.append([PriorityTerrorism, "war on terrorism (" + str(PriorityTerrorism) + "%)"])
+	if TurnOnWMD == true: options.append([PriorityWMD, "proliferation of weapons of mass destruction (" + str(PriorityWMD) + "%)"])
 	options.sort_custom(MyCustomSorter, "sort_descending")
 	var toPool = []
 	for p in options: toPool.append(p[1])
@@ -737,7 +746,7 @@ func ImplementCallOff(i):
 		OfficersAbroad -= Operations[i].AbroadPlan.Officers
 		BudgetOngoingOperations -= Operations[i].AbroadPlan.Cost
 		if Operations[i].AbroadPlan.Remote == false:
-			AddEvent(Operations[i].Name + ": "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned to homeland")
+			AddEvent(Operations[i].Name + ": "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned to Homeland")
 	PursuedOperations -= 1
 	if Operations[i].Source == 1:
 		Trust = Trust*0.67  # huge loss of trust if calling off gov op
@@ -754,7 +763,7 @@ func ImplementOfficerRescue(adictionary):
 	# choice-based changes
 	# "engaging government will return officers, but significantly decrease government's trust"
 	if adictionary.Choice == 1:
-		AddEvent(Operations[i].Name + ": "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned to homeland after being arrested")
+		AddEvent(Operations[i].Name + ": "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned to Homeland after being arrested")
 		OfficersInHQ += Operations[i].AbroadPlan.Officers
 		StaffTrust *= 1.1
 		StaffSkill *= 1.01
@@ -769,7 +778,7 @@ func ImplementOfficerRescue(adictionary):
 		WorldData.DiplomaticRelations[Operations[i].Country][0] -= random.randi_range(5,15)
 	# "expelling will happen between intelligence services only, but these officers will never be allowed to enter this country again"
 	elif adictionary.Choice == 2:
-		AddEvent(Operations[i].Name + ": "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned to homeland after being arrested")
+		AddEvent(Operations[i].Name + ": "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned to Homeland after being arrested")
 		OfficersInHQ += Operations[i].AbroadPlan.Officers
 		StaffTrust *= 1.08
 		StaffSkill *= 1.01
@@ -784,7 +793,7 @@ func ImplementOfficerRescue(adictionary):
 		StaffExperience *= 0.8
 	# "exfiltration is a risky, covert rescue operation performed by the rest of the officers (" +str(GameLogic.OfficersInHQ) + " available), which returns officers intact in case of success but leads to both huge trust loss and expulsion in case of failure"
 	else:
-		AddEvent(Operations[i].Name + ": "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned to homeland after being arrested")
+		AddEvent(Operations[i].Name + ": "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned to Homeland after being arrested")
 		StaffTrust *= 1.09
 		StaffSkill *= 1.02
 		StaffExperience *= 1.02
@@ -933,39 +942,41 @@ func ImplementDirectionDevelopment(aDict):
 		if WorldData.Countries[aDict.Country].Station == 0 and quality > 8:
 			quality = random.randi_range(7,10)
 		if quality < 2: quality = 2
-	Directions.append(
-		{
-			"Active": true,
-			"Type": aDict.Choice,
-			"MonthlyCost": aDict.Cost * 4.0 / aDict.Length,
-			"Length": aDict.Length,
-			"LengthCounter": aDict.Length,
-			"Officers": aDict.Officers,
-			"Country": aDict.Country,
-			"LanguageEffect": languageEffect,
-			"CustomsEffect": customsEffect,
-			"CovertEffect": covertEffect,
-			"Quality": quality,
-		}
-	)
-	BudgetOngoingOperations += aDict.Cost * 4.0 / aDict.Length
-	OfficersInHQ -= aDict.Officers
-	OfficersAbroad += aDict.Officers
-	if aDict.Choice == 1:
-		AddEvent(str(aDict.Officers) + " officer(s) departed to training center")
-	elif aDict.Choice <= 3:
-		AddEvent(str(aDict.Officers) + " officer(s) departed to " + WorldData.Countries[aDict.Country].Name + " to develop new skills")
-	elif aDict.Choice == 4:
-		if WorldData.Countries[aDict.Country].Network > 0:
-			AddEvent(str(aDict.Officers) + " officer(s) departed to " + WorldData.Countries[aDict.Country].Name + " to expand Bureau's network")
-		else:
-			AddEvent(str(aDict.Officers) + " officer(s) departed to " + WorldData.Countries[aDict.Country].Name + " to establish a new network")
-	elif aDict.Choice == 5:
-		if WorldData.Countries[aDict.Country].Station > 0:
-			AddEvent(str(aDict.Officers) + " officer(s) departed to " + WorldData.Countries[aDict.Country].Name + " to expand intelligence station")
-		else:
-			AddEvent(str(aDict.Officers) + " officer(s) departed to " + WorldData.Countries[aDict.Country].Name + " to establish a new intelligence station")
-	if aDict.Country in PriorityTargetCountries: Trust += 1
+	# number of officers can always change in-between
+	if OfficersInHQ >= aDict.Officers and aDict.Officers != 0:
+		Directions.append(
+			{
+				"Active": true,
+				"Type": aDict.Choice,
+				"MonthlyCost": aDict.Cost * 4.0 / aDict.Length,
+				"Length": aDict.Length,
+				"LengthCounter": aDict.Length,
+				"Officers": aDict.Officers,
+				"Country": aDict.Country,
+				"LanguageEffect": languageEffect,
+				"CustomsEffect": customsEffect,
+				"CovertEffect": covertEffect,
+				"Quality": quality,
+			}
+		)
+		BudgetOngoingOperations += aDict.Cost * 4.0 / aDict.Length
+		OfficersInHQ -= aDict.Officers
+		OfficersAbroad += aDict.Officers
+		if aDict.Choice == 1:
+			AddEvent(str(aDict.Officers) + " officer(s) departed to training center")
+		elif aDict.Choice <= 3:
+			AddEvent(str(aDict.Officers) + " officer(s) departed to " + WorldData.Countries[aDict.Country].Name + " to develop new skills")
+		elif aDict.Choice == 4:
+			if WorldData.Countries[aDict.Country].Network > 0:
+				AddEvent(str(aDict.Officers) + " officer(s) departed to " + WorldData.Countries[aDict.Country].Name + " to expand Bureau's network")
+			else:
+				AddEvent(str(aDict.Officers) + " officer(s) departed to " + WorldData.Countries[aDict.Country].Name + " to establish a new network")
+		elif aDict.Choice == 5:
+			if WorldData.Countries[aDict.Country].Station > 0:
+				AddEvent(str(aDict.Officers) + " officer(s) departed to " + WorldData.Countries[aDict.Country].Name + " to expand intelligence station")
+			else:
+				AddEvent(str(aDict.Officers) + " officer(s) departed to " + WorldData.Countries[aDict.Country].Name + " to establish a new intelligence station")
+		if aDict.Country in PriorityTargetCountries: Trust += 1
 
 func ImplementSourceTermination(aDict):
 	# {"Org", "Source", "InvestigationDetails"}
@@ -1015,6 +1026,7 @@ func ImplementMoleTermination(aDict):
 	)
 
 func FinalQuit(anyArgument):
+	Testmodule.FinishSummary()
 	get_tree().quit()
 
 func EmptyFunc(anyArgument):

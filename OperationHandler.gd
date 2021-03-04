@@ -115,8 +115,8 @@ func ProgressOperations():
 				# adjusting number of officers
 				var proxyMaxOfficers = maxOfficers
 				if (proxyMaxOfficers-usedOfficers) > 5:
-					proxyMaxOfficers = usedOfficers + GameLogic.random.randi_range(2,5)
-				usedOfficers = GameLogic.random.randi_range(usedOfficers, maxOfficers)
+					proxyMaxOfficers = usedOfficers + GameLogic.random.randi_range(1,5)
+				usedOfficers = GameLogic.random.randi_range(usedOfficers, proxyMaxOfficers)
 				# remote/nonremote
 				var ifAllRemote = true
 				for m in theMethods:
@@ -345,19 +345,19 @@ func ProgressOperations():
 			if GameLogic.random.randi_range(0, 105) > GameLogic.Operations[i].AbroadPlan.Risk or GameLogic.Operations[i].AbroadPlan.Remote == true:
 				GameLogic.Operations[i].AbroadProgress -= GameLogic.Operations[i].AbroadRateOfProgress
 				if GameLogic.Operations[i].AbroadProgress > 0:  # check to avoid doubling events
-					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": operation continues")
+					GameLogic.AddEvent(WorldData.Countries[GameLogic.Operations[i].Country].Name + " (" + GameLogic.Operations[i].Name + "): operation continues")
 			# second chance with help of a network
 			elif (WorldData.Countries[GameLogic.Operations[i].Country].Network - WorldData.Countries[GameLogic.Operations[i].Country].NetworkBlowup) > 0 and GameLogic.random.randi_range(0,GameLogic.Operations[i].AbroadPlan.Risk*2) < (WorldData.Countries[GameLogic.Operations[i].Country].Network - WorldData.Countries[GameLogic.Operations[i].Country].NetworkBlowup):
 				GameLogic.Operations[i].AbroadProgress -= GameLogic.Operations[i].AbroadRateOfProgress
 				if GameLogic.Operations[i].AbroadProgress > 0:  # check to avoid doubling events
-					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": operation continues with support of local agent network")
+					GameLogic.AddEvent(WorldData.Countries[GameLogic.Operations[i].Country].Name + " (" + GameLogic.Operations[i].Name + "): operation continues with support of local agent network")
 			else:
 				var which = GameLogic.Operations[i].Target
 				# many shades of _something went wrong_
 				var whatHappened = GameLogic.random.randi_range(0, 100)
 				# first week - travel problems
 				if GameLogic.Operations[i].AbroadProgress == GameLogic.Operations[i].AbroadPlan.Length and GameLogic.Operations[i].AbroadPlan.Covert == true and whatHappened < WorldData.Countries[GameLogic.Operations[i].Country].CovertTravel:
-					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": covert travel did not succeed, officers were turned back at the border")
+					GameLogic.AddEvent(WorldData.Countries[GameLogic.Operations[i].Country].Name + " (" + GameLogic.Operations[i].Name + "): covert travel did not succeed, officers were turned back at the border")
 					# internal debriefing
 					GameLogic.Operations[i].Stage = OperationGenerator.Stage.PLANNING_OPERATION
 					GameLogic.OfficersInHQ += GameLogic.Operations[i].AbroadPlan.Officers
@@ -429,7 +429,7 @@ func ProgressOperations():
 						GameLogic.Trust *= (100-GameLogic.PriorityPublic)*0.01
 						# diplomatic event
 						var ifDipl = ""
-						if (WorldData.Organizations[which].Type == WorldData.OrgType.GOVERNMENT or WorldData.Organizations[which].Type == WorldData.OrgType.INTEL or WorldData.Organizations[which].Type == WorldData.OrgType.UNIVERSITY or WorldData.Organizations[which].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE):
+						if (WorldData.Organizations[which].Type == WorldData.OrgType.GOVERNMENT or WorldData.Organizations[which].Type == WorldData.OrgType.INTEL or WorldData.Organizations[which].Type == WorldData.OrgType.UNIVERSITY or WorldData.Organizations[which].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE) and WorldData.Countries[GameLogic.Operations[i].Country].InStateOfWar == false:
 							ifDipl = " In addition, diplomatic relations between Homeland and " + WorldData.Countries[GameLogic.Operations[i].Country].Name + " suffered due to evident attack on a national asset."
 							WorldData.DiplomaticRelations[0][GameLogic.Operations[i].Country] -= GameLogic.random.randi_range(10,30)
 							WorldData.DiplomaticRelations[GameLogic.Operations[i].Country][0] -= GameLogic.random.randi_range(10,30)
@@ -444,7 +444,7 @@ func ProgressOperations():
 								"Content": "Death of " + str(GameLogic.Operations[i].AbroadPlan.Officers) + " Officers in Operation " + str(GameLogic.Operations[i].Name) + "\n\nInvestigation team concluded that the operation failed due to:\n\n" + PoolStringArray(contentReasons).join("\n"),
 							}
 						)
-						GameLogic.AddEvent(GameLogic.Operations[i].Name + ": " + str(GameLogic.Operations[i].AbroadPlan.Officers) + " officers were caught and killed")
+						GameLogic.AddEvent(GameLogic.Operations[i].Name + " (" + WorldData.Countries[GameLogic.Operations[i].Country].Name + "): " + str(GameLogic.Operations[i].AbroadPlan.Officers) + " officers were caught and killed")
 						CallManager.CallQueue.append(
 							{
 								"Header": "Important Information",
@@ -519,7 +519,7 @@ func ProgressOperations():
 							GameLogic.Trust -= GameLogic.random.randi_range(1,10)
 				# base p=25/100: escape
 				elif whatHappened <= 35:
-					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": officers were almost caught and had to flee to homeland")
+					GameLogic.AddEvent(WorldData.Countries[GameLogic.Operations[i].Country].Name + " (" + GameLogic.Operations[i].Name + "): officers were almost caught and had to flee to Homeland")
 					# internal debriefing
 					GameLogic.Operations[i].Stage = OperationGenerator.Stage.PLANNING_OPERATION
 					GameLogic.OfficersInHQ += GameLogic.Operations[i].AbroadPlan.Officers
@@ -537,7 +537,7 @@ func ProgressOperations():
 						GameLogic.Trust -= GameLogic.PriorityPublic*0.05
 				# base p=65/100: slowdown
 				else:
-					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": counterintelligence slowed down operation")
+					GameLogic.AddEvent(WorldData.Countries[GameLogic.Operations[i].Country].Name + " (" + GameLogic.Operations[i].Name + "): counterintelligence slowed down operation")
 					GameLogic.StaffSkill = GameLogic.StaffSkill*1.01
 					GameLogic.StaffExperience = GameLogic.StaffExperience*1.02
 			####################################################################
@@ -630,7 +630,7 @@ func ProgressOperations():
 					content = "Government-designated operation was finished. Homeland " + govFeedbackDesc
 				# debriefing user
 				if GameLogic.Operations[i].AbroadPlan.Remote == false:
-					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": "+str(GameLogic.Operations[i].AbroadPlan.Officers)+" officer(s) returned to homeland")
+					GameLogic.AddEvent(WorldData.Countries[GameLogic.Operations[i].Country].Name + " (" + GameLogic.Operations[i].Name + "): "+str(GameLogic.Operations[i].AbroadPlan.Officers)+" officer(s) returned to Homeland")
 				GameLogic.AddEvent("Bureau finished operation "+GameLogic.Operations[i].Name)
 				CallManager.CallQueue.append(
 					{
@@ -729,7 +729,7 @@ func ProgressOperations():
 						if WorldData.Organizations[whichO].Type == WorldData.OrgType.COMPANY or WorldData.Organizations[whichO].Type == WorldData.OrgType.UNIVERSITY:
 							if GameLogic.Operations[i].AbroadPlan.Quality >= 40:
 								if WorldData.Organizations[whichO].Technology >= 60:
-									GameLogic.Trust += GameLogic.random.randi_range(4,8) * (GameLogic.PriorityTechnology*0.01)
+									GameLogic.Trust += GameLogic.random.randi_range(4,8) * (GameLogic.PriorityTech*0.01)
 						elif WorldData.Organizations[whichO].Type == WorldData.OrgType.GENERALTERROR:
 							GameLogic.Trust += GameLogic.random.randi_range(1,5) * (GameLogic.PriorityTerrorism*0.01)
 						elif WorldData.Organizations[whichO].Type == WorldData.OrgType.GOVERNMENT:
@@ -772,9 +772,9 @@ func ProgressOperations():
 					content = "Operation has been finished. " + govFeedbackDesc
 				# debriefing user
 				if sourceLevel != 0:
-					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": bureau acquired a new source")
+					GameLogic.AddEvent(WorldData.Countries[GameLogic.Operations[i].Country].Name + " (" + GameLogic.Operations[i].Name + "): bureau acquired a new source")
 				if GameLogic.Operations[i].AbroadPlan.Remote == false:
-					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": "+str(GameLogic.Operations[i].AbroadPlan.Officers)+" officer(s) returned to homeland")
+					GameLogic.AddEvent(WorldData.Countries[GameLogic.Operations[i].Country].Name + " (" + GameLogic.Operations[i].Name + "): "+str(GameLogic.Operations[i].AbroadPlan.Officers)+" officer(s) returned to Homeland")
 				GameLogic.AddEvent("Bureau finished operation "+GameLogic.Operations[i].Name)
 				CallManager.CallQueue.append(
 					{
@@ -927,6 +927,7 @@ func ProgressOperations():
 						inflictedDamage = "As a result, the organization has been completely eliminated. "
 						WorldData.Organizations[whichOrg].Active = false
 						WorldData.Countries[0].SoftPower += GameLogic.random.randi_range(2,6)
+						GameLogic.AddEvent("Bureau eliminated " + WorldData.Organizations[whichOrg].Name)
 					else:
 						if destroyedOps > 0:
 							inflictedDamage = "As a result, danger of some of the attacks was eliminated. "
@@ -1033,9 +1034,9 @@ func ProgressOperations():
 					content = "Operation has been finished. " + govFeedbackDesc + attributionDesc
 				# debriefing user
 				if success == true:
-					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": bureau inflicted damage on the target")
+					GameLogic.AddEvent(WorldData.Countries[GameLogic.Operations[i].Country].Name + " (" + GameLogic.Operations[i].Name + "): bureau inflicted damage on the target")
 				if GameLogic.Operations[i].AbroadPlan.Remote == false:
-					GameLogic.AddEvent(GameLogic.Operations[i].Name + ": "+str(GameLogic.Operations[i].AbroadPlan.Officers)+" officer(s) returned to homeland")
+					GameLogic.AddEvent(WorldData.Countries[GameLogic.Operations[i].Country].Name + " (" + GameLogic.Operations[i].Name + "): "+str(GameLogic.Operations[i].AbroadPlan.Officers)+" officer(s) returned to Homeland")
 				GameLogic.AddEvent("Bureau finished operation "+GameLogic.Operations[i].Name)
 				CallManager.CallQueue.append(
 					{
