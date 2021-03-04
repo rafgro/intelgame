@@ -73,9 +73,10 @@ func Execute(past):
 		WorldData.Wars[v].WeeksPassed += 1
 		# after first week of external war, officers should return
 		if WorldData.Wars[v].WeeksPassed == 1 and c != 0 and c2 != 0 and past == null:
-			GameLogic.OfficersInHQ = GameLogic.OfficersAbroad
-			GameLogic.OfficersAbroad = 0
-			GameLogic.AddEvent(str(GameLogic.OfficersInHQ) + " officers returned to Homeland")
+			if GameLogic.OfficersAbroad > 0:
+				GameLogic.OfficersInHQ = GameLogic.OfficersAbroad
+				GameLogic.OfficersAbroad = 0
+				GameLogic.AddEvent(str(GameLogic.OfficersInHQ) + " officers returned to Homeland")
 		# the usual ordeal
 		var communicated = false  # to a void two world events in a week
 		var warFinished = false

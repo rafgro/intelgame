@@ -328,7 +328,15 @@ margin_right = 660.0
 margin_bottom = 1410.0
 size_flags_horizontal = 3
 
+[node name="MainMeny" type="Button" parent="C/M/R/Buttons3"]
+margin_right = 210.0
+margin_bottom = 120.0
+rect_min_size = Vector2( 210, 120 )
+custom_fonts/font = ExtResource( 2 )
+text = "Main Menu"
+
 [node name="Label" type="Label" parent="C/M/R/Buttons3"]
+margin_left = 214.0
 margin_top = 53.0
 margin_right = 446.0
 margin_bottom = 67.0

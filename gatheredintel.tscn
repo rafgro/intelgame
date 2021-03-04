@@ -129,6 +129,7 @@ __meta__ = {
 }
 
 [node name="Type" type="Tabs" parent="C/M/R/Tabs"]
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
@@ -157,6 +158,7 @@ __meta__ = {
 }
 
 [node name="Countries" type="Tabs" parent="C/M/R/Tabs"]
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0

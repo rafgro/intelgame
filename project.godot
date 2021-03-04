@@ -37,6 +37,7 @@ OperationGenerator="*res://OperationGenerator.gd"
 WorldGenerator="*res://WorldGenerator.gd"
 WorldIntel="*res://WorldIntel.gd"
 WorldNextWeek="*res://WorldNextWeek.gd"
+Testmodule="*res://testmodule.gd"
 
 [display]
 
