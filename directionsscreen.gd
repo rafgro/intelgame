@@ -28,6 +28,7 @@ func _on_Tabs_tab_changed(tab):
 	lastSelectedCategory = tab
 
 func _on_List_item_selected(index):
+	if index >= len(mapOfCountries[lastSelectedCategory]): return false
 	lastSelectedCountry = mapOfCountries[lastSelectedCategory][index]
 	var c = lastSelectedCountry  # shortcut for readability
 	var desc = "[b]" + WorldData.Countries[c].Name + "[/b]\npopulation of " + str(int(WorldData.Countries[c].Size)) + " millions | "

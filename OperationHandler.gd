@@ -403,7 +403,7 @@ func ProgressOperations():
 						contentReasons.append("- compromised agents in local network (they were identified and removed)")
 						WorldData.Countries[GameLogic.Operations[i].Country].NetworkBlowup = 0
 					if WorldData.Countries[GameLogic.Operations[i].Country].IntelFriendliness < 30:
-						contentReasons.append("- difficult theater of operation (" + GameLogic.Operations[i].Country.Name + ")")
+						contentReasons.append("- difficult theater of operation (" + WorldData.Countries[GameLogic.Operations[i].Country].Name + ")")
 					if WorldData.DiplomaticRelations[0][GameLogic.Operations[i].Country] < -30:
 						contentReasons.append("- hostile relations between Homeland and " + WorldData.Countries[GameLogic.Operations[i].Country].Name)
 					if GameLogic.Operations[i].AbroadPlan.Covert == true:

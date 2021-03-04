@@ -1,41 +1,58 @@
 extends Node
 
 # testing module
-var maxSteps = 3
+var maxSteps = 200
 var elapsedSteps = 0
-
 signal timeout
-const TIME_PERIOD = 3.0 # 1000ms
+const TIME_PERIOD = 0.5 # 1000ms
 var time = 0
 var availableButtons = []
-var availableTabChanges = []
 var availableItemLists = []
+var availableHSliders = []
 
 func RecursiveClickSearch(current):
 	for x in current.get_children():
 		if x is Button:
 			if x.disabled == false:
 				availableButtons.append(x)
-		#elif x is TabContainer:
-		#	availableTabChanges.append(x)
-		#	RecursiveClickSearch(x)
 		elif x is ItemList:
 			availableItemLists.append(x)
+		elif x is HSlider:
+			availableHSliders.append(x)
 		else: RecursiveClickSearch(x)
 
 func TestStep():
-	print("Second!")
+	#print("step")
 	# traversing the tree to find all the buttons
 	availableButtons.clear()
+	availableItemLists.clear()
+	availableHSliders.clear()
 	RecursiveClickSearch(get_tree().get_current_scene())
-	if len(availableItemLists) > 0:
+	# choosing action
+	if len(availableItemLists) > 0 and GameLogic.random.randi_range(1,4) <= 3:
 		var which = GameLogic.random.randi_range(0, len(availableItemLists)-1)
+		if availableItemLists[-1].get_item_count() > 0: which = -1  # to always choose some org
 		var maxItems = availableItemLists[which].get_item_count()
 		if maxItems > 0:
-			availableItemLists[which].emit_signal("item_selected", GameLogic.random.randi_range(0, maxItems - 1))
+			var chosen = GameLogic.random.randi_range(0, maxItems - 1)
+			availableItemLists[which].emit_signal("item_selected", chosen)
+	elif len(availableHSliders) > 0 and GameLogic.random.randi_range(1,3) == 2:
+		availableHSliders[GameLogic.random.randi_range(0,2)].emit_signal("value_changed", GameLogic.random.randi_range(0,100)*1.0)
+	else:
+		var which = -1  # last button, usually return or next week, more probable
+		if len(availableItemLists) == 4 and len(availableButtons) > 1:  # gather intel screen
+			which = GameLogic.random.randi_range(0, len(availableButtons)-2) # any button except return
+		elif len(availableItemLists) > 0:  # always random to stimulate actions
+			which = GameLogic.random.randi_range(0, len(availableButtons)-1)
+		elif GameLogic.random.randi_range(1,10) <= 6:
+			which = GameLogic.random.randi_range(0, len(availableButtons)-1)
+		availableButtons[which].emit_signal("pressed")
 	# metacontrol
 	elapsedSteps += 1
 	if elapsedSteps >= maxSteps:
+		print("Finished on " + str(GameLogic.DateDay) + "/" + str(GameLogic.DateMonth) + "/" + str(GameLogic.DateYear) + " (" + str(GameLogic.AllWeeks) + " weeks)")
+		print("Trust " + str(int(GameLogic.Trust)) + " | Use " + str(int(GameLogic.Use)) + " | Budget " + str(int(GameLogic.BudgetFull)) + " | Tech " + str(int(GameLogic.Technology)))
+		print(str(len(GameLogic.Operations)) + " operations | " + str(GameLogic.ActiveOfficers) + " officers")
 		get_tree().quit()
 
 func _process(delta):
