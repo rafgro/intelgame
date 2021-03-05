@@ -29,38 +29,57 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="M" type="MarginContainer" parent="C"]
+[node name="V" type="VBoxContainer" parent="C"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="ColorRect" type="ColorRect" parent="C/V"]
+margin_right = 720.0
+margin_bottom = 150.0
+rect_min_size = Vector2( 0, 150 )
+size_flags_horizontal = 3
+color = Color( 0.105882, 0.105882, 0.12549, 1 )
+
+[node name="M" type="MarginContainer" parent="C/V"]
+margin_top = 154.0
+margin_right = 720.0
+margin_bottom = 1276.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
 custom_constants/margin_right = 30
-custom_constants/margin_top = 120
+custom_constants/margin_top = 50
 custom_constants/margin_left = 30
-custom_constants/margin_bottom = 250
+custom_constants/margin_bottom = 50
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="R" type="VBoxContainer" parent="C/M"]
+[node name="R" type="VBoxContainer" parent="C/V/M"]
 margin_left = 30.0
-margin_top = 120.0
+margin_top = 50.0
 margin_right = 690.0
-margin_bottom = 1230.0
+margin_bottom = 1072.0
 rect_min_size = Vector2( 0, 80 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="CHeader" type="HBoxContainer" parent="C/M/R"]
+[node name="CHeader" type="HBoxContainer" parent="C/V/M/R"]
 margin_right = 660.0
 margin_bottom = 40.0
 size_flags_horizontal = 3
 
-[node name="R" type="CenterContainer" parent="C/M/R/CHeader"]
+[node name="R" type="CenterContainer" parent="C/V/M/R/CHeader"]
 margin_right = 660.0
 margin_bottom = 40.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="D" type="HBoxContainer" parent="C/M/R/CHeader/R"]
+[node name="D" type="HBoxContainer" parent="C/V/M/R/CHeader/R"]
 margin_left = 212.0
 margin_right = 448.0
 margin_bottom = 40.0
@@ -68,13 +87,13 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_constants/separation = 10
 
-[node name="TextureRect" type="TextureRect" parent="C/M/R/CHeader/R/D"]
+[node name="TextureRect" type="TextureRect" parent="C/V/M/R/CHeader/R/D"]
 margin_right = 18.0
 margin_bottom = 40.0
 rect_min_size = Vector2( 0, 40 )
 texture = ExtResource( 2 )
 
-[node name="Label" type="Label" parent="C/M/R/CHeader/R/D"]
+[node name="Label" type="Label" parent="C/V/M/R/CHeader/R/D"]
 margin_left = 28.0
 margin_top = 3.0
 margin_right = 236.0
@@ -85,7 +104,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Empty" type="Label" parent="C/M/R"]
+[node name="Empty" type="Label" parent="C/V/M/R"]
 margin_top = 44.0
 margin_right = 660.0
 margin_bottom = 84.0
@@ -93,12 +112,12 @@ rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 
-[node name="T" type="HBoxContainer" parent="C/M/R"]
+[node name="T" type="HBoxContainer" parent="C/V/M/R"]
 margin_top = 88.0
 margin_right = 660.0
 margin_bottom = 128.0
 
-[node name="Level" type="Label" parent="C/M/R/T"]
+[node name="Level" type="Label" parent="C/V/M/R/T"]
 margin_right = 328.0
 margin_bottom = 40.0
 rect_min_size = Vector2( 0, 40 )
@@ -106,7 +125,7 @@ size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 text = "Level: ."
 
-[node name="Operation" type="Label" parent="C/M/R/T"]
+[node name="Operation" type="Label" parent="C/V/M/R/T"]
 margin_left = 332.0
 margin_right = 660.0
 margin_bottom = 40.0
@@ -116,7 +135,7 @@ custom_fonts/font = ExtResource( 1 )
 text = "Operation ."
 align = 2
 
-[node name="Empty2" type="Label" parent="C/M/R"]
+[node name="Empty2" type="Label" parent="C/V/M/R"]
 margin_top = 132.0
 margin_right = 660.0
 margin_bottom = 172.0
@@ -124,10 +143,10 @@ rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 
-[node name="Content" type="RichTextLabel" parent="C/M/R"]
+[node name="Content" type="RichTextLabel" parent="C/V/M/R"]
 margin_top = 176.0
 margin_right = 660.0
-margin_bottom = 654.0
+margin_bottom = 566.0
 rect_min_size = Vector2( 0, 100 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -135,29 +154,29 @@ custom_fonts/bold_font = SubResource( 1 )
 custom_fonts/normal_font = ExtResource( 1 )
 bbcode_enabled = true
 
-[node name="Empty5" type="Label" parent="C/M/R"]
-margin_top = 658.0
+[node name="Empty5" type="Label" parent="C/V/M/R"]
+margin_top = 570.0
 margin_right = 660.0
-margin_bottom = 698.0
+margin_bottom = 610.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 
-[node name="CButtons" type="HBoxContainer" parent="C/M/R"]
-margin_top = 702.0
+[node name="CButtons" type="HBoxContainer" parent="C/V/M/R"]
+margin_top = 614.0
 margin_right = 660.0
-margin_bottom = 882.0
+margin_bottom = 794.0
 size_flags_horizontal = 3
 custom_constants/separation = 50
 
-[node name="Decision1" type="Button" parent="C/M/R/CButtons"]
+[node name="Decision1" type="Button" parent="C/V/M/R/CButtons"]
 margin_right = 305.0
 margin_bottom = 180.0
 rect_min_size = Vector2( 210, 180 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 
-[node name="C" type="CenterContainer" parent="C/M/R/CButtons/Decision1"]
+[node name="C" type="CenterContainer" parent="C/V/M/R/CButtons/Decision1"]
 anchor_top = -0.00555556
 anchor_right = 1.00328
 anchor_bottom = 0.994445
@@ -169,7 +188,7 @@ __meta__ = {
 "_edit_use_anchors_": true
 }
 
-[node name="Label" type="Label" parent="C/M/R/CButtons/Decision1/C"]
+[node name="Label" type="Label" parent="C/V/M/R/CButtons/Decision1/C"]
 margin_left = 123.0
 margin_top = 54.0
 margin_right = 183.0
@@ -185,7 +204,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Decision2" type="Button" parent="C/M/R/CButtons"]
+[node name="Decision2" type="Button" parent="C/V/M/R/CButtons"]
 margin_left = 355.0
 margin_right = 660.0
 margin_bottom = 180.0
@@ -193,7 +212,7 @@ rect_min_size = Vector2( 210, 180 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 
-[node name="C" type="CenterContainer" parent="C/M/R/CButtons/Decision2"]
+[node name="C" type="CenterContainer" parent="C/V/M/R/CButtons/Decision2"]
 anchor_right = 0.990164
 anchor_bottom = 1.0
 rect_min_size = Vector2( 200, 180 )
@@ -204,7 +223,7 @@ __meta__ = {
 "_edit_use_anchors_": true
 }
 
-[node name="Label" type="Label" parent="C/M/R/CButtons/Decision2/C"]
+[node name="Label" type="Label" parent="C/V/M/R/CButtons/Decision2/C"]
 margin_left = 121.0
 margin_top = 54.0
 margin_right = 181.0
@@ -220,29 +239,29 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Empty6" type="Label" parent="C/M/R"]
-margin_top = 886.0
+[node name="Empty6" type="Label" parent="C/V/M/R"]
+margin_top = 798.0
 margin_right = 660.0
-margin_bottom = 926.0
+margin_bottom = 838.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 
-[node name="CButtons2" type="HBoxContainer" parent="C/M/R"]
-margin_top = 930.0
+[node name="CButtons2" type="HBoxContainer" parent="C/V/M/R"]
+margin_top = 842.0
 margin_right = 660.0
-margin_bottom = 1110.0
+margin_bottom = 1022.0
 size_flags_horizontal = 3
 custom_constants/separation = 50
 
-[node name="Decision3" type="Button" parent="C/M/R/CButtons2"]
+[node name="Decision3" type="Button" parent="C/V/M/R/CButtons2"]
 margin_right = 305.0
 margin_bottom = 180.0
 rect_min_size = Vector2( 210, 180 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 
-[node name="C" type="CenterContainer" parent="C/M/R/CButtons2/Decision3"]
+[node name="C" type="CenterContainer" parent="C/V/M/R/CButtons2/Decision3"]
 anchor_right = 0.990164
 anchor_bottom = 1.0
 rect_min_size = Vector2( 200, 180 )
@@ -253,7 +272,7 @@ __meta__ = {
 "_edit_use_anchors_": true
 }
 
-[node name="Label" type="Label" parent="C/M/R/CButtons2/Decision3/C"]
+[node name="Label" type="Label" parent="C/V/M/R/CButtons2/Decision3/C"]
 margin_left = 121.0
 margin_top = 54.0
 margin_right = 181.0
@@ -269,7 +288,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Decision4" type="Button" parent="C/M/R/CButtons2"]
+[node name="Decision4" type="Button" parent="C/V/M/R/CButtons2"]
 margin_left = 355.0
 margin_right = 660.0
 margin_bottom = 180.0
@@ -277,7 +296,7 @@ rect_min_size = Vector2( 210, 180 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 
-[node name="C" type="CenterContainer" parent="C/M/R/CButtons2/Decision4"]
+[node name="C" type="CenterContainer" parent="C/V/M/R/CButtons2/Decision4"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 rect_min_size = Vector2( 200, 180 )
@@ -288,7 +307,7 @@ __meta__ = {
 "_edit_use_anchors_": true
 }
 
-[node name="Label" type="Label" parent="C/M/R/CButtons2/Decision4/C"]
+[node name="Label" type="Label" parent="C/V/M/R/CButtons2/Decision4/C"]
 margin_left = 122.0
 margin_top = 54.0
 margin_right = 182.0
@@ -303,7 +322,15 @@ align = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
-[connection signal="pressed" from="C/M/R/CButtons/Decision1" to="." method="_on_Decision1_pressed"]
-[connection signal="pressed" from="C/M/R/CButtons/Decision2" to="." method="_on_Decision2_pressed"]
-[connection signal="pressed" from="C/M/R/CButtons2/Decision3" to="." method="_on_Decision3_pressed"]
-[connection signal="pressed" from="C/M/R/CButtons2/Decision4" to="." method="_on_Decision4_pressed"]
+
+[node name="ColorRect2" type="ColorRect" parent="C/V"]
+margin_top = 1280.0
+margin_right = 720.0
+margin_bottom = 1480.0
+rect_min_size = Vector2( 0, 200 )
+size_flags_horizontal = 3
+color = Color( 0.105882, 0.105882, 0.12549, 1 )
+[connection signal="pressed" from="C/V/M/R/CButtons/Decision1" to="." method="_on_Decision1_pressed"]
+[connection signal="pressed" from="C/V/M/R/CButtons/Decision2" to="." method="_on_Decision2_pressed"]
+[connection signal="pressed" from="C/V/M/R/CButtons2/Decision3" to="." method="_on_Decision3_pressed"]
+[connection signal="pressed" from="C/V/M/R/CButtons2/Decision4" to="." method="_on_Decision4_pressed"]

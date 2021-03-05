@@ -1175,7 +1175,7 @@ func Execute(past):
 			elif WorldData.Countries[WorldData.Organizations[w].Countries[0]].Station > 15: prob = 60
 			elif WorldData.Countries[WorldData.Organizations[w].Countries[0]].Station > 5: prob = 70
 			if GameLogic.random.randi_range(0, prob) == int(prob*0.5):
-				var qual = GameLogic.StaffSkill*0.2 + WorldData.Countries[WorldData.Organizations[w].Countries[0]].KnowhowLanguage*0.15 + WorldData.Countries[WorldData.Organizations[w].Countries[0]].KnowhowCustoms*0.15 + GameLogic.random.randi_range(-15,15)*0.01 + min(WorldData.Countries[WorldData.Organizations[w].Countries[0]].Station,100)*0.3
+				var qual = GameLogic.StaffSkill*0.2 + WorldData.Countries[WorldData.Organizations[w].Countries[0]].KnowhowLanguage*0.1 + WorldData.Countries[WorldData.Organizations[w].Countries[0]].KnowhowCustoms*0.1 + GameLogic.random.randi_range(-15,15) + min(WorldData.Countries[WorldData.Organizations[w].Countries[0]].Station,100)*0.3
 				WorldIntel.GatherOnOrg(w, qual, GameLogic.GiveDateWithYear(), false)
 		########################################################################
 		# changing relations between arms dealers and terror orgs

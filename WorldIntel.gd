@@ -39,7 +39,7 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 		if credible == true: WorldData.Organizations[o].IntelValue += quality*theFactor
 		else: WorldData.Organizations[o].IntelValue -= quality
 		# government use of intel
-		if WorldData.Organizations[o].Type == WorldData.OrgType.GOVERNMENT:
+		if WorldData.Organizations[o].Type == WorldData.OrgType.GOVERNMENT or WorldData.Organizations[o].Type == WorldData.OrgType.INTERNATIONAL:
 			if credible == true: GameLogic.Use += quality*theFactor*0.1
 			else: GameLogic.Use -= quality*2*0.1  # huge impact of false intel on gov
 		elif WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE and quality >= 20:
@@ -70,6 +70,8 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 		WorldData.Organizations[o].IntelDescType = "scientific institution"
 	elif WorldData.Organizations[o].Type == WorldData.OrgType.MOVEMENT:
 		WorldData.Organizations[o].IntelDescType = "unorganized civilian movement"
+	elif WorldData.Organizations[o].Type == WorldData.OrgType.INTERNATIONAL:
+		WorldData.Organizations[o].IntelDescType = "international organization"
 	############################################################################
 	# discrete intel descriptions, four stages
 	var discreteDesc = ""
@@ -657,7 +659,7 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 					WorldData.Wars[conflict].Result -= howMuch
 	############################################################################
 	# result
-	if len(antihomeland) > 0 and WorldData.Organizations[o].Type != WorldData.OrgType.COMPANY and WorldData.Organizations[o].Type != WorldData.OrgType.UNIVERSITY and WorldData.Organizations[o].Type != WorldData.OrgType.GOVERNMENT:
+	if len(antihomeland) > 0 and WorldData.Organizations[o].Type != WorldData.OrgType.COMPANY and WorldData.Organizations[o].Type != WorldData.OrgType.UNIVERSITY and WorldData.Organizations[o].Type != WorldData.OrgType.GOVERNMENT and WorldData.Organizations[o].Type != WorldData.OrgType.INTERNATIONAL:
 		WorldData.Organizations[o].IntelDescription.push_front("[b]"+date+"[/b] " + antihomeland + "; " + discreteDesc)
 	else:
 		WorldData.Organizations[o].IntelDescription.push_front("[b]"+date+"[/b] " + discreteDesc)

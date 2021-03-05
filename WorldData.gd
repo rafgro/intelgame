@@ -73,14 +73,15 @@ var DiplomaticRelations = []
 
 # Basic list of organizations, modified and generated additionally later
 enum OrgType {
-	GOVERNMENT,
-	INTEL,
-	GENERALTERROR,
-	ARMTRADER,
-	COMPANY,
-	UNIVERSITY,
-	MOVEMENT,
-	UNIVERSITY_OFFENSIVE,
+	GOVERNMENT,  # currently reigning government, single per country
+	INTEL,  # intelligence and counterintelligence agencies, can target bureau
+	GENERALTERROR,  # not only large or small organizations but also lone wolves
+	ARMTRADER,  # tied to and suplying terror organizations
+	COMPANY,  # the only relevance in the game is stealing tech
+	UNIVERSITY,  # strictly civilian scientific institutions, only for stealing tech
+	MOVEMENT,  # general, non-aggressive movements, some of which are tied to terror orgs
+	UNIVERSITY_OFFENSIVE,  # civilian scientific institutions working on WMD
+	INTERNATIONAL,  # civilian international organizations such as UN, usually divided to units (hq etc)
 }
 
 class AnOrganization:
@@ -149,6 +150,7 @@ var Organizations = [
 	AnOrganization.new({ "Type": OrgType.INTEL, "Name": "Mukhabarat", "Fixed": true, "Known": true, "Staff": 4000, "Budget": 20000, "Counterintelligence": 85, "Aggression": 80, "Countries": [12], "IntelValue": 5, "TargetConsistency": 0, "TargetCountries": [1], }),
 	AnOrganization.new({ "Type": OrgType.INTEL, "Name": "NDS", "Fixed": true, "Known": true, "Staff": 3000, "Budget": 10000, "Counterintelligence": 80, "Aggression": 70, "Countries": [13], "IntelValue": 5, "TargetConsistency": 0, "TargetCountries": [1], }),
 	AnOrganization.new({ "Type": OrgType.GENERALTERROR, "Name": "Islamic State", "Fixed": false, "Known": true, "Staff": 5500, "Budget": 25000, "Counterintelligence": 50, "Aggression": 90, "Countries": [12,13], "IntelValue": 0, "TargetConsistency": 20, "TargetCountries": [7], }),
+	AnOrganization.new({ "Type": OrgType.INTERNATIONAL, "Name": "European Parliament", "Fixed": true, "Known": true, "Staff": 7500, "Budget": 100000, "Counterintelligence": 60, "Aggression": 30, "Countries": [3], "IntelValue": 0, "TargetConsistency": 0, "TargetCountries": [1], }),
 ]
 
 class AMethod:

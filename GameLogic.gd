@@ -62,6 +62,7 @@ var OpsLimit = 0  # max number of terror ops against homeland,  increased over t
 var UniversalClearance = false  # with high trust, bureau can target anything they want
 var InternalMoles = 0  # counter of officers that are passing info to other intel agencies
 var YearlyWars = 0  # internal counter, ensuring that there's no more than 1 war per year
+var YearlyHiring = 0  # internal counter, limiting a number of new officers for later stages
 # Distance counters: block anything that happens more frequently than limit
 var DistWalkinCounter = 0
 var DistWalkinMin = 16  # minimum four months between those events
@@ -165,6 +166,7 @@ func NextWeek():
 		YearlyOpsAgainstHomeland = 0
 		OpsLimit = random.randi_range(1, 1+int(AllWeeks*1.0/52))
 		YearlyWars = 0
+		YearlyHiring = 0
 	############################################################################
 	# date proceedings
 	var doesItEndWithCall = false
@@ -209,7 +211,7 @@ func NextWeek():
 	var freeFund = FreeFundsWeekly()
 	if freeFund < 0: freeFund = 0
 	RecruitProgress += freeFund * (IntensityPercent(IntensityHiring)*0.01) / NewOfficerCost
-	if RecruitProgress >= 1.0 and FreeFundsWeekly() >= 4:
+	if RecruitProgress >= 1.0 and FreeFundsWeekly() >= 4 and YearlyHiring <= 5:
 		# currently always plus one, sort of weekly onboarding limit
 		# in the future expand that to a loop
 		ActiveOfficers += 1
@@ -232,11 +234,14 @@ func NextWeek():
 				WorldData.Countries[chosenC].KnowhowCustoms += random.randi_range(5,15)
 				ifDirection = " and brought in some knowledge about " + WorldData.Countries[chosenC].Name
 		AddEvent("New officer joined the bureau"+ifDirection)
+		YearlyHiring += 1
 	# upskilling
 	var upskillDiff = (freeFund * (IntensityPercent(IntensityUpskill)*0.01)) - (SkillMaintenanceCost*ActiveOfficers)
 	if upskillDiff > 0.5: upskillDiff = 0.5
-	elif upskillDiff < -1: upskillDiff = -1
-	if random.randi_range(1,2) == 2: StaffSkill += upskillDiff
+	elif upskillDiff < -0.5: upskillDiff = -0.5
+	StaffSkill += upskillDiff*0.5
+	# trust naturally increases over time
+	Trust += 0.5  # +25% over year
 	# tech increase, slowing down with higher tech level to achieve
 	var techDiff = (freeFund * (IntensityPercent(IntensityTech)*0.01)) / NewTechCost
 	if Technology < 10: Technology += techDiff
@@ -611,11 +616,11 @@ func NextWeek():
 	# physical limits or bug patches
 	if BudgetOngoingOperations < 0: BudgetOngoingOperations = 0
 	if StaffExperience > 100: StaffExperience = 100
-	elif StaffExperience < 0: StaffExperience = 0
+	elif StaffExperience < 1: StaffExperience = 1
 	if StaffSkill > 100: StaffSkill = 100
-	elif StaffSkill < 0: StaffSkill = 0
+	elif StaffSkill < 1: StaffSkill = 1
 	if StaffTrust > 100: StaffTrust = 100
-	elif StaffTrust < 0: StaffTrust = 0
+	elif StaffTrust < 1: StaffTrust = 1
 	if Trust > 100: Trust = 100
 	elif Trust < 0: Trust = 0
 	if Technology > 100: Technology = 100
