@@ -41,6 +41,8 @@ func ProgressOperations():
 				var predictedLength = 3+GameLogic.random.randi_range(-2,2)  # in weeks
 				if GameLogic.Operations[i].Type == OperationGenerator.Type.RECRUIT_SOURCE:
 					predictedLength *= 2
+				elif GameLogic.Operations[i].Type == OperationGenerator.Type.RESCUE:
+					predictedLength = 1
 				var usedOfficers = minOfficers
 				# finding methods to use in the operation
 				var mt = GameLogic.Operations[i].Type
@@ -575,6 +577,11 @@ func ProgressOperations():
 					GameLogic.Trust += GameLogic.random.randi_range(1,3)
 				elif GameLogic.Operations[i].Country in GameLogic.PriorityOfflimitCountries:
 					GameLogic.Trust -= GameLogic.random.randi_range(1,3)
+				if WorldData.Organizations[GameLogic.Operations[i].Target].Type == WorldData.OrgType.MOVEMENT:
+					var ccc = WorldData.Organizations[GameLogic.Operations[i].Target].Countries[0]
+					WorldData.Countries[ccc].KnowhowCustoms += GameLogic.random.randi_range(5,10)
+					if WorldData.Countries[ccc].KnowhowCustoms > 100:
+						WorldData.Countries[ccc].KnowhowCustoms = 100
 				# quality as the main outcome
 				var qualityDiff = (0.0 + GameLogic.Operations[i].AbroadPlan.Quality - GameLogic.Operations[i].ExpectedQuality) / GameLogic.Operations[i].ExpectedQuality
 				if qualityDiff > 2.0: qualityDiff = 2.0
@@ -1078,6 +1085,107 @@ func ProgressOperations():
 				doesItEndWithCall = true
 				# internal debriefing
 				GameLogic.StaffExperience += GameLogic.Operations[i].AbroadPlan.Officers
+			####################################################################
+			# operation finish: RESCUE type
+			elif GameLogic.Operations[i].AbroadProgress <= 0 and GameLogic.Operations[i].Type == OperationGenerator.Type.RESCUE:
+				# debriefing variables
+				GameLogic.Operations[i].Stage = OperationGenerator.Stage.FINISHED
+				GameLogic.OfficersInHQ += GameLogic.Operations[i].AbroadPlan.Officers
+				GameLogic.OfficersAbroad -= GameLogic.Operations[i].AbroadPlan.Officers
+				GameLogic.BudgetOngoingOperations -= GameLogic.Operations[i].AbroadPlan.Cost
+				GameLogic.PursuedOperations -= 1
+				WorldData.Countries[GameLogic.Operations[i].Country].KnowhowLanguage *= 1.01
+				WorldData.Countries[GameLogic.Operations[i].Country].KnowhowCustoms += 2
+				if WorldData.Countries[GameLogic.Operations[i].Country].KnowhowCustoms > 85:
+					WorldData.Countries[GameLogic.Operations[i].Country].KnowhowCustoms -= 1
+				if GameLogic.Operations[i].AbroadPlan.Covert == true:
+					WorldData.Countries[GameLogic.Operations[i].Country].CovertTravel += 2
+					if WorldData.Countries[GameLogic.Operations[i].Country].CovertTravel > 98:
+						WorldData.Countries[GameLogic.Operations[i].Country].CovertTravel = 98
+				# success is determined at this stage
+				if GameLogic.random.randi_range(0,100) < GameLogic.Operations[i].AbroadPlan.Quality:
+					var whichOrg = GameLogic.Operations[i].Target
+					WorldData.Organizations[whichOrg].KnownKidnapper = false
+					WorldData.Organizations[whichOrg].ActiveOpsAgainstHomeland -= 1
+					for b in range(0, len(WorldData.Organizations[whichOrg].OpsAgainstHomeland)):
+						if WorldData.Organizations[whichOrg].OpsAgainstHomeland[b].Type == WorldData.ExtOpType.KIDNAPPING_AND_MURDER:
+							WorldData.Organizations[whichOrg].OpsAgainstHomeland[b].Active = false
+					GameLogic.AddEvent("Bureau rescued kidnapped Homeland citizen")
+					GameLogic.AddEvent(WorldData.Countries[GameLogic.Operations[i].Country].Name + " (" + GameLogic.Operations[i].Name + "): "+str(GameLogic.Operations[i].AbroadPlan.Officers)+" officer(s) returned to Homeland")
+					GameLogic.AddEvent("Bureau finished operation "+GameLogic.Operations[i].Name)
+					var budgetIncrease = GameLogic.BudgetFull*(0.01*GameLogic.Trust*0.5)
+					if budgetIncrease > 100: budgetIncrease = 100
+					GameLogic.BudgetFull += budgetIncrease
+					var govFeedback = 30
+					if (GameLogic.Trust+govFeedback) > 100: govFeedback = 101-GameLogic.Trust
+					GameLogic.Trust += govFeedback
+					GameLogic.Operations[i].Result = "SUCCESS"
+					GameLogic.AddEvent("Government increased budget by €"+str(int(budgetIncrease))+"k")
+					CallManager.CallQueue.append(
+						{
+							"Header": "Important Information",
+							"Level": GameLogic.Operations[i].Level,
+							"Operation": GameLogic.Operations[i].Name  + "\nagainst " + WorldData.Organizations[GameLogic.Operations[i].Target].Name,
+							"Content": "Operation has been finished. Homeland citizen was rescued from hands of terrorists. As a recognition of great success, Bureau gained "+str(int(govFeedback))+"% of trust. Government increases Bureau's budget by €"+str(int(budgetIncrease))+",000.\n",
+							"Show1": false,
+							"Show2": false,
+							"Show3": false,
+							"Show4": true,
+							"Text1": "",
+							"Text2": "",
+							"Text3": "",
+							"Text4": "Understood",
+							"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
+							"Decision1Argument": null,
+							"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
+							"Decision2Argument": null,
+							"Decision3Callback": funcref(GameLogic, "EmptyFunc"),
+							"Decision3Argument": null,
+							"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
+							"Decision4Argument": null,
+						}
+					)
+					doesItEndWithCall = true
+					# internal debriefing
+					GameLogic.StaffExperience += GameLogic.Operations[i].AbroadPlan.Officers*2
+					GameLogic.StaffSkill += GameLogic.Operations[i].AbroadPlan.Officers*2
+					GameLogic.StaffTrust += GameLogic.Operations[i].AbroadPlan.Officers*3
+				else:
+					GameLogic.Operations[i].Stage = OperationGenerator.Stage.FAILED
+					GameLogic.AddEvent(WorldData.Countries[GameLogic.Operations[i].Country].Name + " (" + GameLogic.Operations[i].Name + "): "+str(GameLogic.Operations[i].AbroadPlan.Officers)+" officer(s) returned to Homeland")
+					GameLogic.AddEvent("Bureau finished operation "+GameLogic.Operations[i].Name)
+					var budgetIncrease = GameLogic.BudgetFull*(0.01*GameLogic.Trust*0.5)
+					GameLogic.Operations[i].Result = "FAILURE"
+					GameLogic.Trust -= 5
+					CallManager.CallQueue.append(
+						{
+							"Header": "Important Information",
+							"Level": GameLogic.Operations[i].Level,
+							"Operation": GameLogic.Operations[i].Name  + "\nagainst " + WorldData.Organizations[GameLogic.Operations[i].Target].Name,
+							"Content": "Operation did not succeed. Homeland citizen is still in hands of terrorists. Attempt another rescue operation if it is possible.\n",
+							"Show1": false,
+							"Show2": false,
+							"Show3": false,
+							"Show4": true,
+							"Text1": "",
+							"Text2": "",
+							"Text3": "",
+							"Text4": "Understood",
+							"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
+							"Decision1Argument": null,
+							"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
+							"Decision2Argument": null,
+							"Decision3Callback": funcref(GameLogic, "EmptyFunc"),
+							"Decision3Argument": null,
+							"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
+							"Decision4Argument": null,
+						}
+					)
+					doesItEndWithCall = true
+					# internal debriefing
+					GameLogic.StaffExperience += GameLogic.Operations[i].AbroadPlan.Officers*0.5
+					GameLogic.StaffSkill += GameLogic.Operations[i].AbroadPlan.Officers*0.5
+					GameLogic.StaffTrust += GameLogic.Operations[i].AbroadPlan.Officers*0.5
 		i += 1
 	# showing queued events
 	if len(continuingOperations) == 1:

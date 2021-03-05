@@ -116,8 +116,10 @@ func _on_Organizations_item_selected(index):
 		$C/M/R/H/Gather.disabled = false
 		if WorldData.Organizations[o].IntelIdentified > 0: $C/M/R/H/Recruit.disabled = false
 		else: $C/M/R/H/Recruit.disabled = true
-		if WorldData.Organizations[o].OffensiveClearance == true or GameLogic.UniversalClearance == true: $C/M/R/H/Offensive.disabled = false
+		if WorldData.Organizations[o].OffensiveClearance == true or GameLogic.UniversalClearance == true or WorldData.Organizations[o].KnownKidnapper == true: $C/M/R/H/Offensive.disabled = false
 		else: $C/M/R/H/Offensive.disabled = true
+		if WorldData.Organizations[o].KnownKidnapper == true: $C/M/R/H/Offensive.text = "Rescue Op"
+		else: $C/M/R/H/Offensive.text = "Offensive Op"
 
 func _on_Gather_pressed():
 	if lastSelectedOrg != -1:
@@ -143,11 +145,21 @@ func _on_Recruit_pressed():
 
 func _on_Offensive_pressed():
 	if lastSelectedOrg != -1:
-		OperationGenerator.NewOperation(0, lastSelectedOrg, OperationGenerator.Type.OFFENSIVE)
-		# if possible, start fast
-		if GameLogic.OfficersInHQ > 0:
-			GameLogic.Operations[-1].AnalyticalOfficers = GameLogic.OfficersInHQ
-			GameLogic.Operations[-1].Stage = OperationGenerator.Stage.PLANNING_OPERATION
-			GameLogic.Operations[-1].Started = GameLogic.GiveDateWithYear()
-			GameLogic.Operations[-1].Result = "ONGOING (PLANNING)"
+		if WorldData.Organizations[lastSelectedOrg].KnownKidnapper == false:
+			OperationGenerator.NewOperation(0, lastSelectedOrg, OperationGenerator.Type.OFFENSIVE)
+			# if possible, start fast
+			if GameLogic.OfficersInHQ > 0:
+				GameLogic.Operations[-1].AnalyticalOfficers = GameLogic.OfficersInHQ
+				GameLogic.Operations[-1].Stage = OperationGenerator.Stage.PLANNING_OPERATION
+				GameLogic.Operations[-1].Started = GameLogic.GiveDateWithYear()
+				GameLogic.Operations[-1].Result = "ONGOING (PLANNING)"
+		else:
+			# special rescue operation
+			OperationGenerator.NewOperation(0, lastSelectedOrg, OperationGenerator.Type.RESCUE)
+			# if possible, start fast
+			if GameLogic.OfficersInHQ > 0:
+				GameLogic.Operations[-1].AnalyticalOfficers = GameLogic.OfficersInHQ
+				GameLogic.Operations[-1].Stage = OperationGenerator.Stage.PLANNING_OPERATION
+				GameLogic.Operations[-1].Started = GameLogic.GiveDateWithYear()
+				GameLogic.Operations[-1].Result = "ONGOING (PLANNING)"
 		get_tree().change_scene("res://main.tscn")

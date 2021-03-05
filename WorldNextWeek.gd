@@ -614,13 +614,15 @@ func Execute(past):
 					typeDesc = "hijacking airplane with our citizens"
 				elif WorldData.Organizations[w].OpsAgainstHomeland[u].Type == WorldData.ExtOpType.LEADER_ASSASSINATION:
 					typeDesc = "terrorist attack targeting our leaders"
+				elif WorldData.Organizations[w].OpsAgainstHomeland[u].Type == WorldData.ExtOpType.LEADER_ASSASSINATION:
+					typeDesc = "murder of our kidnapped citizen"
 				# clearing up mess with many attacks at the same time
 				var tickerDesc = ""
 				if GameLogic.AttackTicker != 0 and (GameLogic.AttackTickerOp.Org != w or GameLogic.AttackTickerOp.Op != u):
 					tickerDesc = "\n\nNote that this is a different plot than reported in dashboard. Homeland is facing more than one attack, possibly happenning in " + str(GameLogic.AttackTicker) + " weeks."
 				# decide if it's happenning: prevented or not
 				var knownInvolvedValue = WorldData.Organizations[w].OpsAgainstHomeland[u].Persons * (WorldData.Organizations[w].IntelIdentified*1.0 / WorldData.Organizations[w].Staff)
-				if ((int(knownInvolvedValue) >= int(WorldData.Organizations[w].OpsAgainstHomeland[u].Persons*0.6) or GameLogic.random.randi_range(10,100) < WorldData.Organizations[w].OpsAgainstHomeland[u].IntelValue)) and WorldData.Organizations[w].Known == true:
+				if ((int(knownInvolvedValue) >= int(WorldData.Organizations[w].OpsAgainstHomeland[u].Persons*0.6) or GameLogic.random.randi_range(10,100) < WorldData.Organizations[w].OpsAgainstHomeland[u].IntelValue)) and WorldData.Organizations[w].Known == true and WorldData.Organizations[w].OpsAgainstHomeland[u].Type != WorldData.ExtOpType.KIDNAPPING_AND_MURDER:
 					var reason = ""
 					if knownInvolvedValue > 0 and knownInvolvedValue < 20:
 						reason += "Law enforcement caught " + str(int(knownInvolvedValue)) + " terrorists. "
@@ -838,6 +840,27 @@ func Execute(past):
 					else:
 						shortDesc = "Minor terrorist incident"
 						longDesc = "One of political leaders in Homeland was wounded in a terrorist attack. "
+				################################################################
+				# mundane ifs but had to be done
+				elif WorldData.Organizations[w].OpsAgainstHomeland[u].Type == WorldData.ExtOpType.KIDNAPPING_AND_MURDER:
+					trustLoss = GameLogic.Trust*0.3
+					shortDesc = "Minor terrorist incident"
+					longDesc = "Kidnapped Homeland citizen was murdered. "
+					# debrief any ongoing operations against this
+					for j in range(0, len(GameLogic.Operations)):
+						if GameLogic.Operations[j].Type != OperationGenerator.Type.RESCUE: continue
+						if GameLogic.Operations[j].Stage == OperationGenerator.Stage.FINISHED or GameLogic.Operations[j].Stage == OperationGenerator.Stage.CALLED_OFF or GameLogic.Operations[j].Stage == OperationGenerator.Stage.FAILED: continue
+						if GameLogic.Operations[j].Target != w: continue
+						GameLogic.Operations[j].Stage = OperationGenerator.Stage.FAILED
+						if GameLogic.Operations[j].AbroadPlan != null:
+							GameLogic.OfficersInHQ += GameLogic.Operations[j].AbroadPlan.Officers
+							GameLogic.OfficersAbroad -= GameLogic.Operations[j].AbroadPlan.Officers
+							GameLogic.BudgetOngoingOperations -= GameLogic.Operations[j].AbroadPlan.Cost
+							GameLogic.PursuedOperations -= 1
+							GameLogic.AddEvent(WorldData.Countries[GameLogic.Operations[j].Country].Name + " (" + GameLogic.Operations[j].Name + "): "+str(GameLogic.Operations[j].AbroadPlan.Officers)+" officer(s) returned to Homeland")
+						GameLogic.AddEvent("Bureau finished operation "+GameLogic.Operations[j].Name)
+						GameLogic.Operations[j].Result = "FAILURE"
+						GameLogic.Trust -= 5
 				# executing details and communicating them
 				if trustLoss > GameLogic.Trust: trustLoss = GameLogic.Trust
 				GameLogic.Trust -= trustLoss
@@ -939,7 +962,7 @@ func Execute(past):
 					else: opLength += GameLogic.random.randi_range(-5,5)
 					if opLength < 4: opLength = 4
 					opLength = int(opLength)
-					var opType = GameLogic.random.randi_range(0,3)
+					var opType = GameLogic.random.randi_range(0,4)
 					WorldData.Organizations[w].OpsAgainstHomeland.append(WorldData.AnExternalOperation.new(
 						{
 							"Type": opType,
@@ -953,13 +976,49 @@ func Execute(past):
 					GameLogic.CurrentOpsAgainstHomeland += 1
 					GameLogic.YearlyOpsAgainstHomeland += 1
 					WorldData.Organizations[w].ActiveOpsAgainstHomeland += 1
+					# kidnapping is differently treated
+					if opType == WorldData.ExtOpType.KIDNAPPING_AND_MURDER:
+						opLength = GameLogic.random.randi_range(10,26)
+						if GameLogic.AttackTicker == 0:
+							GameLogic.AttackTicker = opLength  # main screen ticker
+							GameLogic.AttackTickerOp.Org = w
+							GameLogic.AttackTickerOp.Op = len(WorldData.Organizations[w].OpsAgainstHomeland)-1
+							GameLogic.AttackTickerText = " weeks to rescue a citizen"
+						var where = WorldData.Countries[WorldData.Organizations[w].Countries[0]].Name
+						CallManager.CallQueue.append(
+							{
+								"Header": "Important Information",
+								"Level": "Top Secret",
+								"Operation": "-//-",
+								"Content": "Homeland citizen was kidnapped in " + where + ". Officers do not know yet who is behind this attack. According to our general signal surveillance, Bureau should have "+str(opLength)+" weeks to rescue the person. Find the perpetrator and execute rescue action.",
+								"Show1": false,
+								"Show2": false,
+								"Show3": false,
+								"Show4": true,
+								"Text1": "",
+								"Text2": "",
+								"Text3": "",
+								"Text4": "Understood",
+								"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
+								"Decision1Argument": null,
+								"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
+								"Decision2Argument": null,
+								"Decision3Callback": funcref(GameLogic, "EmptyFunc"),
+								"Decision3Argument": null,
+								"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
+								"Decision4Argument": null,
+							}
+						)
+						GameLogic.AddEvent("Bureau tasked with rescue attempt in " + where)
+						doesItEndWithCall = true
 					# most (but not all!) operations are vaguely communicated to the player
-					if GameLogic.random.randi_range(1,10) < 8:
+					elif GameLogic.random.randi_range(1,10) < 8:
 						var tickerDesc = ""
 						if GameLogic.AttackTicker == 0:
 							GameLogic.AttackTicker = opLength  # main screen ticker
 							GameLogic.AttackTickerOp.Org = w
 							GameLogic.AttackTickerOp.Op = len(WorldData.Organizations[w].OpsAgainstHomeland)-1
+							GameLogic.AttackTickerText = " weeks to possible attack"
 						else:
 							tickerDesc = "\n\nNote that this is a different plot than previously detected. Homeland is facing more than one attack."
 						CallManager.CallQueue.append(
@@ -1176,7 +1235,8 @@ func Execute(past):
 			elif WorldData.Countries[WorldData.Organizations[w].Countries[0]].Station > 5: prob = 70
 			if GameLogic.random.randi_range(0, prob) == int(prob*0.5):
 				var qual = GameLogic.StaffSkill*0.2 + WorldData.Countries[WorldData.Organizations[w].Countries[0]].KnowhowLanguage*0.1 + WorldData.Countries[WorldData.Organizations[w].Countries[0]].KnowhowCustoms*0.1 + GameLogic.random.randi_range(-15,15) + min(WorldData.Countries[WorldData.Organizations[w].Countries[0]].Station,100)*0.3
-				WorldIntel.GatherOnOrg(w, qual, GameLogic.GiveDateWithYear(), false)
+				var ifSignificant = WorldIntel.GatherOnOrg(w, qual, GameLogic.GiveDateWithYear(), false)
+				if ifSignificant == true: doesItEndWithCall = true
 		########################################################################
 		# changing relations between arms dealers and terror orgs
 		if WorldData.Organizations[w].Type == WorldData.OrgType.ARMTRADER:

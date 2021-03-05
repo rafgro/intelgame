@@ -9,6 +9,7 @@ func _ready():
 			if t == 0: desc += "intel: "
 			elif t == 1: desc += "recruitment: "
 			elif t == 2: desc += "offensive: "
+			elif t == 3: desc += "rescue: "
 			desc += WorldData.Methods[t][m].Name
 			if WorldData.Methods[t][m].Available == false:
 				# special case: expired

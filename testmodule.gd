@@ -67,4 +67,4 @@ func _process(delta):
 	time += delta
 	if time > TIME_PERIOD:
 		time = 0
-		#TestStep()
+		TestStep()

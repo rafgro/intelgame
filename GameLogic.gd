@@ -55,6 +55,7 @@ var RecruitProgress = 0.0  # when reaches 1, a new officer arrives
 var PreviousTrust = 0  # trust from previous week, to write show the change week to week
 var AttackTicker = 0  # race against time in preventing a terrorist attack, shown if >0
 var AttackTickerOp = {"Org":0,"Op":0}  # which organization and operation it is following
+var AttackTickerText = ""  # text shown next to the number
 var UltimatumTicker = 0  # weeks to actual lay off if user doesn't bring back trust
 var CurrentOpsAgainstHomeland = 0  # internal counter to not overwhelm user, simultaneous
 var YearlyOpsAgainstHomeland = 0  # internal counter as well, yearly ops, zeroed on 01/01
@@ -78,7 +79,7 @@ var ExistingOfficerCost = 4  # monthly wage, increasing with skill over time
 var NewTechCost = 25  # thousands needed to spend on a new percent of technology
 var SkillMaintenanceCost = 0.5  # thousands needed to maintain skills for an officer
 # Options
-var TurnOnTerrorist = false
+var TurnOnTerrorist = true
 var TurnOnWars = true
 var TurnOnWMD = true
 var TurnOnInfiltration = true

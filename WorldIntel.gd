@@ -210,6 +210,7 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 	# operation intel, both discrete descriptions and logic mechanics
 	var antihomeland = ""
 	if quality >= 10:
+		var ifGlobalKidnapping = false
 		var opDescriptions = []
 		for z in range(0,len(WorldData.Organizations[o].OpsAgainstHomeland)):
 			if WorldData.Organizations[o].OpsAgainstHomeland[z].Active == false:
@@ -218,6 +219,11 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 			var ifCounterintel = false
 			if WorldData.Organizations[o].OpsAgainstHomeland[z].Type == WorldData.ExtOpType.COUNTERINTEL:
 				ifCounterintel = true
+			# kidnapping operations are different, intel about them is easier to obtain and then acted
+			var ifKidnapping = false
+			if WorldData.Organizations[o].OpsAgainstHomeland[z].Type == WorldData.ExtOpType.KIDNAPPING_AND_MURDER:
+				ifKidnapping = true
+				ifGlobalKidnapping = true
 			# most important logic change
 			var pastIntel = WorldData.Organizations[o].OpsAgainstHomeland[z].IntelValue
 			WorldData.Organizations[o].OpsAgainstHomeland[z].IntelValue += quality * ((100.0-WorldData.Organizations[o].OpsAgainstHomeland[z].Secrecy)*0.01)
@@ -226,12 +232,22 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 			if newIntel < 20:
 				var roundedD = WorldData.Organizations[o].OpsAgainstHomeland[z].FinishCounter/4 + GameLogic.random.randi_range(-2,2)
 				if roundedD < 1: roundedD = 1
-				if ifCounterintel == false:
-					opDescriptions.append("possible operation finishing in ~" + str(int(roundedD)) + " months")
-				else:
+				if ifCounterintel == true:
 					opDescriptions.append("possible operation against Bureau")
+				elif ifKidnapping == true:
+					opDescriptions.append("probably kidnapped Homeland citizen")
+					WorldData.Organizations[o].KnownKidnapper = true
+				else:
+					opDescriptions.append("possible operation finishing in ~" + str(int(roundedD)) + " months")
 			elif newIntel < 40:
-				if ifCounterintel == false:
+				if ifCounterintel == true:
+					var damage = "deep"
+					if WorldData.Organizations[o].OpsAgainstHomeland[z].Damage < 50: damage = "shallow"
+					opDescriptions.append("probable " + damage + " operation targeting Bureau officers")
+				elif ifKidnapping == true:
+					opDescriptions.append("kidnapped Homeland citizen")
+					WorldData.Organizations[o].KnownKidnapper = true
+				else:
 					var roundedD = WorldData.Organizations[o].OpsAgainstHomeland[z].FinishCounter + GameLogic.random.randi_range(-2,2)
 					if roundedD < 1: roundedD = 1
 					var theType = "terrorist operation inside Homeland"
@@ -242,12 +258,16 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 					var people = "few"
 					if WorldData.Organizations[o].OpsAgainstHomeland[z].Persons > 20: people = "dozens of"
 					opDescriptions.append("probable " + damage + " " + theType + ", with " + people + " people involved, finishing in ~" + str(int(roundedD)) + " weeks")
-				else:
-					var damage = "deep"
-					if WorldData.Organizations[o].OpsAgainstHomeland[z].Damage < 50: damage = "shallow"
-					opDescriptions.append("probable " + damage + " operation targeting Bureau officers")
 			elif newIntel < 60:
-				if ifCounterintel == false:
+				if ifCounterintel == true:
+					var damage = "deep"
+					if WorldData.Organizations[o].OpsAgainstHomeland[z].Damage < 20: damage = "shallow"
+					elif WorldData.Organizations[o].OpsAgainstHomeland[z].Damage < 60: damage = "moderate"
+					opDescriptions.append(damage + " operation targeting Bureau officers")
+				elif ifKidnapping == true:
+					opDescriptions.append("kidnapped Homeland citizen, confinement location is known")
+					WorldData.Organizations[o].KnownKidnapper = true
+				else:
 					var theType = "terrorist operation inside Homeland"
 					if WorldData.Organizations[o].OpsAgainstHomeland[z].Type == WorldData.ExtOpType.EMBASSY_TERRORIST_ATTACK:
 						theType = "terrorist operation targeting embassy"
@@ -266,13 +286,16 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 					if knownInvolvedValue > 0:
 						knownInvolved = " ["+str(int(knownInvolvedValue))+" identified participants]"
 					opDescriptions.append(damage + " " + theType + ", with ~" + str(int(roundedP)) + " individuals involved"+knownInvolved+", finishing in " + str(WorldData.Organizations[o].OpsAgainstHomeland[z].FinishCounter) + " weeks")
-				else:
+			else:
+				if ifCounterintel == true:
 					var damage = "deep"
 					if WorldData.Organizations[o].OpsAgainstHomeland[z].Damage < 20: damage = "shallow"
 					elif WorldData.Organizations[o].OpsAgainstHomeland[z].Damage < 60: damage = "moderate"
 					opDescriptions.append(damage + " operation targeting Bureau officers")
-			else:
-				if ifCounterintel == false:
+				elif ifKidnapping == true:
+					opDescriptions.append("kidnapped Homeland citizen, precise confinement location is known")
+					WorldData.Organizations[o].KnownKidnapper = true
+				else:
 					var theType = "terrorist operation inside Homeland"
 					if WorldData.Organizations[o].OpsAgainstHomeland[z].Type == WorldData.ExtOpType.EMBASSY_TERRORIST_ATTACK:
 						theType = "terrorist operation against embassy"
@@ -291,13 +314,9 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 					if knownInvolvedValue > 0:
 						knownInvolved = " ["+str(int(knownInvolvedValue))+" identified participants]"
 					opDescriptions.append(damage + " " + theType + ", with " + WorldData.Organizations[o].OpsAgainstHomeland[z].Persons + " individuals involved" + knownInvolved + ", finishing in " + str(WorldData.Organizations[o].OpsAgainstHomeland[z].FinishCounter) + " weeks")
-				else:
-					var damage = "deep"
-					if WorldData.Organizations[o].OpsAgainstHomeland[z].Damage < 20: damage = "shallow"
-					elif WorldData.Organizations[o].OpsAgainstHomeland[z].Damage < 60: damage = "moderate"
-					opDescriptions.append(damage + " operation targeting Bureau officers")
 			# comparing significant intel change and notifying user if possible
 			var diff = newIntel - pastIntel
+			if WorldData.Organizations[o].OffensiveClearance == false and ifKidnapping == true: diff = 21
 			if diff >= 20 and ifCounterintel == false and ifHideCalls == false:
 				CallManager.CallQueue.append(
 					{
@@ -328,7 +347,9 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 					GameLogic.AddEvent("Bureau received offensive clearance for targeting " + WorldData.Organizations[o].Name)
 				doesItEndWithCall = true
 		# op description assembly
-		if quality < 20:
+		if ifGlobalKidnapping == true:
+			antihomeland = "[u]" + opDescriptions[randi() % opDescriptions.size()] + "[/u]"
+		elif quality < 20:
 			antihomeland = "lack of knowledge about activity against Homeland"
 			if WorldData.Organizations[o].ActiveOpsAgainstHomeland > 0:
 				if GameLogic.random.randi_range(1,4) == 2:

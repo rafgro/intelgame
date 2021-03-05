@@ -110,6 +110,7 @@ class AnOrganization:
 	var ConnectedTo = []  # ids of organizations supplied by this one (movement or armtrader)
 	var TargetCountries = []  # ids of countries, more frequently/consistently targeted by terror orgs
 	var TargetConsistency = 50  # 0 (random targets) to 100 (only targets from the above list)
+	var KnownKidnapper = false  # different kind of operation against it possible then
 	
 	func _init(adictionary):
 		Type = adictionary.Type
@@ -287,6 +288,13 @@ var Methods = [
 		AMethodOffensive.new({ "Name": "spread black propaganda", "Cost": 100, "Quality": 45, "Risk": 5, "OfficersRequired": 25, "MinimalSkill": 60, "Available": false, "MinimalIntel": 25, "MinimalTrust": 40, "MinLength": 6, "MaxLength": 12, "PossibleCasualties": 0, "BudgetChange": 40, "DamageToOps": 80, "Attribution": 10, "MinimalTech": 30, "MinimalLocal": 90, "Remote": false, "StartYear": 2000, "EndYear": 3000, }),
 		AMethodOffensive.new({ "Name": "(remote) black journalism", "Cost": 100, "Quality": 65, "Risk": 0, "OfficersRequired": 15, "MinimalSkill": 70, "Available": false, "MinimalIntel": 30, "MinimalTrust": 30, "MinLength": 3, "MaxLength": 12, "PossibleCasualties": 0, "BudgetChange": 70, "DamageToOps": 70, "Attribution": 0, "MinimalTech": 0, "MinimalLocal": 90, "Remote": false, "StartYear": 2000, "EndYear": 3000, }),
 	],
+	# RESCUE methods
+	[
+		AMethod.new({ "Name": "engage local authorities", "Cost": 1, "Quality": 15, "Risk": 0, "OfficersRequired": 1, "MinimalSkill": 0, "Available": false, "MinimalIntel": -10, "MinimalTrust": 0, "MinimalTech": 0, "MinimalLocal": 0, "Remote": false, "StartYear": 2000, "EndYear": 3000, }),
+		AMethod.new({ "Name": "negotiate release", "Cost": 3, "Quality": 20, "Risk": 30, "OfficersRequired": 3, "MinimalSkill": 10, "Available": false, "MinimalIntel": 5, "MinimalTrust": 0, "MinimalTech": 0, "MinimalLocal": 0, "Remote": false, "StartYear": 2000, "EndYear": 3000, }),
+		AMethod.new({ "Name": "attempt buy out", "Cost": 100, "Quality": 70, "Risk": 20, "OfficersRequired": 3, "MinimalSkill": 20, "Available": false, "MinimalIntel": 10, "MinimalTrust": 10, "MinimalTech": 0, "MinimalLocal": 0, "Remote": false, "StartYear": 2000, "EndYear": 3000, }),
+		AMethod.new({ "Name": "forced entry and rescue", "Cost": 40, "Quality": 90, "Risk": 60, "OfficersRequired": 8, "MinimalSkill": 15, "Available": false, "MinimalIntel": 10, "MinimalTrust": 10, "MinimalTech": 0, "MinimalLocal": 0, "Remote": false, "StartYear": 2000, "EndYear": 3000, }),
+	],
 ]
 
 enum ExtOpType {
@@ -294,7 +302,8 @@ enum ExtOpType {
 	EMBASSY_TERRORIST_ATTACK = 1,
 	PLANE_HIJACKING = 2,
 	LEADER_ASSASSINATION = 3,
-	COUNTERINTEL = 4,
+	KIDNAPPING_AND_MURDER = 4,
+	COUNTERINTEL = 5,
 }
 
 class AnExternalOperation:
