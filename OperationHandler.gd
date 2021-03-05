@@ -3,6 +3,7 @@ extends Node
 func ProgressOperations():
 	var doesItEndWithCall = false
 	var i = 0
+	var continuingOperations = []  # array for op descriptions, to provide nice display
 	while i < len(GameLogic.Operations):
 		GameLogic.Operations[i].WeeksPassed += 1
 		###########################################################################
@@ -345,7 +346,8 @@ func ProgressOperations():
 			if GameLogic.random.randi_range(0, 105) > GameLogic.Operations[i].AbroadPlan.Risk or GameLogic.Operations[i].AbroadPlan.Remote == true:
 				GameLogic.Operations[i].AbroadProgress -= GameLogic.Operations[i].AbroadRateOfProgress
 				if GameLogic.Operations[i].AbroadProgress > 0:  # check to avoid doubling events
-					GameLogic.AddEvent(WorldData.Countries[GameLogic.Operations[i].Country].Name + " (" + GameLogic.Operations[i].Name + "): operation continues")
+					#GameLogic.AddEvent(WorldData.Countries[GameLogic.Operations[i].Country].Name + " (" + GameLogic.Operations[i].Name + "): operation continues")
+					continuingOperations.append({"Country": WorldData.Countries[GameLogic.Operations[i].Country].Name, "Op": GameLogic.Operations[i].Name})
 			# second chance with help of a network
 			elif (WorldData.Countries[GameLogic.Operations[i].Country].Network - WorldData.Countries[GameLogic.Operations[i].Country].NetworkBlowup) > 0 and GameLogic.random.randi_range(0,GameLogic.Operations[i].AbroadPlan.Risk*2) < (WorldData.Countries[GameLogic.Operations[i].Country].Network - WorldData.Countries[GameLogic.Operations[i].Country].NetworkBlowup):
 				GameLogic.Operations[i].AbroadProgress -= GameLogic.Operations[i].AbroadRateOfProgress
@@ -487,6 +489,9 @@ func ProgressOperations():
 							}
 						)
 						# asking user for action
+						var ifEngagingAvailable = true
+						if WorldData.DiplomaticRelations[0][GameLogic.Operations[i].Country] < -30:
+							ifEngagingAvailable = false
 						var ifExfiltrationAvailable = false
 						if GameLogic.OfficersInHQ > 0: ifExfiltrationAvailable = true
 						CallManager.CallQueue.append(
@@ -494,8 +499,8 @@ func ProgressOperations():
 								"Header": "Urgent Decision",
 								"Level": GameLogic.Operations[i].Level,
 								"Operation": GameLogic.Operations[i].Name + "\nagainst " + WorldData.Organizations[GameLogic.Operations[i].Target].Name,
-								"Content": str(GameLogic.Operations[i].AbroadPlan.Officers) + " officers executing the action were arrested by " + WorldData.Countries[GameLogic.Operations[i].Country].Adjective + " authorities. Decide on appropriate reaction.\n\nPossibilities:\n- engaging government will return officers, but significantly decrease government's trust\n- expelling will happen between intelligence services only, but these officers will never be allowed to enter this country again\n- denying affiliation will result in officer imprisonment and their de facto loss, affecting internal trust, but not affecting any external institutions\n- exfiltration is a risky, covert rescue operation performed by the rest of the officers (" +str(GameLogic.OfficersInHQ) + " available) and eventual agent network (" +str(WorldData.Countries[GameLogic.Operations[i].Country].Network) + " available), which returns officers intact in case of success but leads to both huge trust loss and expulsion in case of failure",
-								"Show1": true,
+								"Content": str(GameLogic.Operations[i].AbroadPlan.Officers) + " officers executing the action were arrested by " + WorldData.Countries[GameLogic.Operations[i].Country].Adjective + " authorities. Decide on appropriate reaction.\n\nPossibilities:\n- engaging government will return officers, but significantly decrease government's trust (unavailable in hostile countries)\n- expelling will happen between intelligence services only, but these officers will never be allowed to enter this country again\n- denying affiliation will result in officer imprisonment and their de facto loss, affecting internal trust, but not affecting any external institutions\n- exfiltration is a risky, covert rescue operation performed by the rest of the officers (" +str(GameLogic.OfficersInHQ) + " available) and eventual agent network (" +str(WorldData.Countries[GameLogic.Operations[i].Country].Network) + " available), which returns officers intact in case of success but leads to both huge trust loss and expulsion in case of failure",
+								"Show1": ifEngagingAvailable,
 								"Show2": true,
 								"Show3": true,
 								"Show4": ifExfiltrationAvailable,
@@ -1066,4 +1071,12 @@ func ProgressOperations():
 				# internal debriefing
 				GameLogic.StaffExperience += GameLogic.Operations[i].AbroadPlan.Officers
 		i += 1
+	# showing queued events
+	if len(continuingOperations) == 1:
+		#GameLogic.AddEvent(continuingOperations.Country + " (" + continuingOperations.Op + "): operation continues")
+		GameLogic.AddEvent(continuingOperations[0].Country + ": operation continues")
+	elif len(continuingOperations) > 1:
+		var cs = []
+		for j in continuingOperations: cs.append(continuingOperations[j].Country)
+		GameLogic.AddEvent(PoolStringArray(cs).join(", ") + ": operations continue")
 	return doesItEndWithCall

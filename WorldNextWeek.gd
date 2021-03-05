@@ -565,9 +565,10 @@ func Execute(past):
 					GameLogic.AddWorldEvent("New suspected terrorist organization, " + WorldData.Organizations[w].Name + ", discovered in " + WorldData.Countries[WorldData.Organizations[w].Countries[0]].Name, past)
 				elif WorldData.Organizations[w].Type == WorldData.OrgType.ARMTRADER:
 					GameLogic.AddWorldEvent("New suspected arms dealer, " + WorldData.Organizations[w].Name + ", discovered in " + WorldData.Countries[WorldData.Organizations[w].Countries[0]].Name, past)
-		# staff and budget changes
+		# staff and budget and aggression changes
 		if GameLogic.random.randi_range(1,4) == 2:  # ~one per month
 			WorldData.Organizations[w].Budget *= (1.0+GameLogic.random.randi_range(-1,1)*0.01)
+			WorldData.Organizations[w].Aggression += GameLogic.random.randi_range(-2,2)*0.5
 			if WorldData.Organizations[w].Staff > 100:  # large orgs
 				WorldData.Organizations[w].Staff *= (1.0+GameLogic.random.randi_range(-1,1)*0.01)
 			else:  # small orgs
@@ -623,6 +624,8 @@ func Execute(past):
 					var reason = ""
 					if knownInvolvedValue > 0 and knownInvolvedValue < 20:
 						reason += "Law enforcement caught " + str(int(knownInvolvedValue)) + " terrorists. "
+						WorldData.Organizations[w].Staff -= knownInvolvedValue
+						if WorldData.Organizations[w].Staff < 1: WorldData.Organizations[w].Staff = 1
 					elif knownInvolvedValue > 0 and knownInvolvedValue < 20:
 						reason += str(knownInvolvedValue) + " terrorists were prevented from approaching the targets. "
 					if WorldData.Organizations[w].OpsAgainstHomeland[u].IntelValue > 80:
@@ -841,6 +844,9 @@ func Execute(past):
 				WorldData.Countries[0].SoftPower -= 5
 				WorldData.Organizations[w].OpsAgainstHomeland[u].Active = false
 				WorldData.Organizations[w].ActiveOpsAgainstHomeland -= 1
+				WorldData.Organizations[w].Aggression += GameLogic.random.randi_range(5,30)
+				if WorldData.Organizations[w].Aggression > 100:
+					WorldData.Organizations[w].Aggression = 100
 				GameLogic.AddWorldEvent(shortDesc+" in " + theCountry, past)
 				CallManager.CallQueue.append(
 					{
@@ -1169,7 +1175,7 @@ func Execute(past):
 			elif WorldData.Countries[WorldData.Organizations[w].Countries[0]].Station > 15: prob = 60
 			elif WorldData.Countries[WorldData.Organizations[w].Countries[0]].Station > 5: prob = 70
 			if GameLogic.random.randi_range(0, prob) == int(prob*0.5):
-				var qual = GameLogic.StaffSkill*0.3 + WorldData.Countries[WorldData.Organizations[w].Countries[0]].KnowhowLanguage*0.3 + WorldData.Countries[WorldData.Organizations[w].Countries[0]].KnowhowCustoms*0.2 + GameLogic.random.randi_range(0,20)*0.01
+				var qual = GameLogic.StaffSkill*0.2 + WorldData.Countries[WorldData.Organizations[w].Countries[0]].KnowhowLanguage*0.15 + WorldData.Countries[WorldData.Organizations[w].Countries[0]].KnowhowCustoms*0.15 + GameLogic.random.randi_range(-15,15)*0.01 + min(WorldData.Countries[WorldData.Organizations[w].Countries[0]].Station,100)*0.3
 				WorldIntel.GatherOnOrg(w, qual, GameLogic.GiveDateWithYear(), false)
 		########################################################################
 		# changing relations between arms dealers and terror orgs

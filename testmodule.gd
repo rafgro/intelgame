@@ -1,7 +1,7 @@
 extends Node
 
 # testing module
-var maxSteps = 1600
+var maxSteps = 2000
 var elapsedSteps = 0
 signal timeout
 const TIME_PERIOD = 0.1 # 1000ms
@@ -67,4 +67,4 @@ func _process(delta):
 	time += delta
 	if time > TIME_PERIOD:
 		time = 0
-		TestStep()
+		#TestStep()

@@ -72,11 +72,12 @@ var DistSourcecheckMin = 20
 var DistMolesearchCounter = 0
 var DistMolesearchMin = 12
 # Sort of constants but also internal, always describe them
-var NewOfficerCost = 80  # thousands needed to spend on a new officer
+var NewOfficerCost = 50  # thousands needed to spend on a new officer, increasing over time
+var ExistingOfficerCost = 4  # monthly wage, increasing with skill over time
 var NewTechCost = 25  # thousands needed to spend on a new percent of technology
 var SkillMaintenanceCost = 0.5  # thousands needed to maintain skills for an officer
 # Options
-var TurnOnTerrorist = true
+var TurnOnTerrorist = false
 var TurnOnWars = true
 var TurnOnWMD = true
 var TurnOnInfiltration = true
@@ -107,10 +108,10 @@ func AddWorldEvent(text, past):
 		WorldEvents.push_front("[b]"+past+"[/b] " + text)
 
 func FreeFundsWeekly():
-	return (BudgetFull - (ActiveOfficers*4+ActiveOfficers*1+BudgetOngoingOperations+BudgetExtras)) / 4
+	return (BudgetFull - (ActiveOfficers*ExistingOfficerCost + BudgetOngoingOperations+BudgetExtras)) / 4
 
 func FreeFundsWeeklyWithoutOngoing():
-	return (BudgetFull - (ActiveOfficers*4+ActiveOfficers*1+BudgetExtras)) / 4
+	return (BudgetFull - (ActiveOfficers*ExistingOfficerCost + BudgetExtras)) / 4
 
 func IntensityPercent(which):
 	return int(which * 1.0 / (IntensityHiring + IntensityUpskill + IntensityTech) * 100)
@@ -153,8 +154,11 @@ func StartAll():
 	TechnologyMonthsAgo.append(Technology)
 
 func NextWeek():
+	var forceGovOpOrder = false
 	############################################################################
 	# scaling difficulty
+	if AllWeeks == 0:  # new things to happen after first next week click
+		forceGovOpOrder = true
 	if AllWeeks == 26:  # half a year to get into the game
 		OpsLimit = 1
 	if AllWeeks % 52 == 0 and AllWeeks != 0:  # roughly a year
@@ -196,7 +200,9 @@ func NextWeek():
 				if budgetIncrease > 150: budgetIncrease = 150
 				BudgetFull += budgetIncrease
 				AddEvent("New year budget increase: +€"+str(int(budgetIncrease))+"k")
-				# other new-year game logic
+		# monthly updated game logic
+		ExistingOfficerCost = 4 + (10*StaffSkill*0.01 + 16*StaffExperience*0.01)  # max 30
+		NewOfficerCost = 50 + (150*StaffSkill*0.01)  # max 200
 	############################################################################
 	# budget-based changes
 	# hiring
@@ -211,7 +217,7 @@ func NextWeek():
 		RecruitProgress -= 1.0
 		StaffExperience -= 3
 		StaffSkill -= 2
-		StaffTrust = StaffTrust * 0.95
+		StaffTrust -= 5
 		var ifDirection = ""
 		if ActiveOfficers < 10:
 			if random.randi_range(1,2) == 1:
@@ -311,8 +317,8 @@ func NextWeek():
 	ifCall = WorldNextWeek.Execute(null)
 	if ifCall == true: doesItEndWithCall = true
 	############################################################################
-	# eventual government assigned operations
-	if random.randi_range(1,20) == 11 and DistGovopCounter < 1:  # one every few months
+	# eventual government assigned operations, one every few months
+	if (random.randi_range(1,20) == 11 and DistGovopCounter < 1) or forceGovOpOrder == true:
 		# choosing organization
 		var whichOrg = -1
 		if random.randi_range(1,2) == 1:
