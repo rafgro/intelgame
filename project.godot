@@ -38,6 +38,7 @@ WorldGenerator="*res://WorldGenerator.gd"
 WorldIntel="*res://WorldIntel.gd"
 WorldNextWeek="*res://WorldNextWeek.gd"
 Testmodule="*res://testmodule.gd"
+Managestate="*res://managestate.gd"
 
 [display]
 

@@ -386,7 +386,7 @@ func Execute(past):
 						if GameLogic.random.randi_range(1,2) == 1: continue  # sometimes enter the war
 				# actual war
 				if GameLogic.random.randi_range(1,5) == 4:
-					WorldData.Wars.append(WorldData.AWar.new({"CountryA": c, "CountryB": c2}))
+					WorldData.Wars.append(WorldData.aNewWar({"CountryA": c, "CountryB": c2}))
 					GameLogic.AddWorldEvent("War began between " + WorldData.Countries[c].Name + " and " + WorldData.Countries[c2].Name, past)
 					WorldData.Countries[c].InStateOfWar = true
 					WorldData.Countries[c2].InStateOfWar = true
@@ -963,7 +963,7 @@ func Execute(past):
 					if opLength < 4: opLength = 4
 					opLength = int(opLength)
 					var opType = GameLogic.random.randi_range(0,4)
-					WorldData.Organizations[w].OpsAgainstHomeland.append(WorldData.AnExternalOperation.new(
+					WorldData.Organizations[w].OpsAgainstHomeland.append(WorldData.aNewExtOp(
 						{
 							"Type": opType,
 							"Budget": int(WorldData.Organizations[w].Budget * opSize),
@@ -1073,7 +1073,7 @@ func Execute(past):
 					if GameLogic.random.randi_range(1,100) < successProb:
 						WorldData.Countries[0].SoftPower -= 3
 						WorldData.Countries[WorldData.Organizations[w].Countries[0]].SoftPower += 3
-						WorldData.Organizations[w].OpsAgainstHomeland.append(WorldData.AnExternalOperation.new(
+						WorldData.Organizations[w].OpsAgainstHomeland.append(WorldData.aNewExtOp(
 							{
 								"Type": WorldData.ExtOpType.COUNTERINTEL,
 								"Budget": int(WorldData.Organizations[w].Budget * 0.01),
@@ -1259,7 +1259,7 @@ func Execute(past):
 		var size = GameLogic.random.randi_range(2,100)
 		var places = GameLogic.random.randi_range(0,len(WorldData.Countries)-1)
 		WorldData.Organizations.append(
-			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.GENERALTERROR, "Name": WorldGenerator.GenerateHostileName(), "Fixed": false, "Known": false, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-50,150), "Counterintelligence": GameLogic.random.randi_range(5,70), "Aggression": GameLogic.random.randi_range(10,80), "Countries": [places], "IntelValue": GameLogic.random.randi_range(-50,-5), "TargetConsistency": 0, "TargetCountries": [], })
+			WorldData.aNewOrganization({ "Type": WorldData.OrgType.GENERALTERROR, "Name": WorldGenerator.GenerateHostileName(), "Fixed": false, "Known": false, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-50,150), "Counterintelligence": GameLogic.random.randi_range(5,70), "Aggression": GameLogic.random.randi_range(10,80), "Countries": [places], "IntelValue": GameLogic.random.randi_range(-50,-5), "TargetConsistency": 0, "TargetCountries": [], })
 		)
 		WorldData.Organizations[-1].UndercoverCounter = GameLogic.random.randi_range(5,120)
 		# usual targets

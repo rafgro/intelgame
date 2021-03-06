@@ -163,7 +163,7 @@ func NewGenerate():
 	# governments
 	for i in range(1, len(WorldData.Countries)):
 		WorldData.Organizations.append(
-			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.GOVERNMENT, "Name": WorldData.Countries[i].Adjective + " Government", "Fixed": true, "Known": true, "Staff": WorldData.Countries[i].Size*300, "Budget": WorldData.Countries[i].Size*10000, "Counterintelligence": GameLogic.random.randi_range(45,65), "Aggression": GameLogic.random.randi_range(20,55), "Countries": [i], "IntelValue": 10, "TargetConsistency": 0, "TargetCountries": [], })
+			WorldData.aNewOrganization({ "Type": WorldData.OrgType.GOVERNMENT, "Name": WorldData.Countries[i].Adjective + " Government", "Fixed": true, "Known": true, "Staff": WorldData.Countries[i].Size*300, "Budget": WorldData.Countries[i].Size*10000, "Counterintelligence": GameLogic.random.randi_range(45,65), "Aggression": GameLogic.random.randi_range(20,55), "Countries": [i], "IntelValue": 10, "TargetConsistency": 0, "TargetCountries": [], })
 		)
 		WorldData.Organizations[-1].IntelIdentified = GameLogic.random.randi_range(20,100)  # officials
 	# movements
@@ -176,7 +176,7 @@ func NewGenerate():
 			if place in doNotRepeat: continue
 			doNotRepeat.append(place)
 			WorldData.Organizations.append(
-				WorldData.AnOrganization.new({ "Type": WorldData.OrgType.MOVEMENT, "Name": WorldData.Countries[place].Adjective + " " + movNames[i] + " Movement", "Fixed": false, "Known": true, "Staff": size, "Budget": 0, "Counterintelligence": 0, "Aggression": GameLogic.random.randi_range(10,70), "Countries": [place], "IntelValue": GameLogic.random.randi_range(-50,10), "TargetConsistency": 0, "TargetCountries": [], })
+				WorldData.aNewOrganization({ "Type": WorldData.OrgType.MOVEMENT, "Name": WorldData.Countries[place].Adjective + " " + movNames[i] + " Movement", "Fixed": false, "Known": true, "Staff": size, "Budget": 0, "Counterintelligence": 0, "Aggression": GameLogic.random.randi_range(10,70), "Countries": [place], "IntelValue": GameLogic.random.randi_range(-50,10), "TargetConsistency": 0, "TargetCountries": [], })
 			)
 	# few general terror orgs
 	for i in range(0,6):
@@ -190,7 +190,7 @@ func NewGenerate():
 		if name in doNotDuplicate: continue
 		doNotDuplicate.append(name)
 		WorldData.Organizations.append(
-			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.GENERALTERROR, "Name": name, "Fixed": false, "Known": true, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-100,100), "Counterintelligence": GameLogic.random.randi_range(10,60), "Aggression": GameLogic.random.randi_range(30,95), "Countries": places, "IntelValue": GameLogic.random.randi_range(-50,10), "TargetConsistency": 0, "TargetCountries": [], })
+			WorldData.aNewOrganization({ "Type": WorldData.OrgType.GENERALTERROR, "Name": name, "Fixed": false, "Known": true, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-100,100), "Counterintelligence": GameLogic.random.randi_range(10,60), "Aggression": GameLogic.random.randi_range(30,95), "Countries": places, "IntelValue": GameLogic.random.randi_range(-50,10), "TargetConsistency": 0, "TargetCountries": [], })
 		)
 		# usual targets
 		WorldData.Organizations[-1].TargetConsistency = GameLogic.random.randi_range(0,100)
@@ -219,7 +219,7 @@ func NewGenerate():
 		if name in doNotDuplicate: continue
 		doNotDuplicate.append(name)
 		WorldData.Organizations.append(
-			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.GENERALTERROR, "Name": name, "Fixed": false, "Known": false, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-50,150), "Counterintelligence": GameLogic.random.randi_range(5,50), "Aggression": GameLogic.random.randi_range(45,95), "Countries": [places], "IntelValue": GameLogic.random.randi_range(-50,-5), "TargetConsistency": 0, "TargetCountries": [], })
+			WorldData.aNewOrganization({ "Type": WorldData.OrgType.GENERALTERROR, "Name": name, "Fixed": false, "Known": false, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-50,150), "Counterintelligence": GameLogic.random.randi_range(5,50), "Aggression": GameLogic.random.randi_range(45,95), "Countries": [places], "IntelValue": GameLogic.random.randi_range(-50,-5), "TargetConsistency": 0, "TargetCountries": [], })
 		)
 		# usual targets
 		WorldData.Organizations[-1].TargetConsistency = GameLogic.random.randi_range(0,100)
@@ -247,7 +247,7 @@ func NewGenerate():
 		if name in doNotDuplicate: continue
 		doNotDuplicate.append(name)
 		WorldData.Organizations.append(
-			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.GENERALTERROR, "Name": name, "Fixed": false, "Known": false, "Staff": size, "Budget": GameLogic.random.randi_range(25,150), "Counterintelligence": GameLogic.random.randi_range(20,80), "Aggression": GameLogic.random.randi_range(15,65), "Countries": [places], "IntelValue": GameLogic.random.randi_range(-10,0), "TargetConsistency": 0, "TargetCountries": [], })
+			WorldData.aNewOrganization({ "Type": WorldData.OrgType.GENERALTERROR, "Name": name, "Fixed": false, "Known": false, "Staff": size, "Budget": GameLogic.random.randi_range(25,150), "Counterintelligence": GameLogic.random.randi_range(20,80), "Aggression": GameLogic.random.randi_range(15,65), "Countries": [places], "IntelValue": GameLogic.random.randi_range(-10,0), "TargetConsistency": 0, "TargetCountries": [], })
 		)
 		# usual targets
 		WorldData.Organizations[-1].TargetConsistency = GameLogic.random.randi_range(0,100)
@@ -276,7 +276,7 @@ func NewGenerate():
 		var ifKnown = false
 		if GameLogic.random.randi_range(1,3) == 2: ifKnown = true
 		WorldData.Organizations.append(
-			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.ARMTRADER, "Name": name, "Fixed": false, "Known": ifKnown, "Staff": GameLogic.random.randi_range(10,200), "Budget": GameLogic.random.randi_range(1000,100000), "Counterintelligence": GameLogic.random.randi_range(50,80), "Aggression": GameLogic.random.randi_range(55,95), "Countries": [places], "IntelValue": GameLogic.random.randi_range(-30,0), "TargetConsistency": 0, "TargetCountries": [], })
+			WorldData.aNewOrganization({ "Type": WorldData.OrgType.ARMTRADER, "Name": name, "Fixed": false, "Known": ifKnown, "Staff": GameLogic.random.randi_range(10,200), "Budget": GameLogic.random.randi_range(1000,100000), "Counterintelligence": GameLogic.random.randi_range(50,80), "Aggression": GameLogic.random.randi_range(55,95), "Countries": [places], "IntelValue": GameLogic.random.randi_range(-30,0), "TargetConsistency": 0, "TargetCountries": [], })
 		)
 		if ifKnown == false:
 			WorldData.Organizations[-1].UndercoverCounter = GameLogic.random.randi_range(30,240)
@@ -298,7 +298,7 @@ func NewGenerate():
 		if name in doNotDuplicate: continue
 		doNotDuplicate.append(name)
 		WorldData.Organizations.append(
-			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.COMPANY, "Name": name, "Fixed": false, "Known": true, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-100,100), "Counterintelligence": GameLogic.random.randi_range(10,50), "Aggression": GameLogic.random.randi_range(0,10), "Countries": [places], "IntelValue": GameLogic.random.randi_range(-10,10), "TargetConsistency": 0, "TargetCountries": [], })
+			WorldData.aNewOrganization({ "Type": WorldData.OrgType.COMPANY, "Name": name, "Fixed": false, "Known": true, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-100,100), "Counterintelligence": GameLogic.random.randi_range(10,50), "Aggression": GameLogic.random.randi_range(0,10), "Countries": [places], "IntelValue": GameLogic.random.randi_range(-10,10), "TargetConsistency": 0, "TargetCountries": [], })
 		)
 		WorldData.Organizations[-1].IntelIdentified = GameLogic.random.randi_range(1,10)  # officials
 		WorldData.Organizations[-1].Technology = GameLogic.random.randi_range(1, WorldData.Countries[places].SoftPower)
@@ -310,7 +310,7 @@ func NewGenerate():
 		if name in doNotDuplicate: continue
 		doNotDuplicate.append(name)
 		WorldData.Organizations.append(
-			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.UNIVERSITY, "Name": name, "Fixed": false, "Known": true, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-100,100), "Counterintelligence": GameLogic.random.randi_range(10,50), "Aggression": GameLogic.random.randi_range(0,5), "Countries": [places], "IntelValue": GameLogic.random.randi_range(-10,10), "TargetConsistency": 0, "TargetCountries": [], })
+			WorldData.aNewOrganization({ "Type": WorldData.OrgType.UNIVERSITY, "Name": name, "Fixed": false, "Known": true, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-100,100), "Counterintelligence": GameLogic.random.randi_range(10,50), "Aggression": GameLogic.random.randi_range(0,5), "Countries": [places], "IntelValue": GameLogic.random.randi_range(-10,10), "TargetConsistency": 0, "TargetCountries": [], })
 		)
 		WorldData.Organizations[-1].IntelIdentified = GameLogic.random.randi_range(1,10)  # officials
 		WorldData.Organizations[-1].Technology = GameLogic.random.randi_range(1, WorldData.Countries[places].SoftPower)
@@ -322,7 +322,7 @@ func NewGenerate():
 		if name in doNotDuplicate: continue
 		doNotDuplicate.append(name)
 		WorldData.Organizations.append(
-			WorldData.AnOrganization.new({ "Type": WorldData.OrgType.UNIVERSITY_OFFENSIVE, "Name": name, "Fixed": false, "Known": true, "Staff": size, "Budget": size*200+GameLogic.random.randi_range(-100,100), "Counterintelligence": GameLogic.random.randi_range(40,85), "Aggression": GameLogic.random.randi_range(15,50), "Countries": [places], "IntelValue": GameLogic.random.randi_range(-10,10), "TargetConsistency": 0, "TargetCountries": [], })
+			WorldData.aNewOrganization({ "Type": WorldData.OrgType.UNIVERSITY_OFFENSIVE, "Name": name, "Fixed": false, "Known": true, "Staff": size, "Budget": size*200+GameLogic.random.randi_range(-100,100), "Counterintelligence": GameLogic.random.randi_range(40,85), "Aggression": GameLogic.random.randi_range(15,50), "Countries": [places], "IntelValue": GameLogic.random.randi_range(-10,10), "TargetConsistency": 0, "TargetCountries": [], })
 		)
 		WorldData.Organizations[-1].IntelIdentified = GameLogic.random.randi_range(1,10)  # officials
 		WorldData.Organizations[-1].Technology = GameLogic.random.randi_range(WorldData.Countries[places].SoftPower, WorldData.Countries[places].SoftPower*2)

@@ -70,4 +70,8 @@ func _on_Directions_pressed():
 	get_tree().change_scene("res://directions.tscn")
 
 func _on_SaveGame_pressed():
-	pass # Replace with function body.
+	$C/M/R/CDate/C/TrustChange.text = "saving game..."
+	$C/M/R/Buttons3/SaveGame.disabled = true
+	Managestate.SaveGame()
+	$C/M/R/CDate/C/TrustChange.text = "game saved"
+	$C/M/R/Buttons3/SaveGame.disabled = false

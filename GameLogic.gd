@@ -160,11 +160,11 @@ func NextWeek():
 	var forceGovOpOrder = false
 	############################################################################
 	# scaling difficulty
-	if AllWeeks == 0:  # new things to happen after first next week click
+	if int(AllWeeks) == 0:  # new things to happen after first next week click
 		forceGovOpOrder = true
-	if AllWeeks == 26:  # half a year to get into the game
+	if int(AllWeeks) == 26:  # half a year to get into the game
 		OpsLimit = 1
-	if AllWeeks % 52 == 0 and AllWeeks != 0:  # roughly a year
+	if int(AllWeeks) % 52 == 0 and int(AllWeeks) != 0:  # roughly a year
 		YearlyOpsAgainstHomeland = 0
 		OpsLimit = random.randi_range(1, 1+int(AllWeeks*1.0/IncreaseTerror))
 		YearlyWars = 0
