@@ -7,10 +7,18 @@ var lastSelectedCountry = -1
 var lastSelectedOrg = -1
 var selectedTab = 0
 
+class MyCustomSorter2:
+	static func sort_ascending(a, b):
+		var farFetched = [a.Name, b.Name]
+		farFetched.sort()
+		if farFetched[0] == a.Name:
+			return true
+		return false
+
 func _ready():
-	$C/M/R/Tabs.set_tab_title(0, "Amount of Intel")
+	$C/M/R/Tabs.set_tab_title(2, "Amount of Intel")
 	$C/M/R/Tabs.set_tab_title(1, "Organization Type")
-	$C/M/R/Tabs.set_tab_title(2, "Host Country")
+	$C/M/R/Tabs.set_tab_title(0, "Host Country")
 	# basic list setup
 	$C/M/R/Tabs/Amount/List.clear()
 	$C/M/R/Tabs/Amount/List.add_item("No Intel")
@@ -26,23 +34,17 @@ func _ready():
 	$C/M/R/Tabs/Type/List.add_item("Movements")
 	$C/M/R/Tabs/Type/List.add_item("Criminal Organizations")
 	mapOfCountries.clear()
-	var descs = []
+	var sortedCountries = []
 	for c in range(1, len(WorldData.Countries)):
 		if WorldData.Countries[c].Size == 0: continue
 		var desc = WorldData.Countries[c].Name
 		if WorldData.DiplomaticRelations[0][c] < -30:
 			desc += " (hostile country)"
-			descs.push_front(desc)
-			mapOfCountries.push_front(c)
-		elif WorldData.DiplomaticRelations[0][c] > 30:
-			desc += " (friendly country)"
-			descs.append(desc)
-			mapOfCountries.append(c)
-		else:
-			descs.append(desc)
-			mapOfCountries.append(c)
-	for d in descs:
-		$C/M/R/Tabs/Countries/List.add_item(d)
+		sortedCountries.append({"Name": desc, "Id": c})
+	sortedCountries.sort_custom(MyCustomSorter2, "sort_ascending")
+	for d in sortedCountries:
+		$C/M/R/Tabs/Countries/List.add_item(d.Name)
+		mapOfCountries.append(d.Id)
 
 func _on_Return_pressed():
 	get_tree().change_scene("res://main.tscn")

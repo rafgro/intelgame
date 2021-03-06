@@ -100,7 +100,8 @@ size_flags_horizontal = 3
 size_flags_vertical = 0
 custom_fonts/font = ExtResource( 1 )
 
-[node name="Amount" type="Tabs" parent="C/M/R/Tabs"]
+[node name="Countries" type="Tabs" parent="C/M/R/Tabs"]
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
@@ -113,7 +114,7 @@ size_flags_vertical = 12
 custom_fonts/font = ExtResource( 1 )
 scrolling_enabled = false
 
-[node name="List" type="ItemList" parent="C/M/R/Tabs/Amount"]
+[node name="List" type="ItemList" parent="C/M/R/Tabs/Countries"]
 anchor_left = -0.010574
 anchor_top = -0.0408163
 anchor_right = 1.01057
@@ -157,8 +158,7 @@ __meta__ = {
 "_edit_use_anchors_": true
 }
 
-[node name="Countries" type="Tabs" parent="C/M/R/Tabs"]
-visible = false
+[node name="Amount" type="Tabs" parent="C/M/R/Tabs"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
@@ -171,7 +171,7 @@ size_flags_vertical = 12
 custom_fonts/font = ExtResource( 1 )
 scrolling_enabled = false
 
-[node name="List" type="ItemList" parent="C/M/R/Tabs/Countries"]
+[node name="List" type="ItemList" parent="C/M/R/Tabs/Amount"]
 anchor_left = -0.010574
 anchor_top = -0.0408163
 anchor_right = 1.01057
@@ -312,9 +312,9 @@ size_flags_horizontal = 0
 custom_fonts/font = ExtResource( 1 )
 text = "Return"
 [connection signal="tab_changed" from="C/M/R/Tabs" to="." method="_on_Tabs_tab_changed"]
-[connection signal="item_selected" from="C/M/R/Tabs/Amount/List" to="." method="_on_AmountList_item_selected"]
-[connection signal="item_selected" from="C/M/R/Tabs/Type/List" to="." method="_on_TypeList_item_selected"]
 [connection signal="item_selected" from="C/M/R/Tabs/Countries/List" to="." method="_on_CountriesList_item_selected"]
+[connection signal="item_selected" from="C/M/R/Tabs/Type/List" to="." method="_on_TypeList_item_selected"]
+[connection signal="item_selected" from="C/M/R/Tabs/Amount/List" to="." method="_on_AmountList_item_selected"]
 [connection signal="item_selected" from="C/M/R/Organizations" to="." method="_on_Organizations_item_selected"]
 [connection signal="pressed" from="C/M/R/H/Gather" to="." method="_on_Gather_pressed"]
 [connection signal="pressed" from="C/M/R/H/Recruit" to="." method="_on_Recruit_pressed"]
