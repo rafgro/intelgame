@@ -21,7 +21,7 @@ _global_script_class_icons={
 [application]
 
 config/name="Int"
-run/main_scene="res://startplay.tscn"
+run/main_scene="res://mainmenu_1.tscn"
 boot_splash/image="res://world_vertical.png"
 boot_splash/fullsize=false
 boot_splash/use_filter=false

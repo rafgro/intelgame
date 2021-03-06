@@ -1,0 +1,198 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://sourcesans.tres" type="DynamicFont" id=1]
+[ext_resource path="res://mainmenu_newrandom.gd" type="Script" id=2]
+
+[node name="Panel" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="C" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+color = Color( 0.145098, 0.145098, 0.164706, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="V" type="VBoxContainer" parent="C"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="M" type="MarginContainer" parent="C/V"]
+margin_right = 720.0
+margin_bottom = 1480.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/margin_right = 30
+custom_constants/margin_top = 50
+custom_constants/margin_left = 30
+custom_constants/margin_bottom = 50
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="R" type="VBoxContainer" parent="C/V/M"]
+margin_left = 30.0
+margin_top = 50.0
+margin_right = 690.0
+margin_bottom = 1430.0
+rect_min_size = Vector2( 0, 80 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Empty3" type="Label" parent="C/V/M/R"]
+margin_right = 660.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 0, 40 )
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 1 )
+
+[node name="CHeader" type="HBoxContainer" parent="C/V/M/R"]
+margin_top = 44.0
+margin_right = 660.0
+margin_bottom = 78.0
+size_flags_horizontal = 3
+
+[node name="R" type="CenterContainer" parent="C/V/M/R/CHeader"]
+margin_right = 660.0
+margin_bottom = 34.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="D" type="HBoxContainer" parent="C/V/M/R/CHeader/R"]
+margin_left = 193.0
+margin_right = 467.0
+margin_bottom = 34.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/separation = 10
+
+[node name="Label" type="Label" parent="C/V/M/R/CHeader/R/D"]
+margin_right = 274.0
+margin_bottom = 34.0
+custom_fonts/font = ExtResource( 1 )
+text = "Start New Random Game"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Empty" type="Label" parent="C/V/M/R"]
+margin_top = 82.0
+margin_right = 660.0
+margin_bottom = 122.0
+rect_min_size = Vector2( 0, 40 )
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 1 )
+
+[node name="Empty4" type="Label" parent="C/V/M/R"]
+margin_top = 126.0
+margin_right = 660.0
+margin_bottom = 166.0
+rect_min_size = Vector2( 0, 40 )
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 1 )
+
+[node name="ChTerror" type="CheckButton" parent="C/V/M/R"]
+margin_top = 170.0
+margin_right = 660.0
+margin_bottom = 212.0
+custom_fonts/font = ExtResource( 1 )
+pressed = true
+text = "Terrorist Attacks"
+
+[node name="Empty2" type="Label" parent="C/V/M/R"]
+margin_top = 216.0
+margin_right = 660.0
+margin_bottom = 256.0
+rect_min_size = Vector2( 0, 40 )
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 1 )
+
+[node name="ChWars" type="CheckButton" parent="C/V/M/R"]
+margin_top = 260.0
+margin_right = 660.0
+margin_bottom = 302.0
+custom_fonts/font = ExtResource( 1 )
+pressed = true
+text = "Wars Between Countries"
+
+[node name="Empty5" type="Label" parent="C/V/M/R"]
+margin_top = 306.0
+margin_right = 660.0
+margin_bottom = 346.0
+rect_min_size = Vector2( 0, 40 )
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 1 )
+
+[node name="ChWMD" type="CheckButton" parent="C/V/M/R"]
+margin_top = 350.0
+margin_right = 660.0
+margin_bottom = 392.0
+custom_fonts/font = ExtResource( 1 )
+pressed = true
+text = "Weapons of Mass Destruction"
+
+[node name="Empty7" type="Label" parent="C/V/M/R"]
+margin_top = 396.0
+margin_right = 660.0
+margin_bottom = 436.0
+rect_min_size = Vector2( 0, 40 )
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 1 )
+
+[node name="ChInfiltrate" type="CheckButton" parent="C/V/M/R"]
+margin_top = 440.0
+margin_right = 660.0
+margin_bottom = 482.0
+custom_fonts/font = ExtResource( 1 )
+pressed = true
+text = "Counterintelligence Infiltration"
+
+[node name="Empty6" type="Label" parent="C/V/M/R"]
+margin_top = 486.0
+margin_right = 660.0
+margin_bottom = 1196.0
+rect_min_size = Vector2( 0, 40 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_fonts/font = ExtResource( 1 )
+
+[node name="CButtons2" type="HBoxContainer" parent="C/V/M/R"]
+margin_top = 1200.0
+margin_right = 660.0
+margin_bottom = 1380.0
+size_flags_horizontal = 3
+custom_constants/separation = 50
+
+[node name="Decision3" type="Button" parent="C/V/M/R/CButtons2"]
+margin_right = 305.0
+margin_bottom = 180.0
+rect_min_size = Vector2( 210, 180 )
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 1 )
+text = "Back"
+
+[node name="Decision4" type="Button" parent="C/V/M/R/CButtons2"]
+margin_left = 355.0
+margin_right = 660.0
+margin_bottom = 180.0
+rect_min_size = Vector2( 210, 180 )
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 1 )
+text = "Start"
+[connection signal="pressed" from="C/V/M/R/CButtons2/Decision3" to="." method="_on_Back_pressed"]
+[connection signal="pressed" from="C/V/M/R/CButtons2/Decision4" to="." method="_on_Start_pressed"]

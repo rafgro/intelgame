@@ -1,20 +1,14 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://sourcesans.tres" type="DynamicFont" id=1]
-[ext_resource path="res://icons/call.png" type="Texture" id=2]
-[ext_resource path="res://callscreen.gd" type="Script" id=3]
-[ext_resource path="res://SourceSansPro-Bold.ttf" type="DynamicFontData" id=4]
-
-[sub_resource type="DynamicFont" id=1]
-size = 24
-font_data = ExtResource( 4 )
+[ext_resource path="res://mainmenu_1.gd" type="Script" id=2]
 
 [node name="Panel" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-script = ExtResource( 3 )
+script = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -40,15 +34,16 @@ __meta__ = {
 
 [node name="ColorRect" type="ColorRect" parent="C/V"]
 margin_right = 720.0
-margin_bottom = 150.0
+margin_bottom = 257.0
 rect_min_size = Vector2( 0, 150 )
 size_flags_horizontal = 3
+size_flags_vertical = 3
 color = Color( 0.12549, 0.12549, 0.145098, 1 )
 
 [node name="M" type="MarginContainer" parent="C/V"]
-margin_top = 154.0
+margin_top = 261.0
 margin_right = 720.0
-margin_bottom = 1276.0
+margin_bottom = 1219.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_constants/margin_right = 30
@@ -63,109 +58,75 @@ __meta__ = {
 margin_left = 30.0
 margin_top = 50.0
 margin_right = 690.0
-margin_bottom = 1072.0
+margin_bottom = 908.0
 rect_min_size = Vector2( 0, 80 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="CHeader" type="HBoxContainer" parent="C/V/M/R"]
+[node name="Empty3" type="Label" parent="C/V/M/R"]
 margin_right = 660.0
 margin_bottom = 40.0
+rect_min_size = Vector2( 0, 40 )
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 1 )
+
+[node name="CHeader" type="HBoxContainer" parent="C/V/M/R"]
+margin_top = 44.0
+margin_right = 660.0
+margin_bottom = 78.0
 size_flags_horizontal = 3
 
 [node name="R" type="CenterContainer" parent="C/V/M/R/CHeader"]
 margin_right = 660.0
-margin_bottom = 40.0
+margin_bottom = 34.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="D" type="HBoxContainer" parent="C/V/M/R/CHeader/R"]
-margin_left = 212.0
-margin_right = 448.0
-margin_bottom = 40.0
+margin_left = 273.0
+margin_right = 387.0
+margin_bottom = 34.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_constants/separation = 10
 
-[node name="TextureRect" type="TextureRect" parent="C/V/M/R/CHeader/R/D"]
-margin_right = 18.0
-margin_bottom = 40.0
-rect_min_size = Vector2( 0, 40 )
-texture = ExtResource( 2 )
-
 [node name="Label" type="Label" parent="C/V/M/R/CHeader/R/D"]
-margin_left = 28.0
-margin_top = 3.0
-margin_right = 236.0
-margin_bottom = 37.0
+margin_right = 114.0
+margin_bottom = 34.0
 custom_fonts/font = ExtResource( 1 )
-text = "Important Decision"
+text = "Homeland"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Empty" type="Label" parent="C/V/M/R"]
-margin_top = 44.0
+margin_top = 82.0
 margin_right = 660.0
-margin_bottom = 84.0
+margin_bottom = 122.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
-
-[node name="T" type="HBoxContainer" parent="C/V/M/R"]
-margin_top = 88.0
-margin_right = 660.0
-margin_bottom = 128.0
-
-[node name="Level" type="Label" parent="C/V/M/R/T"]
-margin_right = 328.0
-margin_bottom = 40.0
-rect_min_size = Vector2( 0, 40 )
-size_flags_horizontal = 3
-custom_fonts/font = ExtResource( 1 )
-text = "Level: ."
-
-[node name="Operation" type="Label" parent="C/V/M/R/T"]
-margin_left = 332.0
-margin_right = 660.0
-margin_bottom = 40.0
-rect_min_size = Vector2( 0, 40 )
-size_flags_horizontal = 3
-custom_fonts/font = ExtResource( 1 )
-text = "Operation ."
-align = 2
 
 [node name="Empty2" type="Label" parent="C/V/M/R"]
-margin_top = 132.0
+margin_top = 126.0
 margin_right = 660.0
-margin_bottom = 172.0
+margin_bottom = 166.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 
-[node name="Content" type="RichTextLabel" parent="C/V/M/R"]
-margin_top = 176.0
-margin_right = 660.0
-margin_bottom = 566.0
-rect_min_size = Vector2( 0, 100 )
-size_flags_horizontal = 3
-size_flags_vertical = 3
-custom_fonts/bold_font = SubResource( 1 )
-custom_fonts/normal_font = ExtResource( 1 )
-bbcode_enabled = true
-
 [node name="Empty5" type="Label" parent="C/V/M/R"]
-margin_top = 570.0
+margin_top = 170.0
 margin_right = 660.0
-margin_bottom = 610.0
+margin_bottom = 210.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 
 [node name="CButtons" type="HBoxContainer" parent="C/V/M/R"]
-margin_top = 614.0
+margin_top = 214.0
 margin_right = 660.0
-margin_bottom = 794.0
+margin_bottom = 394.0
 size_flags_horizontal = 3
 custom_constants/separation = 50
 
@@ -189,16 +150,16 @@ __meta__ = {
 }
 
 [node name="Label" type="Label" parent="C/V/M/R/CButtons/Decision1/C"]
-margin_left = 123.0
+margin_left = 72.0
 margin_top = 54.0
-margin_right = 183.0
+margin_right = 233.0
 margin_bottom = 125.0
 mouse_filter = 1
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_fonts/font = ExtResource( 1 )
-text = "Test
-Test2"
+text = "New
+Random Game"
 align = 1
 __meta__ = {
 "_edit_use_anchors_": false
@@ -211,6 +172,7 @@ margin_bottom = 180.0
 rect_min_size = Vector2( 210, 180 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
+disabled = true
 
 [node name="C" type="CenterContainer" parent="C/V/M/R/CButtons/Decision2"]
 anchor_right = 0.990164
@@ -224,33 +186,33 @@ __meta__ = {
 }
 
 [node name="Label" type="Label" parent="C/V/M/R/CButtons/Decision2/C"]
-margin_left = 121.0
+margin_left = 69.0
 margin_top = 54.0
-margin_right = 181.0
+margin_right = 233.0
 margin_bottom = 125.0
 mouse_filter = 1
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_fonts/font = ExtResource( 1 )
-text = "Test3
-Test4"
+text = "New
+Scenario Game"
 align = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Empty6" type="Label" parent="C/V/M/R"]
-margin_top = 798.0
+margin_top = 398.0
 margin_right = 660.0
-margin_bottom = 838.0
+margin_bottom = 438.0
 rect_min_size = Vector2( 0, 40 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 
 [node name="CButtons2" type="HBoxContainer" parent="C/V/M/R"]
-margin_top = 842.0
+margin_top = 442.0
 margin_right = 660.0
-margin_bottom = 1022.0
+margin_bottom = 622.0
 size_flags_horizontal = 3
 custom_constants/separation = 50
 
@@ -273,16 +235,15 @@ __meta__ = {
 }
 
 [node name="Label" type="Label" parent="C/V/M/R/CButtons2/Decision3/C"]
-margin_left = 121.0
-margin_top = 54.0
-margin_right = 181.0
-margin_bottom = 125.0
+margin_left = 89.0
+margin_top = 73.0
+margin_right = 212.0
+margin_bottom = 107.0
 mouse_filter = 1
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_fonts/font = ExtResource( 1 )
-text = "Test
-Test2"
+text = "Load Game"
 align = 1
 __meta__ = {
 "_edit_use_anchors_": false
@@ -308,29 +269,61 @@ __meta__ = {
 }
 
 [node name="Label" type="Label" parent="C/V/M/R/CButtons2/Decision4/C"]
-margin_left = 122.0
-margin_top = 54.0
-margin_right = 182.0
-margin_bottom = 125.0
+margin_left = 129.0
+margin_top = 73.0
+margin_right = 175.0
+margin_bottom = 107.0
 mouse_filter = 1
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_fonts/font = ExtResource( 1 )
-text = "Test3
-Test4"
+text = "Quit"
 align = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="Empty7" type="Label" parent="C/V/M/R"]
+margin_top = 626.0
+margin_right = 660.0
+margin_bottom = 666.0
+rect_min_size = Vector2( 0, 40 )
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 1 )
+
+[node name="Empty8" type="Label" parent="C/V/M/R"]
+margin_top = 670.0
+margin_right = 660.0
+margin_bottom = 710.0
+rect_min_size = Vector2( 0, 40 )
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 1 )
+
+[node name="Quote" type="RichTextLabel" parent="C/V/M/R"]
+margin_top = 714.0
+margin_right = 660.0
+margin_bottom = 814.0
+rect_min_size = Vector2( 0, 100 )
+size_flags_horizontal = 3
+custom_fonts/normal_font = ExtResource( 1 )
+
+[node name="Empty9" type="Label" parent="C/V/M/R"]
+margin_top = 818.0
+margin_right = 660.0
+margin_bottom = 858.0
+rect_min_size = Vector2( 0, 40 )
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 1 )
+
 [node name="ColorRect2" type="ColorRect" parent="C/V"]
-margin_top = 1280.0
+margin_top = 1223.0
 margin_right = 720.0
 margin_bottom = 1480.0
 rect_min_size = Vector2( 0, 200 )
 size_flags_horizontal = 3
+size_flags_vertical = 3
 color = Color( 0.12549, 0.12549, 0.145098, 1 )
-[connection signal="pressed" from="C/V/M/R/CButtons/Decision1" to="." method="_on_Decision1_pressed"]
-[connection signal="pressed" from="C/V/M/R/CButtons/Decision2" to="." method="_on_Decision2_pressed"]
-[connection signal="pressed" from="C/V/M/R/CButtons2/Decision3" to="." method="_on_Decision3_pressed"]
-[connection signal="pressed" from="C/V/M/R/CButtons2/Decision4" to="." method="_on_Decision4_pressed"]
+[connection signal="pressed" from="C/V/M/R/CButtons/Decision1" to="." method="_on_NewRandom_pressed"]
+[connection signal="pressed" from="C/V/M/R/CButtons/Decision2" to="." method="_on_NewScenario_pressed"]
+[connection signal="pressed" from="C/V/M/R/CButtons2/Decision3" to="." method="_on_Load_pressed"]
+[connection signal="pressed" from="C/V/M/R/CButtons2/Decision4" to="." method="_on_Quit_pressed"]

@@ -68,3 +68,6 @@ func _on_Tradecraft_pressed():
 
 func _on_Directions_pressed():
 	get_tree().change_scene("res://directions.tscn")
+
+func _on_SaveGame_pressed():
+	pass # Replace with function body.

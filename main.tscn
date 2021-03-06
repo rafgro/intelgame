@@ -328,13 +328,12 @@ margin_right = 660.0
 margin_bottom = 1410.0
 size_flags_horizontal = 3
 
-[node name="MainMeny" type="Button" parent="C/M/R/Buttons3"]
+[node name="SaveGame" type="Button" parent="C/M/R/Buttons3"]
 margin_right = 210.0
 margin_bottom = 120.0
 rect_min_size = Vector2( 210, 120 )
 custom_fonts/font = ExtResource( 2 )
-disabled = true
-text = "Main Menu"
+text = "Save Game"
 
 [node name="Label" type="Label" parent="C/M/R/Buttons3"]
 margin_left = 214.0
@@ -358,4 +357,5 @@ text = "Next Week"
 [connection signal="pressed" from="C/M/R/Buttons2/Directions" to="." method="_on_Directions_pressed"]
 [connection signal="pressed" from="C/M/R/Buttons2/Operations" to="." method="_on_Operations_pressed"]
 [connection signal="pressed" from="C/M/R/Buttons2/GatheredIntel" to="." method="_on_GatheredIntel_pressed"]
+[connection signal="pressed" from="C/M/R/Buttons3/SaveGame" to="." method="_on_SaveGame_pressed"]
 [connection signal="pressed" from="C/M/R/Buttons3/NextWeek" to="." method="_on_NextWeek_pressed"]
