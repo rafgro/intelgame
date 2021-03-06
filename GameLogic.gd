@@ -24,7 +24,7 @@ var WorldEvents = []
 var IntensityHiring = 5
 var IntensityUpskill = 10
 var IntensityTech = 5
-var BudgetFull = 100  # in thousands, monthly
+var BudgetFull = 150  # in thousands, monthly
 var BudgetOngoingOperations = 0
 var BudgetExtras = 0  # sources, stations
 # Staff
@@ -80,6 +80,7 @@ var NewTechCost = 25  # thousands needed to spend on a new percent of technology
 var SkillMaintenanceCost = 0.5  # thousands needed to maintain skills for an officer
 # Options
 var TurnOnTerrorist = true
+var IncreaseTerror = 52*2  # possible +1 terror ops every x weeks
 var TurnOnWars = true
 var TurnOnWMD = true
 var TurnOnInfiltration = true
@@ -165,7 +166,7 @@ func NextWeek():
 		OpsLimit = 1
 	if AllWeeks % 52 == 0 and AllWeeks != 0:  # roughly a year
 		YearlyOpsAgainstHomeland = 0
-		OpsLimit = random.randi_range(1, 1+int(AllWeeks*1.0/52))
+		OpsLimit = random.randi_range(1, 1+int(AllWeeks*1.0/IncreaseTerror))
 		YearlyWars = 0
 		YearlyHiring = 0
 	############################################################################
@@ -199,13 +200,14 @@ func NextWeek():
 				DateMonth = 1
 				DateYear += 1
 				# new-year budget increase
-				var budgetIncrease = BudgetFull*(0.01*Trust)
-				if budgetIncrease > 150: budgetIncrease = 150
+				var budgetIncrease = 15 + Trust*0.5
+				if budgetIncrease > 70: budgetIncrease = random.randi_range(68,75)
 				BudgetFull += budgetIncrease
 				AddEvent("New year budget increase: +€"+str(int(budgetIncrease))+"k")
 		# monthly updated game logic
-		ExistingOfficerCost = 4 + (10*StaffSkill*0.01 + 16*StaffExperience*0.01)  # max 30
-		NewOfficerCost = 50 + (150*StaffSkill*0.01)  # max 200
+		ExistingOfficerCost = 6 + (10*StaffSkill*0.01 + 16*StaffExperience*0.01)  # max 30
+		NewOfficerCost = 50 + (150*StaffSkill*0.01) + ActiveOfficers*4  # ~max 250
+		if NewOfficerCost > 250: NewOfficerCost = 250
 	############################################################################
 	# budget-based changes
 	# hiring
@@ -294,26 +296,31 @@ func NextWeek():
 				# training
 				if Directions[t].Type <= 3:
 					AddEvent(str(Directions[t].Officers) + " officer(s) came back with improved knowledge about " + WorldData.Countries[Directions[t].Country].Name)
+					StaffTrust += 2
 				# network
 				elif Directions[t].Type == 4:
 					if WorldData.Countries[Directions[t].Country].Network > 0:
 						WorldData.Countries[Directions[t].Country].Network *= (1.0 + Directions[t].Quality*0.01)
 						AddEvent(str(Directions[t].Officers) + " officer(s) came back after expanding agent network in " + WorldData.Countries[Directions[t].Country].Name)
 						BudgetExtras += Directions[t].MonthlyCost * 0.05
+						StaffTrust += 0.5
 					else:
 						WorldData.Countries[Directions[t].Country].Network = int(Directions[t].Quality)
 						AddEvent(str(Directions[t].Officers) + " officer(s) came back after establishing agent network in " + WorldData.Countries[Directions[t].Country].Name)
 						BudgetExtras += Directions[t].MonthlyCost * 0.3
+						StaffTrust += 1
 				# station
 				elif Directions[t].Type == 5:
 					if WorldData.Countries[Directions[t].Country].Station > 0:
 						WorldData.Countries[Directions[t].Country].Station *= (1.0 + Directions[t].Quality*0.01)
 						AddEvent(str(Directions[t].Officers) + " officer(s) came back after expanding station in " + WorldData.Countries[Directions[t].Country].Name)
 						BudgetExtras += Directions[t].MonthlyCost * 0.2
+						StaffTrust += 1
 					else:
 						WorldData.Countries[Directions[t].Country].Station = int(Directions[t].Quality)
 						AddEvent(str(Directions[t].Officers) + " officer(s) came back after establishing station in " + WorldData.Countries[Directions[t].Country].Name)
 						BudgetExtras += Directions[t].MonthlyCost
+						StaffTrust += 3
 	############################################################################
 	# operations
 	var ifCall = OperationHandler.ProgressOperations()
@@ -368,7 +375,8 @@ func NextWeek():
 			var opType = OperationGenerator.Type.MORE_INTEL
 			if WorldData.Organizations[whichOrg].IntelIdentified > 0 and random.randi_range(1,5) == 2:
 				opType = OperationGenerator.Type.RECRUIT_SOURCE
-			OperationGenerator.NewOperation(1, whichOrg, opType)
+			var countryId = WorldData.Organizations[whichOrg].Countries[0]
+			OperationGenerator.NewOperation(1, whichOrg, countryId, opType)
 			# if possible, start fast
 			if OfficersInHQ > 0:
 				Operations[-1].AnalyticalOfficers = OfficersInHQ
@@ -782,7 +790,7 @@ func ImplementOfficerRescue(adictionary):
 	# choice-based changes
 	# "engaging government will return officers, but significantly decrease government's trust"
 	if adictionary.Choice == 1:
-		AddEvent(Operations[i].Name + ": "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned to Homeland after being arrested")
+		AddEvent(WorldData.Countries[Operations[i].Country].Name + " (" + Operations[i].Name + "): "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned to Homeland after being arrested")
 		OfficersInHQ += Operations[i].AbroadPlan.Officers
 		StaffTrust *= 1.1
 		StaffSkill *= 1.01
@@ -797,7 +805,7 @@ func ImplementOfficerRescue(adictionary):
 		WorldData.DiplomaticRelations[Operations[i].Country][0] -= random.randi_range(5,15)
 	# "expelling will happen between intelligence services only, but these officers will never be allowed to enter this country again"
 	elif adictionary.Choice == 2:
-		AddEvent(Operations[i].Name + ": "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned to Homeland after being arrested")
+		AddEvent(WorldData.Countries[Operations[i].Country].Name + " (" + Operations[i].Name + "): "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned to Homeland after being arrested")
 		OfficersInHQ += Operations[i].AbroadPlan.Officers
 		StaffTrust *= 1.08
 		StaffSkill *= 1.01
@@ -806,13 +814,13 @@ func ImplementOfficerRescue(adictionary):
 	# "denying affiliation will result in officer imprisonment and their de facto loss, affecting internal trust, but not affecting any external instituions"
 	elif adictionary.Choice == 3:
 		ActiveOfficers -= Operations[i].AbroadPlan.Officers
-		AddEvent(Operations[i].Name + ": "+str(Operations[i].AbroadPlan.Officers)+" officer(s) arrested and imprisoned for many years")
+		AddEvent(WorldData.Countries[Operations[i].Country].Name + " (" + Operations[i].Name + "): "+str(Operations[i].AbroadPlan.Officers)+" officer(s) arrested and imprisoned for many years")
 		StaffTrust *= 0.4
 		StaffSkill *= 0.8
 		StaffExperience *= 0.8
 	# "exfiltration is a risky, covert rescue operation performed by the rest of the officers (" +str(GameLogic.OfficersInHQ) + " available), which returns officers intact in case of success but leads to both huge trust loss and expulsion in case of failure"
 	else:
-		AddEvent(Operations[i].Name + ": "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned to Homeland after being arrested")
+		AddEvent(WorldData.Countries[Operations[i].Country].Name + " (" + Operations[i].Name + "): "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned to Homeland after being arrested")
 		StaffTrust *= 1.09
 		StaffSkill *= 1.02
 		StaffExperience *= 1.02
@@ -1033,7 +1041,7 @@ func ImplementMoleTermination(aDict):
 	OfficersInHQ -= 1
 	StaffSkill *= 0.9
 	StaffExperience *= 0.9
-	StaffTrust *= 0.9
+	StaffTrust *= 0.8
 	Investigations.append(
 		{
 			"Type": WorldData.ExtOpType.COUNTERINTEL,

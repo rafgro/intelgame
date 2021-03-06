@@ -26,14 +26,14 @@ enum Stage {
 	FAILED = 5,
 }
 
-func NewOperation(source, againstOrg, whatType):
+func NewOperation(source, againstOrg, countryId, whatType):
 	GameLogic.PursuedOperations += 1
 	# name
 	var whichName = randi() % PossibleNames.size()
 	var theName = PossibleNames[whichName]
 	PossibleNames.remove(whichName)  # to avoid using the same name again
 	# place
-	var countryId = WorldData.Organizations[againstOrg].Countries[randi() % WorldData.Organizations[againstOrg].Countries.size()]
+	#var countryId = WorldData.Organizations[againstOrg].Countries[randi() % WorldData.Organizations[againstOrg].Countries.size()]
 	WorldData.Countries[countryId].OperationStats += 1
 	# type
 	var alevel = "Confidential"
@@ -55,7 +55,7 @@ func NewOperation(source, againstOrg, whatType):
 		alevel = "Top Secret"
 	# local communicate
 	if source == 0:
-		GameLogic.AddEvent("Bureau started a new operation: " + theName)
+		GameLogic.AddEvent("Bureau started a new operation in " + WorldData.Countries[countryId].Name + ": " + theName)
 	else:
 		GameLogic.AddEvent("Government designated a new operation: " + theName)
 	# actual operation addition

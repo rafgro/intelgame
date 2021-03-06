@@ -350,6 +350,7 @@ func ProgressOperations():
 				if GameLogic.Operations[i].AbroadProgress > 0:  # check to avoid doubling events
 					#GameLogic.AddEvent(WorldData.Countries[GameLogic.Operations[i].Country].Name + " (" + GameLogic.Operations[i].Name + "): operation continues")
 					continuingOperations.append({"Country": WorldData.Countries[GameLogic.Operations[i].Country].Name, "Op": GameLogic.Operations[i].Name})
+					GameLogic.StaffTrust += 0.5
 			# second chance with help of a network
 			elif (WorldData.Countries[GameLogic.Operations[i].Country].Network - WorldData.Countries[GameLogic.Operations[i].Country].NetworkBlowup) > 0 and GameLogic.random.randi_range(0,GameLogic.Operations[i].AbroadPlan.Risk*2) < (WorldData.Countries[GameLogic.Operations[i].Country].Network - WorldData.Countries[GameLogic.Operations[i].Country].NetworkBlowup):
 				GameLogic.Operations[i].AbroadProgress -= GameLogic.Operations[i].AbroadRateOfProgress
@@ -477,53 +478,69 @@ func ProgressOperations():
 						# also, if this was gov op, then we loose trust in hard negative, not only fraction
 						if GameLogic.Operations[i].Source == 1:
 							GameLogic.Trust -= GameLogic.random.randi_range(5,15)
-					# otherwise, arrest
+					# otherwise
 					else:
+						# expulsion
+						if GameLogic.Operations[i].AbroadPlan.Covert == false:
+							GameLogic.AddEvent(GameLogic.Operations[i].Name + ": "+str(GameLogic.Operations[i].AbroadPlan.Officers)+" officer(s) were caught and expelled from " + WorldData.Countries[GameLogic.Operations[i].Country].Name)
+							GameLogic.StaffExperience *= 1.01
+							WorldData.Countries[GameLogic.Operations[i].Country].Expelled += GameLogic.Operations[i].AbroadPlan.Officers
+							GameLogic.PursuedOperations -= 1
+							GameLogic.Operations[i].Stage = OperationGenerator.Stage.FAILED
+							GameLogic.Operations[i].Result = "FAILED, " + str(GameLogic.Operations[i].AbroadPlan.Officers) + " officers expelled"
+							GameLogic.OfficersAbroad -= GameLogic.Operations[i].AbroadPlan.Officers
+							GameLogic.OfficersInHQ += GameLogic.Operations[i].AbroadPlan.Officers
+							GameLogic.BudgetOngoingOperations -= GameLogic.Operations[i].AbroadPlan.Cost
+							GameLogic.Trust -= 5
+							WorldData.DiplomaticRelations[0][GameLogic.Operations[i].Country] -= GameLogic.random.randi_range(2,7)
+							WorldData.DiplomaticRelations[GameLogic.Operations[i].Country][0] -= GameLogic.random.randi_range(2,7)
+						# arrest
 						# prepare investigation early, because it's about op, not rescue
-						GameLogic.Investigations.append(
-							{
-								"Type": 100,
-								"FinishCounter": GameLogic.random.randi_range(3,6),
-								"Organization": which,
-								"Operation": i,
-								"Success": null,
-								"Content": "Arrest of " + str(GameLogic.Operations[i].AbroadPlan.Officers) + " Officers in Operation " + str(GameLogic.Operations[i].Name) + "\n\nInvestigation team concluded that the operation failed due to:\n\n" + PoolStringArray(contentReasons).join("\n"),
-							}
-						)
-						# asking user for action
-						var ifEngagingAvailable = true
-						if WorldData.DiplomaticRelations[0][GameLogic.Operations[i].Country] < -30:
-							ifEngagingAvailable = false
-						var ifExfiltrationAvailable = false
-						if GameLogic.OfficersInHQ > 0: ifExfiltrationAvailable = true
-						CallManager.CallQueue.append(
-							{
-								"Header": "Urgent Decision",
-								"Level": GameLogic.Operations[i].Level,
-								"Operation": GameLogic.Operations[i].Name + "\nagainst " + WorldData.Organizations[GameLogic.Operations[i].Target].Name,
-								"Content": str(GameLogic.Operations[i].AbroadPlan.Officers) + " officers executing the action were arrested by " + WorldData.Countries[GameLogic.Operations[i].Country].Adjective + " authorities. Decide on appropriate reaction.\n\nPossibilities:\n- engaging government will return officers, but significantly decrease government's trust (unavailable in hostile countries)\n- expelling will happen between intelligence services only, but these officers will never be allowed to enter this country again\n- denying affiliation will result in officer imprisonment and their de facto loss, affecting internal trust, but not affecting any external institutions\n- exfiltration is a risky, covert rescue operation performed by the rest of the officers (" +str(GameLogic.OfficersInHQ) + " available) and eventual agent network (" +str(WorldData.Countries[GameLogic.Operations[i].Country].Network) + " available), which returns officers intact in case of success but leads to both huge trust loss and expulsion in case of failure",
-								"Show1": ifEngagingAvailable,
-								"Show2": true,
-								"Show3": true,
-								"Show4": ifExfiltrationAvailable,
-								"Text1": "Engage government",
-								"Text2": "Push for expelling",
-								"Text3": "Deny affiliation",
-								"Text4": "Attempt exfiltration",
-								"Decision1Callback": funcref(GameLogic, "ImplementOfficerRescue"),
-								"Decision1Argument": {"Operation":i, "Choice":1},
-								"Decision2Callback": funcref(GameLogic, "ImplementOfficerRescue"),
-								"Decision2Argument": {"Operation":i, "Choice":2},
-								"Decision3Callback": funcref(GameLogic, "ImplementOfficerRescue"),
-								"Decision3Argument": {"Operation":i, "Choice":3},
-								"Decision4Callback": funcref(GameLogic, "ImplementOfficerRescue"),
-								"Decision4Argument": {"Operation":i, "Choice":4},
-							}
-						)
-						doesItEndWithCall = true
-						# also, if this was gov op, then we loose trust
-						if GameLogic.Operations[i].Source == 1:
-							GameLogic.Trust -= GameLogic.random.randi_range(1,10)
+						else:
+							GameLogic.Investigations.append(
+								{
+									"Type": 100,
+									"FinishCounter": GameLogic.random.randi_range(3,6),
+									"Organization": which,
+									"Operation": i,
+									"Success": null,
+									"Content": "Arrest of " + str(GameLogic.Operations[i].AbroadPlan.Officers) + " Officers in Operation " + str(GameLogic.Operations[i].Name) + "\n\nInvestigation team concluded that the operation failed due to:\n\n" + PoolStringArray(contentReasons).join("\n"),
+								}
+							)
+							# asking user for action
+							var ifEngagingAvailable = true
+							if WorldData.DiplomaticRelations[0][GameLogic.Operations[i].Country] < -30:
+								ifEngagingAvailable = false
+							var ifExfiltrationAvailable = false
+							if GameLogic.OfficersInHQ > 0: ifExfiltrationAvailable = true
+							CallManager.CallQueue.append(
+								{
+									"Header": "Urgent Decision",
+									"Level": GameLogic.Operations[i].Level,
+									"Operation": GameLogic.Operations[i].Name + "\nagainst " + WorldData.Organizations[GameLogic.Operations[i].Target].Name,
+									"Content": str(GameLogic.Operations[i].AbroadPlan.Officers) + " officers executing the action were arrested by " + WorldData.Countries[GameLogic.Operations[i].Country].Adjective + " authorities. Decide on appropriate reaction.\n\nPossibilities:\n- engaging government will return officers, but significantly decrease government's trust (unavailable in hostile countries)\n- expelling will happen between intelligence services only, but these officers will never be allowed to enter this country again\n- denying affiliation will result in officer imprisonment and their de facto loss, affecting internal trust, but not affecting any external institutions\n- exfiltration is a risky, covert rescue operation performed by the rest of the officers (" +str(GameLogic.OfficersInHQ) + " available) and eventual agent network (" +str(WorldData.Countries[GameLogic.Operations[i].Country].Network) + " available), which returns officers intact in case of success but leads to both huge trust loss and expulsion in case of failure",
+									"Show1": ifEngagingAvailable,
+									"Show2": true,
+									"Show3": true,
+									"Show4": ifExfiltrationAvailable,
+									"Text1": "Engage government",
+									"Text2": "Push for expelling",
+									"Text3": "Deny affiliation",
+									"Text4": "Attempt exfiltration",
+									"Decision1Callback": funcref(GameLogic, "ImplementOfficerRescue"),
+									"Decision1Argument": {"Operation":i, "Choice":1},
+									"Decision2Callback": funcref(GameLogic, "ImplementOfficerRescue"),
+									"Decision2Argument": {"Operation":i, "Choice":2},
+									"Decision3Callback": funcref(GameLogic, "ImplementOfficerRescue"),
+									"Decision3Argument": {"Operation":i, "Choice":3},
+									"Decision4Callback": funcref(GameLogic, "ImplementOfficerRescue"),
+									"Decision4Argument": {"Operation":i, "Choice":4},
+								}
+							)
+							doesItEndWithCall = true
+							# also, if this was gov op, then we loose trust
+							if GameLogic.Operations[i].Source == 1:
+								GameLogic.Trust -= GameLogic.random.randi_range(1,10)
 				# base p=25/100: escape
 				elif whatHappened <= 35:
 					GameLogic.AddEvent(WorldData.Countries[GameLogic.Operations[i].Country].Name + " (" + GameLogic.Operations[i].Name + "): officers were almost caught and had to flee to Homeland")
@@ -637,8 +654,8 @@ func ProgressOperations():
 					var govFeedbackDesc = "negatively rated its execution. Bureau lost "+str(int((-1)*govFeedback))+"% of trust."
 					GameLogic.Operations[i].Result = "COMPLETED, negative feedback"
 					if govFeedback > 0:
-						var budgetIncrease = GameLogic.BudgetFull*(0.01*GameLogic.Trust*0.5)
-						if budgetIncrease > 50: budgetIncrease = 50
+						var budgetIncrease = GameLogic.BudgetFull*(0.01*GameLogic.Trust*0.25)
+						if budgetIncrease > 15: budgetIncrease = 15
 						GameLogic.BudgetFull += budgetIncrease
 						govFeedbackDesc = "positively rated its execution. Bureau gained "+str(int(govFeedback))+"% of trust. As a confirmation, government increases bureau's budget by €"+str(int(budgetIncrease))+",000.\n"
 						GameLogic.Operations[i].Result = "SUCCESS, positive feedback"
@@ -783,8 +800,8 @@ func ProgressOperations():
 					var govFeedbackDesc = "Officers failed at acquiring a new source in an organization indicated by the government. Bureau lost "+str(int((-1)*govFeedback))+"% of trust."
 					GameLogic.Operations[i].Result = "COMPLETED, negative feedback"
 					if sourceLevel != 0:
-						var budgetIncrease = GameLogic.BudgetFull*(0.01*GameLogic.Trust*0.5)
-						if budgetIncrease > 50: budgetIncrease = 50
+						var budgetIncrease = GameLogic.BudgetFull*(0.01*GameLogic.Trust*0.25)
+						if budgetIncrease > 30: budgetIncrease = 30
 						GameLogic.BudgetFull += budgetIncrease
 						govFeedbackDesc = "Officers acquired a new source in an organization indicated by the government. Bureau gained "+str(int(govFeedback))+"% of trust. As a confirmation, government increases bureau's budget by €"+str(int(budgetIncrease))+",000.\n"
 						GameLogic.Operations[i].Result = "SUCCESS, positive feedback"
@@ -976,6 +993,7 @@ func ProgressOperations():
 					# attribution can lead to diplomatic scandal
 					if GameLogic.random.randi_range(0,100) < WorldData.Methods[2][methodId].Attribution and WorldData.Countries[0].InStateOfWar == false:
 						attributionDesc = "Unfortunately, the operation was publicly associated with Bureau, which led to international diplomatic scandal. "
+						WorldData.Countries[GameLogic.Operations[i].Country].Expelled += WorldData.Operations[i].AbroadPlan.Officers
 						WorldData.DiplomaticRelations[0][GameLogic.Operations[i].Country] -= GameLogic.random.randi_range(30,60)
 						WorldData.DiplomaticRelations[GameLogic.Operations[i].Country][0] -= GameLogic.random.randi_range(30,60)
 				# wartime offensive op
@@ -1045,8 +1063,8 @@ func ProgressOperations():
 					var govFeedbackDesc = "Officers failed at damaging an organization indicated by the government. Bureau lost "+str(int((-1)*govFeedback))+"% of trust. "
 					GameLogic.Operations[i].Result = "COMPLETED, negative feedback"
 					if success == true:
-						var budgetIncrease = GameLogic.BudgetFull*(0.01*GameLogic.Trust*0.5)
-						if budgetIncrease > 100: budgetIncrease = 100
+						var budgetIncrease = GameLogic.BudgetFull*(0.01*GameLogic.Trust*0.25)
+						if budgetIncrease > 40: budgetIncrease = 40
 						GameLogic.BudgetFull += budgetIncrease
 						govFeedbackDesc = "Officers damaged an organization indicated by the government. " + inflictedDamage + " Bureau gained "+str(int(govFeedback))+"% of trust. As a confirmation, government increases bureau's budget by €"+str(int(budgetIncrease))+",000.\n"
 						GameLogic.Operations[i].Result = "SUCCESS, positive feedback"
@@ -1113,12 +1131,12 @@ func ProgressOperations():
 					GameLogic.AddEvent("Bureau rescued kidnapped Homeland citizen")
 					GameLogic.AddEvent(WorldData.Countries[GameLogic.Operations[i].Country].Name + " (" + GameLogic.Operations[i].Name + "): "+str(GameLogic.Operations[i].AbroadPlan.Officers)+" officer(s) returned to Homeland")
 					GameLogic.AddEvent("Bureau finished operation "+GameLogic.Operations[i].Name)
-					var budgetIncrease = GameLogic.BudgetFull*(0.01*GameLogic.Trust*0.5)
-					if budgetIncrease > 100: budgetIncrease = 100
+					var budgetIncrease = GameLogic.BudgetFull*(0.01*GameLogic.Trust*0.25)
+					if budgetIncrease > 50: budgetIncrease = 50
 					GameLogic.BudgetFull += budgetIncrease
 					var govFeedback = 30
 					if (GameLogic.Trust+govFeedback) > 100: govFeedback = 101-GameLogic.Trust
-					GameLogic.Trust += govFeedback
+					GameLogic.Trust += govFeedback*(GameLogic.PriorityPublic*0.01)
 					GameLogic.Operations[i].Result = "SUCCESS"
 					GameLogic.AddEvent("Government increased budget by €"+str(int(budgetIncrease))+"k")
 					CallManager.CallQueue.append(
@@ -1154,15 +1172,14 @@ func ProgressOperations():
 					GameLogic.Operations[i].Stage = OperationGenerator.Stage.FAILED
 					GameLogic.AddEvent(WorldData.Countries[GameLogic.Operations[i].Country].Name + " (" + GameLogic.Operations[i].Name + "): "+str(GameLogic.Operations[i].AbroadPlan.Officers)+" officer(s) returned to Homeland")
 					GameLogic.AddEvent("Bureau finished operation "+GameLogic.Operations[i].Name)
-					var budgetIncrease = GameLogic.BudgetFull*(0.01*GameLogic.Trust*0.5)
 					GameLogic.Operations[i].Result = "FAILURE"
-					GameLogic.Trust -= 5
+					GameLogic.Trust -= 5*(GameLogic.PriorityPublic*0.01)
 					CallManager.CallQueue.append(
 						{
 							"Header": "Important Information",
 							"Level": GameLogic.Operations[i].Level,
 							"Operation": GameLogic.Operations[i].Name  + "\nagainst " + WorldData.Organizations[GameLogic.Operations[i].Target].Name,
-							"Content": "Operation did not succeed. Homeland citizen is still in hands of terrorists. Attempt another rescue operation if it is possible.\n",
+							"Content": "Operation did not succeed. Homeland citizen is still in hands of terrorists. Bureau should consider changing approach - for instance, gathering more detailed intelligence before the next rescue action - if it is possible.\n",
 							"Show1": false,
 							"Show2": false,
 							"Show3": false,

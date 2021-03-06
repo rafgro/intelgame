@@ -2,6 +2,7 @@ extends Control
 
 var mapOfCountries = []
 var lastMapOfOrgs = []
+var countryChoiceActive = false
 var lastSelectedCountry = -1
 var lastSelectedOrg = -1
 var selectedTab = 0
@@ -50,6 +51,7 @@ func _on_Tabs_tab_changed(tab):
 	$C/M/R/Organizations.clear()
 
 func _on_AmountList_item_selected(index):
+	countryChoiceActive = false
 	lastMapOfOrgs.clear()
 	$C/M/R/Organizations.clear()
 	for o in range(0, len(WorldData.Organizations)):
@@ -72,6 +74,7 @@ func _on_AmountList_item_selected(index):
 					$C/M/R/Organizations.add_item(WorldData.Organizations[o].Name)
 
 func _on_TypeList_item_selected(index):
+	countryChoiceActive = false
 	lastMapOfOrgs.clear()
 	$C/M/R/Organizations.clear()
 	var whichType = [WorldData.OrgType.GOVERNMENT]
@@ -87,6 +90,7 @@ func _on_TypeList_item_selected(index):
 			$C/M/R/Organizations.add_item(WorldData.Organizations[o].Name)
 
 func _on_CountriesList_item_selected(index):
+	countryChoiceActive = true
 	lastMapOfOrgs.clear()
 	$C/M/R/Organizations.clear()
 	lastSelectedCountry = mapOfCountries[index]
@@ -123,7 +127,9 @@ func _on_Organizations_item_selected(index):
 
 func _on_Gather_pressed():
 	if lastSelectedOrg != -1:
-		OperationGenerator.NewOperation(0, lastSelectedOrg, OperationGenerator.Type.MORE_INTEL)
+		var countryId = WorldData.Organizations[lastSelectedOrg].Countries[randi() % WorldData.Organizations[lastSelectedOrg].Countries.size()]
+		if countryChoiceActive == true: countryId = lastSelectedCountry
+		OperationGenerator.NewOperation(0, lastSelectedOrg, countryId, OperationGenerator.Type.MORE_INTEL)
 		# if possible, start fast
 		if GameLogic.OfficersInHQ > 0:
 			GameLogic.Operations[-1].AnalyticalOfficers = GameLogic.OfficersInHQ
@@ -134,7 +140,9 @@ func _on_Gather_pressed():
 
 func _on_Recruit_pressed():
 	if lastSelectedOrg != -1:
-		OperationGenerator.NewOperation(0, lastSelectedOrg, OperationGenerator.Type.RECRUIT_SOURCE)
+		var countryId = WorldData.Organizations[lastSelectedOrg].Countries[randi() % WorldData.Organizations[lastSelectedOrg].Countries.size()]
+		if countryChoiceActive == true: countryId = lastSelectedCountry
+		OperationGenerator.NewOperation(0, lastSelectedOrg, countryId, OperationGenerator.Type.RECRUIT_SOURCE)
 		# if possible, start fast
 		if GameLogic.OfficersInHQ > 0:
 			GameLogic.Operations[-1].AnalyticalOfficers = GameLogic.OfficersInHQ
@@ -145,8 +153,10 @@ func _on_Recruit_pressed():
 
 func _on_Offensive_pressed():
 	if lastSelectedOrg != -1:
+		var countryId = WorldData.Organizations[lastSelectedOrg].Countries[randi() % WorldData.Organizations[lastSelectedOrg].Countries.size()]
+		if countryChoiceActive == true: countryId = lastSelectedCountry
 		if WorldData.Organizations[lastSelectedOrg].KnownKidnapper == false:
-			OperationGenerator.NewOperation(0, lastSelectedOrg, OperationGenerator.Type.OFFENSIVE)
+			OperationGenerator.NewOperation(0, lastSelectedOrg, countryId, OperationGenerator.Type.OFFENSIVE)
 			# if possible, start fast
 			if GameLogic.OfficersInHQ > 0:
 				GameLogic.Operations[-1].AnalyticalOfficers = GameLogic.OfficersInHQ
@@ -155,7 +165,7 @@ func _on_Offensive_pressed():
 				GameLogic.Operations[-1].Result = "ONGOING (PLANNING)"
 		else:
 			# special rescue operation
-			OperationGenerator.NewOperation(0, lastSelectedOrg, OperationGenerator.Type.RESCUE)
+			OperationGenerator.NewOperation(0, lastSelectedOrg, countryId, OperationGenerator.Type.RESCUE)
 			# if possible, start fast
 			if GameLogic.OfficersInHQ > 0:
 				GameLogic.Operations[-1].AnalyticalOfficers = GameLogic.OfficersInHQ

@@ -642,8 +642,8 @@ func Execute(past):
 					if trustIncrease < (20 * GameLogic.PriorityTerrorism*0.01): trustIncrease = GameLogic.random.randi_range(21,25) * GameLogic.PriorityTerrorism*0.01
 					if (trustIncrease+GameLogic.Trust) > 100: trustIncrease = 100-GameLogic.Trust
 					GameLogic.Trust += trustIncrease
-					var budgetIncrease = GameLogic.BudgetFull*(0.01*GameLogic.Trust)
-					if budgetIncrease > 100: budgetIncrease = 100
+					var budgetIncrease = GameLogic.BudgetFull*(0.01*GameLogic.Trust*0.35)
+					if budgetIncrease > 50: budgetIncrease = 50
 					GameLogic.BudgetFull += budgetIncrease
 					CallManager.CallQueue.append(
 						{
@@ -757,7 +757,7 @@ func Execute(past):
 					else:
 						shortDesc = "Minor terrorist incident"
 						var cas = "was 1 casualty"
-						if GameLogic.random.randi_range(0,1) == 0: casualties = "were no casualties"
+						if GameLogic.random.randi_range(0,1) == 0: cas = "were no casualties"
 						trustLoss = GameLogic.Trust*0.5 * GameLogic.PriorityTerrorism*0.01
 						if trustLoss < (15 * GameLogic.PriorityTerrorism*0.01): trustLoss = 15 * GameLogic.PriorityTerrorism*0.01
 						longDesc = "Homeland suffered from a minor terrorist incident inside our country. There "+cas+". "
@@ -793,7 +793,7 @@ func Execute(past):
 					else:
 						shortDesc = "Minor terrorist incident"
 						var cas = "was 1 casualty"
-						if GameLogic.random.randi_range(0,1) == 0: casualties = "were no casualties"
+						if GameLogic.random.randi_range(0,1) == 0: cas = "were no casualties"
 						trustLoss = GameLogic.Trust*0.5 * GameLogic.PriorityTerrorism*0.01
 						if trustLoss < (15 * GameLogic.PriorityTerrorism*0.01): trustLoss = 15 * GameLogic.PriorityTerrorism*0.01
 						longDesc = "Homeland suffered from a minor terrorist incident near our embassy in " + theCountry + ". There "+cas+". "

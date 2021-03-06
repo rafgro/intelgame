@@ -497,7 +497,7 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 				GameLogic.Trust += trustIncrease
 				WorldData.Countries[0].SoftPower += GameLogic.random.randi_range(1,3)
 				var budgetIncrease = quality*0.3
-				if budgetIncrease > 50: budgetIncrease = 50
+				if budgetIncrease > 20: budgetIncrease = 20
 				GameLogic.BudgetFull += budgetIncrease
 				CallManager.CallQueue.append(
 					{
@@ -598,7 +598,7 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 				GameLogic.Trust += trustIncrease
 				WorldData.Countries[0].SoftPower += GameLogic.random.randi_range(10,30)
 				var budgetIncrease = quality*0.3
-				if budgetIncrease > 50: budgetIncrease = 50
+				if budgetIncrease > 40: budgetIncrease = 40
 				GameLogic.BudgetFull += budgetIncrease
 				CallManager.CallQueue.append(
 					{
