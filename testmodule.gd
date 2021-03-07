@@ -1,7 +1,7 @@
 extends Node
 
 # testing module
-"""var maxSteps = 2400
+var maxSteps = 2000
 var elapsedSteps = 0
 signal timeout
 const TIME_PERIOD = 0.1 # 1000ms
@@ -11,9 +11,9 @@ var availableItemLists = []
 var availableHSliders = []
 
 func FinishSummary():
-	print("Finished on " + str(GameLogic.DateDay) + "/" + str(GameLogic.DateMonth) + "/" + str(GameLogic.DateYear) + " (" + str(GameLogic.AllWeeks) + " weeks)")
+	print("Finished on " + str(int(GameLogic.DateDay)) + "/" + str(int(GameLogic.DateMonth)) + "/" + str(int(GameLogic.DateYear)) + " (" + str(int(GameLogic.AllWeeks)) + " weeks)")
 	print("Trust " + str(int(GameLogic.Trust)) + " | Use " + str(int(GameLogic.Use)) + " | Budget " + str(int(GameLogic.BudgetFull)) + "\nTech " + str(int(GameLogic.Technology)) + " | Skill " + str(int(GameLogic.StaffSkill)) + " | Exp " + str(int(GameLogic.StaffExperience)) + " | Inner trust " + str(int(GameLogic.StaffTrust)))
-	print(str(len(GameLogic.Operations)) + " operations | " + str(GameLogic.ActiveOfficers) + " officers")
+	print(str(len(GameLogic.Operations)) + " operations | " + str(int(GameLogic.ActiveOfficers)) + " officers")
 	var __my_file := File.new()
 	__my_file.open("res://Test.txt", __my_file.WRITE)
 	assert(__my_file.is_open())
@@ -67,4 +67,4 @@ func _process(delta):
 	time += delta
 	if time > TIME_PERIOD:
 		time = 0
-		#TestStep()"""
+		#TestStep()

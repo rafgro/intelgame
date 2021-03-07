@@ -31,10 +31,12 @@ extends Node
 	var NetworkBlowup = 0  # subtracted from above var but hidden from user, coming from moles
 	var Station = 0  # number of employees in a local station, supporting ops
 	var WMDProgress = 0  # 0 to 100 to have a wmd, produced only in university_offensive
-	var WMDIntel = 0  # knowledge of gov about wmd program, prevents from entering the war"""
+	var WMDIntel = 0  # knowledge of gov about wmd program, prevents from entering the war
+	var NetworkWork = false  # if there is any network work, this ensures that it isnt started again
+	var StationWork = false  # the same as as above, just with station"""
 	
 func aNewCountry(aDictionary):
-	return {"Name": aDictionary.Name, "Adjective": aDictionary.Adjective, "TravelCost": aDictionary.TravelCost, "LocalCost": aDictionary.LocalCost, "IntelFriendliness": aDictionary.IntelFriendliness, "Size": aDictionary.Size, "ElectionPeriod": aDictionary.ElectionPeriod, "ElectionProgress": aDictionary.ElectionProgress, "SoftPower": aDictionary.SoftPower, "InStateOfWar": false, "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, "Expelled": 0, "DiplomaticTravel": true, "CovertTravel": 50, "CovertTravelBlowup": 0, "OperationStats": 0, "KnowhowLanguage": 0, "KnowhowCustoms": 0, "Network": 0, "NetworkBlowup": 0, "Station": 0, "WMDProgress": 0, "WMDIntel": 0}
+	return {"Name": aDictionary.Name, "Adjective": aDictionary.Adjective, "TravelCost": aDictionary.TravelCost, "LocalCost": aDictionary.LocalCost, "IntelFriendliness": aDictionary.IntelFriendliness, "Size": aDictionary.Size, "ElectionPeriod": aDictionary.ElectionPeriod, "ElectionProgress": aDictionary.ElectionProgress, "SoftPower": aDictionary.SoftPower, "InStateOfWar": false, "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, "Expelled": 0, "DiplomaticTravel": true, "CovertTravel": 50, "CovertTravelBlowup": 0, "OperationStats": 0, "KnowhowLanguage": 0, "KnowhowCustoms": 0, "Network": 0, "NetworkBlowup": 0, "Station": 0, "WMDProgress": 0, "WMDIntel": 0, "NetworkWork": false, "StationWork": false}
 
 # All rough locations, usually countries, separated by costs and difficulty
 var Countries = [
@@ -49,19 +51,6 @@ var Countries = [
 		"ElectionProgress": 52*4,  # counter to the next election
 		"SoftPower": GameLogic.random.randi_range(30,70),
 	}),
-	aNewCountry({ "Name": "Ireland", "Adjective": "Irish", "TravelCost": 1, "LocalCost": 1, "IntelFriendliness": 90, "Size": 5, "ElectionPeriod": 52*4, "ElectionProgress": GameLogic.random.randi_range(1,50*4), "SoftPower": GameLogic.random.randi_range(30,70), }),
-	aNewCountry({ "Name": "United Kingdom", "Adjective": "British", "TravelCost": 1, "LocalCost": 2, "IntelFriendliness": 40, "Size": 67, "ElectionPeriod": 52*4, "ElectionProgress": GameLogic.random.randi_range(1,50*4), "SoftPower": GameLogic.random.randi_range(50,100), }),
-	aNewCountry({ "Name": "Belgium", "Adjective": "Belgian", "TravelCost": 1, "LocalCost": 2, "IntelFriendliness": 80, "Size": 11, "ElectionPeriod": 52*4,  "ElectionProgress": GameLogic.random.randi_range(1,50*4), "SoftPower": GameLogic.random.randi_range(30,70), }),
-	aNewCountry({ "Name": "Germany", "Adjective": "German", "TravelCost": 1, "LocalCost": 2, "IntelFriendliness": 50, "Size": 83, "ElectionPeriod": 52*4, "ElectionProgress": GameLogic.random.randi_range(1,50*4), "SoftPower": GameLogic.random.randi_range(60,90), }),
-	aNewCountry({ "Name": "United States", "Adjective": "American", "TravelCost": 3, "LocalCost": 2, "IntelFriendliness": 30, "Size": 328, "ElectionPeriod": 52*4, "ElectionProgress": GameLogic.random.randi_range(1,50*4), "SoftPower": GameLogic.random.randi_range(70,100), }),
-	aNewCountry({ "Name": "Poland", "Adjective": "Polish", "TravelCost": 1, "LocalCost": 1, "IntelFriendliness": 60, "Size": 38, "ElectionPeriod": 52*4, "ElectionProgress": GameLogic.random.randi_range(1,50*4), "SoftPower": GameLogic.random.randi_range(30,70), }),
-	aNewCountry({ "Name": "France", "Adjective": "French", "TravelCost": 1, "LocalCost": 2, "IntelFriendliness": 40, "Size": 67, "ElectionPeriod": 52*4, "ElectionProgress": GameLogic.random.randi_range(1,50*4), "SoftPower": GameLogic.random.randi_range(30,70), }),
-	aNewCountry({ "Name": "Russia", "Adjective": "Russian", "TravelCost": 3, "LocalCost": 1, "IntelFriendliness": 30, "Size": 144, "ElectionPeriod": 52*10, "ElectionProgress": GameLogic.random.randi_range(50*5,50*10), "SoftPower": GameLogic.random.randi_range(10,50), }),
-	aNewCountry({ "Name": "China", "Adjective": "Chinese", "TravelCost": 5, "LocalCost": 2, "IntelFriendliness": 20, "Size": 1398, "ElectionPeriod": 52*20, "ElectionProgress": GameLogic.random.randi_range(50*10,50*20), "SoftPower": GameLogic.random.randi_range(60,95), }),
-	aNewCountry({ "Name": "Israel", "Adjective": "Israeli", "TravelCost": 3, "LocalCost": 2, "IntelFriendliness": 30, "Size": 9, "ElectionPeriod": 52*4, "ElectionProgress": GameLogic.random.randi_range(1,50*4), "SoftPower": GameLogic.random.randi_range(50,90), }),
-	aNewCountry({ "Name": "Turkey", "Adjective": "Turkish", "TravelCost": 2, "LocalCost": 1, "IntelFriendliness": 50, "Size": 84, "ElectionPeriod": 52*10, "ElectionProgress": GameLogic.random.randi_range(1,50*10), "SoftPower": GameLogic.random.randi_range(30,70), }),
-	aNewCountry({ "Name": "Iraq", "Adjective": "Iraqi", "TravelCost": 3, "LocalCost": 1, "IntelFriendliness": 40, "Size": 40, "ElectionPeriod": 52*4, "ElectionProgress": GameLogic.random.randi_range(1,50*4), "SoftPower": GameLogic.random.randi_range(2,20), }),
-	aNewCountry({ "Name": "Afghanistan", "Adjective": "Afghan", "TravelCost": 3, "LocalCost": 1, "IntelFriendliness": 60, "Size": 38, "ElectionPeriod": 52*4, "ElectionProgress": GameLogic.random.randi_range(1,50*4), "SoftPower": GameLogic.random.randi_range(2,10), }),
 ]
 
 # Intercountry relations, 2d array
@@ -111,33 +100,12 @@ enum OrgType {
 func aNewOrganization(adictionary):
 	return {"Type": adictionary.Type, "Name": adictionary.Name, "Fixed": adictionary.Fixed, "Known": adictionary.Known, "Staff": adictionary.Staff, "Budget": adictionary.Budget, "Counterintelligence": adictionary.Counterintelligence, "Aggression": adictionary.Aggression, "Countries": adictionary.Countries.duplicate(true), "IntelValue": adictionary.IntelValue, "TargetConsistency": adictionary.TargetConsistency, "TargetCountries": adictionary.TargetCountries, "Active": true, "ActiveOpsAgainstHomeland": 0, "OpsAgainstHomeland": [], "IntelDescription": [], "IntelDescType": "", "IntelIdentified": 0, "IntelSources": [], "UndercoverCounter": 0, "OffensiveClearance": false, "Technology": 0, "IntelTechnology": 0, "ConnectedTo": [], "KnownKidnapper": false}
 
-var Organizations = [
-	aNewOrganization({
-		"Type": OrgType.INTEL,
-		"Name": "MI6",
-		"Fixed": true,  # cannot delete if true, mainly for intel agencies
-		"Known": true,  # false for hidden criminal organizations
-		"Staff": 2600,  # number of human members
-		"Budget": 260000,  # monthly in thousands
-		"Counterintelligence": 95,  # from 0 (get in from the street) to 100 (impossible to infiltrate)
-		"Aggression": 65,
-		"Countries": [2],  # ids of host countries
-		"IntelValue": 5,  # -100 (long search) to 100 (own), determines available methods
-		"TargetConsistency": 0, "TargetCountries": [1], # unusued here, only for terror
-	}),
-	aNewOrganization({ "Type": OrgType.INTEL, "Name": "BND", "Fixed": true, "Known": true, "Staff": 6500, "Budget": 85000, "Counterintelligence": 90, "Aggression": 70, "Countries": [4], "IntelValue": 5, "TargetConsistency": 0, "TargetCountries": [1], }),
-	aNewOrganization({ "Type": OrgType.INTEL, "Name": "CIA", "Fixed": true, "Known": true, "Staff": 22000, "Budget": 1250000, "Counterintelligence": 95, "Aggression": 75, "Countries": [5], "IntelValue": 5, "TargetConsistency": 0, "TargetCountries": [1], }),
-	aNewOrganization({ "Type": OrgType.INTEL, "Name": "AW (Agencja Wywiadu)", "Fixed": true, "Known": true, "Staff": 1000, "Budget": 20800, "Counterintelligence": 80, "Aggression": 70, "Countries": [6], "IntelValue": 5, "TargetConsistency": 0, "TargetCountries": [1], }),
-	aNewOrganization({ "Type": OrgType.INTEL, "Name": "DGSE", "Fixed": true, "Known": true, "Staff": 6100, "Budget": 42000, "Counterintelligence": 95, "Aggression": 75, "Countries": [7], "IntelValue": 5, "TargetConsistency": 0, "TargetCountries": [1], }),
-	aNewOrganization({ "Type": OrgType.INTEL, "Name": "ФСБ (FSB)", "Fixed": true, "Known": true, "Staff": 66200, "Budget": 1000000, "Counterintelligence": 95, "Aggression": 80, "Countries": [8], "IntelValue": 5, "TargetConsistency": 0, "TargetCountries": [1], }),
-	aNewOrganization({ "Type": OrgType.INTEL, "Name": "Guoanbu", "Fixed": true, "Known": true, "Staff": 100000, "Budget": 2000000, "Counterintelligence": 98, "Aggression": 80, "Countries": [9],  "IntelValue": 5, "TargetConsistency": 0, "TargetCountries": [1], }),
-	aNewOrganization({ "Type": OrgType.INTEL, "Name": "Mossad", "Fixed": true, "Known": true, "Staff": 7000, "Budget": 228000, "Counterintelligence": 98, "Aggression": 85, "Countries": [10], "IntelValue": 5, "TargetConsistency": 0, "TargetCountries": [1], }),
-	aNewOrganization({ "Type": OrgType.INTEL, "Name": "MIT (Milli Istihbarat Teskilati)", "Fixed": true, "Known": true, "Staff": 8000, "Budget": 180000, "Counterintelligence": 90, "Aggression": 80, "Countries": [11], "IntelValue": 5, "TargetConsistency": 0, "TargetCountries": [1], }),
-	aNewOrganization({ "Type": OrgType.INTEL, "Name": "Mukhabarat", "Fixed": true, "Known": true, "Staff": 4000, "Budget": 20000, "Counterintelligence": 85, "Aggression": 80, "Countries": [12], "IntelValue": 5, "TargetConsistency": 0, "TargetCountries": [1], }),
-	aNewOrganization({ "Type": OrgType.INTEL, "Name": "NDS", "Fixed": true, "Known": true, "Staff": 3000, "Budget": 10000, "Counterintelligence": 80, "Aggression": 70, "Countries": [13], "IntelValue": 5, "TargetConsistency": 0, "TargetCountries": [1], }),
+"""var Organizations = [
 	aNewOrganization({ "Type": OrgType.GENERALTERROR, "Name": "Islamic State", "Fixed": false, "Known": true, "Staff": 5500, "Budget": 25000, "Counterintelligence": 50, "Aggression": 90, "Countries": [12,13], "IntelValue": 0, "TargetConsistency": 20, "TargetCountries": [7], }),
 	aNewOrganization({ "Type": OrgType.INTERNATIONAL, "Name": "European Parliament", "Fixed": true, "Known": true, "Staff": 7500, "Budget": 100000, "Counterintelligence": 60, "Aggression": 30, "Countries": [3], "IntelValue": 0, "TargetConsistency": 0, "TargetCountries": [1], }),
-]
+]"""
+
+var Organizations = []
 
 """class AMethod:
 	var Name = null
@@ -200,10 +168,10 @@ var Methods = [
 		aNewMethod({ "Name": "(remote) tap into local cctv", "Cost": 2, "Quality": 30, "Risk": 0, "OfficersRequired": 1, "MinimalSkill": 20, "Available": false, "MinimalIntel": -50, "MinimalTrust": 0, "MinimalTech": 30, "MinimalLocal": 30, "Remote": true, "StartYear": 2000, "EndYear": 3000, }),
 		aNewMethod({ "Name": "intercept local mobile communication", "Cost": 10, "Quality": 40, "Risk": 5, "OfficersRequired": 1, "MinimalSkill": 30, "Available": false, "MinimalIntel": -10, "MinimalTrust": 10, "MinimalTech": 25, "MinimalLocal": 10, "Remote": false, "StartYear": 2000, "EndYear": 3000, }),
 		aNewMethod({ "Name": "rent house for observation", "Cost": 20, "Quality": 35, "Risk": 2, "OfficersRequired": 2, "MinimalSkill": 5, "Available": false, "MinimalIntel": 5, "MinimalTrust": 0, "MinimalTech": 0, "MinimalLocal": 30, "Remote": false, "StartYear": 2000, "EndYear": 3000, }),
-		aNewMethod({ "Name": "attemp walk in from a street", "Cost": 20, "Quality": 60, "Risk": 55, "OfficersRequired": 5, "MinimalSkill": 25, "Available": false, "MinimalIntel": 10, "MinimalTrust": 40, "MinimalTech": 0, "MinimalLocal": 50, "Remote": false, "StartYear": 2000, "EndYear": 3000, }),
-		aNewMethod({ "Name": "bug places frequented by members", "Cost": 60, "Quality": 80, "Risk": 15, "OfficersRequired": 4, "MinimalSkill": 40, "Available": false, "MinimalIntel": 25, "MinimalTrust": 40, "MinimalTech": 35, "MinimalLocal": 10, "Remote": false, "StartYear": 2000, "EndYear": 3000, }),
-		aNewMethod({ "Name": "break-in and copy documents", "Cost": 60, "Quality": 90, "Risk": 75, "OfficersRequired": 10, "MinimalSkill": 50, "Available": false, "MinimalIntel": 50, "MinimalTrust": 50, "MinimalTech": 60, "MinimalLocal": 5, "Remote": false, "StartYear": 2000, "EndYear": 3000, }),
-		aNewMethod({ "Name": "(remote) hack in and steal documents", "Cost": 50, "Quality": 90, "Risk": 0, "OfficersRequired": 4, "MinimalSkill": 40, "Available": false, "MinimalIntel": 40, "MinimalTrust": 10, "MinimalTech": 80, "MinimalLocal": 15, "Remote": true, "StartYear": 2000, "EndYear": 3000, }),
+		aNewMethod({ "Name": "attemp walk in from a street", "Cost": 20, "Quality": 60, "Risk": 55, "OfficersRequired": 5, "MinimalSkill": 25, "Available": false, "MinimalIntel": 5, "MinimalTrust": 40, "MinimalTech": 0, "MinimalLocal": 50, "Remote": false, "StartYear": 2000, "EndYear": 3000, }),
+		aNewMethod({ "Name": "bug places frequented by members", "Cost": 60, "Quality": 80, "Risk": 15, "OfficersRequired": 4, "MinimalSkill": 40, "Available": false, "MinimalIntel": 10, "MinimalTrust": 40, "MinimalTech": 35, "MinimalLocal": 10, "Remote": false, "StartYear": 2000, "EndYear": 3000, }),
+		aNewMethod({ "Name": "break-in and copy documents", "Cost": 60, "Quality": 90, "Risk": 75, "OfficersRequired": 10, "MinimalSkill": 50, "Available": false, "MinimalIntel": 40, "MinimalTrust": 50, "MinimalTech": 60, "MinimalLocal": 5, "Remote": false, "StartYear": 2000, "EndYear": 3000, }),
+		aNewMethod({ "Name": "(remote) hack in and steal documents", "Cost": 50, "Quality": 90, "Risk": 0, "OfficersRequired": 4, "MinimalSkill": 40, "Available": false, "MinimalIntel": 30, "MinimalTrust": 10, "MinimalTech": 80, "MinimalLocal": 15, "Remote": true, "StartYear": 2000, "EndYear": 3000, }),
 		aNewMethod({ "Name": "pose as undercover local company", "Cost": 100, "Quality": 60, "Risk": 20, "OfficersRequired": 12, "MinimalSkill": 40, "Available": false, "MinimalIntel": -50, "MinimalTrust": 40, "MinimalTech": 0, "MinimalLocal": 70, "Remote": false, "StartYear": 2000, "EndYear": 3000, }),
 		aNewMethod({ "Name": "pose as undercover government organization", "Cost": 300, "Quality": 85, "Risk": 25, "OfficersRequired": 16, "MinimalSkill": 50, "Available": false, "MinimalIntel": -100, "MinimalTrust": 75, "MinimalTech": 0, "MinimalLocal": 90, "Remote": false, "StartYear": 2000, "EndYear": 3000, }),
 		aNewMethod({ "Name": "buy information from close contacts", "Cost": 30, "Quality": 50, "Risk": 50, "OfficersRequired": 1, "MinimalSkill": 10, "Available": false, "MinimalIntel": -10, "MinimalTrust": 0, "MinimalTech": 0, "MinimalLocal": 20, "Remote": false, "StartYear": 2000, "EndYear": 3000, }),

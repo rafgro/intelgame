@@ -333,6 +333,7 @@ margin_right = 210.0
 margin_bottom = 120.0
 rect_min_size = Vector2( 210, 120 )
 custom_fonts/font = ExtResource( 2 )
+disabled = true
 text = "Save Game"
 
 [node name="Label" type="Label" parent="C/M/R/Buttons3"]

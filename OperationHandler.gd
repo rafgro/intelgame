@@ -33,6 +33,7 @@ func ProgressOperations():
 			var noPlanReasonStaff = 0
 			var noPlanReasonLocal = 0
 			var noPlanReasonTravel = 0
+			var notEnoughIntel = []  # names of methods
 			# actual method planning
 			var j = 0
 			while j < 6:  # six tries but will present only first three
@@ -69,6 +70,8 @@ func ProgressOperations():
 						# do not use methods not applicable here
 						if WorldData.Organizations[which].IntelValue < WorldData.Methods[mt][methodId].MinimalIntel:
 							countMinIntel += 1
+							if !(WorldData.Methods[mt][methodId].Name) in notEnoughIntel:
+								notEnoughIntel.append(WorldData.Methods[mt][methodId].Name)
 							continue
 						theMethods.append(methodId)
 						# adjust to methods
@@ -96,6 +99,8 @@ func ProgressOperations():
 						# do not use methods not applicable here
 						if WorldData.Organizations[which].IntelValue < WorldData.Methods[mt][methodId].MinimalIntel:
 							countMinIntel += 1
+							if !(WorldData.Methods[mt][methodId].Name) in notEnoughIntel:
+								notEnoughIntel.append(WorldData.Methods[mt][methodId].Name)
 							continue
 						theMethods.append(methodId)
 						# adjust to methods
@@ -176,6 +181,12 @@ func ProgressOperations():
 				totalQuality = totalQuality*1.0/len(WorldData.Organizations[which].Countries)
 				var officerFactor = 1.0 + usedOfficers*0.1
 				if officerFactor > 2.1: officerFactor = 2.1
+				if WorldData.Countries[whichCountry].Station > 0:
+					var stationSupport = 1
+					if WorldData.Countries[whichCountry].Station > 80: stationSupport = 10
+					if WorldData.Countries[whichCountry].Station > 40: stationSupport = 6
+					if WorldData.Countries[whichCountry].Station > 10: stationSupport = 3
+					totalQuality += stationSupport
 				totalQuality *= officerFactor
 				var lengthFactor = 1.0 + predictedLength*0.1
 				if lengthFactor > 1.8: lengthFactor = 1.8
@@ -214,7 +225,13 @@ func ProgressOperations():
 						totalRisk += 0.4 * (100-WorldData.Countries[whichCountry].CovertTravel + WorldData.Countries[whichCountry].CovertTravelBlowup)
 					elif WorldData.Countries[whichCountry].CovertTravel < 70:
 						totalRisk += 0.2 * (100-WorldData.Countries[whichCountry].CovertTravel + WorldData.Countries[whichCountry].CovertTravelBlowup)
-				if totalRisk < 2: totalRisk = 2
+				if WorldData.Countries[whichCountry].Network > 0:
+					var networkSupport = 5
+					if WorldData.Countries[whichCountry].Network > 80: networkSupport = 40
+					if WorldData.Countries[whichCountry].Network > 40: networkSupport = 20
+					if WorldData.Countries[whichCountry].Network > 10: networkSupport = 10
+					totalRisk -= networkSupport
+				if totalRisk < 0: totalRisk = 0
 				var riskVsTime = totalRisk * predictedLength
 				var riskDesc = "no"
 				if riskVsTime >= 100: riskDesc = "extreme"
@@ -261,7 +278,7 @@ func ProgressOperations():
 				if len(noPlanReasonsArr) == 0: noPlanReasonsArr.append("resources")
 				var noPlanReasons = ""
 				if len(noPlanReasonsArr) > 1:
-					noPlanReasons = PoolStringArray(noPlanReasonsArr.slice(0,len(noPlanReasonsArr)-2)).join(", ") + ", and " + noPlanReasonsArr[-1] + " to approach this target. "
+					noPlanReasons = "[u]" + PoolStringArray(noPlanReasonsArr.slice(0,len(noPlanReasonsArr)-2)).join(", ") + ", and " + noPlanReasonsArr[-1] + "[/u] to approach this target. "
 				else:
 					noPlanReasons = noPlanReasonsArr[0] + " to approach this target."
 				CallManager.CallQueue.append(
@@ -315,6 +332,8 @@ func ProgressOperations():
 				else:
 					wholeContent += "[b]Plan A[/b]\n" + localPlans[0].Description+"\n[b]Plan B[/b]\n" \
 						+ localPlans[1].Description+"\n[b]Plan C[/b]\n"+localPlans[2].Description+"\n"
+				if len(notEnoughIntel) > 0:
+					wholeContent += "Following methods were not available due to not enough intel gathered: " + PoolStringArray(notEnoughIntel).join(", ") + ".\n"
 				wholeContent += "Choose appropriate plan or wait for new plans."
 				# setting the call for player
 				CallManager.CallQueue.append(
@@ -391,7 +410,7 @@ func ProgressOperations():
 					elif GameLogic.Operations[i].AbroadPlan.HighestRiskVal > 45:
 						contentReasons.append("- use of an extremely high risk method (" + GameLogic.Operations[i].AbroadPlan.HighestRiskName + ")")
 					if (GameLogic.Operations[i].AbroadPlan.Length * GameLogic.Operations[i].AbroadPlan.Risk) > 70 and GameLogic.Operations[i].AbroadPlan.Length > 3:
-						contentReasons.append("- long period of time abroad (" + str(GameLogic.Operations[i].AbroadPlan.Length) + " weeks)")
+						contentReasons.append("- long period of time abroad (" + str(int(GameLogic.Operations[i].AbroadPlan.Length)) + " weeks)")
 					if GameLogic.StaffExperience < 20:
 						contentReasons.append("- low experience of officers")
 					elif GameLogic.StaffExperience < 40:
@@ -424,7 +443,7 @@ func ProgressOperations():
 						var staffPerecent = GameLogic.ActiveOfficers * 1.0 / GameLogic.Operations[i].AbroadPlan.Officers
 						GameLogic.PursuedOperations -= 1
 						GameLogic.Operations[i].Stage = OperationGenerator.Stage.FAILED
-						GameLogic.Operations[i].Result = "FAILED, " + str(GameLogic.Operations[i].AbroadPlan.Officers) + " officers lost"
+						GameLogic.Operations[i].Result = "FAILED, " + str(int(GameLogic.Operations[i].AbroadPlan.Officers)) + " officers lost"
 						GameLogic.ActiveOfficers -= GameLogic.Operations[i].AbroadPlan.Officers
 						GameLogic.OfficersAbroad -= GameLogic.Operations[i].AbroadPlan.Officers
 						GameLogic.BudgetOngoingOperations -= GameLogic.Operations[i].AbroadPlan.Cost
@@ -446,10 +465,10 @@ func ProgressOperations():
 								"Organization": which,
 								"Operation": i,
 								"Success": null,
-								"Content": "Death of " + str(GameLogic.Operations[i].AbroadPlan.Officers) + " Officers in Operation " + str(GameLogic.Operations[i].Name) + "\n\nInvestigation team concluded that the operation failed due to:\n\n" + PoolStringArray(contentReasons).join("\n"),
+								"Content": "Death of " + str(int(GameLogic.Operations[i].AbroadPlan.Officers)) + " Officers in Operation " + GameLogic.Operations[i].Name + "\n\nInvestigation team concluded that the operation failed due to:\n\n" + PoolStringArray(contentReasons).join("\n"),
 							}
 						)
-						GameLogic.AddEvent(GameLogic.Operations[i].Name + " (" + WorldData.Countries[GameLogic.Operations[i].Country].Name + "): " + str(GameLogic.Operations[i].AbroadPlan.Officers) + " officers were caught and killed")
+						GameLogic.AddEvent(GameLogic.Operations[i].Name + " (" + WorldData.Countries[GameLogic.Operations[i].Country].Name + "): " + str(int(GameLogic.Operations[i].AbroadPlan.Officers)) + " officers were caught and killed")
 						CallManager.CallQueue.append(
 							{
 								"Header": "Important Information",
@@ -487,7 +506,7 @@ func ProgressOperations():
 							WorldData.Countries[GameLogic.Operations[i].Country].Expelled += GameLogic.Operations[i].AbroadPlan.Officers
 							GameLogic.PursuedOperations -= 1
 							GameLogic.Operations[i].Stage = OperationGenerator.Stage.FAILED
-							GameLogic.Operations[i].Result = "FAILED, " + str(GameLogic.Operations[i].AbroadPlan.Officers) + " officers expelled"
+							GameLogic.Operations[i].Result = "FAILED, " + str(int(GameLogic.Operations[i].AbroadPlan.Officers)) + " officers expelled"
 							GameLogic.OfficersAbroad -= GameLogic.Operations[i].AbroadPlan.Officers
 							GameLogic.OfficersInHQ += GameLogic.Operations[i].AbroadPlan.Officers
 							GameLogic.BudgetOngoingOperations -= GameLogic.Operations[i].AbroadPlan.Cost
@@ -504,7 +523,7 @@ func ProgressOperations():
 									"Organization": which,
 									"Operation": i,
 									"Success": null,
-									"Content": "Arrest of " + str(GameLogic.Operations[i].AbroadPlan.Officers) + " Officers in Operation " + str(GameLogic.Operations[i].Name) + "\n\nInvestigation team concluded that the operation failed due to:\n\n" + PoolStringArray(contentReasons).join("\n"),
+									"Content": "Arrest of " + str(int(GameLogic.Operations[i].AbroadPlan.Officers)) + " Officers in Operation " + GameLogic.Operations[i].Name + "\n\nInvestigation team concluded that the operation failed due to:\n\n" + PoolStringArray(contentReasons).join("\n"),
 								}
 							)
 							# asking user for action
@@ -974,11 +993,11 @@ func ProgressOperations():
 					funds = int(funds)
 					if casualties > 0:
 						if casualties > 1:
-							inflictedDamage += WorldData.Organizations[whichOrg].Name + " lost " + str(casualties) + " members. "
+							inflictedDamage += WorldData.Organizations[whichOrg].Name + " lost " + str(int(casualties)) + " members. "
 						elif casualties == 1:
 							inflictedDamage += WorldData.Organizations[whichOrg].Name + " lost one valuable member. "
 					if funds > 0:
-						inflictedDamage += "Inflicted financial damage is estimated at €" + str(funds) + ",000. "
+						inflictedDamage += "Inflicted financial damage is estimated at €" + str(int(funds)) + ",000. "
 					if len(WorldData.Organizations[whichOrg].ConnectedTo) > 0:
 						inflictedDamage += "In addition, some of the terrorist organizations connected to " + WorldData.Organizations[whichOrg].Name + " were also affected. "
 				# special case: offensive action against government

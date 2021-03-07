@@ -6,17 +6,17 @@ func UpdateMainScreen():
 	$C/M/R/CDate/Date.text = GameLogic.GiveDateWithYear()
 	# other
 	$C/M/R/CTrust/TrustPercent.value = GameLogic.Trust
-	$C/M/R/COfficer/Active.text = "Active officers: " + str(GameLogic.ActiveOfficers)
+	$C/M/R/COfficer/Active.text = "Active officers: " + str(int(GameLogic.ActiveOfficers))
 	var hqtext = ""
 	if GameLogic.OfficersInHQ < 0: hqtext += "0"  # allowed in principle, because it sorts out itself
 	else: hqtext += str(GameLogic.OfficersInHQ)
 	$C/M/R/COfficer/HQAbroad.text = hqtext + " in HQ, " \
-		+ str(GameLogic.OfficersAbroad) + " in action"
-	$C/M/R/COperations/Pursued.text = "Active operations: " + str(GameLogic.PursuedOperations)
+		+ str(int(GameLogic.OfficersAbroad)) + " in action"
+	$C/M/R/COperations/Pursued.text = "Active operations: " + str(int(GameLogic.PursuedOperations))
 	if GameLogic.UltimatumTicker > 0:
-		$C/M/R/COperations/Ticker.text = str(GameLogic.UltimatumTicker) + " weeks of ultimatum left"
+		$C/M/R/COperations/Ticker.text = str(int(GameLogic.UltimatumTicker)) + " weeks of ultimatum left"
 	elif GameLogic.AttackTicker > 0:
-		$C/M/R/COperations/Ticker.text = str(GameLogic.AttackTicker) + str(GameLogic.AttackTickerText)
+		$C/M/R/COperations/Ticker.text = str(int(GameLogic.AttackTicker)) + str(GameLogic.AttackTickerText)
 	else: $C/M/R/COperations/Ticker.text = ""
 	$C/M/R/CEvents2/RichTextLabel.bbcode_text = PoolStringArray(GameLogic.BureauEvents).join("\n")
 	$C/M/R/CEvents4/RichTextLabel.bbcode_text = PoolStringArray(GameLogic.WorldEvents).join("\n")

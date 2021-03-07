@@ -110,9 +110,11 @@ func _on_Organizations_item_selected(index):
 		if len(WorldData.Organizations[o].IntelDescription) == 0:
 			desc += "No intel gathered."
 		else:
-			desc += WorldData.Organizations[o].IntelDescType + " | " + str(WorldData.Organizations[o].IntelIdentified) + " identified members"
+			desc += WorldData.Organizations[o].IntelDescType + " | " + str(int(WorldData.Organizations[o].IntelIdentified)) + " identified members"
 			if len(WorldData.Organizations[o].IntelSources) > 0:
 				desc += " | " + str(len(WorldData.Organizations[o].IntelSources)) + " sources inside"
+			if WorldData.Organizations[o].IntelValue < -10: desc += "\nunknown precise location"
+			elif WorldData.Organizations[o].IntelValue < 0: desc += "\nlow intel awareness"
 			var orgCountries = []
 			for c in WorldData.Organizations[o].Countries:
 				orgCountries.append(WorldData.Countries[c].Name)

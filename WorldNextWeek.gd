@@ -310,6 +310,9 @@ func Execute(past):
 	############################################################################
 	# countries
 	for c in range(0, len(WorldData.Countries)):
+		# variable constraints
+		if WorldData.Countries[c].KnowhowLanguage > 100: WorldData.Countries[c].KnowhowLanguage = 100
+		if WorldData.Countries[c].KnowhowCustoms > 100: WorldData.Countries[c].KnowhowCustoms = 100
 		# parameter fluctations
 		if GameLogic.random.randi_range(1,5) == 2:  # ~one per month
 			WorldData.Countries[c].Size *= (1.0+GameLogic.random.randi_range(-1,1)*0.01)
@@ -442,6 +445,9 @@ func Execute(past):
 							GameLogic.AddEvent(str(GameLogic.OfficersInHQ) + " officer(s) departed to assist in wartime evacuation")
 							GameLogic.OfficersAbroad = GameLogic.OfficersInHQ
 							GameLogic.OfficersInHQ = 0
+							for d in range(0, len(GameLogic.Directions)):
+								if GameLogic.Directions[d].Active == false: continue
+								GameLogic.Directions[d].LengthCounter += 2
 						# ensuring that calls related to ops are not presented
 						if len(CallManager.CallQueue) > 0:
 							var toRemove = -1
@@ -640,6 +646,7 @@ func Execute(past):
 					WorldData.Organizations[w].ActiveOpsAgainstHomeland -= 1
 					var trustIncrease = WorldData.Organizations[w].OpsAgainstHomeland[u].Damage * GameLogic.PriorityTerrorism*0.01
 					if trustIncrease < (20 * GameLogic.PriorityTerrorism*0.01): trustIncrease = GameLogic.random.randi_range(21,25) * GameLogic.PriorityTerrorism*0.01
+					trustIncrease *= 1.0 * GameLogic.PriorityPublic*0.01
 					if (trustIncrease+GameLogic.Trust) > 100: trustIncrease = 100-GameLogic.Trust
 					GameLogic.Trust += trustIncrease
 					var budgetIncrease = GameLogic.BudgetFull*(0.01*GameLogic.Trust*0.35)
@@ -862,6 +869,7 @@ func Execute(past):
 						GameLogic.Operations[j].Result = "FAILURE"
 						GameLogic.Trust -= 5
 				# executing details and communicating them
+				trustLoss *= 1.0 * GameLogic.PriorityPublic*0.01 * GameLogic.PriorityTerrorism*0.01
 				if trustLoss > GameLogic.Trust: trustLoss = GameLogic.Trust
 				GameLogic.Trust -= trustLoss
 				WorldData.Countries[0].SoftPower -= 5
@@ -1186,7 +1194,7 @@ func Execute(past):
 					elif len(WorldData.Organizations[w].IntelSources) > 1: detectionProb += 20
 					var investigationDetails = "Investigation team concluded that the source "
 					if WorldData.Organizations[w].IntelSources[whichS].Level < 0:
-						investigationDetails += "provided false intel for approximately " + str(WorldData.Organizations[w].IntelSources[whichS].TurnedHowLong) + " weeks. Officers suspect that " + WorldData.Organizations[w].IntelSources[whichS].TurnedByWho + " was responsible for compromising the asset. Termination of cooperation was good decision."
+						investigationDetails += "provided false intel for approximately " + str(int(WorldData.Organizations[w].IntelSources[whichS].TurnedHowLong)) + " weeks. Officers suspect that " + WorldData.Organizations[w].IntelSources[whichS].TurnedByWho + " was responsible for compromising the asset. Termination of cooperation was good decision."
 					else:
 						investigationDetails += "have not been compromised. Termination of cooperation was unnecessary."
 					if GameLogic.random.randi_range(1,100) < detectionProb:

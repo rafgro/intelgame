@@ -82,7 +82,7 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 		elif WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE:
 			WorldData.Organizations[o].IntelDescType = "scientific institution"
 		var desc = ""
-		if noOfIdentified > 0: desc += "identified " + str(noOfIdentified) + " individuals inside, "
+		if noOfIdentified > 0: desc += "identified " + str(int(noOfIdentified)) + " individuals inside, "
 		desc += "current state of org: "
 		if WorldData.Organizations[o].Staff < 100: desc += "very small number of members"
 		elif WorldData.Organizations[o].Staff < 5000: desc += "small number of members"
@@ -112,7 +112,7 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 		# rounding example:
 		# 12,000 * 0.0001 = 1.2 -> ~= 1 -> = 1 * 10,000 = 10,000
 		var desc1 = ""
-		if noOfIdentified > 0: desc1 += "identified " + str(noOfIdentified) + " individuals inside, "
+		if noOfIdentified > 0: desc1 += "identified " + str(int(noOfIdentified)) + " individuals inside, "
 		desc1 += "current state of org: "
 		var roundedStaff = str(int(WorldData.Organizations[o].Staff * 0.0001) * 10000)
 		if roundedStaff == "0":
@@ -143,7 +143,7 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 		elif WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE:
 			WorldData.Organizations[o].IntelDescType = "well-protected scientific institution"
 		var desc1 = ""
-		if noOfIdentified > 0: desc1 += "identified " + str(noOfIdentified) + " individuals inside, "
+		if noOfIdentified > 0: desc1 += "identified " + str(int(noOfIdentified)) + " individuals inside, "
 		desc1 += "current state of org: "
 		var roundedStaff = str(int(WorldData.Organizations[o].Staff * 0.001) * 1000)
 		if roundedStaff == "0":
@@ -154,7 +154,7 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 		var roundedBudget = "€"+str(int(WorldData.Organizations[o].Budget * 0.001) * 10)
 		if roundedBudget == "€0": roundedBudget = "less than €10"
 		var roundedCounter = int(WorldData.Organizations[o].Counterintelligence * 0.1) * 10
-		discreteDesc = desc1 + "approximately " + roundedStaff + " members, budget of " + roundedBudget + " millions monthly, " + str(roundedCounter) + "/100 counterintelligence measures"
+		discreteDesc = desc1 + "approximately " + roundedStaff + " members, budget of " + roundedBudget + " millions monthly, " + str(int(roundedCounter)) + "/100 counterintelligence measures"
 	############################################################################
 	elif quality < 70:
 		if WorldData.Organizations[o].Type == WorldData.OrgType.GENERALTERROR:
@@ -171,7 +171,7 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 		elif WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE:
 			WorldData.Organizations[o].IntelDescType = "well-protected scientific institution"
 		var desc1 = ""
-		if noOfIdentified > 0: desc1 += "identified " + str(noOfIdentified) + " individuals inside, "
+		if noOfIdentified > 0: desc1 += "identified " + str(int(noOfIdentified)) + " individuals inside, "
 		desc1 += "current state of org: "
 		var roundedStaff = str(int(WorldData.Organizations[o].Staff * 0.01) * 100)
 		if roundedStaff == "0":
@@ -182,7 +182,7 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 		var roundedBudget = "€"+str(int(WorldData.Organizations[o].Budget * 0.01))
 		if roundedBudget == "€0": roundedBudget = "less than €1"
 		var roundedCounter = WorldData.Organizations[o].Counterintelligence
-		discreteDesc = desc1 + "approximately " + roundedStaff + " members, budget of " + roundedBudget + " millions monthly, " + str(roundedCounter) + "/100 counterintelligence measures"
+		discreteDesc = desc1 + "approximately " + roundedStaff + " members, budget of " + roundedBudget + " millions monthly, " + str(int(roundedCounter)) + "/100 counterintelligence measures"
 	############################################################################
 	else:
 		if WorldData.Organizations[o].Type == WorldData.OrgType.GENERALTERROR:
@@ -199,13 +199,13 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 		elif WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE:
 			WorldData.Organizations[o].IntelDescType = "well-protected scientific institution"
 		var desc1 = ""
-		if noOfIdentified > 0: desc1 += "identified " + str(noOfIdentified) + " individuals inside, "
+		if noOfIdentified > 0: desc1 += "identified " + str(int(noOfIdentified)) + " individuals inside, "
 		desc1 += "current state of org: "
 		var roundedStaff = str(int(WorldData.Organizations[o].Staff))
 		var roundedBudget = "€"+str(int(WorldData.Organizations[o].Budget * 0.01))
 		if roundedBudget == "€0": roundedBudget = "less than €1"
 		var roundedCounter = WorldData.Organizations[o].Counterintelligence
-		discreteDesc = desc1 + roundedStaff + " members, budget of " + roundedBudget + " millions monthly, " + str(roundedCounter) + "/100 counterintelligence measures"
+		discreteDesc = desc1 + roundedStaff + " members, budget of " + roundedBudget + " millions monthly, " + str(int(roundedCounter)) + "/100 counterintelligence measures"
 	############################################################################
 	# operation intel, both discrete descriptions and logic mechanics
 	var antihomeland = ""
@@ -313,7 +313,7 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 					var knownInvolved = " [no identified participants]"
 					if knownInvolvedValue > 0:
 						knownInvolved = " ["+str(int(knownInvolvedValue))+" identified participants]"
-					opDescriptions.append(damage + " " + theType + ", with " + WorldData.Organizations[o].OpsAgainstHomeland[z].Persons + " individuals involved" + knownInvolved + ", finishing in " + str(WorldData.Organizations[o].OpsAgainstHomeland[z].FinishCounter) + " weeks")
+					opDescriptions.append(damage + " " + theType + ", with " + str(int(WorldData.Organizations[o].OpsAgainstHomeland[z].Persons)) + " individuals involved" + knownInvolved + ", finishing in " + str(WorldData.Organizations[o].OpsAgainstHomeland[z].FinishCounter) + " weeks")
 			# comparing significant intel change and notifying user if possible
 			var diff = newIntel - pastIntel
 			if WorldData.Organizations[o].OffensiveClearance == false and ifKidnapping == true: diff = 21
@@ -630,16 +630,28 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 		discreteDesc += techDesc
 	elif WorldData.Organizations[o].Type == WorldData.OrgType.MOVEMENT or WorldData.Organizations[o].Type == WorldData.OrgType.ARMTRADER:
 		var movDesc = ""
-		if quality < 10:
+		if quality < 2:
 			pass  # not enough
-		elif quality < 25:
+		elif quality < 10:
 			movDesc = ", probably not connected to terrorist organizations"
 			if len(WorldData.Organizations[o].ConnectedTo) > 0 and GameLogic.random.randi_range(1,2) == 1:
 				movDesc = ", potentially connected to a terrorist organization"
+		elif quality < 25:
+			movDesc = ", probably not connected to terrorist organizations"
+			if len(WorldData.Organizations[o].ConnectedTo) > 0:
+				movDesc = ", potentially connected to at least one terrorist organization (" + WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].Name + ")"
+				WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].IntelValue += 5
+				WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].IntelDescription.push_front("[b]"+date+"[/b] discovered connection to " + WorldData.Organizations[o].Name)
+				if WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].Known == false:
+					WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].Known = true
+					GatherOnOrg(WorldData.Organizations[o].ConnectedTo[0], 5, date, ifHideCalls)
+					antihomeland = "[u]previously unknown terrorist organization, " + WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].Name + ", was discovered in connection the to movement[/u]"
 		elif quality < 50:
 			movDesc = ", probably not connected to terrorist organizations"
 			if len(WorldData.Organizations[o].ConnectedTo) > 0:
 				movDesc = ", connected to at least one terrorist organization (" + WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].Name + ")"
+				WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].IntelValue += 10
+				WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].IntelDescription.push_front("[b]"+date+"[/b] discovered connection to " + WorldData.Organizations[o].Name)
 				if WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].Known == false:
 					WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].Known = true
 					GatherOnOrg(WorldData.Organizations[o].ConnectedTo[0], 5, date, ifHideCalls)
@@ -648,10 +660,14 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 			movDesc = ", not connected to terrorist organizations"
 			if len(WorldData.Organizations[o].ConnectedTo) == 1:
 				movDesc = ", connected to a terrorist organization (" + WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].Name + ")"
+				WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].IntelValue += 20
+				WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].IntelDescription.push_front("[b]"+date+"[/b] discovered connection to " + WorldData.Organizations[o].Name)
 			elif len(WorldData.Organizations[o].ConnectedTo) > 1:
 				var orgNames = []
 				for y in WorldData.Organizations[o].ConnectedTo:
 					orgNames.append(WorldData.Organizations[y].Name)
+					WorldData.Organizations[y].IntelValue += 15
+					WorldData.Organizations[y].IntelDescription.push_front("[b]"+date+"[/b] discovered connection to " + WorldData.Organizations[o].Name)
 					if WorldData.Organizations[y].Known == false:
 						WorldData.Organizations[y].Known = true
 						GatherOnOrg(y, 5, date, ifHideCalls)
@@ -678,6 +694,13 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 					WorldData.Wars[conflict].Result += howMuch
 				else:  # negative is our direction
 					WorldData.Wars[conflict].Result -= howMuch
+	############################################################################
+	# new or not
+	if len(WorldData.Organizations[o].IntelDescription) > 0:
+		var first = WorldData.Organizations[o].IntelDescription[0].right(18)
+		var second = antihomeland + "; " + discreteDesc
+		if first == second:
+			discreteDesc = "no new intel"
 	############################################################################
 	# result
 	if len(antihomeland) > 0 and WorldData.Organizations[o].Type != WorldData.OrgType.COMPANY and WorldData.Organizations[o].Type != WorldData.OrgType.UNIVERSITY and WorldData.Organizations[o].Type != WorldData.OrgType.GOVERNMENT and WorldData.Organizations[o].Type != WorldData.OrgType.INTERNATIONAL:

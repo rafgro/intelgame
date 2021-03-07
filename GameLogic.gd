@@ -64,6 +64,8 @@ var UniversalClearance = false  # with high trust, bureau can target anything th
 var InternalMoles = 0  # counter of officers that are passing info to other intel agencies
 var YearlyWars = 0  # internal counter, ensuring that there's no more than 1 war per year
 var YearlyHiring = 0  # internal counter, limiting a number of new officers for later stages
+var YearlyNetworks = 0  # internal counter instead of budget limit
+var YearlyStations = 0  # as above but for number of established or expanded stations over a year
 # Distance counters: block anything that happens more frequently than limit
 var DistWalkinCounter = 0
 var DistWalkinMin = 16  # minimum four months between those events
@@ -88,9 +90,9 @@ var TurnOnInfiltration = true
 func GiveDateWithYear():
 	var dateString = ""
 	if DateDay < 10: dateString += "0"
-	dateString += str(DateDay) + "/"
+	dateString += str(int(DateDay)) + "/"
 	if DateMonth < 10: dateString += "0"
-	dateString += str(DateMonth) + "/" + str(DateYear)
+	dateString += str(int(DateMonth)) + "/" + str(int(DateYear))
 	return dateString
 	
 func GiveDateWithoutYear():
@@ -169,6 +171,8 @@ func NextWeek():
 		OpsLimit = random.randi_range(1, 1+int(AllWeeks*1.0/IncreaseTerror))
 		YearlyWars = 0
 		YearlyHiring = 0
+		YearlyNetworks = 0
+		YearlyStations = 0
 	############################################################################
 	# date proceedings
 	var doesItEndWithCall = false
@@ -244,7 +248,7 @@ func NextWeek():
 	elif upskillDiff < -0.5: upskillDiff = -0.5
 	StaffSkill += upskillDiff*0.5
 	# trust naturally increases over time
-	Trust += 0.5  # +25% over year
+	StaffTrust += 0.25  # +12.5% over year
 	# tech increase, slowing down with higher tech level to achieve
 	var techDiff = (freeFund * (IntensityPercent(IntensityTech)*0.01)) / NewTechCost
 	if Technology < 10: Technology += techDiff
@@ -302,25 +306,23 @@ func NextWeek():
 					if WorldData.Countries[Directions[t].Country].Network > 0:
 						WorldData.Countries[Directions[t].Country].Network *= (1.0 + Directions[t].Quality*0.01)
 						AddEvent(str(Directions[t].Officers) + " officer(s) came back after expanding agent network in " + WorldData.Countries[Directions[t].Country].Name)
-						BudgetExtras += Directions[t].MonthlyCost * 0.05
 						StaffTrust += 0.5
 					else:
 						WorldData.Countries[Directions[t].Country].Network = int(Directions[t].Quality)
 						AddEvent(str(Directions[t].Officers) + " officer(s) came back after establishing agent network in " + WorldData.Countries[Directions[t].Country].Name)
-						BudgetExtras += Directions[t].MonthlyCost * 0.3
 						StaffTrust += 1
+					WorldData.Countries[Directions[t].Country].NetworkWork = false
 				# station
 				elif Directions[t].Type == 5:
 					if WorldData.Countries[Directions[t].Country].Station > 0:
 						WorldData.Countries[Directions[t].Country].Station *= (1.0 + Directions[t].Quality*0.01)
 						AddEvent(str(Directions[t].Officers) + " officer(s) came back after expanding station in " + WorldData.Countries[Directions[t].Country].Name)
-						BudgetExtras += Directions[t].MonthlyCost * 0.2
 						StaffTrust += 1
 					else:
 						WorldData.Countries[Directions[t].Country].Station = int(Directions[t].Quality)
 						AddEvent(str(Directions[t].Officers) + " officer(s) came back after establishing station in " + WorldData.Countries[Directions[t].Country].Name)
-						BudgetExtras += Directions[t].MonthlyCost
 						StaffTrust += 3
+					WorldData.Countries[Directions[t].Country].StationWork = false
 	############################################################################
 	# operations
 	var ifCall = OperationHandler.ProgressOperations()
@@ -489,7 +491,7 @@ func NextWeek():
 		if UltimatumTicker == 0:
 			# make or break
 			if Trust < 10:
-				var localSummary = "- " + str(AllWeeks) + " weeks\n- " + str(len(Operations)) + " operations"  # expand in the future
+				var localSummary = "- " + str(int(AllWeeks)) + " weeks\n- " + str(len(Operations)) + " operations"  # expand in the future
 				CallManager.CallQueue.append(
 					{
 						"Header": "Important Information",
@@ -524,7 +526,7 @@ func NextWeek():
 						"Header": "Important Information",
 						"Level": "Confidential",
 						"Operation": "-//-",
-						"Content": "Bringing back level of trust into acceptable territory convinced Government to keep you as the chief of Bureau. In recognition of past struggles, the budget was increased by €" + str(increase) + ",000.",
+						"Content": "Bringing back level of trust into acceptable territory convinced Government to keep you as the chief of Bureau. In recognition of past struggles, the budget was increased by €" + str(int(increase)) + ",000.",
 						"Show1": false,
 						"Show2": false,
 						"Show3": false,
@@ -559,7 +561,7 @@ func NextWeek():
 					content += "Possible Informant in Bureau\n\n"
 					# either successfully detected
 					if Investigations[e].Success == true:
-						content += "Investigation team concluded that fired officer have been leaking confidential information to " + WorldData.Organizations[org].Name + " for " + str(WorldData.Organizations[org].OpsAgainstHomeland[op].InvestigationData.Length) + " weeks. As a result:\n"
+						content += "Investigation team concluded that fired officer have been leaking confidential information to " + WorldData.Organizations[org].Name + " for " + str(int(WorldData.Organizations[org].OpsAgainstHomeland[op].InvestigationData.Length)) + " weeks. As a result:\n"
 						if WorldData.Organizations[org].OpsAgainstHomeland[op].InvestigationData.CovertDamage > 0:
 							content += "- " + str(int(WorldData.Organizations[org].OpsAgainstHomeland[op].InvestigationData.CovertDamage)) + "% of covert travel know how and operations in " + WorldData.Countries[WorldData.Organizations[org].Countries[0]].Name + " were affected (some of the know how has to be rebuilt)\n\n"
 						if WorldData.Organizations[org].OpsAgainstHomeland[op].InvestigationData.NetworkDamage > 0:
@@ -722,9 +724,9 @@ class MyCustomSorter:
 func ListPriorities(delimeter):
 	# why func? to provide nice semi-sorted list
 	# sorted priorities
-	var options = [[PriorityGovernments, "gathering intelligence on other governments (" + str(PriorityGovernments) + "%)"], [PriorityTech, "technological and industrial espionage (" + str(PriorityTech) + "%)"], [PriorityPublic, "public opinion (" + str(PriorityPublic) + "%)"]]
-	if TurnOnTerrorist == true: options.append([PriorityTerrorism, "war on terrorism (" + str(PriorityTerrorism) + "%)"])
-	if TurnOnWMD == true: options.append([PriorityWMD, "proliferation of weapons of mass destruction (" + str(PriorityWMD) + "%)"])
+	var options = [[PriorityGovernments, "gathering intelligence on other governments (" + str(int(PriorityGovernments)) + "%)"], [PriorityTech, "technological and industrial espionage (" + str(int(PriorityTech)) + "%)"], [PriorityPublic, "public opinion (" + str(PriorityPublic) + "%)"]]
+	if TurnOnTerrorist == true: options.append([PriorityTerrorism, "war on terrorism (" + str(int(PriorityTerrorism)) + "%)"])
+	if TurnOnWMD == true: options.append([PriorityWMD, "proliferation of weapons of mass destruction (" + str(int(PriorityWMD)) + "%)"])
 	options.sort_custom(MyCustomSorter, "sort_descending")
 	var toPool = []
 	for p in options: toPool.append(p[1])
@@ -784,7 +786,7 @@ func ImplementOfficerRescue(adictionary):
 	# debriefing variables
 	PursuedOperations -= 1
 	Operations[i].Stage = OperationGenerator.Stage.FAILED
-	Operations[i].Result = "FAILED, " + str(Operations[i].AbroadPlan.Officers) + " officers arrested"
+	Operations[i].Result = "FAILED, " + str(int(Operations[i].AbroadPlan.Officers)) + " officers arrested"
 	OfficersAbroad -= Operations[i].AbroadPlan.Officers
 	BudgetOngoingOperations -= Operations[i].AbroadPlan.Cost
 	# choice-based changes
@@ -908,8 +910,8 @@ func ImplementWalkin(adict):
 				"Decision4Argument": null,
 			}
 		)
-		var invDetail = "Investigation team concluded that intel provided by the source is highly credible and advances our knowledge about " + str(WorldData.Organizations[adict.Whichorg].Name) + "."
-		if adict.Quality < 0: invDetail = "Investigation team concluded that intel provided by the source is false and reduced our knowledge about " + str(WorldData.Organizations[adict.Whichorg].Name) + "."
+		var invDetail = "Investigation team concluded that intel provided by the source is highly credible and advances our knowledge about " + WorldData.Organizations[adict.Whichorg].Name + "."
+		if adict.Quality < 0: invDetail = "Investigation team concluded that intel provided by the source is false and reduced our knowledge about " + WorldData.Organizations[adict.Whichorg].Name + "."
 		Investigations.append(
 			{
 				"Type": 100,
@@ -917,7 +919,7 @@ func ImplementWalkin(adict):
 				"Organization": adict.Whichorg,
 				"Operation": null,
 				"Success": null,
-				"Content": "Walk-in Source from " + str(WorldData.Organizations[adict.Whichorg].Name) + "\n\n" + invDetail,
+				"Content": "Walk-in Source from " + WorldData.Organizations[adict.Whichorg].Name + "\n\n" + invDetail,
 			}
 		)
 
@@ -963,12 +965,16 @@ func ImplementDirectionDevelopment(aDict):
 		if WorldData.Countries[aDict.Country].Network == 0 and quality > 15:
 			quality = random.randi_range(13,17)
 		if quality < 2: quality = 2
+		WorldData.Countries[aDict.Country].NetworkWork = true
+		YearlyNetworks += 1
 	elif aDict.Choice == 5:
 		# establishing a new station or expanding existing one
 		quality = (WorldData.Countries[aDict.Country].KnowhowCustoms + WorldData.Countries[aDict.Country].KnowhowLanguage) * 0.4 + (StaffSkill + Technology) * 0.6
 		if WorldData.Countries[aDict.Country].Station == 0 and quality > 8:
 			quality = random.randi_range(7,10)
 		if quality < 2: quality = 2
+		WorldData.Countries[aDict.Country].StationWork = true
+		YearlyStations += 1
 	# number of officers can always change in-between
 	if OfficersInHQ >= aDict.Officers and aDict.Officers != 0:
 		Directions.append(
@@ -1014,7 +1020,7 @@ func ImplementSourceTermination(aDict):
 			"Organization": aDict.Org,
 			"Operation": null,
 			"Success": null,
-			"Content": "Source Loss in " + str(WorldData.Organizations[aDict.Org].Name) + "\n\n" + aDict.InvestigationDetails,
+			"Content": "Source Loss in " + WorldData.Organizations[aDict.Org].Name + "\n\n" + aDict.InvestigationDetails,
 		}
 	)
 	WorldData.Organizations[aDict.Org].IntelSources.remove(aDict.Source)
