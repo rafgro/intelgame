@@ -333,7 +333,7 @@ func ProgressOperations():
 					wholeContent += "[b]Plan A[/b]\n" + localPlans[0].Description+"\n[b]Plan B[/b]\n" \
 						+ localPlans[1].Description+"\n[b]Plan C[/b]\n"+localPlans[2].Description+"\n"
 				if len(notEnoughIntel) > 0:
-					wholeContent += "Following methods were not available due to not enough intel gathered: " + PoolStringArray(notEnoughIntel).join(", ") + ".\n"
+					wholeContent += "Following approaches were not available due to not enough intel gathered: " + PoolStringArray(notEnoughIntel).join(", ") + ".\n\n"
 				wholeContent += "Choose appropriate plan or wait for new plans."
 				# setting the call for player
 				CallManager.CallQueue.append(

@@ -519,37 +519,40 @@ func Execute(past):
 	# country summits
 	if GameLogic.random.randi_range(0,40) == 12:
 		# getting participants
-		var howmany = GameLogic.random.randi_range(3,6)
+		var howmany = GameLogic.random.randi_range(2,6)
 		var participants = []
-		while len(participants) < howmany:
+		var safetyCounter = 0
+		while len(participants) < howmany and safetyCounter < howmany*5:
+			safetyCounter += 1
 			var try = GameLogic.random.randi_range(0, len(WorldData.Countries)-1)
 			if !(try in participants):
 				participants.append(try)
-		# results, mostly depending on sum of internal relations
-		var theSum = 0
-		for p in participants:
-			for p2 in participants:
-				theSum += WorldData.DiplomaticRelations[p][p2]
-		theSum += GameLogic.random.randf_range(theSum*(-0.2),theSum*(0.2))
-		var result = 15
-		if theSum < 0: result = -15
-		# updating relations
-		var message = ""
-		for p in participants:
-			message += WorldData.Countries[p].Name + ", "
-			for p2 in participants:
-				WorldData.DiplomaticRelations[p][p2] += result
-		# public information
-		message = "Summit of " + message.substr(0, len(message)-2) + ": "
-		if theSum > 0:
-			message += "governments issued a joint statement"
+		if len(participants) > 1:
+			# results, mostly depending on sum of internal relations
+			var theSum = 0
 			for p in participants:
-				WorldData.Countries[p].SoftPower += 3
-		else:
-			message += "governments could not reach consensus"
+				for p2 in participants:
+					theSum += WorldData.DiplomaticRelations[p][p2]
+			theSum += GameLogic.random.randf_range(theSum*(-0.2),theSum*(0.2))
+			var result = 15
+			if theSum < 0: result = -15
+			# updating relations
+			var message = ""
 			for p in participants:
-				WorldData.Countries[p].SoftPower -= 1.5
-		GameLogic.AddWorldEvent(message, past)
+				message += WorldData.Countries[p].Name + ", "
+				for p2 in participants:
+					WorldData.DiplomaticRelations[p][p2] += result
+			# public information
+			message = "Summit of " + message.substr(0, len(message)-2) + ": "
+			if theSum > 0:
+				message += "governments issued a joint statement"
+				for p in participants:
+					WorldData.Countries[p].SoftPower += 3
+			else:
+				message += "governments could not reach consensus"
+				for p in participants:
+					WorldData.Countries[p].SoftPower -= 1.5
+			GameLogic.AddWorldEvent(message, past)
 	############################################################################
 	# organization proceedings
 	for w in range(0,len(WorldData.Organizations)):
@@ -917,7 +920,8 @@ func Execute(past):
 			elif WorldData.Organizations[w].Budget < 1000: opFrequency *= 0.5
 			elif WorldData.Organizations[w].Budget < 10000: opFrequency *= 0.7
 			elif WorldData.Organizations[w].Budget < 50000: opFrequency *= 0.95
-			var randFrequency = 110 - opFrequency  # max aggr->p=1/10, min aggr->p=1/110
+			# max aggr->p=1/10, min aggr->p=1/110
+			var randFrequency = 110 - opFrequency*GameLogic.FrequencyAttacks
 			if GameLogic.TurnOnTerrorist == true and GameLogic.random.randi_range(0,randFrequency) == int(randFrequency*0.5):
 				var whichCountry = randi() % WorldData.Countries.size()
 				if GameLogic.YearlyOpsAgainstHomeland < GameLogic.OpsLimit and GameLogic.random.randi_range(0,2) == 2:
@@ -1261,15 +1265,53 @@ func Execute(past):
 						if GameLogic.random.randi_range(1,4) != 2: continue
 						WorldData.Organizations[w].ConnectedTo.append(f)
 						break
+		########################################################################
+		# movements vs terror
+		if WorldData.Organizations[w].Type == WorldData.OrgType.MOVEMENT:
+			# terror org spun out from the movement
+			if GameLogic.random.randi_range(40,100) < WorldData.Organizations[w].Aggression:
+				if GameLogic.random.randi_range(1,52) == 15:
+					WorldData.Organizations.append(
+						WorldData.aNewOrganization({ "Type": WorldData.OrgType.GENERALTERROR, "Name": WorldGenerator.GenerateHostileName(), "Fixed": false, "Known": false, "Staff": GameLogic.random.randi_range(10,100), "Budget": GameLogic.random.randi_range(50,1000), "Counterintelligence": GameLogic.random.randi_range(20,60), "Aggression": WorldData.Organizations[w].Aggression+GameLogic.random.randi_range(-5,5), "Countries": WorldData.Organizations[w].Countries.duplicate(), "IntelValue": 0, "TargetConsistency": GameLogic.random.randi_range(50,100), "TargetCountries": WorldData.Organizations[w].Countries.duplicate(), })
+					)
+					WorldData.Organizations[-1].UndercoverCounter = GameLogic.random.randi_range(4,26)
+					# target homeland more often
+					if !(0 in WorldData.Organizations[-1].TargetCountries):
+						if GameLogic.random.randi_range(1,9) == 7:
+							WorldData.Organizations[-1].TargetCountries.append(0)
+					WorldData.Organizations[-1].ConnectedTo.append(w)
+			# louder event initiated by the movement
+			if GameLogic.random.randi_range(20,120) < WorldData.Organizations[w].Aggression and WorldData.Organizations[w].Staff > 5000:
+				if GameLogic.random.randi_range(1,46) == 25:
+					var whichE = GameLogic.random.randi_range(1,3)
+					if whichE == 1:
+						GameLogic.AddWorldEvent(WorldData.Organizations[w].Name + " protests in " + WorldData.Countries[WorldData.Organizations[w].Countries[randi() % WorldData.Organizations[w].Countries.size()]].Name, past)
+					elif whichE == 2:
+						GameLogic.AddWorldEvent(WorldData.Organizations[w].Name + " march on streets of " + WorldData.Countries[WorldData.Organizations[w].Countries[randi() % WorldData.Organizations[w].Countries.size()]].Name, past)
+					else:
+						GameLogic.AddWorldEvent("Riots sparked by " + WorldData.Organizations[w].Name + " in " + WorldData.Countries[WorldData.Organizations[w].Countries[randi() % WorldData.Organizations[w].Countries.size()]].Name, past)
+			# affecting orgs tied to the movement
+			if GameLogic.random.randi_range(1,4) == 3:
+				for p in WorldData.Organizations[w].ConnectedTo:
+					WorldData.Organizations[p].Aggression += (WorldData.Organizations[w].Aggression-50)*0.01
+					if GameLogic.random.randi_range(1,2) == 2:
+						var sizeChange = 0
+						if WorldData.Organizations[w].Staff > 100000:
+							sizeChange = GameLogic.random.randi_range(10,100)
+						elif WorldData.Organizations[w].Staff > 10000:
+							sizeChange = GameLogic.random.randi_range(1,10)
+						else:
+							sizeChange = GameLogic.random.randi_range(1,3)
+						WorldData.Organizations[p].Staff += sizeChange
 	############################################################################
 	# rare new organizations, no more than one per year
 	if GameLogic.random.randi_range(1,100) == 45:
 		var size = GameLogic.random.randi_range(2,100)
 		var places = GameLogic.random.randi_range(0,len(WorldData.Countries)-1)
 		WorldData.Organizations.append(
-			WorldData.aNewOrganization({ "Type": WorldData.OrgType.GENERALTERROR, "Name": WorldGenerator.GenerateHostileName(), "Fixed": false, "Known": false, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-50,150), "Counterintelligence": GameLogic.random.randi_range(5,70), "Aggression": GameLogic.random.randi_range(10,80), "Countries": [places], "IntelValue": GameLogic.random.randi_range(-50,-5), "TargetConsistency": 0, "TargetCountries": [], })
+			WorldData.aNewOrganization({ "Type": WorldData.OrgType.GENERALTERROR, "Name": WorldGenerator.GenerateHostileName(), "Fixed": false, "Known": false, "Staff": size, "Budget": size*100+GameLogic.random.randi_range(-50,150), "Counterintelligence": GameLogic.random.randi_range(5,70), "Aggression": GameLogic.random.randi_range(10,80), "Countries": [places], "IntelValue": GameLogic.random.randi_range(-10,-5), "TargetConsistency": 0, "TargetCountries": [], })
 		)
-		WorldData.Organizations[-1].UndercoverCounter = GameLogic.random.randi_range(5,120)
+		WorldData.Organizations[-1].UndercoverCounter = GameLogic.random.randi_range(30,150)
 		# usual targets
 		WorldData.Organizations[-1].TargetConsistency = GameLogic.random.randi_range(0,100)
 		for h in range(0, GameLogic.random.randi_range(1,5)):
@@ -1286,5 +1328,15 @@ func Execute(past):
 			if WorldData.Organizations[j].Countries[0] != places: continue
 			if GameLogic.random.randi_range(1,2) == 1:
 				WorldData.Organizations[j].ConnectedTo.append(len(WorldData.Organizations)-1)
+	############################################################################
+	# very rare new movements
+	if GameLogic.random.randi_range(0,200) == 155:
+		var movNames = ["Extremists", "Nationalists", "Anarchists", "Resistance"]
+		var size = GameLogic.random.randi_range(100,15000)
+		var place = GameLogic.random.randi_range(1,len(WorldData.Countries)-1)
+		WorldData.Organizations.append(
+			WorldData.aNewOrganization({ "Type": WorldData.OrgType.MOVEMENT, "Name": WorldData.Countries[place].Adjective + " " + movNames[randi() % movNames.size()], "Fixed": false, "Known": true, "Staff": size, "Budget": 0, "Counterintelligence": 0, "Aggression": GameLogic.random.randi_range(10,90), "Countries": [place], "IntelValue": 5, "TargetConsistency": 0, "TargetCountries": [], })
+		)
+		GameLogic.AddWorldEvent("New movement emerged: " + WorldData.Organizations[-1].Name, past)
 	############################################################################
 	return doesItEndWithCall

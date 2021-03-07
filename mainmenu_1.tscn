@@ -172,7 +172,6 @@ margin_bottom = 180.0
 rect_min_size = Vector2( 210, 180 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
-disabled = true
 
 [node name="C" type="CenterContainer" parent="C/V/M/R/CButtons/Decision2"]
 anchor_right = 0.990164

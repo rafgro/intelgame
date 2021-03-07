@@ -12,7 +12,8 @@ func GenerateIntelOrgs(countryName, countryId):
 	elif countryName == "France":
 		WorldData.Organizations.append(WorldData.aNewOrganization({ "Type": WorldData.OrgType.INTEL, "Name": "DGSE", "Fixed": true, "Known": true, "Staff": 6100, "Budget": 42000, "Counterintelligence": 95, "Aggression": 75, "Countries": [countryId], "IntelValue": 5, "TargetConsistency": 0, "TargetCountries": [1], }))
 	elif countryName == "Russia":
-		WorldData.Organizations.append(WorldData.aNewOrganization({ "Type": WorldData.OrgType.INTEL, "Name": "FSB", "Fixed": true, "Known": true, "Staff": 66200, "Budget": 1000000, "Counterintelligence": 95, "Aggression": 80, "Countries": [countryId], "IntelValue": 5, "TargetConsistency": 0, "TargetCountries": [1], }))
+		WorldData.Organizations.append(WorldData.aNewOrganization({ "Type": WorldData.OrgType.INTEL, "Name": "GRU", "Fixed": true, "Known": true, "Staff": 25000, "Budget": 100000, "Counterintelligence": 95, "Aggression": 95, "Countries": [countryId], "IntelValue": 5, "TargetConsistency": 0, "TargetCountries": [1], }))
+		WorldData.Organizations.append(WorldData.aNewOrganization({ "Type": WorldData.OrgType.INTEL, "Name": "SVR", "Fixed": true, "Known": true, "Staff": 13000, "Budget": 50000, "Counterintelligence": 90, "Aggression": 70, "Countries": [countryId], "IntelValue": 5, "TargetConsistency": 0, "TargetCountries": [1], }))
 	elif countryName == "China":
 		WorldData.Organizations.append(WorldData.aNewOrganization({ "Type": WorldData.OrgType.INTEL, "Name": "Guoanbu", "Fixed": true, "Known": true, "Staff": 100000, "Budget": 2000000, "Counterintelligence": 98, "Aggression": 80, "Countries": [countryId],  "IntelValue": 5, "TargetConsistency": 0, "TargetCountries": [1], }))
 	elif countryName == "Israel":
@@ -207,8 +208,8 @@ func NewGenerate():
 	# organizations such as NATO or UN
 	ScenarioEurope21.CreateAdHocOrgs()
 	# movements
-	var movNames = ["Religious", "Nationalist", "Anarchist", "Counter-culture"]
-	for i in range(0,3):
+	var movNames = ["Religious Movement", "Nationalists", "Anarchists", "Resistance"]
+	for i in range(0,4):
 		var doNotRepeat = []
 		for k in range(0,GameLogic.random.randi_range(1,howManyCountries)):
 			var size = GameLogic.random.randi_range(100,15000)
@@ -216,7 +217,7 @@ func NewGenerate():
 			if place in doNotRepeat: continue
 			doNotRepeat.append(place)
 			WorldData.Organizations.append(
-				WorldData.aNewOrganization({ "Type": WorldData.OrgType.MOVEMENT, "Name": WorldData.Countries[place].Adjective + " " + movNames[i] + " Movement", "Fixed": false, "Known": true, "Staff": size, "Budget": 0, "Counterintelligence": 0, "Aggression": GameLogic.random.randi_range(10,70), "Countries": [place], "IntelValue": GameLogic.random.randi_range(-10,10), "TargetConsistency": 0, "TargetCountries": [], })
+				WorldData.aNewOrganization({ "Type": WorldData.OrgType.MOVEMENT, "Name": WorldData.Countries[place].Adjective + " " + movNames[i], "Fixed": false, "Known": true, "Staff": size, "Budget": 0, "Counterintelligence": 0, "Aggression": GameLogic.random.randi_range(10,70), "Countries": [place], "IntelValue": GameLogic.random.randi_range(-10,10), "TargetConsistency": 0, "TargetCountries": [], })
 			)
 	# few general terror orgs
 	var howManyTerror = int(howManyCriminal*0.6)

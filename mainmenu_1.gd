@@ -27,7 +27,7 @@ func _on_NewRandom_pressed():
 	get_tree().change_scene("res://mainmenu_newrandom.tscn")
 
 func _on_NewScenario_pressed():
-	pass # Replace with function body.
+	get_tree().change_scene("res://mainmenu_newscenario.tscn")
 
 func _on_Load_pressed():
 	Managestate.LoadGame()

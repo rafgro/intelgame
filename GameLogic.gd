@@ -86,6 +86,7 @@ var IncreaseTerror = 52*2  # possible +1 terror ops every x weeks
 var TurnOnWars = true
 var TurnOnWMD = true
 var TurnOnInfiltration = true
+var FrequencyAttacks = 1.0
 
 func GiveDateWithYear():
 	var dateString = ""
@@ -128,8 +129,6 @@ func _init():
 
 func StartAll():
 	AddEvent("The bureau has opened")
-	# past and current world situation
-	SoftPowerMonthsAgo = WorldGenerator.NewGenerate()
 	# initial craft availabililty
 	for t in range(0, len(WorldData.Methods)):
 		for m in range(0, len(WorldData.Methods[t])):
@@ -204,8 +203,8 @@ func NextWeek():
 				DateMonth = 1
 				DateYear += 1
 				# new-year budget increase
-				var budgetIncrease = 15 + Trust*0.5
-				if budgetIncrease > 70: budgetIncrease = random.randi_range(68,75)
+				var budgetIncrease = 30 + Trust*0.7
+				if budgetIncrease > 100: budgetIncrease = random.randi_range(97,103)
 				BudgetFull += budgetIncrease
 				AddEvent("New year budget increase: +€"+str(int(budgetIncrease))+"k")
 		# monthly updated game logic
@@ -240,8 +239,17 @@ func NextWeek():
 				WorldData.Countries[chosenC].KnowhowLanguage += random.randi_range(10,35)
 				WorldData.Countries[chosenC].KnowhowCustoms += random.randi_range(5,15)
 				ifDirection = " and brought in some knowledge about " + WorldData.Countries[chosenC].Name
-		AddEvent("New officer joined the bureau"+ifDirection)
+		AddEvent("New officer joined Bureau"+ifDirection)
 		YearlyHiring += 1
+	# random officer events
+	if random.randi_range(0,100) == 50:
+		if random.randi_range(0,100) < ActiveOfficers and OfficersInHQ > 0:
+			StaffTrust -= 5
+			StaffSkill *= 1.0-(1/ActiveOfficers)
+			StaffExperience *= 1.0-(1/ActiveOfficers)
+			ActiveOfficers -= 1
+			OfficersInHQ -= 1
+			AddEvent("Bureau lost an officer due to resignation")
 	# upskilling
 	var upskillDiff = (freeFund * (IntensityPercent(IntensityUpskill)*0.01)) - (SkillMaintenanceCost*ActiveOfficers)
 	if upskillDiff > 0.5: upskillDiff = 0.5
