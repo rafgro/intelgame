@@ -54,12 +54,13 @@ func GenerateUniversityName(adjective):
 	var wordsA = ["University", "Institute", "College", "Tech Uni", "Institute of Tech", "School of Science", "Polytechnic", "Academy of Sciences", "Advanced Study", "National Laboratory", "Research Center", "Scientific Society"]
 	return adjective + " " + wordsA[randi() % wordsA.size()]
 
+var howManyCountries = 5
+var howManyCriminal = 8
+
 func NewGenerate():
 	GameLogic.random.randomize()
 	randomize()
 	var homelandSoftPowerLastMonths = []  # will be returned
-	var howManyCountries = 5
-	var howManyCriminal = 8
 	############################################################################
 	# get countries
 	var addedNames = []
