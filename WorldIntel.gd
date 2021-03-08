@@ -413,17 +413,21 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 		var innerTechChange = 0
 		if quality < 10:
 			pass  # not enough
-		elif quality < 20:
+		elif quality < 30:
 			techDesc = ", probably no interesting technology"
 			if WorldData.Organizations[o].Technology > 50 and GameLogic.random.randi_range(1,2) == 1:
 				techDesc = ", potentially interesting technology"
+				if len(WorldData.Organizations[o].TechDescription) > 0:
+					techDesc += ": " + WorldData.Organizations[o].TechDescription
 				WorldData.Organizations[o].IntelTechnology = WorldData.Organizations[o].Technology*0.2
 				innerTechChange = 1
-		elif quality < 40:
+		elif quality < 50:
 			if WorldData.Organizations[o].Technology < 30:
 				techDesc = ", no interesting technology"
 			elif WorldData.Organizations[o].Technology < 60:
 				techDesc = ", some technological details acquired"
+				if len(WorldData.Organizations[o].TechDescription) > 0:
+					techDesc += ": " + WorldData.Organizations[o].TechDescription
 				WorldData.Organizations[o].IntelTechnology = WorldData.Organizations[o].Technology*0.3
 				innerTechChange = 1
 			else:
@@ -435,12 +439,16 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 					innerTechChange = 2
 				else: innerTechChange = 1
 				techDesc = ", " + ifNew + "interesting technological details acquired"
+				if len(WorldData.Organizations[o].TechDescription) > 0:
+					techDesc += ": " + WorldData.Organizations[o].TechDescription
 				WorldData.Organizations[o].IntelTechnology = newIntelTech
 		elif quality < 75:
 			if WorldData.Organizations[o].Technology < 30:
 				techDesc = ", no interesting technology"
 			elif WorldData.Organizations[o].Technology < 60:
 				techDesc = ", technological documents acquired"
+				if len(WorldData.Organizations[o].TechDescription) > 0:
+					techDesc += ": " + WorldData.Organizations[o].TechDescription
 				var newIntelTech = WorldData.Organizations[o].Technology*0.6
 				WorldData.Organizations[o].IntelTechnology = newIntelTech
 				innerTechChange = 2
@@ -453,6 +461,8 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 					innerTechChange = 3
 				else: innerTechChange = 2
 				techDesc = ", " + ifNew + "interesting technological documents acquired"
+				if len(WorldData.Organizations[o].TechDescription) > 0:
+					techDesc += ": " + WorldData.Organizations[o].TechDescription
 				WorldData.Organizations[o].IntelTechnology = newIntelTech
 		else:
 			if WorldData.Organizations[o].Technology < 30:
@@ -466,6 +476,8 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 					innerTechChange = 3
 				else: innerTechChange = 2
 				techDesc = ", " + ifNew + "valuable technological documents acquired"
+				if len(WorldData.Organizations[o].TechDescription) > 0:
+					techDesc += ": " + WorldData.Organizations[o].TechDescription
 				WorldData.Organizations[o].IntelTechnology = newIntelTech
 			else:
 				var ifNew = ""
@@ -476,54 +488,59 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 					innerTechChange = 4
 				else: innerTechChange = 3
 				techDesc = ", " + ifNew + "significantly valuable technological documents acquired"
+				if len(WorldData.Organizations[o].TechDescription) > 0:
+					techDesc += ": " + WorldData.Organizations[o].TechDescription
 				WorldData.Organizations[o].IntelTechnology = newIntelTech
-			# inner technology change
-			if credible == true:
-				if WorldData.Organizations[o].Type == WorldData.OrgType.COMPANY or WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY:
-					# limited use of private tech
-					if GameLogic.Technology < 20: GameLogic.Technology += innerTechChange
-					elif GameLogic.Technology < 30: GameLogic.Technology += innerTechChange*0.5
-					elif GameLogic.Technology < 40: GameLogic.Technology += innerTechChange*0.1
-				elif WorldData.Organizations[o].Type == WorldData.OrgType.INTEL:
-					# huge use of intel tech
-					if GameLogic.Technology < 50: GameLogic.Technology += innerTechChange
-					elif GameLogic.Technology < 65: GameLogic.Technology += innerTechChange*0.5
-					elif GameLogic.Technology < 80: GameLogic.Technology += innerTechChange*0.1
-			# eventual user debriefing
-			if technologyWinCall == true and ifHideCalls == false:
-				var trustIncrease = quality*0.15*GameLogic.PriorityTech*0.01
-				if trustIncrease > 10: trustIncrease = 10
-				if (GameLogic.Trust+trustIncrease) > 100: trustIncrease = 101-GameLogic.Trust
-				GameLogic.Trust += trustIncrease
-				WorldData.Countries[0].SoftPower += GameLogic.random.randi_range(1,3)
-				var budgetIncrease = quality*0.3
-				if budgetIncrease > 20: budgetIncrease = 20
-				GameLogic.BudgetFull += budgetIncrease
-				CallManager.CallQueue.append(
-					{
-						"Header": "Important Information",
-						"Level": "Confidential",
-						"Operation": "-//-",
-						"Content": "New technological intel has been gathered in " + WorldData.Organizations[o].Name + ". Homeland authorities recognized it as highly valuable. In recognition of the efforts and in hope of continuation, government raised the trust by " + str(int(trustIncrease)) + "% and increased Bureau's budget by €" + str(int(budgetIncrease)) + ",000.",
-						"Show1": false,
-						"Show2": false,
-						"Show3": false,
-						"Show4": true,
-						"Text1": "",
-						"Text2": "",
-						"Text3": "",
-						"Text4": "Understood",
-						"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
-						"Decision1Argument": null,
-						"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
-						"Decision2Argument": null,
-						"Decision3Callback": funcref(GameLogic, "EmptyFunc"),
-						"Decision3Argument": null,
-						"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
-						"Decision4Argument": null,
-					}
-				)
-				doesItEndWithCall = true
+		# inner technology change
+		if credible == true and WorldData.Organizations[o].TradecraftTech == true:
+			if WorldData.Organizations[o].Type == WorldData.OrgType.COMPANY or WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY:
+				# limited use of private tech
+				if GameLogic.Technology < 20: GameLogic.Technology += innerTechChange
+				elif GameLogic.Technology < 30: GameLogic.Technology += innerTechChange*0.5
+				elif GameLogic.Technology < 40: GameLogic.Technology += innerTechChange*0.1
+			elif WorldData.Organizations[o].Type == WorldData.OrgType.INTEL:
+				# huge use of intel tech
+				if GameLogic.Technology < 50: GameLogic.Technology += innerTechChange
+				elif GameLogic.Technology < 65: GameLogic.Technology += innerTechChange*0.5
+				elif GameLogic.Technology < 80: GameLogic.Technology += innerTechChange*0.1
+		# eventual user debriefing
+		if technologyWinCall == true and ifHideCalls == false:
+			var trustIncrease = quality*0.15*GameLogic.PriorityTech*0.01
+			if trustIncrease > 10: trustIncrease = 10
+			if (GameLogic.Trust+trustIncrease) > 100: trustIncrease = 101-GameLogic.Trust
+			GameLogic.Trust += trustIncrease
+			WorldData.Countries[0].SoftPower += GameLogic.random.randi_range(1,3)
+			var budgetIncrease = quality*0.5
+			if budgetIncrease > 50: budgetIncrease = 50
+			GameLogic.BudgetFull += budgetIncrease
+			var ifTechDetail = ""
+			if len(WorldData.Organizations[o].TechDescription) > 0:
+				ifTechDetail = " about " + WorldData.Organizations[o].TechDescription
+			CallManager.CallQueue.append(
+				{
+					"Header": "Important Information",
+					"Level": "Confidential",
+					"Operation": "-//-",
+					"Content": "New technological intel has been gathered in " + WorldData.Organizations[o].Name + ifTechDetail + ". Homeland authorities recognized it as highly valuable. In recognition of the efforts and in hope of continuation, government raised the trust by " + str(int(trustIncrease)) + "% and increased Bureau's budget by €" + str(int(budgetIncrease)) + ",000.",
+					"Show1": false,
+					"Show2": false,
+					"Show3": false,
+					"Show4": true,
+					"Text1": "",
+					"Text2": "",
+					"Text3": "",
+					"Text4": "Understood",
+					"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
+					"Decision1Argument": null,
+					"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
+					"Decision2Argument": null,
+					"Decision3Callback": funcref(GameLogic, "EmptyFunc"),
+					"Decision3Argument": null,
+					"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
+					"Decision4Argument": null,
+				}
+			)
+			doesItEndWithCall = true
 		discreteDesc += techDesc
 	elif GameLogic.TurnOnWMD == true and WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE:
 		# will call user only if clearance is off

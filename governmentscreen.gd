@@ -29,7 +29,7 @@ func _ready():
 	desc += ", "+str(WorldData.Countries[0].ElectionProgress) \
 		+" weeks to the next election\n"
 	desc += "positive relations with: "
-	var c = 0
+	var c = 1
 	var positiveList = []
 	while c < len(WorldData.DiplomaticRelations[0]):
 		if WorldData.DiplomaticRelations[0][c] > 30:
@@ -38,7 +38,7 @@ func _ready():
 	if len(positiveList) == 0: desc += "-\n"
 	else: desc += PoolStringArray(positiveList).join(", ") + "\n"
 	desc += "negative relations with: "
-	c = 0
+	c = 1
 	var negativeList = []
 	while c < len(WorldData.DiplomaticRelations[0]):
 		if WorldData.DiplomaticRelations[0][c] < -30:

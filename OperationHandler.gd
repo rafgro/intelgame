@@ -624,7 +624,7 @@ func ProgressOperations():
 				var content = ""
 				# debriefing user and results of the intel
 				if GameLogic.Operations[i].Source == 0:
-					content = "Operation was sucessfully executed. "
+					content = "Operation was successfully executed. "
 					content += "Intel gathered on " + WorldData.Organizations[GameLogic.Operations[i].Target].Name + ":\n" + WorldData.Organizations[GameLogic.Operations[i].Target].IntelDescription[0].substr(18)
 					GameLogic.Operations[i].Result = "SUCCESS"
 					# special gov feedbacks
@@ -654,7 +654,7 @@ func ProgressOperations():
 					if govFeedback < -5: govFeedback = GameLogic.random.randi_range(-5,-7)
 					if govFeedback > 5: govFeedback = GameLogic.random.randi_range(5,7)
 					govFeedback = int(govFeedback)
-					if govFeedback == 0: govFeedback = -1
+					if govFeedback < 1 and govFeedback > -1: govFeedback = -1
 					var whichO = GameLogic.Operations[i].Target
 					# special gov feedbacks
 					if WorldData.Organizations[whichO].Type == WorldData.OrgType.COMPANY or WorldData.Organizations[whichO].Type == WorldData.OrgType.UNIVERSITY:
@@ -796,7 +796,7 @@ func ProgressOperations():
 				elif GameLogic.Operations[i].Source == 1:
 					var govFeedback = sourceLevel*(1.0+(difficulty*0.05))
 					if sourceLevel == 0:
-						govFeedback = GameLogic.random.randi_range(-40,-10)*(1.0-(difficulty*0.05))
+						govFeedback = GameLogic.random.randi_range(-25,-5)
 					if govFeedback > 0: govFeedback *= WorldData.Countries[0].PoliticsIntel*0.01
 					if govFeedback < -10: govFeedback = GameLogic.random.randi_range(-12,-10)
 					if govFeedback > 10: govFeedback = GameLogic.random.randi_range(10,12)
@@ -815,6 +815,9 @@ func ProgressOperations():
 						govFeedback *= (GameLogic.PriorityGovernments*0.012)
 					elif WorldData.Organizations[whichO].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE:
 						govFeedback *= (GameLogic.PriorityWMD*0.01)
+					# ad hoc error correction
+					if sourceLevel <= 0 and govFeedback > 0:
+						govFeedback = GameLogic.random.randi_range(-10,-5)
 					GameLogic.Trust += govFeedback
 					var govFeedbackDesc = "Officers failed at acquiring a new source in an organization indicated by the government. Bureau lost "+str(int((-1)*govFeedback))+"% of trust."
 					GameLogic.Operations[i].Result = "COMPLETED, negative feedback"

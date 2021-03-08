@@ -1,5 +1,7 @@
 extends Node
 
+var Description = "[b]Europe and Superpowers in 2021[/b]\n\n- Homeland as a new small country\n- Complex relations between US, China, and Russia\n- Very active Russian and Chinese intelligence services\n- Multiple turbulent social movements\n- Weakened Islamic State desperate to rebuild its power\n- Expensive travel and empty streets due to the pandemic\n- Governments hungry for coronavirus technology, ordering intelligence services to steal vaccines and efficient treatments"
+
 # one year simulation from 2020 and then starts in 2021
 var PossibleCountries = [
 	WorldData.aNewCountry({ "Name": "Ireland", "Adjective": "Irish", "TravelCost": 1, "LocalCost": 1, "IntelFriendliness": 90, "Size": 5, "ElectionPeriod": 52*5, "ElectionProgress": 52+52*4.1, "SoftPower": 40, }),
@@ -58,6 +60,18 @@ func GenerateWorld():
 	# get countries
 	for c in range(0, len(PossibleCountries)):
 		WorldData.Countries.append(PossibleCountries[c])
+	############################################################################
+	# 2021 countries features
+	WorldData.Countries[2].WMDProgress = 100
+	WorldData.Countries[2].WMDIntel = 100
+	WorldData.Countries[5].WMDProgress = 100
+	WorldData.Countries[5].WMDIntel = 100
+	WorldData.Countries[6].WMDProgress = 70
+	WorldData.Countries[6].WMDIntel = 70
+	WorldData.Countries[7].WMDProgress = 100
+	WorldData.Countries[7].WMDIntel = 100
+	WorldData.Countries[8].WMDProgress = 100
+	WorldData.Countries[8].WMDIntel = 100
 	############################################################################
 	# relationships
 	#    HO IR UK BE GE US FR RU CH IS SP IT SW
@@ -199,6 +213,56 @@ func GenerateWorld():
 	WorldData.Organizations.append(
 		WorldData.aNewOrganization({ "Type": WorldData.OrgType.GENERALTERROR, "Name": "Vilayat Kavkaz", "Fixed": false, "Known": true, "Staff": 1000, "Budget": 10000, "Counterintelligence": 80, "Aggression": 80, "Countries": [7], "IntelValue": -5, "TargetConsistency": 95, "TargetCountries": [7], })
 	)
+	# companies
+	WorldData.Organizations.append(
+		WorldData.aNewOrganization({ "Type": WorldData.OrgType.COMPANY, "Name": "AstraZeneca", "Fixed": true, "Known": true, "Staff": 70600, "Budget": 6000000, "Counterintelligence": 50, "Aggression": 0, "Countries": [2], "IntelValue": 0, "TargetConsistency": 0, "TargetCountries": [], })
+	)
+	WorldData.Organizations[-1].TechDescription = "coronavirus vaccine AZD1222"
+	WorldData.Organizations[-1].Technology = 85
+	WorldData.Organizations[-1].TradecraftTech = false
+	WorldData.Organizations.append(
+		WorldData.aNewOrganization({ "Type": WorldData.OrgType.COMPANY, "Name": "BioNTech", "Fixed": true, "Known": true, "Staff": 1323, "Budget": 5000, "Counterintelligence": 40, "Aggression": 0, "Countries": [4], "IntelValue": 0, "TargetConsistency": 0, "TargetCountries": [], })
+	)
+	WorldData.Organizations[-1].TechDescription = "coronavirus vaccine BNT162b2"
+	WorldData.Organizations[-1].Technology = 95
+	WorldData.Organizations[-1].TradecraftTech = false
+	WorldData.Organizations.append(
+		WorldData.aNewOrganization({ "Type": WorldData.OrgType.COMPANY, "Name": "Pfizer", "Fixed": true, "Known": true, "Staff": 2500, "Budget": 50000, "Counterintelligence": 40, "Aggression": 0, "Countries": [1,5], "IntelValue": 0, "TargetConsistency": 0, "TargetCountries": [], })
+	)
+	WorldData.Organizations[-1].TechDescription = "coronavirus vaccine BNT162b2"
+	WorldData.Organizations[-1].Technology = 95
+	WorldData.Organizations[-1].TradecraftTech = false
+	WorldData.Organizations.append(
+		WorldData.aNewOrganization({ "Type": WorldData.OrgType.COMPANY, "Name": "Moderna", "Fixed": true, "Known": true, "Staff": 830, "Budget": 475000, "Counterintelligence": 60, "Aggression": 0, "Countries": [5], "IntelValue": 0, "TargetConsistency": 0, "TargetCountries": [], })
+	)
+	WorldData.Organizations[-1].TechDescription = "coronavirus vaccine mRNA-1273"
+	WorldData.Organizations[-1].Technology = 90
+	WorldData.Organizations[-1].TradecraftTech = false
+	WorldData.Organizations.append(
+		WorldData.aNewOrganization({ "Type": WorldData.OrgType.COMPANY, "Name": "J&J", "Fixed": true, "Known": true, "Staff": 13000, "Budget": 900000, "Counterintelligence": 60, "Aggression": 0, "Countries": [5], "IntelValue": 0, "TargetConsistency": 0, "TargetCountries": [], })
+	)
+	WorldData.Organizations[-1].TechDescription = "coronavirus vaccine JNJ-78436735"
+	WorldData.Organizations[-1].Technology = 80
+	WorldData.Organizations[-1].TradecraftTech = false
+	WorldData.Organizations.append(
+		WorldData.aNewOrganization({ "Type": WorldData.OrgType.COMPANY, "Name": "Sinovac Biotech", "Fixed": true, "Known": true, "Staff": 3000, "Budget": 50000, "Counterintelligence": 80, "Aggression": 0, "Countries": [8], "IntelValue": 0, "TargetConsistency": 0, "TargetCountries": [], })
+	)
+	WorldData.Organizations[-1].TechDescription = "coronavirus vaccine CoronaVac"
+	WorldData.Organizations[-1].Technology = 75
+	WorldData.Organizations[-1].TradecraftTech = false
+	# scientific institutes
+	WorldData.Organizations.append(
+		WorldData.aNewOrganization({ "Type": WorldData.OrgType.UNIVERSITY, "Name": "Oxford University", "Fixed": true, "Known": true, "Staff": 14500, "Budget": 100000, "Counterintelligence": 30, "Aggression": 0, "Countries": [2], "IntelValue": 0, "TargetConsistency": 0, "TargetCountries": [], })
+	)
+	WorldData.Organizations[-1].TechDescription = "coronavirus vaccine AZD1222"
+	WorldData.Organizations[-1].Technology = 85
+	WorldData.Organizations[-1].TradecraftTech = false
+	WorldData.Organizations.append(
+		WorldData.aNewOrganization({ "Type": WorldData.OrgType.UNIVERSITY, "Name": "Gamaleya Institute", "Fixed": true, "Known": true, "Staff": 379, "Budget": 1000, "Counterintelligence": 70, "Aggression": 0, "Countries": [7], "IntelValue": 0, "TargetConsistency": 0, "TargetCountries": [], })
+	)
+	WorldData.Organizations[-1].TechDescription = "coronavirus vaccine Sputnik-V"
+	WorldData.Organizations[-1].Technology = 75
+	WorldData.Organizations[-1].TradecraftTech = false
 	# the pandemic
 	############################################################################
 	# generators
@@ -215,7 +279,7 @@ func GenerateWorld():
 				WorldData.aNewOrganization({ "Type": WorldData.OrgType.MOVEMENT, "Name": WorldData.Countries[place].Adjective + " " + movNames[i], "Fixed": false, "Known": true, "Staff": size, "Budget": 0, "Counterintelligence": 0, "Aggression": GameLogic.random.randi_range(10,70), "Countries": [place], "IntelValue": GameLogic.random.randi_range(-10,10), "TargetConsistency": 0, "TargetCountries": [], })
 			)
 	# few general terror orgs
-	var howManyTerror = 3
+	var howManyTerror = 2
 	var howManyLone = 2
 	for i in range(0,howManyTerror):
 		var size = GameLogic.random.randi_range(10,500)
@@ -304,7 +368,7 @@ func GenerateWorld():
 		# target homeland more often
 		if !(0 in WorldData.Organizations[-1].TargetCountries):
 			if GameLogic.random.randi_range(1,10) == 2:
-				WorldData.Organizations[-1].TargetContries.append(0)
+				WorldData.Organizations[-1].TargetCountries.append(0)
 	# few arms traders
 	for i in range(0,6):
 		var places = GameLogic.random.randi_range(1,len(WorldData.Countries)-1)
@@ -329,7 +393,7 @@ func GenerateWorld():
 				WorldData.Organizations[-1].ConnectedTo.append(j)
 				tied += 1
 	# companies
-	for i in range(0,10):
+	for i in range(0,5):
 		var size = GameLogic.random.randi_range(10,5000)
 		var places = GameLogic.random.randi_range(1,len(WorldData.Countries)-1)
 		var name = WorldGenerator.GenerateCompanyName()
@@ -340,8 +404,16 @@ func GenerateWorld():
 		)
 		WorldData.Organizations[-1].IntelIdentified = GameLogic.random.randi_range(1,10)  # officials
 		WorldData.Organizations[-1].Technology = GameLogic.random.randi_range(1, WorldData.Countries[places].SoftPower)
+		if GameLogic.random.randi_range(1,10) == 5:
+			if GameLogic.random.randi_range(1,2) == 1:
+				WorldData.Organizations[-1].TechDescription = "possible coronavirus cure"
+				WorldData.Organizations[-1].Technology = 100
+			else:
+				WorldData.Organizations[-1].TechDescription = "new coronavirus treatment"
+				WorldData.Organizations[-1].Technology = 60
+			WorldData.Organizations[-1].TradecraftTech = false
 	# universities
-	for i in range(0,10):
+	for i in range(0,8):
 		var size = GameLogic.random.randi_range(200,2000)
 		var places = GameLogic.random.randi_range(1,len(WorldData.Countries)-1)
 		var name = WorldGenerator.GenerateUniversityName(WorldData.Countries[places].Adjective)
@@ -352,8 +424,16 @@ func GenerateWorld():
 		)
 		WorldData.Organizations[-1].IntelIdentified = GameLogic.random.randi_range(1,10)  # officials
 		WorldData.Organizations[-1].Technology = GameLogic.random.randi_range(1, WorldData.Countries[places].SoftPower)
+		if GameLogic.random.randi_range(1,3) == 2:
+			if GameLogic.random.randi_range(1,2) == 1:
+				WorldData.Organizations[-1].TechDescription = "possible coronavirus cure"
+				WorldData.Organizations[-1].Technology = 100
+			else:
+				WorldData.Organizations[-1].TechDescription = "new coronavirus treatment"
+				WorldData.Organizations[-1].Technology = 60
+			WorldData.Organizations[-1].TradecraftTech = false
 	# offensive universities (wmd research etc)
-	for i in range(0,8):
+	for i in range(0,3):
 		var size = GameLogic.random.randi_range(200,2000)
 		var places = GameLogic.random.randi_range(1,len(WorldData.Countries)-1)
 		if WorldData.Countries[places].SoftPower < 71: continue
@@ -422,5 +502,43 @@ func GenerateWorld():
 	############################################################################
 	# last government setups
 	GameLogic.SetUpNewPriorities(true)
+	GameLogic.PriorityTech = 100
 	############################################################################
 	return homelandSoftPowerLastMonths
+
+func ModifyMethods():
+	pass
+
+func StartAll():
+	WorldData.Countries[0].Size = 3
+	GameLogic.TurnOnTerrorist = true
+	GameLogic.TurnOnWars = true
+	GameLogic.TurnOnWMD = true
+	GameLogic.TurnOnInfiltration = true
+	GameLogic.FrequencyAttacks = 0.5
+	GameLogic.SoftPowerMonthsAgo = GenerateWorld()
+	GameLogic.StartAll()
+	CallManager.CallQueue.append(
+		{
+			"Header": "Important Information",
+			"Level": "Unclassified",
+			"Operation": "-//-",
+			"Content": "Welcome,\n\nHomeland created a new foreign intelligence agency and appointed you as the director.\n\nGather information from around the world, support national efforts, secure our nation from external threats.\n\nActivities of bureau should be guided by and will evaluated according to the list of priorities given by the government:\n- " + GameLogic.ListPriorities("\n- ") + "\n\nGood luck!",
+			"Show1": false,
+			"Show2": false,
+			"Show3": false,
+			"Show4": true,
+			"Text1": "",
+			"Text2": "",
+			"Text3": "",
+			"Text4": "Understood",
+			"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
+			"Decision1Argument": null,
+			"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
+			"Decision2Argument": null,
+			"Decision3Callback": funcref(GameLogic, "EmptyFunc"),
+			"Decision3Argument": null,
+			"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
+			"Decision4Argument": null,
+		}
+	)
