@@ -88,6 +88,7 @@ var TurnOnWMD = true
 var TurnOnInfiltration = true
 var FrequencyAttacks = 1.0
 var Onboarding = false
+var WhenAllowAttacks = 26
 
 func GiveDateWithYear():
 	var dateString = ""
@@ -165,7 +166,7 @@ func NextWeek():
 	# scaling difficulty
 	if int(AllWeeks) == 0:  # new things to happen after first next week click
 		forceGovOpOrder = true
-	if int(AllWeeks) == 26:  # half a year to get into the game
+	if int(AllWeeks) == int(WhenAllowAttacks):
 		OpsLimit = 1
 	if int(AllWeeks) % 52 == 0 and int(AllWeeks) != 0:  # roughly a year
 		YearlyOpsAgainstHomeland = 0
@@ -221,7 +222,7 @@ func NextWeek():
 	var freeFund = FreeFundsWeekly()
 	if freeFund < 0: freeFund = 0
 	RecruitProgress += freeFund * (IntensityPercent(IntensityHiring)*0.01) / NewOfficerCost
-	if RecruitProgress >= 1.0 and FreeFundsWeekly() >= 4 and YearlyHiring <= 5:
+	if RecruitProgress >= 1.0 and FreeFundsWeekly() >= 4 and YearlyHiring <= 3:
 		# currently always plus one, sort of weekly onboarding limit
 		# in the future expand that to a loop
 		ActiveOfficers += 1

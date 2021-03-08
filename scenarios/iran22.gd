@@ -54,18 +54,23 @@ func GenerateWorld():
 	WorldData.Countries[1].PoliticsAggression = 60  # IR
 	WorldData.Countries[1].PoliticsIntel = 80
 	WorldData.Countries[1].PoliticsStability = 90
+	WorldData.Countries[1].DiplomaticTravel = false
 	WorldData.Countries[2].PoliticsAggression = 80  # GA
 	WorldData.Countries[2].PoliticsIntel = 50
 	WorldData.Countries[2].PoliticsStability = 50
+	WorldData.Countries[2].DiplomaticTravel = false
 	WorldData.Countries[3].PoliticsAggression = 20  # SY
 	WorldData.Countries[3].PoliticsIntel = 20
 	WorldData.Countries[3].PoliticsStability = 80
+	WorldData.Countries[3].DiplomaticTravel = false
 	WorldData.Countries[4].PoliticsAggression = 30  # IQ
 	WorldData.Countries[4].PoliticsIntel = 30
 	WorldData.Countries[4].PoliticsStability = 40
+	WorldData.Countries[4].DiplomaticTravel = false
 	WorldData.Countries[5].PoliticsAggression = 30  # LE
 	WorldData.Countries[5].PoliticsIntel = 60
 	WorldData.Countries[5].PoliticsStability = 90
+	WorldData.Countries[5].DiplomaticTravel = false
 	WorldData.Countries[6].PoliticsAggression = 50  # SA
 	WorldData.Countries[6].PoliticsIntel = 90
 	WorldData.Countries[6].PoliticsStability = 90
@@ -292,7 +297,7 @@ func GenerateWorld():
 	for o in range(0, len(WorldData.Organizations)):
 		if WorldData.Organizations[o].Type == WorldData.OrgType.INTEL:
 			WorldData.Organizations[o].Technology = WorldData.Organizations[o].Counterintelligence + GameLogic.random.randi_range(-15,15)
-			WorldIntel.GatherOnOrg(o, 0, "01/01/2021", false)
+			WorldIntel.GatherOnOrg(o, 0, "01/01/2022", false)
 			# updating initial country characterization
 			WorldData.Countries[WorldData.Organizations[o].Countries[0]].CovertTravel -= WorldData.Organizations[o].Counterintelligence * 0.3
 			if WorldData.Countries[WorldData.Organizations[o].Countries[0]].CovertTravel < 0:
@@ -317,7 +322,7 @@ func GenerateWorld():
 				if pastMonth == 13:
 					pastMonth = 1
 					pastYear += 1
-					if pastYear == 2021:
+					if pastYear == 2022:
 						break  # finish of the simulation
 		# formatting date
 		var localDate = ""
@@ -345,13 +350,13 @@ func ModifyMethods():
 	pass
 
 func StartAll():
-	WorldData.Countries[0].Size = 3
 	GameLogic.TurnOnTerrorist = true
 	GameLogic.TurnOnWars = true
 	GameLogic.TurnOnWMD = true
 	GameLogic.TurnOnInfiltration = true
 	GameLogic.FrequencyAttacks = 0.25
 	GameLogic.SoftPowerMonthsAgo = GenerateWorld()
+	GameLogic.DateYear = 2022
 	GameLogic.StartAll()
 	CallManager.CallQueue.append(
 		{

@@ -69,7 +69,7 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 	elif WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY:
 		WorldData.Organizations[o].IntelDescType = "scientific institution"
 	elif WorldData.Organizations[o].Type == WorldData.OrgType.MOVEMENT:
-		WorldData.Organizations[o].IntelDescType = "unorganized civilian movement"
+		WorldData.Organizations[o].IntelDescType = "social movement"
 	elif WorldData.Organizations[o].Type == WorldData.OrgType.INTERNATIONAL:
 		WorldData.Organizations[o].IntelDescType = "international organization"
 	############################################################################

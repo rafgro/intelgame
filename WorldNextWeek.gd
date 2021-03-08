@@ -1342,5 +1342,4 @@ func Execute(past):
 		)
 		GameLogic.AddWorldEvent("New movement emerged: " + WorldData.Organizations[-1].Name, past)
 	############################################################################
-	print(WorldData.Countries[1].WMDProgress)
 	return doesItEndWithCall

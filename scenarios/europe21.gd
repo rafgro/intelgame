@@ -484,6 +484,7 @@ func StartAll():
 	GameLogic.TurnOnInfiltration = true
 	GameLogic.FrequencyAttacks = 0.5
 	GameLogic.SoftPowerMonthsAgo = GenerateWorld()
+	GameLogic.DateYear = 2021
 	GameLogic.StartAll()
 	CallManager.CallQueue.append(
 		{
