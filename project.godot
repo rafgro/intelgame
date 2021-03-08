@@ -39,7 +39,6 @@ WorldIntel="*res://WorldIntel.gd"
 WorldNextWeek="*res://WorldNextWeek.gd"
 Testmodule="*res://testmodule.gd"
 Managestate="*res://managestate.gd"
-ScenarioEurope21="*res://scenario_europe21.gd"
 
 [display]
 

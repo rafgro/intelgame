@@ -593,7 +593,10 @@ func Execute(past):
 		elif WorldData.Organizations[w].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE:
 			# in addition to own tech changes, it also changes country's wmd capabilities
 			if GameLogic.TurnOnWMD == true:
-				WorldData.Countries[WorldData.Organizations[w].Countries[0]].WMDProgress += WorldData.Organizations[w].Technology*0.008  # plus ~26% over a year
+				# plus ~26% over a year when factor is 1.0
+				WorldData.Countries[WorldData.Organizations[w].Countries[0]].WMDProgress += WorldData.Organizations[w].Technology*0.008 * WorldData.Countries[WorldData.Organizations[w].Countries[0]].WMDProgressFactor
+				if WorldData.Countries[WorldData.Organizations[w].Countries[0]].WMDProgress > 100:
+					WorldData.Countries[WorldData.Organizations[w].Countries[0]].WMDProgress = 100
 			if GameLogic.random.randi_range(1,70) == 25:
 				WorldData.Organizations[w].Technology += GameLogic.random.randi_range(1,7)
 		elif WorldData.Organizations[w].Type == WorldData.OrgType.INTEL:
@@ -1339,4 +1342,5 @@ func Execute(past):
 		)
 		GameLogic.AddWorldEvent("New movement emerged: " + WorldData.Organizations[-1].Name, past)
 	############################################################################
+	print(WorldData.Countries[1].WMDProgress)
 	return doesItEndWithCall

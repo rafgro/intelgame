@@ -1,5 +1,40 @@
 extends Node
 
+var ScenarioEurope21 = load("res://scenarios/europe21.gd").new()  # taking countries from there
+
+func CreateAdHocOrgs():
+	# solves problem of various country ids
+	for c in range(0, len(WorldData.Countries)):
+		if WorldData.Countries[c].Name == "Belgium":
+			WorldData.Organizations.append(
+				WorldData.aNewOrganization({ "Type": WorldData.OrgType.INTERNATIONAL, "Name": "European Parliament", "Fixed": true, "Known": true, "Staff": 7500, "Budget": 100000, "Counterintelligence": 60, "Aggression": 30, "Countries": [c], "IntelValue": 0, "TargetConsistency": 0, "TargetCountries": [1], })
+			)
+			WorldData.Organizations.append(
+				WorldData.aNewOrganization({ "Type": WorldData.OrgType.INTERNATIONAL, "Name": "NATO HQ", "Fixed": true, "Known": true, "Staff": 3800, "Budget": 500, "Counterintelligence": 80, "Aggression": 80, "Countries": [c], "IntelValue": 0, "TargetConsistency": 0, "TargetCountries": [1], })
+			)
+		elif WorldData.Countries[c].Name == "United States":
+			WorldData.Organizations.append(
+				WorldData.aNewOrganization({ "Type": WorldData.OrgType.INTERNATIONAL, "Name": "United Nations", "Fixed": true, "Known": true, "Staff": 26400, "Budget": 100000, "Counterintelligence": 50, "Aggression": 10, "Countries": [c], "IntelValue": 0, "TargetConsistency": 0, "TargetCountries": [1], })
+			)
+			WorldData.Organizations.append(
+				WorldData.aNewOrganization({ "Type": WorldData.OrgType.INTERNATIONAL, "Name": "IMF", "Fixed": true, "Known": true, "Staff": 2400, "Budget": 1000000, "Counterintelligence": 40, "Aggression": 10, "Countries": [c], "IntelValue": 0, "TargetConsistency": 0, "TargetCountries": [1], })
+			)
+			WorldData.Organizations.append(
+				WorldData.aNewOrganization({ "Type": WorldData.OrgType.INTERNATIONAL, "Name": "World Bank", "Fixed": true, "Known": true, "Staff": 500, "Budget": 1000000, "Counterintelligence": 40, "Aggression": 10, "Countries": [c], "IntelValue": 0, "TargetConsistency": 0, "TargetCountries": [1], })
+			)
+		elif WorldData.Countries[c].Name == "Switzerland":
+			WorldData.Organizations.append(
+				WorldData.aNewOrganization({ "Type": WorldData.OrgType.INTERNATIONAL, "Name": "WTO", "Fixed": true, "Known": true, "Staff": 600, "Budget": 10000, "Counterintelligence": 30, "Aggression": 10, "Countries": [c], "IntelValue": 0, "TargetConsistency": 0, "TargetCountries": [1], })
+			)
+		elif WorldData.Countries[c].Name == "France":
+			WorldData.Organizations.append(
+				WorldData.aNewOrganization({ "Type": WorldData.OrgType.INTERNATIONAL, "Name": "Interpol", "Fixed": true, "Known": true, "Staff": 1000, "Budget": 5000, "Counterintelligence": 70, "Aggression": 60, "Countries": [c], "IntelValue": 0, "TargetConsistency": 0, "TargetCountries": [1], })
+			)
+		elif WorldData.Countries[c].Name == "Netherlands":
+			WorldData.Organizations.append(
+				WorldData.aNewOrganization({ "Type": WorldData.OrgType.INTERNATIONAL, "Name": "OPCW", "Fixed": true, "Known": true, "Staff": 500, "Budget": 5000, "Counterintelligence": 50, "Aggression": 30, "Countries": [c], "IntelValue": 0, "TargetConsistency": 0, "TargetCountries": [1], })
+			)
+
 func GenerateIntelOrgs(countryName, countryId):
 	if countryName == "United Kingdom":
 		WorldData.Organizations.append(WorldData.aNewOrganization({"Type": WorldData.OrgType.INTEL, "Name": "MI6", "Fixed": true, "Known": true, "Staff": 2600, "Budget": 260000, "Counterintelligence": 95, "Aggression": 65, "Countries": [countryId], "IntelValue": 5, "TargetConsistency": 0, "TargetCountries": [1], }))
@@ -206,7 +241,7 @@ func NewGenerate():
 		WorldData.Organizations[-1].IntelIdentified = GameLogic.random.randi_range(20,100)  # officials
 		GenerateIntelOrgs(WorldData.Countries[i].Name, i)
 	# organizations such as NATO or UN
-	ScenarioEurope21.CreateAdHocOrgs()
+	CreateAdHocOrgs()
 	# movements
 	var movNames = ["Religious Movement", "Nationalists", "Anarchists", "Resistance"]
 	for i in range(0,4):

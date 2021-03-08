@@ -972,7 +972,9 @@ func ProgressOperations():
 					# removing technology, accumulated
 					if WorldData.Organizations[whichOrg].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE:
 						if GameLogic.random.randi_range(0,100) < WorldData.Methods[2][methodId].DamageToOps:
-							WorldData.Organizations[whichOrg].Technology -= GameLogic.random.randi_range(1, WorldData.Methods[2][methodId].DamageToOps*0.5)
+							var wmdChange = GameLogic.random.randi_range(1, WorldData.Methods[2][methodId].DamageToOps*0.5)
+							WorldData.Organizations[whichOrg].Technology -= wmdChange
+							WorldData.Countries[GameLogic.Operations[i].Country].ProgressWMD -= wmdChange*0.5
 					# removing operations, accumulated with previous ones
 					if WorldData.Organizations[whichOrg].ActiveOpsAgainstHomeland > 0:
 						for a in range(0, len(WorldData.Organizations[whichOrg].OpsAgainstHomeland)):

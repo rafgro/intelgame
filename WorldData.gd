@@ -31,12 +31,13 @@ extends Node
 	var NetworkBlowup = 0  # subtracted from above var but hidden from user, coming from moles
 	var Station = 0  # number of employees in a local station, supporting ops
 	var WMDProgress = 0  # 0 to 100 to have a wmd, produced only in university_offensive
+	var WMDProgressFactor = 1.0  # progress from offensive unis is multiplied by this
 	var WMDIntel = 0  # knowledge of gov about wmd program, prevents from entering the war
 	var NetworkWork = false  # if there is any network work, this ensures that it isnt started again
 	var StationWork = false  # the same as as above, just with station"""
 	
 func aNewCountry(aDictionary):
-	return {"Name": aDictionary.Name, "Adjective": aDictionary.Adjective, "TravelCost": aDictionary.TravelCost, "LocalCost": aDictionary.LocalCost, "IntelFriendliness": aDictionary.IntelFriendliness, "Size": aDictionary.Size, "ElectionPeriod": aDictionary.ElectionPeriod, "ElectionProgress": aDictionary.ElectionProgress, "SoftPower": aDictionary.SoftPower, "InStateOfWar": false, "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, "Expelled": 0, "DiplomaticTravel": true, "CovertTravel": 50, "CovertTravelBlowup": 0, "OperationStats": 0, "KnowhowLanguage": 0, "KnowhowCustoms": 0, "Network": 0, "NetworkBlowup": 0, "Station": 0, "WMDProgress": 0, "WMDIntel": 0, "NetworkWork": false, "StationWork": false}
+	return {"Name": aDictionary.Name, "Adjective": aDictionary.Adjective, "TravelCost": aDictionary.TravelCost, "LocalCost": aDictionary.LocalCost, "IntelFriendliness": aDictionary.IntelFriendliness, "Size": aDictionary.Size, "ElectionPeriod": aDictionary.ElectionPeriod, "ElectionProgress": aDictionary.ElectionProgress, "SoftPower": aDictionary.SoftPower, "InStateOfWar": false, "PoliticsIntel": 50, "PoliticsAggression": 0, "PoliticsStability": 50, "Expelled": 0, "DiplomaticTravel": true, "CovertTravel": 50, "CovertTravelBlowup": 0, "OperationStats": 0, "KnowhowLanguage": 0, "KnowhowCustoms": 0, "Network": 0, "NetworkBlowup": 0, "Station": 0, "WMDProgress": 0, "WMDProgressFactor": 1.0, "WMDIntel": 0, "NetworkWork": false, "StationWork": false}
 
 # All rough locations, usually countries, separated by costs and difficulty
 var Countries = [

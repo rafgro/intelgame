@@ -18,39 +18,6 @@ var PossibleCountries = [
 	WorldData.aNewCountry({ "Name": "Switzerland", "Adjective": "Swiss", "TravelCost": 2, "LocalCost": 3, "IntelFriendliness": 65, "Size": 9, "ElectionPeriod": 52*4, "ElectionProgress": 52+52*2.8, "SoftPower": 70, }),
 ]
 
-func CreateAdHocOrgs():
-	# solves problem of various country ids
-	for c in range(0, len(WorldData.Countries)):
-		if WorldData.Countries[c].Name == "Belgium":
-			WorldData.Organizations.append(
-				WorldData.aNewOrganization({ "Type": WorldData.OrgType.INTERNATIONAL, "Name": "European Parliament", "Fixed": true, "Known": true, "Staff": 7500, "Budget": 100000, "Counterintelligence": 60, "Aggression": 30, "Countries": [c], "IntelValue": 0, "TargetConsistency": 0, "TargetCountries": [1], })
-			)
-			WorldData.Organizations.append(
-				WorldData.aNewOrganization({ "Type": WorldData.OrgType.INTERNATIONAL, "Name": "NATO HQ", "Fixed": true, "Known": true, "Staff": 3800, "Budget": 500, "Counterintelligence": 80, "Aggression": 80, "Countries": [c], "IntelValue": 0, "TargetConsistency": 0, "TargetCountries": [1], })
-			)
-		elif WorldData.Countries[c].Name == "United States":
-			WorldData.Organizations.append(
-				WorldData.aNewOrganization({ "Type": WorldData.OrgType.INTERNATIONAL, "Name": "United Nations", "Fixed": true, "Known": true, "Staff": 26400, "Budget": 100000, "Counterintelligence": 50, "Aggression": 10, "Countries": [c], "IntelValue": 0, "TargetConsistency": 0, "TargetCountries": [1], })
-			)
-			WorldData.Organizations.append(
-				WorldData.aNewOrganization({ "Type": WorldData.OrgType.INTERNATIONAL, "Name": "IMF", "Fixed": true, "Known": true, "Staff": 2400, "Budget": 1000000, "Counterintelligence": 40, "Aggression": 10, "Countries": [c], "IntelValue": 0, "TargetConsistency": 0, "TargetCountries": [1], })
-			)
-			WorldData.Organizations.append(
-				WorldData.aNewOrganization({ "Type": WorldData.OrgType.INTERNATIONAL, "Name": "World Bank", "Fixed": true, "Known": true, "Staff": 500, "Budget": 1000000, "Counterintelligence": 40, "Aggression": 10, "Countries": [c], "IntelValue": 0, "TargetConsistency": 0, "TargetCountries": [1], })
-			)
-		elif WorldData.Countries[c].Name == "Switzerland":
-			WorldData.Organizations.append(
-				WorldData.aNewOrganization({ "Type": WorldData.OrgType.INTERNATIONAL, "Name": "WTO", "Fixed": true, "Known": true, "Staff": 600, "Budget": 10000, "Counterintelligence": 30, "Aggression": 10, "Countries": [c], "IntelValue": 0, "TargetConsistency": 0, "TargetCountries": [1], })
-			)
-		elif WorldData.Countries[c].Name == "France":
-			WorldData.Organizations.append(
-				WorldData.aNewOrganization({ "Type": WorldData.OrgType.INTERNATIONAL, "Name": "Interpol", "Fixed": true, "Known": true, "Staff": 1000, "Budget": 5000, "Counterintelligence": 70, "Aggression": 60, "Countries": [c], "IntelValue": 0, "TargetConsistency": 0, "TargetCountries": [1], })
-			)
-		elif WorldData.Countries[c].Name == "Netherlands":
-			WorldData.Organizations.append(
-				WorldData.aNewOrganization({ "Type": WorldData.OrgType.INTERNATIONAL, "Name": "OPCW", "Fixed": true, "Known": true, "Staff": 500, "Budget": 5000, "Counterintelligence": 50, "Aggression": 30, "Countries": [c], "IntelValue": 0, "TargetConsistency": 0, "TargetCountries": [1], })
-			)
-
 func GenerateWorld():
 	# - Homeland as a new small country\n- Complex relations between US, China, and Russia\n- Very active Russian and Chinese intelligence services\n- Multiple turbulent social movements\n- Weakened Islamic State desperate to rebuild its power\n- Expensive travel and empty streets due to the pandemic
 	GameLogic.random.randomize()
@@ -161,7 +128,7 @@ func GenerateWorld():
 		WorldGenerator.GenerateIntelOrgs(WorldData.Countries[i].Name, i)
 	############################################################################
 	# organizations such as NATO or UN
-	CreateAdHocOrgs()
+	WorldGenerator.CreateAdHocOrgs()
 	# 2021 things
 	# movements
 	WorldData.Organizations.append(
