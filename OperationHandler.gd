@@ -106,7 +106,7 @@ func ProgressOperations():
 						# adjust to methods
 						if WorldData.Methods[mt][methodId].OfficersRequired > usedOfficers:
 							usedOfficers = WorldData.Methods[mt][methodId].OfficersRequired
-				# intel agencies, internationals, and universities are currently off limits
+				# some are currently off limits
 				if GameLogic.Operations[i].Type == OperationGenerator.Type.OFFENSIVE:
 					if WorldData.Organizations[which].Type == WorldData.OrgType.INTEL or WorldData.Organizations[which].Type == WorldData.OrgType.UNIVERSITY or WorldData.Organizations[which].Type == WorldData.OrgType.INTERNATIONAL:
 						theMethods.clear()
@@ -375,6 +375,23 @@ func ProgressOperations():
 				GameLogic.Operations[i].AbroadProgress -= GameLogic.Operations[i].AbroadRateOfProgress
 				if GameLogic.Operations[i].AbroadProgress > 0:  # check to avoid doubling events
 					GameLogic.AddEvent(WorldData.Countries[GameLogic.Operations[i].Country].Name + " (" + GameLogic.Operations[i].Name + "): operation continues with support of local agent network")
+			# officer defection
+			elif GameLogic.StaffTrust < 10 and GameLogic.random.randi_range(1,52) == 24:
+				GameLogic.AddEvent(GameLogic.Operations[i].Name + ": officer defected to " + WorldData.Countries[GameLogic.Operations[i].Country].Adjective + " authorities")
+				var staffPerecent = 1.0 - (1.0 / GameLogic.ActiveOfficers)
+				GameLogic.StaffExperience *= staffPerecent
+				GameLogic.StaffTrust *= staffPerecent
+				GameLogic.StaffSkill *= staffPerecent
+				GameLogic.PursuedOperations -= 1
+				GameLogic.Operations[i].Stage = OperationGenerator.Stage.FAILED
+				GameLogic.Operations[i].Result = "FAILED, officer defected"
+				GameLogic.OfficersAbroad -= GameLogic.Operations[i].AbroadPlan.Officers
+				GameLogic.OfficersInHQ += GameLogic.Operations[i].AbroadPlan.Officers-1
+				GameLogic.ActiveOfficers -= 1
+				GameLogic.BudgetOngoingOperations -= GameLogic.Operations[i].AbroadPlan.Cost
+				GameLogic.Trust -= 5
+				WorldData.Countries[GameLogic.Operations[i].Country].Network = 0
+				WorldData.Countries[GameLogic.Operations[i].Country].CovertTravel = 0
 			else:
 				var which = GameLogic.Operations[i].Target
 				# many shades of _something went wrong_
@@ -891,6 +908,7 @@ func ProgressOperations():
 				# actual result and influence on organization
 				var success = false
 				var casualties = 0
+				var losses = 0
 				var funds = 0
 				var destroyedOrg = false
 				var destroyedOps = 0
@@ -899,13 +917,22 @@ func ProgressOperations():
 				if GameLogic.random.randi_range(0,100) < GameLogic.Operations[i].AbroadPlan.Quality:
 					success = true
 					# removing members
-					if WorldData.Methods[2][methodId].PossibleCasualties > 0:
-						casualties = WorldData.Methods[2][methodId].PossibleCasualties * (1.0+(0.1*GameLogic.random.randi_range(-5,5)))
-						if casualties > WorldData.Organizations[whichOrg].Staff:
-							casualties = WorldData.Organizations[whichOrg].Staff
-						WorldData.Organizations[whichOrg].Staff -= casualties
-						if WorldData.Organizations[whichOrg].Staff <= 0:
-							destroyedOrg = true
+					if WorldData.Organizations[whichOrg].Type == WorldData.OrgType.MOVEMENT:
+						if WorldData.Methods[2][methodId].PossibleLosses > 0:
+							losses = WorldData.Methods[2][methodId].PossibleLosses * (1.0+(0.1*GameLogic.random.randi_range(-5,5)))
+							if losses > WorldData.Organizations[whichOrg].Staff:
+								losses = WorldData.Organizations[whichOrg].Staff
+							WorldData.Organizations[whichOrg].Staff -= losses
+							if WorldData.Organizations[whichOrg].Staff <= 0:
+								destroyedOrg = true
+					else:
+						if WorldData.Methods[2][methodId].PossibleCasualties > 0:
+							casualties = WorldData.Methods[2][methodId].PossibleCasualties * (1.0+(0.1*GameLogic.random.randi_range(-5,5)))
+							if casualties > WorldData.Organizations[whichOrg].Staff:
+								casualties = WorldData.Organizations[whichOrg].Staff
+							WorldData.Organizations[whichOrg].Staff -= casualties
+							if WorldData.Organizations[whichOrg].Staff <= 0:
+								destroyedOrg = true
 					# removing money
 					if WorldData.Methods[2][methodId].BudgetChange > 0:
 						funds = (WorldData.Methods[2][methodId].BudgetChange*0.01) * WorldData.Organizations[whichOrg].Budget - GameLogic.random.randi_range(100,1000)
@@ -922,6 +949,9 @@ func ProgressOperations():
 								WorldData.OrgType[z].Aggression += GameLogic.random.randi_range(5,10)
 								if WorldData.OrgType[z].Staff > casualties:
 									WorldData.OrgType[z].Staff -= GameLogic.random.randi_range(0, casualties*0.5)
+							if losses > 0:
+								WorldData.OrgType[z].Staff -= GameLogic.random.randi_range(0, losses*0.005)
+								if WorldData.OrgType[z].Staff < 1: WorldData.OrgType[z].Staff = 1
 							WorldData.Organizations[z].Budget *= 1.0 - (WorldData.Methods[2][methodId].BudgetChange*0.002)
 							if WorldData.Organizations[z].ActiveOpsAgainstHomeland > 0:
 								for u in range(0,len(WorldData.Organizations[z].OpsAgainstHomeland)):
@@ -992,7 +1022,7 @@ func ProgressOperations():
 							inflictedDamage = "As a result, danger of some of the attacks was eliminated. "
 						elif lengthenedOps > 0:
 							inflictedDamage = "As a result, some operations of the organization were delayed. "
-					casualties = int(casualties)
+					casualties = int(casualties+losses)
 					funds = int(funds)
 					if casualties > 0:
 						if casualties > 1:

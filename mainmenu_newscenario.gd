@@ -17,4 +17,5 @@ func _on_Decision4_pressed():
 	if lastSelected == 0:
 		$C/V/M/R/Large.text = "Loading..."
 		ScenarioEurope21.StartAll()
+		if $C/V/M/R/Onboarding.pressed == true: GameLogic.OnboardingIsOn(0)
 		get_tree().change_scene("res://call.tscn")

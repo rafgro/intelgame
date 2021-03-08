@@ -56,6 +56,7 @@ func _on_Start_pressed():
 			"Decision4Argument": null,
 		}
 	)
+	if $C/V/M/R/Onboarding.pressed == true: GameLogic.OnboardingIsOn(0)
 	get_tree().change_scene("res://call.tscn")
 
 func _on_SizeSlider_value_changed(value):

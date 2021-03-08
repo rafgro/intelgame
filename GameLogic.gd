@@ -87,6 +87,7 @@ var TurnOnWars = true
 var TurnOnWMD = true
 var TurnOnInfiltration = true
 var FrequencyAttacks = 1.0
+var Onboarding = true
 
 func GiveDateWithYear():
 	var dateString = ""
@@ -159,6 +160,7 @@ func StartAll():
 
 func NextWeek():
 	var forceGovOpOrder = false
+	var doesItEndWithCall = false
 	############################################################################
 	# scaling difficulty
 	if int(AllWeeks) == 0:  # new things to happen after first next week click
@@ -172,9 +174,11 @@ func NextWeek():
 		YearlyHiring = 0
 		YearlyNetworks = 0
 		YearlyStations = 0
+	if Onboarding == true:
+		OnboardingIsOn(AllWeeks+1)
+		doesItEndWithCall = true
 	############################################################################
 	# date proceedings
-	var doesItEndWithCall = false
 	# clearing u-tags in events
 	var i = 0
 	while i < min(len(BureauEvents), 10):
@@ -1065,6 +1069,46 @@ func ImplementMoleTermination(aDict):
 			"Success": ifSuccess,
 		}
 	)
+
+func OnboardingIsOn(which):
+	Onboarding = true
+	var content = ""
+	if which == 0:
+		content = "Week 1: Big Picture\n\nIntelligence services are tightly connected to the government. Relationship between Bureau and Homeland government is predominantly summarized by [b]trust[/b] parameter, from 0% to 100%, displayed at the top of the main screen.\n\nTrust directly translates to budget and clearances. Successful activities increase trust, bonus points for alignment with government priorities. On the contrary, if anything goes wrong, trust falls accordingly. After prolonged period of extremely low trust (under [b]10%[/b]), you can lose your job as Bureau chief."
+	elif which == 1:
+		content = "Week 2: Operations\n\nCore activity of Bureau is divided into [b]operations[/b]. These are few-week stunts performed abroad by the officers, who achieve goals via methods of espionage tradecraft. Roughly, the main goals are: gathering intelligence (information), recruiting sources, or directly damaging adversary.\n\nOperations are sometimes requested by Homeland government. This should happen in this week. You can also start operations yourself in the 'Intelligence' screen. Proactivity and anticipation is the key to success.\n\nAfter initiating an operation, officers in HQ (if there are any) design possible plans over the next few days or a full week. You will receive three plans, differing in methods, staffing, quality, risk. By choosing one of them, ground section of the operation begins.\n\nSpeaking of [b]risk[/b], managing it is one of your most important tasks. Many things can go wrong: officers could be turned back at the border, forced to hide and extend the operation, or even be caught. When caught, travel via embassy usually gives them diplomatic immunity. However, when travelling covertly or targeting criminal organizations, they can be captured or even killed. The risk can be worth the hassle - covert action gives better results - but actual loss of officers may be a huge setback to Bureau skills and Government trust."
+	elif which == 2:
+		content = "Week 3: Intelligence Cycle\n\nNeeds -> Collection -> Dissemination\n\nYou decide which [b]organizations[/b] are most important from the perspective of national security. Bureau can target other governments and international organizations to gather intel useful for Homeland government; criminal organizations to monitor whether they are preparing an attack on Homeland; social movements to deepen knowledge about existing and future criminal organizations; scientific institutions and companies to steal technology and discover eventual WMD projects; finally, you can target other intelligence services to steal their tech, intel, and discover direct anti-Bureau operations.\n\n[b]Intel[/b] can be gathered in direct operations, via connections to other organizations, or indirectly by individuals other than officers. In the last category, intel can be regularly provided by sources recruited inside an organization, or by employees of local intelligence station, who survey all organizations in a country.\n\nSome informations are immediately [b]disseminated[/b] by officers in HQ. For instance, details about planned terrorist attack or identified members of criminal organization are passed to Homeland authorities, which then can use them to prevent terrorist attack from happenning. Other, non-critical intel is left for your interpretation. Be aware that some intel can be misleading. There is even possibility that recruited sources will become double agents, intentionally providing false information prepared by counterintelligence services."
+	elif which >= 3:
+		content = "Week 4: External World\n\nCritical information about other countries is summarized in [b]Directions[/b] screen. Officers can develop skills, acquire experience, build local infrastructure in specific countries, which in turn heavily influences results of local operations.\n\n[b]Organizations[/b] constantly expand or shrink, plan new actions, form new connections, some of them move between countries. New criminal organizations can emerge from social movements, from other criminal organizations, or out of thin air. Their existence may be unknown until they are discovered by other authorities or by Bureau itself.\n\n[b]Governments[/b] undergo election cycles, after which their approach to intelligence services and other countries may significantly change. Large deterioriation of diplomatic relations can lead to wars, including nuclear wars. Be aware that Homeland entering a war with a nation possessing weapons of mass destruction leads to mutual or one-sided annihilation. Intel gathered on WMD programs can prevent Homeland government from entering such conflict.\n\nOther [b]intelligence services[/b] can target Bureau. Eventual recruitment of one of the officers can lead to loss of covert abilities in the host country of adversary, reversal of the recruited sources, and loss of local agent network.\n\nThis is the last onboarding communicate. There is much more - for instance, offensive operations - but you can discover these mechanisms yourself at later stages. Good luck!"
+		Onboarding = false
+	CallManager.CallQueue.append(
+		{
+			"Header": "Onboarding",
+			"Level": "Secret",
+			"Operation": "-//-",
+			"Content": content,
+			"Show1": false,
+			"Show2": false,
+			"Show3": true,
+			"Show4": true,
+			"Text1": "",
+			"Text2": "",
+			"Text3": "Turn Off\nOnboarding",
+			"Text4": "Understood",
+			"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
+			"Decision1Argument": null,
+			"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
+			"Decision2Argument": null,
+			"Decision3Callback": funcref(GameLogic, "OnboardingTurnOff"),
+			"Decision3Argument": null,
+			"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
+			"Decision4Argument": null,
+		}
+	)
+
+func OnboardingTurnOff(anyArgument):
+	Onboarding = false
 
 func FinalQuit(anyArgument):
 	Testmodule.FinishSummary()
