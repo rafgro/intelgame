@@ -65,7 +65,6 @@ var InternalMoles = 0  # counter of officers that are passing info to other inte
 var YearlyWars = 0  # internal counter, ensuring that there's no more than 1 war per year
 var YearlyHiring = 0  # internal counter, limiting a number of new officers for later stages
 var YearlyNetworks = 0  # internal counter instead of budget limit
-var YearlyStations = 0  # as above but for number of established or expanded stations over a year
 # Distance counters: block anything that happens more frequently than limit
 var DistWalkinCounter = 0
 var DistWalkinMin = 16  # minimum four months between those events
@@ -174,7 +173,6 @@ func NextWeek():
 		YearlyWars = 0
 		YearlyHiring = 0
 		YearlyNetworks = 0
-		YearlyStations = 0
 	if Onboarding == true:
 		OnboardingIsOn(AllWeeks+1)
 		doesItEndWithCall = true
@@ -222,7 +220,7 @@ func NextWeek():
 	var freeFund = FreeFundsWeekly()
 	if freeFund < 0: freeFund = 0
 	RecruitProgress += freeFund * (IntensityPercent(IntensityHiring)*0.01) / NewOfficerCost
-	if RecruitProgress >= 1.0 and FreeFundsWeekly() >= 4 and YearlyHiring <= 3:
+	if RecruitProgress >= 1.0 and FreeFundsWeekly() >= 4 and YearlyHiring < 5:
 		# currently always plus one, sort of weekly onboarding limit
 		# in the future expand that to a loop
 		ActiveOfficers += 1
@@ -328,12 +326,12 @@ func NextWeek():
 				# station
 				elif Directions[t].Type == 5:
 					if WorldData.Countries[Directions[t].Country].Station > 0:
-						WorldData.Countries[Directions[t].Country].Station *= (1.0 + Directions[t].Quality*0.01)
-						AddEvent(str(Directions[t].Officers) + " officer(s) came back after expanding station in " + WorldData.Countries[Directions[t].Country].Name)
+						WorldData.Countries[Directions[t].Country].Station += 1
+						AddEvent(WorldData.Countries[Directions[t]].Adjective + " intelligence station is expanded to " + str(int(WorldData.Countries[Directions[t].Country].Station)) + " officers")
 						StaffTrust += 1
 					else:
-						WorldData.Countries[Directions[t].Country].Station = int(Directions[t].Quality)
-						AddEvent(str(Directions[t].Officers) + " officer(s) came back after establishing station in " + WorldData.Countries[Directions[t].Country].Name)
+						WorldData.Countries[Directions[t].Country].Station = 1
+						AddEvent("Bureau intelligence station starts work in " + WorldData.Countries[Directions[t].Country].Name)
 						StaffTrust += 3
 					WorldData.Countries[Directions[t].Country].StationWork = false
 	############################################################################
@@ -937,59 +935,61 @@ func ImplementWalkin(adict):
 		)
 
 func ImplementDirectionDevelopment(aDict):
-	# {Choice, Cost, Length, Officers, Country}
-	var languageEffect = 0
-	var customsEffect = 0
-	var covertEffect = 0
-	var quality = 0  # unused in training
-	if aDict.Choice == 1:
-		# language training
-		languageEffect = aDict.Officers * aDict.Length * (1.0+(random.randi_range(-3,3)*0.1))
-		if WorldData.Countries[aDict.Country].KnowhowLanguage > 70: languageEffect *= 0.5
-	elif aDict.Choice == 2 and WorldData.Countries[aDict.Country].DiplomaticTravel == true:
-		# embassy residency, language immersion, engagement with local culture
-		languageEffect = aDict.Officers * aDict.Length * (1.0+(random.randi_range(-2,5)*0.1))
-		if WorldData.Countries[aDict.Country].KnowhowLanguage > 90: languageEffect *= 0.3
-		elif WorldData.Countries[aDict.Country].KnowhowLanguage > 70: languageEffect *= 0.6
-		customsEffect = aDict.Officers * aDict.Length * (1.0+(random.randi_range(-2,5)*0.1))
-		if WorldData.Countries[aDict.Country].KnowhowCustoms > 90: customsEffect *= 0.3
-		elif WorldData.Countries[aDict.Country].KnowhowCustoms > 70: customsEffect *= 0.6
-		if WorldData.Countries[aDict.Country].CovertTravel < 10: covertEffect = random.randi_range(5,10)
-	elif aDict.Choice == 2 and WorldData.Countries[aDict.Country].DiplomaticTravel == false:
-		# residency in closest possible country, acquitance with local emmigrants from targeted country
-		languageEffect = aDict.Officers * aDict.Length * (1.0+(random.randi_range(-4,2)*0.1))
-		if WorldData.Countries[aDict.Country].KnowhowLanguage > 90: languageEffect *= 0.3
-		elif WorldData.Countries[aDict.Country].KnowhowLanguage > 70: languageEffect *= 0.6
-		customsEffect = aDict.Officers * aDict.Length * (1.0+(random.randi_range(-2,5)*0.1))
-		if WorldData.Countries[aDict.Country].KnowhowCustoms > 90: customsEffect *= 0.3
-		elif WorldData.Countries[aDict.Country].KnowhowCustoms > 70: customsEffect *= 0.6
-		if WorldData.Countries[aDict.Country].CovertTravel < 30: covertEffect = random.randi_range(5,10)
-	elif aDict.Choice == 3 and WorldData.Countries[aDict.Country].CovertTravel <= 35:
-		# develop passport forging system, test and correct covert travel procedures
-		covertEffect = aDict.Officers * aDict.Length * (1.0+(random.randi_range(-2,4)*0.1))
-	elif aDict.Choice == 3:
-		# correct covert travel procedures, live as a covert local
-		covertEffect = aDict.Officers * aDict.Length * (1.0+(random.randi_range(-5,5)*0.1))
-		if WorldData.Countries[aDict.Country].CovertTravel > 80: covertEffect *= 0.3
-		elif WorldData.Countries[aDict.Country].CovertTravel > 60: covertEffect *= 0.6
-	elif aDict.Choice == 4:
-		# establishing a new network or expanding existing one
-		quality = (WorldData.Countries[aDict.Country].KnowhowCustoms + WorldData.Countries[aDict.Country].KnowhowLanguage + StaffSkill) * 0.3
-		if WorldData.Countries[aDict.Country].Network == 0 and quality > 15:
-			quality = random.randi_range(13,17)
-		if quality < 2: quality = 2
-		WorldData.Countries[aDict.Country].NetworkWork = true
-		YearlyNetworks += 1
-	elif aDict.Choice == 5:
-		# establishing a new station or expanding existing one
-		quality = (WorldData.Countries[aDict.Country].KnowhowCustoms + WorldData.Countries[aDict.Country].KnowhowLanguage) * 0.4 + (StaffSkill + Technology) * 0.6
-		if WorldData.Countries[aDict.Country].Station == 0 and quality > 8:
-			quality = random.randi_range(7,10)
-		if quality < 2: quality = 2
-		WorldData.Countries[aDict.Country].StationWork = true
-		YearlyStations += 1
 	# number of officers can always change in-between
 	if OfficersInHQ >= aDict.Officers and aDict.Officers != 0:
+		# {Choice, Cost, Length, Officers, Country}
+		var languageEffect = 0
+		var customsEffect = 0
+		var covertEffect = 0
+		var quality = 0  # unused in training
+		if aDict.Choice == 1:
+			# language training
+			languageEffect = aDict.Officers * aDict.Length * (1.0+(random.randi_range(-3,3)*0.1))
+			if WorldData.Countries[aDict.Country].KnowhowLanguage > 70: languageEffect *= 0.5
+		elif aDict.Choice == 2 and WorldData.Countries[aDict.Country].DiplomaticTravel == true:
+			# embassy residency, language immersion, engagement with local culture
+			languageEffect = aDict.Officers * aDict.Length * (1.0+(random.randi_range(-2,5)*0.1))
+			if WorldData.Countries[aDict.Country].KnowhowLanguage > 90: languageEffect *= 0.3
+			elif WorldData.Countries[aDict.Country].KnowhowLanguage > 70: languageEffect *= 0.6
+			customsEffect = aDict.Officers * aDict.Length * (1.0+(random.randi_range(-2,5)*0.1))
+			if WorldData.Countries[aDict.Country].KnowhowCustoms > 90: customsEffect *= 0.3
+			elif WorldData.Countries[aDict.Country].KnowhowCustoms > 70: customsEffect *= 0.6
+			if WorldData.Countries[aDict.Country].CovertTravel < 10: covertEffect = random.randi_range(5,10)
+		elif aDict.Choice == 2 and WorldData.Countries[aDict.Country].DiplomaticTravel == false:
+			# residency in closest possible country, acquitance with local emmigrants from targeted country
+			languageEffect = aDict.Officers * aDict.Length * (1.0+(random.randi_range(-4,2)*0.1))
+			if WorldData.Countries[aDict.Country].KnowhowLanguage > 90: languageEffect *= 0.3
+			elif WorldData.Countries[aDict.Country].KnowhowLanguage > 70: languageEffect *= 0.6
+			customsEffect = aDict.Officers * aDict.Length * (1.0+(random.randi_range(-2,5)*0.1))
+			if WorldData.Countries[aDict.Country].KnowhowCustoms > 90: customsEffect *= 0.3
+			elif WorldData.Countries[aDict.Country].KnowhowCustoms > 70: customsEffect *= 0.6
+			if WorldData.Countries[aDict.Country].CovertTravel < 30: covertEffect = random.randi_range(5,10)
+		elif aDict.Choice == 3 and WorldData.Countries[aDict.Country].CovertTravel <= 35:
+			# develop passport forging system, test and correct covert travel procedures
+			covertEffect = aDict.Officers * aDict.Length * (1.0+(random.randi_range(-2,4)*0.1))
+		elif aDict.Choice == 3:
+			# correct covert travel procedures, live as a covert local
+			covertEffect = aDict.Officers * aDict.Length * (1.0+(random.randi_range(-5,5)*0.1))
+			if WorldData.Countries[aDict.Country].CovertTravel > 80: covertEffect *= 0.3
+			elif WorldData.Countries[aDict.Country].CovertTravel > 60: covertEffect *= 0.6
+		elif aDict.Choice == 4:
+			# establishing a new network or expanding existing one
+			quality = (WorldData.Countries[aDict.Country].KnowhowCustoms + WorldData.Countries[aDict.Country].KnowhowLanguage + StaffSkill) * 0.3
+			if WorldData.Countries[aDict.Country].Network == 0 and quality > 15:
+				quality = random.randi_range(13,17)
+			if quality < 2: quality = 2
+			WorldData.Countries[aDict.Country].NetworkWork = true
+			YearlyNetworks += 1
+		elif aDict.Choice == 5:
+			# establishing a new station or expanding existing one
+			"""quality = (WorldData.Countries[aDict.Country].KnowhowCustoms + WorldData.Countries[aDict.Country].KnowhowLanguage) * 0.4 + (StaffSkill + Technology) * 0.6
+			if WorldData.Countries[aDict.Country].Station == 0 and quality > 8:
+				quality = random.randi_range(7,10)
+			if quality < 2: quality = 2"""
+			quality = 1  # always just one officer
+			WorldData.Countries[aDict.Country].StationWork = true
+			ActiveOfficers -= 1
+			OfficersInHQ -= 1
 		Directions.append(
 			{
 				"Active": true,

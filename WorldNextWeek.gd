@@ -398,8 +398,11 @@ func Execute(past):
 						var against = c
 						if c == 0: against = c2
 						WorldData.Countries[against].DiplomaticTravel = false
-						if WorldData.Countries[against].Station > 0: GameLogic.BudgetExtras *= 0.8
-						WorldData.Countries[against].Station = 0
+						if WorldData.Countries[against].Station > 0:
+							GameLogic.AddEvent(WorldData.Countries[against].Adjective + " intelligence station was evacuated, " + str(int(WorldData.Countries[against].Station)) + " officers returned")
+							GameLogic.ActiveOfficers += WorldData.Countries[against].Station
+							GameLogic.OfficersInHQ += WorldData.Countries[against].Station
+							WorldData.Countries[against].Station = 0
 						for x in range(0,len(WorldData.Organizations)):
 							if WorldData.Organizations[x].Countries[0] == against:
 								WorldData.Organizations[x].OffensiveClearance = true
@@ -1242,14 +1245,15 @@ func Execute(past):
 		########################################################################
 		# intel stations
 		if WorldData.Countries[WorldData.Organizations[w].Countries[0]].Station > 0:
-			var prob = 80  # one time in 80 weeks
-			if WorldData.Countries[WorldData.Organizations[w].Countries[0]].Station > 100: prob = 20
-			elif WorldData.Countries[WorldData.Organizations[w].Countries[0]].Station > 50: prob = 40
-			elif WorldData.Countries[WorldData.Organizations[w].Countries[0]].Station > 25: prob = 50
-			elif WorldData.Countries[WorldData.Organizations[w].Countries[0]].Station > 15: prob = 60
-			elif WorldData.Countries[WorldData.Organizations[w].Countries[0]].Station > 5: prob = 70
+			var prob = 100  # one time in 100 weeks
+			if WorldData.Countries[WorldData.Organizations[w].Countries[0]].Station > 5:
+				prob = 50 - (WorldData.Countries[WorldData.Organizations[w].Countries[0]].Station*0.2)
+			elif WorldData.Countries[WorldData.Organizations[w].Countries[0]].Station > 4: prob = 60
+			elif WorldData.Countries[WorldData.Organizations[w].Countries[0]].Station > 3: prob = 70
+			elif WorldData.Countries[WorldData.Organizations[w].Countries[0]].Station > 2: prob = 80
+			elif WorldData.Countries[WorldData.Organizations[w].Countries[0]].Station > 1: prob = 90
 			if GameLogic.random.randi_range(0, prob) == int(prob*0.5):
-				var qual = GameLogic.StaffSkill*0.2 + WorldData.Countries[WorldData.Organizations[w].Countries[0]].KnowhowLanguage*0.1 + WorldData.Countries[WorldData.Organizations[w].Countries[0]].KnowhowCustoms*0.1 + GameLogic.random.randi_range(-15,15) + min(WorldData.Countries[WorldData.Organizations[w].Countries[0]].Station,100)*0.3
+				var qual = GameLogic.StaffSkill*0.2 + WorldData.Countries[WorldData.Organizations[w].Countries[0]].KnowhowLanguage*0.1 + WorldData.Countries[WorldData.Organizations[w].Countries[0]].KnowhowCustoms*0.1 + GameLogic.random.randi_range(-15,15) + min(WorldData.Countries[WorldData.Organizations[w].Countries[0]].Station,10)*0.6
 				var ifSignificant = WorldIntel.GatherOnOrg(w, qual, GameLogic.GiveDateWithYear(), false)
 				if ifSignificant == true: doesItEndWithCall = true
 		########################################################################

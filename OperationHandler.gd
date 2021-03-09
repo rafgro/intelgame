@@ -36,7 +36,7 @@ func ProgressOperations():
 			var notEnoughIntel = []  # names of methods
 			# actual method planning
 			var j = 0
-			while j < 6:  # six tries but will present only first three
+			while j < 10:  # ten tries but will present only first three
 				j += 1  # in the beginning to allow early continue commands
 				var totalCost = 0
 				var predictedLength = 3+GameLogic.random.randi_range(-2,2)  # in weeks
@@ -47,8 +47,8 @@ func ProgressOperations():
 				var usedOfficers = minOfficers
 				# finding methods to use in the operation
 				var mt = GameLogic.Operations[i].Type
-				var noOfMethods = GameLogic.random.randi_range(1,4)
-				if GameLogic.random.randi_range(1,4) == 3: noOfMethods = GameLogic.random.randi_range(1,8)
+				var noOfMethods = GameLogic.random.randi_range(1,3)
+				if GameLogic.random.randi_range(1,4) == 3: noOfMethods = GameLogic.random.randi_range(1,5)
 				var theMethods = []
 				var safetyCounter = 0
 				var countUnavailable = 0
@@ -123,7 +123,7 @@ func ProgressOperations():
 				# adjusting number of officers
 				var proxyMaxOfficers = maxOfficers
 				if (proxyMaxOfficers-usedOfficers) > 5:
-					proxyMaxOfficers = usedOfficers + GameLogic.random.randi_range(1,5)
+					proxyMaxOfficers = usedOfficers + GameLogic.random.randi_range(1,3)
 				usedOfficers = GameLogic.random.randi_range(usedOfficers, proxyMaxOfficers)
 				# remote/nonremote
 				var ifAllRemote = true
@@ -182,10 +182,8 @@ func ProgressOperations():
 				var officerFactor = 1.0 + usedOfficers*0.1
 				if officerFactor > 2.1: officerFactor = 2.1
 				if WorldData.Countries[whichCountry].Station > 0:
-					var stationSupport = 1
-					if WorldData.Countries[whichCountry].Station > 80: stationSupport = 10
-					if WorldData.Countries[whichCountry].Station > 40: stationSupport = 6
-					if WorldData.Countries[whichCountry].Station > 10: stationSupport = 3
+					var stationSupport = WorldData.Countries[whichCountry].Station
+					if WorldData.Countries[whichCountry].Station > 10: stationSupport = 10
 					totalQuality += stationSupport
 				totalQuality *= officerFactor
 				var lengthFactor = 1.0 + predictedLength*0.1
@@ -270,7 +268,7 @@ func ProgressOperations():
 			if len(localPlans) == 0:
 				var noPlanReasonsArr = []
 				if noPlanReasonLocal > 1: noPlanReasonsArr.append("knowledge of local language and customs in " + WorldData.Countries[whichCountry].Name)
-				if noPlanReasonLocal > 1: noPlanReasonsArr.append("acceptable means of travel to " + WorldData.Countries[whichCountry].Name)
+				if noPlanReasonTravel > 1: noPlanReasonsArr.append("acceptable means of travel to " + WorldData.Countries[whichCountry].Name)
 				if noPlanReasonMinIntel > 1: noPlanReasonsArr.append("intel about " + WorldData.Organizations[GameLogic.Operations[i].Target].Name)
 				if noPlanReasonStaff > 1: noPlanReasonsArr.append("human resources")
 				if noPlanReasonCost > 1: noPlanReasonsArr.append("financial resources")
@@ -280,7 +278,7 @@ func ProgressOperations():
 				if len(noPlanReasonsArr) > 1:
 					noPlanReasons = "[u]" + PoolStringArray(noPlanReasonsArr.slice(0,len(noPlanReasonsArr)-2)).join(", ") + ", and " + noPlanReasonsArr[-1] + "[/u] to approach this target. "
 				else:
-					noPlanReasons = noPlanReasonsArr[0] + " to approach this target."
+					noPlanReasons = "[u]" + noPlanReasonsArr[0] + "[/u] to approach this target."
 				CallManager.CallQueue.append(
 					{
 						"Header": "Important Information",

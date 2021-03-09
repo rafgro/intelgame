@@ -57,7 +57,7 @@ func _on_List_item_selected(index):
 	if WorldData.Countries[c].Network > 0:
 		desc += "\n[b]Network of " + str(int(WorldData.Countries[c].Network)) + " local agents present[/b] (supports operations when possible)"
 	if WorldData.Countries[c].Station > 0:
-		desc += "\n[b]Intelligence station with " + str(int(WorldData.Countries[c].Station)) + " employees present[/b] (regularly gathers intel on all local organizations)"
+		desc += "\n[b]Intelligence station with " + str(int(WorldData.Countries[c].Station)) + " officer(s) present[/b] (regularly gathers intel on all local organizations)"
 	desc += "\nAverage travel cost per officer: €" + str(int(WorldData.Countries[c].TravelCost)) + ",000\n"
 	desc += "Average cost of living per officer per week: €" + str(int(WorldData.Countries[c].LocalCost)) + ",000\n\n"
 	desc += str(WorldData.Countries[c].OperationStats) + " operations inside performed to date\n"
@@ -140,6 +140,11 @@ func _on_Develop_pressed():
 				planCdesc = " (financially unavailable)"
 			content += "\n\n[b]Plan C[/b]"+planCdesc+"\n€" + str(int(planCcost)) + ",000 | " + str(int(planCofficers)) + " officers | " + str(int(planClength)) + " weeks\ncorrect covert travel procedures\nlive as a covert local"
 		content += "\n\nChoose appropriate plan or wait for new plans. Be aware that officers involved in these operations generally will not be in contact with the HQ, and therefore cannot be called off.\n"
+		if GameLogic.OfficersInHQ < 1:
+			planAshow = false
+			planBshow = false
+			planCshow = false
+			content = "Currently, there are no officers who could execute this operation."
 		# call
 		CallManager.CallQueue.append(
 			{
@@ -185,6 +190,9 @@ func _on_Network_pressed():
 		else:
 			planAvailability = " Remember that Bureau can work only on two networks in a year."
 		content += " local agent network in " + WorldData.Countries[lastSelectedCountry].Name + " will require €" + str(int(planCost)) + ",000 and " + str(int(planOfficers)) + " officers. The operation will last " + str(int(planLength)) + " weeks."+planAvailability+"\n\nNote that its effects are strictly correlated with familiarity with the country."
+		if GameLogic.OfficersInHQ < 1:
+			planShow = false
+			content = "Currently, there are no officers to execute this operation."
 		# call
 		CallManager.CallQueue.append(
 			{
@@ -214,22 +222,27 @@ func _on_Network_pressed():
 
 func _on_Station_pressed():
 	if lastSelectedCountry > 0:
-		var planOfficers = GameLogic.random.randi_range(1, min(GameLogic.OfficersInHQ, 9))
-		var planLength = GameLogic.random.randi_range(8,26)
-		var planCost = planOfficers*10*planLength
+		var planOfficers = 1
+		var planLength = GameLogic.random.randi_range(6,12)
+		var planCost = 50+planOfficers*10*planLength
 		var content = "Establishing"
-		if WorldData.Countries[lastSelectedCountry].Station > 0: content = "Expanding"
+		var whatHappens = "The station will start work"
+		if WorldData.Countries[lastSelectedCountry].Station > 0:
+			content = "Expanding"
+			planCost = 10+planOfficers*6*planLength
+			planLength = GameLogic.random.randi_range(4,8)
+			whatHappens = "The new station officer will start work"
 		var planShow = true
 		var planAvailability = ""
 		if (planCost*1.0/planLength) > GameLogic.FreeFundsWeeklyWithoutOngoing():
 			planShow = false
 			planAvailability = " Currently, it is financially unavailable."
-		elif GameLogic.YearlyStations >= 1:
-			planShow = false
-			planAvailability = " In this year, Bureau cannot work anymore on establishing or expanding stations."
 		else:
 			planAvailability = " Remember that Bureau can establish or expand only one station in a year."
-		content += " intelligence station in " + WorldData.Countries[lastSelectedCountry].Name + " will require €" + str(int(planCost)) + ",000 and " + str(int(planOfficers)) + " officers. The operation will last " + str(int(planLength)) + " weeks."+planAvailability
+		content += " intelligence station in " + WorldData.Countries[lastSelectedCountry].Name + " will require €" + str(int(planCost)) + ",000 and will take out 1 officer from HQ to the station, permanently. " + whatHappens + " in " + str(int(planLength)) + " weeks."+planAvailability
+		if GameLogic.OfficersInHQ < 1:
+			planShow = false
+			content = "Currently, there are no officers to execute this operation."
 		# call
 		CallManager.CallQueue.append(
 			{
@@ -250,7 +263,7 @@ func _on_Station_pressed():
 				"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
 				"Decision2Argument": null,
 				"Decision3Callback": funcref(GameLogic, "ImplementDirectionDevelopment"),
-				"Decision3Argument": {"Choice":5, "Cost": planCost, "Length": planLength, "Officers": planOfficers, "Country": lastSelectedCountry},
+				"Decision3Argument": {"Choice":5, "Cost": planCost, "Length": planLength, "Officers": 0, "Country": lastSelectedCountry},
 				"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 				"Decision4Argument": null,
 			}

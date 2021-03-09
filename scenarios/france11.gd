@@ -1,6 +1,6 @@
 extends Node
 
-var Description = "[b]ISIS growth and attacks in 2010s[/b]\n\n- Homeland similar to France\n- ISIS grows to proclaimed caliphate\n- European countries engaged in Syrian civil war are targeted by ISIS cells and lone wolves\n- Europe undergoes migrant crisis"
+var Description = "[b]ISIS growth and attacks in 2010s[/b]\n\n- Homeland similar to France\n- ISIS grows into proclaimed caliphate\n- European countries engaged in Syrian civil war are targeted by ISIS cells\n- ISIS inspires many lone wolves\n- Europe undergoes migrant crisis"
 
 # one year simulation from 2010 and then starts in 2011
 var PossibleCountries = [
@@ -101,7 +101,7 @@ func GenerateWorld():
 	var SY = 5
 	var IR = 6
 	WorldData.Organizations.append(
-		WorldData.aNewOrganization({ "Type": WorldData.OrgType.MOVEMENT, "Name": "Islamic Extremists", "Fixed": false, "Known": true, "Staff": 1000000, "Budget": 0, "Counterintelligence": 0, "Aggression": 70, "Countries": [YE,SY,IR], "IntelValue": 0, "TargetConsistency": 0, "TargetCountries": [], })
+		WorldData.aNewOrganization({ "Type": WorldData.OrgType.MOVEMENT, "Name": "Islamic Extremists", "Fixed": false, "Known": true, "Staff": 1000000, "Budget": 0, "Counterintelligence": 0, "Aggression": 70, "Countries": [YE,SY,IR], "IntelValue": -5, "TargetConsistency": 0, "TargetCountries": [], })
 	)
 	var extremists = len(WorldData.Organizations)-1
 	WorldData.Organizations.append(
@@ -109,7 +109,7 @@ func GenerateWorld():
 	)
 	var moroccan = len(WorldData.Organizations)-1
 	WorldData.Organizations.append(
-		WorldData.aNewOrganization({ "Type": WorldData.OrgType.MOVEMENT, "Name": "Salafists", "Fixed": false, "Known": true, "Staff": 700000, "Budget": 0, "Counterintelligence": 0, "Aggression": 60, "Countries": [BE,UK,SY], "IntelValue": 0, "TargetConsistency": 0, "TargetCountries": [], })
+		WorldData.aNewOrganization({ "Type": WorldData.OrgType.MOVEMENT, "Name": "Salafists", "Fixed": false, "Known": true, "Staff": 700000, "Budget": 0, "Counterintelligence": 0, "Aggression": 60, "Countries": [BE,UK,SY], "IntelValue": -5, "TargetConsistency": 0, "TargetCountries": [], })
 	)
 	var salafists = len(WorldData.Organizations)-1
 	WorldData.Organizations.append(
@@ -118,19 +118,19 @@ func GenerateWorld():
 	var migrants = len(WorldData.Organizations)-1
 	# terror
 	WorldData.Organizations.append(
-		WorldData.aNewOrganization({ "Type": WorldData.OrgType.GENERALTERROR, "Name": "ISIS", "Fixed": false, "Known": true, "Staff": 45000, "Budget": 1000000, "Counterintelligence": 50, "Aggression": 95, "Countries": [YE,SY,IR], "IntelValue": 0, "TargetConsistency": 80, "TargetCountries": [0,BE,UK], })
+		WorldData.aNewOrganization({ "Type": WorldData.OrgType.GENERALTERROR, "Name": "ISIS", "Fixed": false, "Known": true, "Staff": 45000, "Budget": 1000000, "Counterintelligence": 50, "Aggression": 95, "Countries": [YE,SY,IR], "IntelValue": -10, "TargetConsistency": 80, "TargetCountries": [0,BE,UK], })
 	)
 	WorldData.Organizations[-1].ConnectedTo.append(extremists)
 	WorldData.Organizations[extremists].ConnectedTo.append(len(WorldData.Organizations)-1)
 	var isis = len(WorldData.Organizations)-1
 	WorldData.Organizations.append(
-		WorldData.aNewOrganization({ "Type": WorldData.OrgType.GENERALTERROR, "Name": "ISIS Sympathizers", "Fixed": false, "Known": true, "Staff": 5000, "Budget": 500, "Counterintelligence": 50, "Aggression": 80, "Countries": [BE,UK,IT], "IntelValue": 0, "TargetConsistency": 50, "TargetCountries": [0,BE,UK,IT], })
+		WorldData.aNewOrganization({ "Type": WorldData.OrgType.GENERALTERROR, "Name": "ISIS Sympathizers", "Fixed": false, "Known": true, "Staff": 5000, "Budget": 500, "Counterintelligence": 50, "Aggression": 80, "Countries": [BE,UK,IT], "IntelValue": -5, "TargetConsistency": 50, "TargetCountries": [0,BE,UK,IT], })
 	)
 	var isisSymp = len(WorldData.Organizations)-1
 	WorldData.Organizations[-1].ConnectedTo.append(migrants)
 	WorldData.Organizations[migrants].ConnectedTo.append(len(WorldData.Organizations)-1)
 	WorldData.Organizations.append(
-		WorldData.aNewOrganization({ "Type": WorldData.OrgType.GENERALTERROR, "Name": "Brussels Cell", "Fixed": false, "Known": true, "Staff": 20, "Budget": 500, "Counterintelligence": 65, "Aggression": 90, "Countries": [BE], "IntelValue": 0, "TargetConsistency": 90, "TargetCountries": [0,BE], })
+		WorldData.aNewOrganization({ "Type": WorldData.OrgType.GENERALTERROR, "Name": "Brussels Cell", "Fixed": false, "Known": true, "Staff": 20, "Budget": 500, "Counterintelligence": 65, "Aggression": 90, "Countries": [BE], "IntelValue": -15, "TargetConsistency": 90, "TargetCountries": [0,BE], })
 	)
 	WorldData.Organizations[-1].ConnectedTo.append(moroccan)
 	WorldData.Organizations[moroccan].ConnectedTo.append(len(WorldData.Organizations)-1)
@@ -138,17 +138,17 @@ func GenerateWorld():
 	WorldData.Organizations[salafists].ConnectedTo.append(len(WorldData.Organizations)-1)
 	var brusselsCell = len(WorldData.Organizations)-1
 	WorldData.Organizations.append(
-		WorldData.aNewOrganization({ "Type": WorldData.OrgType.ARMTRADER, "Name": "Brussels Underworld", "Fixed": false, "Known": true, "Staff": 50, "Budget": 1000, "Counterintelligence": 85, "Aggression": 90, "Countries": [BE], "IntelValue": 0, "TargetConsistency": 0, "TargetCountries": [], })
+		WorldData.aNewOrganization({ "Type": WorldData.OrgType.ARMTRADER, "Name": "Brussels Underworld", "Fixed": false, "Known": true, "Staff": 50, "Budget": 1000, "Counterintelligence": 85, "Aggression": 90, "Countries": [BE], "IntelValue": -15, "TargetConsistency": 0, "TargetCountries": [], })
 	)
 	WorldData.Organizations[-1].ConnectedTo.append(brusselsCell)
 	WorldData.Organizations[brusselsCell].ConnectedTo.append(len(WorldData.Organizations)-1)
 	WorldData.Organizations.append(
-		WorldData.aNewOrganization({ "Type": WorldData.OrgType.ARMTRADER, "Name": "Syrian Black Market", "Fixed": false, "Known": true, "Staff": 300, "Budget": 10000, "Counterintelligence": 75, "Aggression": 90, "Countries": [SY], "IntelValue": 0, "TargetConsistency": 0, "TargetCountries": [], })
+		WorldData.aNewOrganization({ "Type": WorldData.OrgType.ARMTRADER, "Name": "Syrian Black Market", "Fixed": false, "Known": true, "Staff": 300, "Budget": 10000, "Counterintelligence": 75, "Aggression": 90, "Countries": [SY], "IntelValue": -5, "TargetConsistency": 0, "TargetCountries": [], })
 	)
 	WorldData.Organizations[-1].ConnectedTo.append(isis)
 	WorldData.Organizations[isis].ConnectedTo.append(len(WorldData.Organizations)-1)
 	WorldData.Organizations.append(
-		WorldData.aNewOrganization({ "Type": WorldData.OrgType.ARMTRADER, "Name": "Yemeni Rebels", "Fixed": false, "Known": true, "Staff": 5000, "Budget": 5000, "Counterintelligence": 55, "Aggression": 90, "Countries": [YE], "IntelValue": 0, "TargetConsistency": 0, "TargetCountries": [], })
+		WorldData.aNewOrganization({ "Type": WorldData.OrgType.ARMTRADER, "Name": "Yemeni Rebels", "Fixed": false, "Known": true, "Staff": 5000, "Budget": 5000, "Counterintelligence": 55, "Aggression": 90, "Countries": [YE], "IntelValue": -5, "TargetConsistency": 0, "TargetCountries": [], })
 	)
 	WorldData.Organizations[-1].ConnectedTo.append(isisSymp)
 	WorldData.Organizations[isisSymp].ConnectedTo.append(len(WorldData.Organizations)-1)
@@ -163,7 +163,7 @@ func GenerateWorld():
 		if name in doNotDuplicate: continue
 		doNotDuplicate.append(name)
 		WorldData.Organizations.append(
-			WorldData.aNewOrganization({ "Type": WorldData.OrgType.GENERALTERROR, "Name": name, "Fixed": false, "Known": false, "Staff": size, "Budget": GameLogic.random.randi_range(25,150), "Counterintelligence": GameLogic.random.randi_range(20,80), "Aggression": GameLogic.random.randi_range(15,65), "Countries": [places], "IntelValue": GameLogic.random.randi_range(-10,0), "TargetConsistency": 0, "TargetCountries": [], })
+			WorldData.aNewOrganization({ "Type": WorldData.OrgType.GENERALTERROR, "Name": name, "Fixed": false, "Known": false, "Staff": size, "Budget": GameLogic.random.randi_range(25,150), "Counterintelligence": GameLogic.random.randi_range(20,80), "Aggression": GameLogic.random.randi_range(15,65), "Countries": [places], "IntelValue": GameLogic.random.randi_range(-15,-2), "TargetConsistency": 0, "TargetCountries": [], })
 		)
 		# usual targets
 		WorldData.Organizations[-1].TargetConsistency = GameLogic.random.randi_range(0,100)
