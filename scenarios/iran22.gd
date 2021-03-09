@@ -19,6 +19,7 @@ func GenerateWorld():
 	WorldData.Countries[0].ElectionPeriod = 52*4
 	WorldData.Countries[0].ElectionProgress = 7*4*3
 	GameLogic.BudgetFull = 800
+	GameLogic.FrequencyGovOps = 0.8
 	GameLogic.ActiveOfficers = 15
 	GameLogic.OfficersInHQ = 15
 	GameLogic.StaffSkill = 30

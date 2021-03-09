@@ -1183,10 +1183,19 @@ func Execute(past):
 					continue
 				# fluctuate level
 				if GameLogic.random.randi_range(1,3) == 2:
-					WorldData.Organizations[w].IntelSources[s].Level += GameLogic.random.randi_range(-1,1)
+					if GameLogic.random.randi_range(10,100) < WorldData.Organizations[w].IntelSources[s].Potential:
+						var pastLevel = WorldData.Organizations[w].IntelSources[s].Level
+						WorldData.Organizations[w].IntelSources[s].Level += 2
+						var newLevel = WorldData.Organizations[w].IntelSources[s].Level
+						if pastLevel <= 70 and newLevel > 70 and WorldData.Organizations[w].IntelSources[s].SingleProgress == false:
+							GameLogic.AddEvent("Bureau source in " + WorldData.Organizations[w].Name + " moved up to a higher position")
+							WorldData.Organizations[w].IntelSources[s].SingleProgress = true
+					else:
+						WorldData.Organizations[w].IntelSources[s].Level += GameLogic.random.randi_range(-1,1)
 				# flip by high enough counterintelligence
-				if GameLogic.random.randi_range(1,6) == 3 and WorldData.Organizations[w].Counterintelligence > GameLogic.random.randi_range(50,150) and WorldData.Organizations[w].IntelSources[s].Level > 0:
-					WorldData.Organizations[w].IntelSources[s].Level *= -1
+				if GameLogic.random.randi_range(1,26) == 3 and WorldData.Organizations[w].Counterintelligence > GameLogic.random.randi_range(45,150) and WorldData.Organizations[w].IntelSources[s].Level > 0 and WorldData.Organizations[w].IntelSources[s].Trust < 10:
+					WorldData.Organizations[w].IntelSources[s].Level *= -1.0
+					WorldData.Organizations[w].IntelSources[s].Trust = 45
 				# noting levels for joint intel
 				sumOfLevels += WorldData.Organizations[w].IntelSources[s].Level
 				if abs(highestLevel) < abs(WorldData.Organizations[w].IntelSources[s].Level):
@@ -1196,9 +1205,9 @@ func Execute(past):
 				WorldData.Organizations[w].IntelSources.remove(sourceLoss)
 				GameLogic.AddEvent('Bureau lost source in ' + WorldData.Organizations[w].Name)
 			if len(WorldData.Organizations[w].IntelSources) > 0:
-				# providing joint intel from all sources, every 8 weeks on average
-				if GameLogic.random.randi_range(1,8) == 4:
-					var localCall = WorldIntel.GatherOnOrg(w, highestLevel*(0.8+len(WorldData.Organizations[w].IntelSources)*0.2), GameLogic.GiveDateWithYear(), false)
+				# providing joint intel from all sources, every 10 weeks on average
+				if GameLogic.random.randi_range(1,10) == 4:
+					var localCall = WorldIntel.GatherOnOrg(w, highestLevel*(0.7+len(WorldData.Organizations[w].IntelSources)*0.3), GameLogic.GiveDateWithYear(), false)
 					if localCall == true: doesItEndWithCall = true
 				# reversal check
 				var whichS = randi() % WorldData.Organizations[w].IntelSources.size()

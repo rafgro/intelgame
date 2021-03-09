@@ -30,6 +30,7 @@ func _on_Start_pressed():
 	GameLogic.TurnOnWars = $C/V/M/R/ChWars.pressed
 	GameLogic.TurnOnWMD = $C/V/M/R/ChWMD.pressed
 	GameLogic.TurnOnInfiltration = $C/V/M/R/ChInfiltrate.pressed
+	if $C/V/M/R/ChGovops.pressed == false: GameLogic.FrequencyGovOps = 0
 	GameLogic.SoftPowerMonthsAgo = WorldGenerator.NewGenerate()
 	GameLogic.StartAll()
 	CallManager.CallQueue.append(

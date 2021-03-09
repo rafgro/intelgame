@@ -782,10 +782,12 @@ func RecruitInOrg(o, quality, date):
 		# noting source in org data
 		WorldData.Organizations[o].IntelSources.append(
 			{
-				"Level": levelOfSuccess,
-				"Trust": GameLogic.random.randi_range(5,25),
-				"TurnedHowLong": 0,
-				"TurnedByWho": "unknown organization",
+				"Level": levelOfSuccess,  # from 0 (secretary) to 100 (leader)
+				"Trust": GameLogic.random.randi_range(5,25),  # when falls down, source is lost
+				"Potential": GameLogic.random.randi_range(-100,100),  # stationary or progressing level
+				"SingleProgress": false,  # flip switch to avoid multiple communicates about progression
+				"TurnedHowLong": 0,  # for investigation
+				"TurnedByWho": "unknown organization",  # for investigation
 			}
 		)
 		var wordLevel = "low"

@@ -295,6 +295,7 @@ func StartAll():
 	GameLogic.TurnOnWMD = false
 	GameLogic.TurnOnInfiltration = false
 	GameLogic.FrequencyAttacks = 1.0
+	GameLogic.FrequencyGovOps = 0.5
 	GameLogic.SoftPowerMonthsAgo = GenerateWorld()
 	GameLogic.DateYear = 2011
 	GameLogic.StartAll()

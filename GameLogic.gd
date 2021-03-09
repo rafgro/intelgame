@@ -87,6 +87,7 @@ var TurnOnWars = true
 var TurnOnWMD = true
 var TurnOnInfiltration = true
 var FrequencyAttacks = 1.0
+var FrequencyGovOps = 1.0
 var Onboarding = false
 var WhenAllowAttacks = 26
 
@@ -341,6 +342,55 @@ func NextWeek():
 						AddEvent("Bureau intelligence station starts work in " + WorldData.Countries[Directions[t].Country].Name)
 						StaffTrust += 3
 					WorldData.Countries[Directions[t].Country].StationWork = false
+				# source - requesting intel
+				elif Directions[t].Type == 6:
+					var whichOrg = Directions[t].Quality
+					var highestLevel = 0
+					for s in range(0, len(WorldData.Organizations[whichOrg].IntelSources)):
+						if abs(highestLevel) < abs(WorldData.Organizations[whichOrg].IntelSources[s].Level):
+							highestLevel = WorldData.Organizations[whichOrg].IntelSources[s].Level
+						WorldData.Organizations[whichOrg].IntelSources[s].Trust -= 3  # dangerous
+					var localCall = WorldIntel.GatherOnOrg(whichOrg, highestLevel*(0.7+len(WorldData.Organizations[whichOrg].IntelSources)*0.3), GiveDateWithYear(), false)
+					if localCall == true: doesItEndWithCall = true
+					AddEvent("1 officer came back after meeting with source(s) from " + WorldData.Organizations[whichOrg].Name)
+				# source - handling
+				elif Directions[t].Type == 7:
+					var whichOrg = Directions[t].Quality
+					var suspectedSource = -1
+					for s in range(0, len(WorldData.Organizations[whichOrg].IntelSources)):
+						WorldData.Organizations[whichOrg].IntelSources[s].Trust += GameLogic.random.randi_range(1,3)
+						if WorldData.Organizations[whichOrg].IntelSources[s].Potential > -10 and WorldData.Organizations[whichOrg].IntelSources[s].Potential < 30:
+							WorldData.Organizations[whichOrg].IntelSources[s].Potential += GameLogic.random.randi_range(1,5)
+						if WorldData.Organizations[whichOrg].IntelSources[s].Level < -5 and GameLogic.random.randi_range(1,2) == 2:
+							suspectedSource = s
+					AddEvent("1 officer came back after handling source(s) from " + WorldData.Organizations[whichOrg].Name)
+					if suspectedSource > -1:
+						var investigationDetails = "Investigation team concluded that the source provided false intel for approximately " + str(int(WorldData.Organizations[whichOrg].IntelSources[suspectedSource].TurnedHowLong)) + " weeks. Officers suspect that " + WorldData.Organizations[whichOrg].IntelSources[suspectedSource].TurnedByWho + " was responsible for compromising the asset."
+						CallManager.CallQueue.append(
+							{
+								"Header": "Urgent Decision",
+								"Level": "Secret",
+								"Operation": "-//-",
+								"Content": "During source handling, an officer noticed that a single source inside " + WorldData.Organizations[whichOrg].Name + " (" + str(int(100.0/ len(WorldData.Organizations[whichOrg].IntelSources))) + "% of sources in this organization) is probably a double agent.\n\nDecide if we terminate or continue the cooperation.",
+								"Show1": false,
+								"Show2": false,
+								"Show3": true,
+								"Show4": true,
+								"Text1": "",
+								"Text2": "",
+								"Text3": "Terminate\nCooperation",
+								"Text4": "Continue\nCooperation",
+								"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
+								"Decision1Argument": null,
+								"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
+								"Decision2Argument": null,
+								"Decision3Callback": funcref(GameLogic, "ImplementSourceTermination"),
+								"Decision3Argument": {"Org":whichOrg, "Source":suspectedSource, "InvestigationDetails": investigationDetails},
+								"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
+								"Decision4Argument": null,
+							}
+						)
+						doesItEndWithCall = true
 	############################################################################
 	# operations
 	var ifCall = OperationHandler.ProgressOperations()
@@ -351,7 +401,7 @@ func NextWeek():
 	if ifCall == true: doesItEndWithCall = true
 	############################################################################
 	# eventual government assigned operations, one every few months
-	if (random.randi_range(1,20) == 11 and DistGovopCounter < 1) or forceGovOpOrder == true:
+	if (random.randi_range(1,120-(FrequencyGovOps*100)) == 1 and DistGovopCounter < 1 and FrequencyGovOps > 0.05) or (forceGovOpOrder == true and FrequencyGovOps > 0.05):
 		# choosing organization
 		var whichOrg = -1
 		if random.randi_range(1,2) == 1:
@@ -521,7 +571,7 @@ func NextWeek():
 					elif o.Type == OperationGenerator.Type.RECRUIT_SOURCE:
 						localQuality = 40 + 0.6*o.AbroadPlan.Quality
 					elif o.Type == OperationGenerator.Type.MORE_INTEL:
-						localQuality = 10 + 0.5*o.AbroadPlan.Quality
+						localQuality = 10 + 0.3*o.AbroadPlan.Quality
 					var localContent = "'" + o.Name + "' against " + WorldData.Organizations[o.Target].Name + " via "
 					var methodNames = []
 					for j in o.AbroadPlan.Methods: methodNames.append(WorldData.Methods[o.Type][j].Name)
@@ -531,8 +581,8 @@ func NextWeek():
 					mostSuccessfulOps.sort_custom(MyCustomSorter, "sort_descending")
 					if len(mostSuccessfulOps) > 5: mostSuccessfulOps = mostSuccessfulOps.slice(0,4)
 					var isolated = []
-					for k in mostSuccessfulOps: isolated.append(isolated[1])
-					localSummary += "\n- most successful: " + PoolStringArray(isolated).join("|")
+					for k in mostSuccessfulOps: isolated.append(k[1])
+					localSummary += "\n- most successful:\n  - " + PoolStringArray(isolated).join("\n  - ")
 				if len(Achievements) > 0:
 					localSummary += "\n- other achievements: " + PoolStringArray(Achievements).join(", ")
 				CallManager.CallQueue.append(
@@ -1021,23 +1071,42 @@ func ImplementDirectionDevelopment(aDict):
 			WorldData.Countries[aDict.Country].StationWork = true
 			ActiveOfficers -= 1
 			OfficersInHQ -= 1
-		Directions.append(
-			{
-				"Active": true,
-				"Type": aDict.Choice,
-				"MonthlyCost": aDict.Cost * 4.0 / aDict.Length,
-				"Length": aDict.Length,
-				"LengthCounter": aDict.Length,
-				"Officers": aDict.Officers,
-				"Country": aDict.Country,
-				"LanguageEffect": languageEffect,
-				"CustomsEffect": customsEffect,
-				"CovertEffect": covertEffect,
-				"Quality": quality,
-			}
-		)
-		BudgetOngoingOperations += aDict.Cost * 4.0 / aDict.Length
-		if aDict.Choice != 5:
+		elif aDict.Choice == 6:
+			# immediate intel
+			quality = aDict.Org  # org coded in quality var
+		elif aDict.Choice == 7:
+			# source handling
+			quality = aDict.Org  # org coded in quality var
+		elif aDict.Choice == 8:
+			# recruiting a new source
+			var countryId = WorldData.Organizations[aDict.Org].Countries[0]
+			OperationGenerator.NewOperation(0, aDict.Org, aDict.Country, OperationGenerator.Type.RECRUIT_SOURCE)
+			# if possible, start fast
+			if OfficersInHQ > 0:
+				Operations[-1].AnalyticalOfficers = OfficersInHQ
+				Operations[-1].Stage = OperationGenerator.Stage.PLANNING_OPERATION
+				Operations[-1].Started = GiveDateWithYear()
+				Operations[-1].Result = "ONGOING (PLANNING)"
+		########################################################################
+		if aDict.Choice != 8:
+			Directions.append(
+				{
+					"Active": true,
+					"Type": aDict.Choice,
+					"MonthlyCost": aDict.Cost * 4.0 / aDict.Length,
+					"Length": aDict.Length,
+					"LengthCounter": aDict.Length,
+					"Officers": aDict.Officers,
+					"Country": aDict.Country,
+					"LanguageEffect": languageEffect,
+					"CustomsEffect": customsEffect,
+					"CovertEffect": covertEffect,
+					"Quality": quality,
+				}
+			)
+			BudgetOngoingOperations += aDict.Cost * 4.0 / aDict.Length
+		########################################################################
+		if aDict.Choice != 5 and aDict.Choice != 8:
 			OfficersInHQ -= aDict.Officers
 			OfficersAbroad += aDict.Officers
 		if aDict.Choice == 1:
@@ -1054,6 +1123,10 @@ func ImplementDirectionDevelopment(aDict):
 				AddEvent(str(aDict.Officers) + " officer(s) departed to " + WorldData.Countries[aDict.Country].Name + " to expand intelligence station")
 			else:
 				AddEvent(str(aDict.Officers) + " officer(s) departed to " + WorldData.Countries[aDict.Country].Name + " to establish a new intelligence station")
+		elif aDict.Choice == 6:
+			AddEvent("1 officer departed to meet source(s) from " + WorldData.Organizations[aDict.Org].Name)
+		elif aDict.Choice == 7:
+			AddEvent("1 officer departed to handle source(s) from " + WorldData.Organizations[aDict.Org].Name)
 		if aDict.Country in PriorityTargetCountries: Trust += 1
 
 func ImplementSourceTermination(aDict):

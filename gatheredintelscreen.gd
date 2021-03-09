@@ -122,12 +122,13 @@ func _on_Organizations_item_selected(index):
 			desc += "\n" + PoolStringArray(WorldData.Organizations[o].IntelDescription).join("\n")
 		$C/M/R/Details.bbcode_text = desc
 		$C/M/R/H/Gather.disabled = false
-		if WorldData.Organizations[o].IntelIdentified > 0: $C/M/R/H/Recruit.disabled = false
+		if WorldData.Organizations[o].IntelIdentified > 0 or len(WorldData.Organizations[o].IntelSources) > 0: $C/M/R/H/Recruit.disabled = false
 		else: $C/M/R/H/Recruit.disabled = true
 		if WorldData.Organizations[o].OffensiveClearance == true or GameLogic.UniversalClearance == true or WorldData.Organizations[o].KnownKidnapper == true: $C/M/R/H/Offensive.disabled = false
 		else: $C/M/R/H/Offensive.disabled = true
 		if WorldData.Organizations[o].KnownKidnapper == true: $C/M/R/H/Offensive.text = "Rescue Op"
 		else: $C/M/R/H/Offensive.text = "Offensive Op"
+		if len(WorldData.Organizations[o].IntelSources) > 0: $C/M/R/H/Recruit.text = "Sources"
 
 func _on_Gather_pressed():
 	if lastSelectedOrg != -1:
@@ -144,16 +145,61 @@ func _on_Gather_pressed():
 
 func _on_Recruit_pressed():
 	if lastSelectedOrg != -1:
-		var countryId = WorldData.Organizations[lastSelectedOrg].Countries[randi() % WorldData.Organizations[lastSelectedOrg].Countries.size()]
-		if countryChoiceActive == true: countryId = lastSelectedCountry
-		OperationGenerator.NewOperation(0, lastSelectedOrg, countryId, OperationGenerator.Type.RECRUIT_SOURCE)
-		# if possible, start fast
-		if GameLogic.OfficersInHQ > 0:
-			GameLogic.Operations[-1].AnalyticalOfficers = GameLogic.OfficersInHQ
-			GameLogic.Operations[-1].Stage = OperationGenerator.Stage.PLANNING_OPERATION
-			GameLogic.Operations[-1].Started = GameLogic.GiveDateWithYear()
-			GameLogic.Operations[-1].Result = "ONGOING (PLANNING)"
-		get_tree().change_scene("res://main.tscn")
+		if len(WorldData.Organizations[lastSelectedOrg].IntelSources) > 0:
+			# multiple options
+			var planCost = 1*5*2
+			var planShow = true
+			var planAvailability = ""
+			if (planCost*1.0/2) > GameLogic.FreeFundsWeeklyWithoutOngoing():
+				planShow = false
+				planAvailability = " Currently, it is financially unavailable."
+			var content = ""
+			if len(WorldData.Organizations[lastSelectedOrg].IntelSources) == 1:
+				content += "There is a single source inside " + WorldData.Organizations[lastSelectedOrg].Name + ". Bureau can work with them or recruit other people."
+			else:
+				content += "There are " + str(len(WorldData.Organizations[lastSelectedOrg].IntelSources)) + " sources inside " + WorldData.Organizations[lastSelectedOrg].Name + ". Bureau can work with them or recruit other people."
+			content += "\n\n[b]Plan A[/b]\n€" + str(int(planCost)) + ",000 | 1 officer | 2 weeks\nrequest immediate intel\n\n[b]Plan B[/b]\n€" + str(int(planCost)) + ",000 | 1 officer | 2 weeks\nhandle sources: verify, increase trust, train\n\n[b]Plan C[/b]\ndetails depend on plan design\nrecruit a new source"
+			if GameLogic.OfficersInHQ < 1:
+				planShow = false
+				content = "Currently, there are no officers to execute any operations."
+			# call
+			CallManager.CallQueue.append(
+				{
+					"Header": "Decision",
+					"Level": "Secret",
+					"Operation": "-//-",
+					"Content": content,
+					"Show1": planShow,
+					"Show2": planShow,
+					"Show3": planShow,
+					"Show4": true,
+					"Text1": "Plan A",
+					"Text2": "Plan B",
+					"Text3": "Plan C",
+					"Text4": "Cancel",
+					"Decision1Callback": funcref(GameLogic, "ImplementDirectionDevelopment"),
+					"Decision1Argument": {"Choice":6, "Cost": planCost, "Length": 2, "Officers": 1, "Country": WorldData.Organizations[lastSelectedOrg].Countries[0], "Org": lastSelectedOrg},
+					"Decision2Callback": funcref(GameLogic, "ImplementDirectionDevelopment"),
+					"Decision2Argument": {"Choice":7, "Cost": planCost, "Length": 2, "Officers": 1, "Country": WorldData.Organizations[lastSelectedOrg].Countries[0], "Org": lastSelectedOrg},
+					"Decision3Callback": funcref(GameLogic, "ImplementDirectionDevelopment"),
+					"Decision3Argument": {"Choice":8, "Cost": planCost, "Length": 2, "Officers": 1, "Country": WorldData.Organizations[lastSelectedOrg].Countries[0], "Org": lastSelectedOrg},
+					"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
+					"Decision4Argument": null,
+				}
+			)
+			get_tree().change_scene("res://call.tscn")
+		else:
+			# just recruiting
+			var countryId = WorldData.Organizations[lastSelectedOrg].Countries[randi() % WorldData.Organizations[lastSelectedOrg].Countries.size()]
+			if countryChoiceActive == true: countryId = lastSelectedCountry
+			OperationGenerator.NewOperation(0, lastSelectedOrg, countryId, OperationGenerator.Type.RECRUIT_SOURCE)
+			# if possible, start fast
+			if GameLogic.OfficersInHQ > 0:
+				GameLogic.Operations[-1].AnalyticalOfficers = GameLogic.OfficersInHQ
+				GameLogic.Operations[-1].Stage = OperationGenerator.Stage.PLANNING_OPERATION
+				GameLogic.Operations[-1].Started = GameLogic.GiveDateWithYear()
+				GameLogic.Operations[-1].Result = "ONGOING (PLANNING)"
+			get_tree().change_scene("res://main.tscn")
 
 func _on_Offensive_pressed():
 	if lastSelectedOrg != -1:
