@@ -238,7 +238,7 @@ func _on_Station_pressed():
 			planShow = false
 			planAvailability = " Currently, it is financially unavailable."
 		else:
-			planAvailability = " Remember that Bureau can establish or expand only one station in a year."
+			planAvailability = ""
 		content += " intelligence station in " + WorldData.Countries[lastSelectedCountry].Name + " will require €" + str(int(planCost)) + ",000 and will take out 1 officer from HQ to the station, permanently. " + whatHappens + " in " + str(int(planLength)) + " weeks."+planAvailability
 		if GameLogic.OfficersInHQ < 1:
 			planShow = false
@@ -263,7 +263,7 @@ func _on_Station_pressed():
 				"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
 				"Decision2Argument": null,
 				"Decision3Callback": funcref(GameLogic, "ImplementDirectionDevelopment"),
-				"Decision3Argument": {"Choice":5, "Cost": planCost, "Length": planLength, "Officers": 0, "Country": lastSelectedCountry},
+				"Decision3Argument": {"Choice":5, "Cost": planCost, "Length": planLength, "Officers": 1, "Country": lastSelectedCountry},
 				"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 				"Decision4Argument": null,
 			}

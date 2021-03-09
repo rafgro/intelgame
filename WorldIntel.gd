@@ -318,6 +318,7 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 			var diff = newIntel - pastIntel
 			if WorldData.Organizations[o].OffensiveClearance == false and ifKidnapping == true: diff = 21
 			if diff >= 20 and ifCounterintel == false and ifHideCalls == false:
+				GameLogic.Achievements.append("identified attack prepared by " + WorldData.Organizations[o].Name)
 				CallManager.CallQueue.append(
 					{
 						"Header": "Important Information",
@@ -516,6 +517,7 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 			var ifTechDetail = ""
 			if len(WorldData.Organizations[o].TechDescription) > 0:
 				ifTechDetail = " about " + WorldData.Organizations[o].TechDescription
+				GameLogic.Achievements.append("acquired details of " + WorldData.Organizations[o].TechDescription + " from " + WorldData.Organizations[o].Name)
 			CallManager.CallQueue.append(
 				{
 					"Header": "Important Information",
@@ -617,6 +619,7 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 				var budgetIncrease = quality*0.3
 				if budgetIncrease > 40: budgetIncrease = 40
 				GameLogic.BudgetFull += budgetIncrease
+				GameLogic.Achievements.append("discovered details of WMD program in "+WorldData.Organizations[o].Name)
 				CallManager.CallQueue.append(
 					{
 						"Header": "Important Information",

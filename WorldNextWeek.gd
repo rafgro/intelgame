@@ -271,6 +271,7 @@ func Execute(past):
 								WorldIntel.GatherOnOrg(x, 100, GameLogic.GiveDateWithYear(), true)
 					content = "[b]Homeland won war with " + WorldData.Countries[against].Name + ".[/b]\n\n" + WorldData.Countries[against].Name + " continues existence as a smaller, independent country. Homeland authorities captured wealth of intel from all " + WorldData.Countries[against].Adjective + " institutions, increasing our technological capabilities and knowledge about other organizations existing in the world."
 					WorldData.Countries[against].Size *= 0.5
+					GameLogic.Achievements.append("supported Homeland in war with " + WorldData.Countries[against].Name)
 				else:
 					# loss
 					GameLogic.BudgetFull *= 0.3

@@ -239,8 +239,7 @@ func ProgressOperations():
 				# saving and describing
 				var ifCovertTravel = false
 				if ifDiplomaticTravel == false: ifCovertTravel = true
-				var theDescription = "€"+str(totalCost)+",000 | "+str(usedOfficers)+" officers | " \
-					+str(predictedLength)+" weeks | "+qualityDesc+" quality, "+riskDesc+" risk\n"
+				var theDescription = "€"+str(int(totalCost))+",000 | "+str(int(usedOfficers))+" officers | "+str(int(predictedLength))+" weeks | "+qualityDesc+" quality, "+riskDesc+" risk\n"
 				if ifAllRemote == true: theDescription += "no travel\n"
 				elif ifCovertTravel == true: theDescription += "covert travel\n"
 				else: theDescription += "travel to embassy\n"
@@ -771,6 +770,7 @@ func ProgressOperations():
 				var content = ""
 				if GameLogic.Operations[i].Source == 0:
 					if sourceLevel == 0:
+						GameLogic.Operations[i].Stage = OperationGenerator.Stage.FAILED
 						content = "Operation failed. Officers gathered some intel on " + WorldData.Organizations[GameLogic.Operations[i].Target].Name + ", but they did not recruit a source in or near the organization.\n"
 						GameLogic.Operations[i].Result = "FAILURE"
 						GameLogic.StaffSkill += GameLogic.random.randi_range(1,2)
@@ -843,6 +843,8 @@ func ProgressOperations():
 						govFeedbackDesc = "Officers acquired a new source in an organization indicated by the government. Bureau gained "+str(int(govFeedback))+"% of trust. As a confirmation, government increases bureau's budget by €"+str(int(budgetIncrease))+",000.\n"
 						GameLogic.Operations[i].Result = "SUCCESS, positive feedback"
 						GameLogic.AddEvent("Government increased budget by €"+str(int(budgetIncrease))+"k")
+					else:
+						GameLogic.Operations[i].Stage = OperationGenerator.Stage.FAILED
 					content = "Operation has been finished. " + govFeedbackDesc
 				# debriefing user
 				if sourceLevel != 0:
@@ -1078,6 +1080,7 @@ func ProgressOperations():
 				var methodDesc = WorldData.Methods[2][GameLogic.Operations[i].AbroadPlan.Methods[0]].Name.replace("(remote) ", "")
 				if GameLogic.Operations[i].Source == 0:
 					if success == false:
+						GameLogic.Operations[i].Stage = OperationGenerator.Stage.FAILED
 						content = "Operation failed. Officers did not damage " + WorldData.Organizations[GameLogic.Operations[i].Target].Name + ", they were not able to successfully " + methodDesc + ". " + attributionDesc + "\n"
 						GameLogic.Operations[i].Result = "FAILURE"
 						GameLogic.StaffSkill += 2
@@ -1121,6 +1124,8 @@ func ProgressOperations():
 						govFeedbackDesc = "Officers damaged an organization indicated by the government. " + inflictedDamage + " Bureau gained "+str(int(govFeedback))+"% of trust. As a confirmation, government increases bureau's budget by €"+str(int(budgetIncrease))+",000.\n"
 						GameLogic.Operations[i].Result = "SUCCESS, positive feedback"
 						GameLogic.AddEvent("Government increased budget by €"+str(int(budgetIncrease))+"k")
+					else:
+						GameLogic.Operations[i].Stage = OperationGenerator.Stage.FAILED
 					content = "Operation has been finished. " + govFeedbackDesc + attributionDesc
 				# debriefing user
 				if success == true:

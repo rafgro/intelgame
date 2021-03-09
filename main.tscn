@@ -226,7 +226,6 @@ margin_bottom = 120.0
 rect_min_size = Vector2( 200, 120 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 2 )
-disabled = true
 text = "Tradecraft"
 
 [node name="Government" type="Button" parent="C/M/R/Buttons"]
@@ -260,7 +259,6 @@ margin_bottom = 120.0
 rect_min_size = Vector2( 200, 120 )
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 2 )
-disabled = true
 text = "Operations"
 
 [node name="GatheredIntel" type="Button" parent="C/M/R/Buttons2"]
@@ -335,8 +333,7 @@ margin_right = 210.0
 margin_bottom = 120.0
 rect_min_size = Vector2( 210, 120 )
 custom_fonts/font = ExtResource( 2 )
-disabled = true
-text = "Save Game"
+text = "Main Menu"
 
 [node name="Label" type="Label" parent="C/M/R/Buttons3"]
 margin_left = 214.0

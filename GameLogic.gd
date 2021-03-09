@@ -65,6 +65,7 @@ var InternalMoles = 0  # counter of officers that are passing info to other inte
 var YearlyWars = 0  # internal counter, ensuring that there's no more than 1 war per year
 var YearlyHiring = 0  # internal counter, limiting a number of new officers for later stages
 var YearlyNetworks = 0  # internal counter instead of budget limit
+var Achievements = []  # listed in the finish screen, things not covered by op descriptions
 # Distance counters: block anything that happens more frequently than limit
 var DistWalkinCounter = 0
 var DistWalkinMin = 16  # minimum four months between those events
@@ -104,6 +105,12 @@ func GiveDateWithoutYear():
 	if DateMonth < 10: dateString += "0"
 	dateString += str(DateMonth)
 	return dateString
+
+class MyCustomSorter:
+	static func sort_descending(a, b):
+		if a[0] > b[0]:
+			return true
+		return false
 
 func AddEvent(text):
 	BureauEvents.push_front("[u][b]"+GiveDateWithoutYear()+"[/b] " + text + "[/u]")
@@ -502,7 +509,32 @@ func NextWeek():
 		if UltimatumTicker == 0:
 			# make or break
 			if Trust < 10:
-				var localSummary = "- " + str(int(AllWeeks)) + " weeks\n- " + str(len(Operations)) + " operations"  # expand in the future
+				var localSummary = "- " + str(int(AllWeeks)) + " weeks\n- " + str(len(Operations)) + " operations"
+				var mostSuccessfulOps = []
+				for o in Operations:
+					if o.Stage != OperationGenerator.Stage.FINISHED: continue
+					if o.AbroadPlan == null: continue
+					var localQuality = 0
+					if o.Type == OperationGenerator.Type.RESCUE: localQuality = 100
+					elif o.Type == OperationGenerator.Type.OFFENSIVE:
+						localQuality = 50 + 0.5*o.AbroadPlan.Quality
+					elif o.Type == OperationGenerator.Type.RECRUIT_SOURCE:
+						localQuality = 40 + 0.6*o.AbroadPlan.Quality
+					elif o.Type == OperationGenerator.Type.MORE_INTEL:
+						localQuality = 10 + 0.5*o.AbroadPlan.Quality
+					var localContent = "'" + o.Name + "' against " + WorldData.Organizations[o.Target].Name + " via "
+					var methodNames = []
+					for j in o.AbroadPlan.Methods: methodNames.append(WorldData.Methods[o.Type][j].Name)
+					localContent += PoolStringArray(methodNames).join(", ")
+					mostSuccessfulOps.append([localQuality, localContent])
+				if len(mostSuccessfulOps) > 0:
+					mostSuccessfulOps.sort_custom(MyCustomSorter, "sort_descending")
+					if len(mostSuccessfulOps) > 5: mostSuccessfulOps = mostSuccessfulOps.slice(0,4)
+					var isolated = []
+					for k in mostSuccessfulOps: isolated.append(isolated[1])
+					localSummary += "\n- most successful: " + PoolStringArray(isolated).join("|")
+				if len(Achievements) > 0:
+					localSummary += "\n- other achievements: " + PoolStringArray(Achievements).join(", ")
 				CallManager.CallQueue.append(
 					{
 						"Header": "Important Information",
@@ -729,12 +761,6 @@ func SetUpNewPriorities(completelyNew):
 	if TurnOnTerrorist == false: PriorityTerrorism = 50
 	if TurnOnWMD == false: PriorityWMD = 50
 
-class MyCustomSorter:
-	static func sort_descending(a, b):
-		if a[0] > b[0]:
-			return true
-		return false
-
 func ListPriorities(delimeter):
 	# why func? to provide nice semi-sorted list
 	# sorted priorities
@@ -843,6 +869,8 @@ func ImplementOfficerRescue(adictionary):
 		var involvedInExf = OfficersInHQ
 		if involvedInExf > 15: involvedInExf = random.randi_range(14,18)
 		var content = ""
+		if !(("successfully exfiltrated officers from "+WorldData.Countries[Operations[i].Country].Name) in Achievements):
+			Achievements.append("successfully exfiltrated officers from "+WorldData.Countries[Operations[i].Country].Name)
 		if random.randi_range(0, Operations[i].AbroadPlan.Officers) < involvedInExf and random.randi_range(1,3) < 3:  # second condition to ensure variability even if we sent 100 officers
 			# successful
 			content = "Exfiltration was successful. "+str(Operations[i].AbroadPlan.Officers)+" officer(s) returned to Homeland."
