@@ -10,7 +10,7 @@ func _ready():
 	$C/V/M/R/Scenarios.add_item("Europe and Superpowers in 2021")
 	$C/V/M/R/Scenarios.add_item("Iran developing WMD in 2020s")
 	$C/V/M/R/Scenarios.add_item("ISIS growth and attacks in 2010s")
-	$C/V/M/R/Scenarios.add_item("Al-Qaeda preparing WTC attacks in 2001")
+	$C/V/M/R/Scenarios.add_item("Al-Qaeda preparing 2001 attacks")
 
 func _on_Scenarios_item_selected(index):
 	lastSelected = index

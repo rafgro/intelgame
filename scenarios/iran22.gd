@@ -343,6 +343,8 @@ func GenerateWorld():
 	# last government setups
 	GameLogic.SetUpNewPriorities(true)
 	GameLogic.PriorityWMD = 100
+	GameLogic.PriorityTerrorism = GameLogic.random.randi_range(1,25)
+	GameLogic.PriorityPublic = GameLogic.random.randi_range(1,25)
 	############################################################################
 	return homelandSoftPowerLastMonths
 
@@ -354,7 +356,7 @@ func StartAll():
 	GameLogic.TurnOnWars = true
 	GameLogic.TurnOnWMD = true
 	GameLogic.TurnOnInfiltration = true
-	GameLogic.FrequencyAttacks = 0.25
+	GameLogic.FrequencyAttacks = 0.2
 	GameLogic.SoftPowerMonthsAgo = GenerateWorld()
 	GameLogic.DateYear = 2022
 	GameLogic.StartAll()

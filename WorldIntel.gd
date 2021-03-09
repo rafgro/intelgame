@@ -691,6 +691,11 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 						antihomeland = "[u]previously unknown terrorist organization, " + WorldData.Organizations[y].Name + ", was discovered in connection the to movement[/u]"
 				movDesc = ", connected to terrorist organizations (" + PoolStringArray(orgNames).join(", ") + ")"
 		discreteDesc += movDesc
+	# rare company connections
+	if len(WorldData.Organizations[o].ConnectedTo) > 0 and WorldData.Organizations[o].Type == WorldData.OrgType.COMPANY:
+		discreteDesc += ", connected to " + WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].Name
+		WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].IntelValue += quality*0.1
+		WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].IntelDescription.push_front("[b]"+date+"[/b] discovered connection to " + WorldData.Organizations[o].Name)
 	############################################################################
 	# wartime intel
 	if WorldData.Organizations[o].Type == WorldData.OrgType.GOVERNMENT or WorldData.Organizations[o].Type == WorldData.OrgType.INTEL or WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE:

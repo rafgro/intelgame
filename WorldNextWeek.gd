@@ -389,12 +389,12 @@ func Execute(past):
 						if GameLogic.random.randi_range(1,2) == 1: continue  # sometimes enter the war
 				# actual war
 				if GameLogic.random.randi_range(1,5) == 4:
-					WorldData.Wars.append(WorldData.aNewWar({"CountryA": c, "CountryB": c2}))
-					GameLogic.AddWorldEvent("War began between " + WorldData.Countries[c].Name + " and " + WorldData.Countries[c2].Name, past)
-					WorldData.Countries[c].InStateOfWar = true
-					WorldData.Countries[c2].InStateOfWar = true
 					# homeland involved
-					if c == 0 or c2 == 0:
+					if (c == 0 or c2 == 0) and past == null:
+						WorldData.Wars.append(WorldData.aNewWar({"CountryA": c, "CountryB": c2}))
+						GameLogic.AddWorldEvent("War began between " + WorldData.Countries[c].Name + " and " + WorldData.Countries[c2].Name, past)
+						WorldData.Countries[c].InStateOfWar = true
+						WorldData.Countries[c2].InStateOfWar = true
 						var against = c
 						if c == 0: against = c2
 						WorldData.Countries[against].DiplomaticTravel = false
@@ -433,6 +433,10 @@ func Execute(past):
 						doesItEndWithCall = true
 					# external war
 					elif c != 0 and c2 != 0 and past == null:
+						WorldData.Wars.append(WorldData.aNewWar({"CountryA": c, "CountryB": c2}))
+						GameLogic.AddWorldEvent("War began between " + WorldData.Countries[c].Name + " and " + WorldData.Countries[c2].Name, past)
+						WorldData.Countries[c].InStateOfWar = true
+						WorldData.Countries[c2].InStateOfWar = true
 						# calling ff operations
 						for q in range(0, len(GameLogic.Operations)):
 							if GameLogic.Operations[q].Stage <= 2:
@@ -878,8 +882,10 @@ func Execute(past):
 						GameLogic.Operations[j].Result = "FAILURE"
 						GameLogic.Trust -= 5
 				# executing details and communicating them
-				trustLoss *= 1.0 * GameLogic.PriorityPublic*0.01 * GameLogic.PriorityTerrorism*0.01
+				trustLoss *= (1.2*GameLogic.PriorityPublic*0.01)+(1.2*GameLogic.PriorityTerrorism*0.01)
 				if trustLoss > GameLogic.Trust: trustLoss = GameLogic.Trust
+				if WorldData.Organizations[w].OpsAgainstHomeland[u].Damage >= 75:
+					trustLoss = GameLogic.Trust
 				GameLogic.Trust -= trustLoss
 				WorldData.Countries[0].SoftPower -= 5
 				WorldData.Organizations[w].OpsAgainstHomeland[u].Active = false
@@ -888,12 +894,14 @@ func Execute(past):
 				if WorldData.Organizations[w].Aggression > 100:
 					WorldData.Organizations[w].Aggression = 100
 				GameLogic.AddWorldEvent(shortDesc+" in " + theCountry, past)
+				var trustLossDesc = "Bureau lost "+str(int(trustLoss))+"% of trust."
+				if trustLoss < 1: trustLossDesc = ""
 				CallManager.CallQueue.append(
 					{
 						"Header": "Important Information",
 						"Level": "Unclassified",
 						"Operation": "-//-",
-						"Content": "[b]The worst has happened.[/b]\n\n" +longDesc + responsibility + "\n\nBureau lost "+str(int(trustLoss))+"% of trust."+tickerDesc,
+						"Content": "[b]The worst has happened.[/b]\n\n" +longDesc + responsibility + "\n\n"+trustLossDesc+tickerDesc,
 						"Show1": false,
 						"Show2": false,
 						"Show3": false,

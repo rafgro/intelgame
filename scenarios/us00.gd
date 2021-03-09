@@ -1,6 +1,6 @@
 extends Node
 
-var Description = "[b]Al-Qaeda preparing WTC attacks in 2001[/b]\n\n- Homeland similar to United States\n- Bureau similar to CIA's Alec Station\n- Al-Qaeda already designed a huge attack\n- Race with time to delay or eliminate the danger\n- Missile strikes available, given enough intel and well-nurtured government trust"
+var Description = "[b]Al-Qaeda preparing 2001 attacks[/b]\n\n- Homeland similar to United States\n- Bureau similar to CIA's Alec Station\n- Al-Qaeda already designed a huge attack\n- Race with time to delay or eliminate the danger\n- Missile strikes available, given enough intel and well-nurtured government trust"
 
 # one year simulation from 1998.9 to 1999.9
 var PossibleCountries = [
@@ -133,6 +133,11 @@ func GenerateWorld():
 	)
 	WorldData.Organizations[-1].ConnectedTo.append(alqaeda)
 	WorldData.Organizations[alqaeda].ConnectedTo.append(len(WorldData.Organizations)-1)
+	WorldData.Organizations.append(
+		WorldData.aNewOrganization({ "Type": WorldData.OrgType.COMPANY, "Name": "Al-Quds Al-Arabi", "Fixed": false, "Known": true, "Staff": 20, "Budget": 100, "Counterintelligence": 25, "Aggression": 50, "Countries": [UK], "IntelValue": 0, "TargetConsistency": 0, "TargetCountries": [], })
+	)
+	WorldData.Organizations[-1].ConnectedTo.append(alqaeda)
+	WorldData.Organizations[alqaeda].ConnectedTo.append(len(WorldData.Organizations)-1)
 	############################################################################
 	# generators
 	# companies
@@ -210,18 +215,8 @@ func GenerateWorld():
 	GameLogic.DateMonth = pastMonth
 	GameLogic.DateYear = pastYear
 	############################################################################
-	WorldData.Organizations[alqaeda].OpsAgainstHomeland.append(
-		WorldData.aNewExtOp(
-			{
-				"Type": WorldData.ExtOpType.HOME_TERRORIST_ATTACK,
-				"Budget": WorldData.Organizations[alqaeda].Budget * 0.5,
-				"Persons": 100,
-				"Secrecy": 70,
-				"Damage": 90,
-				"FinishCounter": 52*2+1,
-			}
-		)
-	)
+	# wtc
+	WorldData.Organizations[alqaeda].OpsAgainstHomeland.append(WorldData.aNewExtOp({"Type": WorldData.ExtOpType.HOME_TERRORIST_ATTACK, "Budget": WorldData.Organizations[alqaeda].Budget * 0.5, "Persons": 100, "Secrecy": 70, "Damage": 90, "FinishCounter": 52*2+1, }))
 	GameLogic.CurrentOpsAgainstHomeland += 1
 	GameLogic.YearlyOpsAgainstHomeland += 1
 	WorldData.Organizations[alqaeda].ActiveOpsAgainstHomeland += 1
@@ -229,10 +224,16 @@ func GenerateWorld():
 	GameLogic.AttackTickerOp.Org = alqaeda
 	GameLogic.AttackTickerOp.Op = len(WorldData.Organizations[alqaeda].OpsAgainstHomeland)-1
 	GameLogic.AttackTickerText = " weeks to possible attack"
+	# anthrax
+	WorldData.Organizations[alqaeda].OpsAgainstHomeland.append(WorldData.aNewExtOp({"Type": WorldData.ExtOpType.HOME_TERRORIST_ATTACK, "Budget": WorldData.Organizations[alqaeda].Budget * 0.1, "Persons": 20, "Secrecy": 90, "Damage": 35, "FinishCounter": 52*2+1+3, }))
+	GameLogic.CurrentOpsAgainstHomeland += 1
+	GameLogic.YearlyOpsAgainstHomeland += 1
+	WorldData.Organizations[alqaeda].ActiveOpsAgainstHomeland += 1
 	############################################################################
 	# last government setups
 	GameLogic.SetUpNewPriorities(true)
 	GameLogic.PriorityTerrorism = 100
+	GameLogic.PriorityPublic = 100
 	############################################################################
 	return homelandSoftPowerLastMonths
 

@@ -220,7 +220,7 @@ func NextWeek():
 	var freeFund = FreeFundsWeekly()
 	if freeFund < 0: freeFund = 0
 	RecruitProgress += freeFund * (IntensityPercent(IntensityHiring)*0.01) / NewOfficerCost
-	if RecruitProgress >= 1.0 and FreeFundsWeekly() >= 4 and YearlyHiring < 5:
+	if RecruitProgress >= 1.0 and FreeFundsWeekly() >= 4 and YearlyHiring < 4:
 		# currently always plus one, sort of weekly onboarding limit
 		# in the future expand that to a loop
 		ActiveOfficers += 1
@@ -652,6 +652,9 @@ func NextWeek():
 	if BudgetExtras < 0: BudgetExtras = 0
 	if ActiveOfficers != (OfficersAbroad+OfficersInHQ):
 		OfficersInHQ = ActiveOfficers - OfficersAbroad
+	if ActiveOfficers < 0: ActiveOfficers = 0
+	if OfficersInHQ < 0: OfficersInHQ = 0
+	if OfficersAbroad < 0: OfficersAbroad = 0
 	# histories of certain variables
 	if len(StaffSkillMonthsAgo) < 26:  # if this is under, all histories are under
 		# building initial history
@@ -1006,8 +1009,9 @@ func ImplementDirectionDevelopment(aDict):
 			}
 		)
 		BudgetOngoingOperations += aDict.Cost * 4.0 / aDict.Length
-		OfficersInHQ -= aDict.Officers
-		OfficersAbroad += aDict.Officers
+		if aDict.Choice != 5:
+			OfficersInHQ -= aDict.Officers
+			OfficersAbroad += aDict.Officers
 		if aDict.Choice == 1:
 			AddEvent(str(aDict.Officers) + " officer(s) departed to training center")
 		elif aDict.Choice <= 3:

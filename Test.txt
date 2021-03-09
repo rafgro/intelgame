@@ -1,346 +1,518 @@
-[u][b]09/11[/b] Belgium: operation continues[/u]
-[b]02/11[/b] Belgium: operation continues
-[b]26/10[/b] Bureau called off operation Rabbit Redux
-[b]26/10[/b] Belgium: operation continues
-[b]19/10[/b] Government designated a new operation: Rabbit Redux
-[b]19/10[/b] Belgium: operation continues
-[b]12/10[/b] Ulysses: 4 officer(s) departed to Belgium
-[b]28/09[/b] Bureau started a new operation in Belgium: Ulysses
-[b]24/08[/b] Bureau did not prevent terrorist attack with 38 casualties on Homeland
-[b]10/08[/b] France (Moonstone): 2 officer(s) returned to Homeland after being arrested
-[b]03/08[/b] Moonstone: 2 officer(s) departed to France
+[u][b]13/06[/b] France: operation continues[/u]
+[u][b]13/06[/b] Italy (Murphy): counterintelligence slowed down operation[/u]
+[b]06/06[/b] France: operation continues
+[b]06/06[/b] Italy (Murphy): counterintelligence slowed down operation
+[b]30/05[/b] Suicide Note: 2 officer(s) departed to France
+[b]30/05[/b] Murphy: 3 officer(s) departed to Italy
+[b]23/05[/b] Bureau started a new operation in France: Suicide Note
+[b]23/05[/b] Bureau started a new operation in Italy: Murphy
+[b]23/05[/b] Bureau started a new operation in Belgium: Tropic of Cancer
+[b]18/04[/b] Bureau finished operation Of Human Bondage
+[b]18/04[/b] United Kingdom (Of Human Bondage): 2 officer(s) returned to Homeland
+[b]11/04[/b] United Kingdom: operation continues
+[b]11/04[/b] Bureau finished operation Hyperion
+[b]11/04[/b] United States (Hyperion): 1 officer(s) returned to Homeland
+[b]04/04[/b] United Kingdom, United States: operations continue
+[b]28/03[/b] United Kingdom, United States: operations continue
+[b]21/03[/b] Bureau did not prevent terrorist attack with 10 casualties on Homeland
+[b]21/03[/b] United Kingdom, United States: operations continue
+[b]14/03[/b] Hyperion: 1 officer(s) departed to United States
+[b]14/03[/b] United Kingdom: operation continues
+[b]07/03[/b] Bureau started a new operation in United States: Hyperion
+[b]07/03[/b] Of Human Bondage: 2 officer(s) departed to United Kingdom
+[b]28/02[/b] Bureau started a new operation in United Kingdom: Of Human Bondage
+[b]07/02[/b] New officer joined Bureau
+[b]03/01[/b] New year budget increase: +€40k
+[b]29/11[/b] Bureau detected possibility of terrorist attack in 16 weeks
+[b]29/11[/b] Bureau finished operation Ender's Game
+[b]29/11[/b] Italy (Ender's Game): 2 officer(s) returned to Homeland
+[b]22/11[/b] Italy: operation continues
+[b]15/11[/b] Italy: operation continues
+[b]08/11[/b] Italy: operation continues
+[b]01/11[/b] Italy (Ender's Game): counterintelligence slowed down operation
+[b]25/10[/b] Italy: operation continues
+[b]18/10[/b] Italy (Ender's Game): counterintelligence slowed down operation
+[b]11/10[/b] Italy: operation continues
+[b]11/10[/b] New officer joined Bureau and brought in some knowledge about United States
+[b]04/10[/b] Ender's Game: 2 officer(s) departed to Italy
+[b]04/10[/b] 6 officer(s) came back with improved knowledge about Belgium
+[b]06/09[/b] Bureau started a new operation in Italy: Ender's Game
+[b]06/09[/b] Bureau called off operation Single Man
+[b]30/08[/b] Bureau started a new operation in United States: Single Man
+[b]02/08[/b] Bureau called off operation Age of Innocence
+[b]19/07[/b] Bureau called off operation Catch-22
+[b]19/07[/b] Government designated a new operation: Age of Innocence
+[b]19/07[/b] Bureau finished operation Dark Matter
+[b]19/07[/b] Germany (Dark Matter): 5 officer(s) returned to Homeland
+[b]12/07[/b] 6 officer(s) departed to Belgium to develop new skills
+[b]12/07[/b] Bureau called off operation Under the Sea
+[b]12/07[/b] Germany: operation continues
+[b]12/07[/b] 4 officer(s) came back after establishing agent network in Belgium
+[b]12/07[/b] Bureau lost an officer due to resignation
+[b]05/07[/b] Bureau started a new operation in Belgium: Catch-22
+[b]05/07[/b] Germany: operation continues
+[b]28/06[/b] Germany: operation continues
+[b]21/06[/b] Bureau called off operation Artemis
+[b]21/06[/b] Germany: operation continues
+[b]14/06[/b] Germany: operation continues
+[b]07/06[/b] Bureau started a new operation in United Kingdom: Artemis
+[b]07/06[/b] Germany: operation continues
+[b]31/05[/b] Germany: operation continues
+[b]24/05[/b] Germany: operation continues
+[b]17/05[/b] 4 officer(s) departed to Belgium to establish a new network
+[b]17/05[/b] Dark Matter: 5 officer(s) departed to Germany
+[b]10/05[/b] Government designated a new operation: Under the Sea
+[b]19/04[/b] Germany (Dark Matter): officers were almost caught and had to flee to Homeland
+[b]12/04[/b] Dark Matter: 4 officer(s) departed to Germany
+[b]15/03[/b] Bureau started a new operation in Germany: Dark Matter
+[b]01/02[/b] New craft is available: identify potential defectors
+[b]01/02[/b] New officer joined Bureau
+[b]11/01[/b] Bureau finished operation Blindness
+[b]11/01[/b] Ireland (Blindness): 3 officer(s) returned to Homeland
+[b]04/01[/b] Ireland: operation continues
+[b]04/01[/b] New year budget increase: +€45k
+[b]28/12[/b] Ireland: operation continues
+[b]21/12[/b] Ireland: operation continues
+[b]14/12[/b] Ireland: operation continues
+[b]07/12[/b] Ireland: operation continues
+[b]30/11[/b] Ireland: operation continues
+[b]23/11[/b] Bureau called off operation Gentlemen Prefer Blondes
+[b]23/11[/b] Ireland: operation continues
+[b]16/11[/b] Ireland: operation continues
+[b]09/11[/b] Bureau started a new operation in Ireland: Gentlemen Prefer Blondes
+[b]09/11[/b] Blindness: 3 officer(s) departed to Ireland
+[b]02/11[/b] Government designated a new operation: Blindness
+[b]26/10[/b] Bureau finished operation High Castle
+[b]26/10[/b] United States (High Castle): 2 officer(s) returned to Homeland
+[b]26/10[/b] Government increased budget by €15k
+[b]19/10[/b] United States: operation continues
+[b]12/10[/b] United States: operation continues
+[b]12/10[/b] Bureau finished operation Lord of the Flies
+[b]12/10[/b] Belgium (Lord of the Flies): 2 officer(s) returned to Homeland
+[b]05/10[/b] United States, Belgium: operations continue
+[b]28/09[/b] United States, Belgium: operations continue
+[b]21/09[/b] High Castle: 2 officer(s) departed to United States
+[b]21/09[/b] Belgium: operation continues
+[b]14/09[/b] Belgium: operation continues
+[b]07/09[/b] Lord of the Flies: 2 officer(s) departed to Belgium
+[b]24/08[/b] Bureau started a new operation in Belgium: Lord of the Flies
+[b]10/08[/b] Government designated a new operation: High Castle
 [b]03/08[/b] New officer joined Bureau
-[b]20/07[/b] France (Moonstone): officers were almost caught and had to flee to Homeland
-[b]13/07[/b] France (Moonstone): counterintelligence slowed down operation
-[b]06/07[/b] France: operation continues
-[b]29/06[/b] France (Moonstone): counterintelligence slowed down operation
-[b]22/06[/b] Bureau detected possibility of terrorist attack in 41 weeks
-[b]22/06[/b] France: operation continues
-[b]15/06[/b] France (Moonstone): counterintelligence slowed down operation
-[b]08/06[/b] France: operation continues
-[b]01/06[/b] France (Moonstone): counterintelligence slowed down operation
-[b]25/05[/b] France (Moonstone): counterintelligence slowed down operation
-[b]18/05[/b] Moonstone: 6 officer(s) departed to France
-[b]18/05[/b] Bureau detected possibility of terrorist attack in 14 weeks
-[b]11/05[/b] Bureau started a new operation in France: Moonstone
-[b]06/04[/b] Bureau finished operation Catch-22
-[b]06/04[/b] United States (Catch-22): 5 officer(s) returned to Homeland
-[b]30/03[/b] United States: operation continues
-[b]23/03[/b] United States: operation continues
-[b]16/03[/b] United States: operation continues
-[b]09/03[/b] United States: operation continues
-[b]02/03[/b] United States: operation continues
-[b]23/02[/b] Catch-22: 5 officer(s) departed to United States
-[b]09/02[/b] 2 officer(s) came back after establishing agent network in Ireland
-[b]02/02[/b] Bureau started a new operation in United States: Catch-22
-[b]02/02[/b] New officer joined Bureau and brought in some knowledge about United Kingdom
-[b]05/01[/b] New year budget increase: +€44k
-[b]24/11[/b] New craft is available: construct network of close contacts
-[b]17/11[/b] Bureau finished operation Dispossesed
-[b]17/11[/b] China (Dispossesed): 1 officer(s) returned to Homeland
-[b]10/11[/b] China: operation continues
-[b]10/11[/b] Bureau finished operation Lolly Willowes
-[b]10/11[/b] Russia (Lolly Willowes): 1 officer(s) returned to Homeland
-[b]03/11[/b] Russia, China: operations continue
-[b]27/10[/b] Russia, China: operations continue
-[b]20/10[/b] Russia, China: operations continue
-[b]13/10[/b] Dispossesed: 1 officer(s) departed to China
-[b]13/10[/b] Russia: operation continues
-[b]06/10[/b] Russia: operation continues
-[b]29/09[/b] Lolly Willowes: 1 officer(s) departed to Russia
-[b]29/09[/b] Bureau finished operation Dune
-[b]29/09[/b] United States (Dune): 3 officer(s) returned to Homeland
-[b]29/09[/b] Government increased budget by €15k
-[b]29/09[/b] New craft is available: (remote) tap into local cctv
-[b]22/09[/b] United States: operation continues
-[b]15/09[/b] Bureau started a new operation in China: Dispossesed
-[b]15/09[/b] United States: operation continues
-[b]15/09[/b] Russia (Lolly Willowes): officers were almost caught and had to flee to Homeland
-[b]08/09[/b] Russia, United States: operations continue
-[b]01/09[/b] Lolly Willowes: 1 officer(s) departed to Russia
+[b]01/06[/b] Bureau finished operation Maltese Falcon
+[b]01/06[/b] Spain (Maltese Falcon): 3 officer(s) returned to Homeland
+[b]25/05[/b] Spain: operation continues
+[b]18/05[/b] Spain: operation continues
+[b]11/05[/b] Maltese Falcon: 3 officer(s) departed to Spain
+[b]11/05[/b] Bureau finished operation Scoop
+[b]11/05[/b] China (Scoop): 5 officer(s) returned to Homeland
+[b]04/05[/b] Bureau started a new operation in Spain: Maltese Falcon
+[b]04/05[/b] China: operation continues
+[b]04/05[/b] New officer joined Bureau
+[b]27/04[/b] China: operation continues
+[b]20/04[/b] Scoop: 5 officer(s) departed to China
+[b]06/04[/b] Government designated a new operation: Scoop
+[b]09/02[/b] Bureau finished operation Song of Solomon
+[b]09/02[/b] Israel (Song of Solomon): 3 officer(s) returned to Homeland
+[b]02/02[/b] Israel: operation continues
+[b]26/01[/b] Israel: operation continues
+[b]26/01[/b] Bureau finished operation Grub Street
+[b]26/01[/b] Russia (Grub Street): 2 officer(s) returned to Homeland
+[b]19/01[/b] Song of Solomon: 3 officer(s) departed to Israel
+[b]19/01[/b] Russia: operation continues
+[b]12/01[/b] Bureau started a new operation in Israel: Song of Solomon
+[b]12/01[/b] Russia: operation continues
+[b]05/01[/b] Russia: operation continues
+[b]05/01[/b] New year budget increase: +€45k
+[b]29/12[/b] Russia: operation continues
+[b]29/12[/b] Bureau finished operation Heart of Darkness
+[b]22/12[/b] Grub Street: 2 officer(s) departed to Russia
+[b]22/12[/b] Germany: operation continues
+[b]22/12[/b] New officer joined Bureau
+[b]15/12[/b] Germany: operation continues
+[b]15/12[/b] Bureau finished operation Thirty-Nine Steps
+[b]15/12[/b] Belgium (Thirty-Nine Steps): 7 officer(s) returned to Homeland
+[b]08/12[/b] Bureau started a new operation in Russia: Grub Street
+[b]08/12[/b] Heart of Darkness: 1 officer(s) began operation
+[b]08/12[/b] Belgium: operation continues
+[b]08/12[/b] Bureau finished operation Swim-Two-Birds
+[b]08/12[/b] United States (Swim-Two-Birds): 1 officer(s) returned to Homeland
+[b]01/12[/b] Belgium: operation continues
+[b]01/12[/b] United States (Swim-Two-Birds): counterintelligence slowed down operation
+[b]24/11[/b] United States, Belgium: operations continue
+[b]17/11[/b] Thirty-Nine Steps: 7 officer(s) departed to Belgium
+[b]17/11[/b] United States: operation continues
+[b]17/11[/b] Germany (Heart of Darkness): officers were almost caught and had to flee to Homeland
+[b]10/11[/b] Heart of Darkness: 6 officer(s) departed to Germany
+[b]10/11[/b] United States: operation continues
+[b]03/11[/b] United States: operation continues
+[b]27/10[/b] Bureau started a new operation in Belgium: Thirty-Nine Steps
+[b]27/10[/b] Bureau started a new operation in Germany: Heart of Darkness
+[b]27/10[/b] United States: operation continues
+[b]20/10[/b] Swim-Two-Birds: 1 officer(s) departed to United States
+[b]06/10[/b] Bureau did not prevent terrorist attack on Homeland
+[b]15/09[/b] United States (Swim-Two-Birds): officers were almost caught and had to flee to Homeland
+[b]08/09[/b] United States: operation continues
 [b]01/09[/b] United States: operation continues
-[b]01/09[/b] New officer joined Bureau
-[b]25/08[/b] United States: operation continues
-[b]18/08[/b] Dune: 3 officer(s) departed to United States
-[b]18/08[/b] Bureau finished operation Vanity Fair
-[b]18/08[/b] Germany (Vanity Fair): 3 officer(s) returned to Homeland
-[b]11/08[/b] 2 officer(s) departed to Ireland to establish a new network
-[b]11/08[/b] Germany: operation continues
-[b]04/08[/b] Government designated a new operation: Dune
-[b]04/08[/b] Germany: operation continues
-[b]04/08[/b] Russia (Lolly Willowes): officers were almost caught and had to flee to Homeland
-[b]28/07[/b] Bureau did not prevent terrorist attack with 63 casualties on Homeland
-[b]28/07[/b] Germany: operation continues
-[b]28/07[/b] Russia (Lolly Willowes): counterintelligence slowed down operation
-[b]21/07[/b] Lolly Willowes: 1 officer(s) departed to Russia
-[b]21/07[/b] Vanity Fair: 3 officer(s) departed to Germany
-[b]14/07[/b] Bureau finished operation Ancillary Sword
-[b]14/07[/b] Belgium (Ancillary Sword): 7 officer(s) returned to Homeland
-[b]07/07[/b] Bureau started a new operation in Russia: Lolly Willowes
-[b]07/07[/b] Belgium: operation continues
-[b]30/06[/b] Bureau started a new operation in Germany: Vanity Fair
-[b]30/06[/b] Bureau detected possibility of terrorist attack in 4 weeks
-[b]30/06[/b] Belgium: operation continues
-[b]23/06[/b] Bureau called off operation Great Gatsby
-[b]23/06[/b] Belgium (Ancillary Sword): counterintelligence slowed down operation
-[b]16/06[/b] Belgium: operation continues
-[b]09/06[/b] Government designated a new operation: Great Gatsby
-[b]09/06[/b] Belgium: operation continues
-[b]02/06[/b] Belgium: operation continues
-[b]26/05[/b] Belgium: operation continues
-[b]19/05[/b] Belgium: operation continues
-[b]12/05[/b] Belgium: operation continues
-[b]05/05[/b] Bureau called off operation Rainbow
-[b]05/05[/b] Ancillary Sword: 7 officer(s) departed to Belgium
-[b]28/04[/b] New craft is available: build relationship with potential assets
-[b]21/04[/b] Bureau finished operation On the Road
-[b]21/04[/b] Germany (On the Road): 3 officer(s) returned to Homeland
-[b]14/04[/b] Germany: operation continues
-[b]07/04[/b] Germany: operation continues
-[b]31/03[/b] Germany: operation continues
-[b]31/03[/b] Belgium (Ancillary Sword): officers were almost caught and had to flee to Homeland
-[b]24/03[/b] Belgium, Germany: operations continue
-[b]17/03[/b] Bureau did not prevent terrorist attack with 292 casualties on Homeland
-[b]17/03[/b] Germany: operation continues
-[b]17/03[/b] Belgium (Ancillary Sword): counterintelligence slowed down operation
-[b]10/03[/b] On the Road: 3 officer(s) departed to Germany
-[b]10/03[/b] Government designated a new operation: Rainbow
+[b]25/08[/b] Swim-Two-Birds: 6 officer(s) departed to United States
+[b]18/08[/b] Bureau tasked with rescue attempt in Russia
+[b]11/08[/b] Bureau started a new operation in United States: Swim-Two-Birds
+[b]04/08[/b] Bureau finished operation Wind in the Willow
+[b]28/07[/b] France: operation continues
+[b]21/07[/b] France: operation continues
+[b]14/07[/b] France: operation continues
+[b]07/07[/b] France: operation continues
+[b]30/06[/b] France: operation continues
+[b]23/06[/b] Wind in the Willow: 2 officer(s) began operation
+[b]16/06[/b] Bureau started a new operation in France: Wind in the Willow
+[b]16/06[/b] New craft is available: kill a known member
+[b]09/06[/b] Bureau finished operation Lolita
+[b]09/06[/b] United States (Lolita): 3 officer(s) returned to Homeland
+[b]02/06[/b] United States: operation continues
+[b]26/05[/b] United States: operation continues
+[b]19/05[/b] United States: operation continues
+[b]19/05[/b] Bureau finished operation Illustrated Man
+[b]19/05[/b] Italy (Illustrated Man): 2 officer(s) returned to Homeland
+[b]12/05[/b] Italy, United States: operations continue
+[b]05/05[/b] Italy, United States: operations continue
+[b]05/05[/b] Bureau finished operation Underworld
+[b]05/05[/b] Belgium (Underworld): 2 officer(s) returned to Homeland
+[b]28/04[/b] Lolita: 3 officer(s) departed to United States
+[b]28/04[/b] Belgium, Italy: operations continue
+[b]21/04[/b] Bureau started a new operation in United States: Lolita
+[b]21/04[/b] Illustrated Man: 2 officer(s) departed to Italy
+[b]21/04[/b] Belgium: operation continues
+[b]21/04[/b] Bureau finished operation Sign of Four
+[b]21/04[/b] Spain (Sign of Four): 6 officer(s) returned to Homeland
+[b]14/04[/b] Belgium, Spain: operations continue
+[b]07/04[/b] Sign of Four: 6 officer(s) departed to Spain
+[b]07/04[/b] Belgium: operation continues
+[b]31/03[/b] Bureau started a new operation in Italy: Illustrated Man
+[b]31/03[/b] Bureau started a new operation in Spain: Sign of Four
+[b]31/03[/b] Belgium: operation continues
+[b]24/03[/b] Belgium: operation continues
+[b]17/03[/b] Belgium: operation continues
 [b]10/03[/b] Belgium: operation continues
-[b]03/03[/b] Belgium (Ancillary Sword): counterintelligence slowed down operation
-[b]24/02[/b] Ancillary Sword: 2 officer(s) departed to Belgium
-[b]24/02[/b] New officer joined Bureau
-[b]17/02[/b] Bureau started a new operation in Germany: On the Road
-[b]10/02[/b] Bureau started a new operation in Belgium: Ancillary Sword
-[b]10/02[/b] New craft is available: intercept local mobile communication
-[b]27/01[/b] Bureau finished operation History of Mr Polly
-[b]27/01[/b] United States (History of Mr Polly): 7 officer(s) returned to Homeland
-[b]20/01[/b] United States (History of Mr Polly): counterintelligence slowed down operation
-[b]13/01[/b] United States: operation continues
-[b]06/01[/b] History of Mr Polly: 7 officer(s) departed to United States
-[b]06/01[/b] New craft is available: forced entry and rescue
-[b]06/01[/b] New craft is available: engage local gangs
-[b]06/01[/b] New year budget increase: +€74k
-[b]30/12[/b] Bureau started a new operation in United States: History of Mr Polly
-[b]30/12[/b] Golden Bowl: 3 officer(s) were caught and expelled from Ireland
-[b]23/12[/b] Golden Bowl: 3 officer(s) departed to Ireland
-[b]23/12[/b] New officer joined Bureau and brought in some knowledge about China
-[b]16/12[/b] New craft is available: honeytrap blackmail
-[b]16/12[/b] New craft is available: collect blackmail material
-[b]02/12[/b] Government designated a new operation: Golden Bowl
-[b]18/11[/b] Bureau finished operation Cloud Atlas
-[b]11/11[/b] Ireland: operation continues
-[b]04/11[/b] Ireland: operation continues
-[b]28/10[/b] Ireland: operation continues
-[b]28/10[/b] 1 officer(s) came back with improved knowledge about Belgium
-[b]21/10[/b] Ireland: operation continues
-[b]14/10[/b] Cloud Atlas: 1 officer(s) began operation
-[b]07/10[/b] Government designated a new operation: Cloud Atlas
-[b]30/09[/b] New officer joined Bureau
-[b]23/09[/b] 1 officer(s) departed to Belgium to develop new skills
-[b]08/07[/b] New craft is available: kidnap and interrogate a known member
-[b]01/07[/b] Bureau finished operation Lord of the Flies
-[b]01/07[/b] Switzerland (Lord of the Flies): 3 officer(s) returned to Homeland
-[b]24/06[/b] Switzerland: operation continues
-[b]17/06[/b] Switzerland (Lord of the Flies): counterintelligence slowed down operation
-[b]10/06[/b] Switzerland: operation continues
-[b]03/06[/b] Switzerland (Lord of the Flies): counterintelligence slowed down operation
-[b]27/05[/b] Switzerland: operation continues
-[b]27/05[/b] 4 officer(s) came back with improved knowledge about Belgium
-[b]20/05[/b] Switzerland: operation continues
-[b]13/05[/b] Switzerland (Lord of the Flies): counterintelligence slowed down operation
-[b]06/05[/b] Switzerland: operation continues
-[b]29/04[/b] Lord of the Flies: 3 officer(s) departed to Switzerland
-[b]22/04[/b] Switzerland (Lord of the Flies): officers were almost caught and had to flee to Homeland
-[b]15/04[/b] Switzerland: operation continues
-[b]08/04[/b] 4 officer(s) departed to training center
-[b]08/04[/b] Lord of the Flies: 3 officer(s) departed to Switzerland
-[b]01/04[/b] Bureau started a new operation in Switzerland: Lord of the Flies
-[b]01/04[/b] Bureau finished operation Wonderland
-[b]01/04[/b] Ireland (Wonderland): 4 officer(s) returned to Homeland
-[b]01/04[/b] Ireland (Wonderland): bureau acquired a new source
-[b]01/04[/b] Government increased budget by €30k
-[b]25/03[/b] Ireland: operation continues
-[b]18/03[/b] Bureau called off operation Huckleberry Finn
-[b]18/03[/b] Ireland: operation continues
-[b]11/03[/b] Ireland: operation continues
-[b]04/03[/b] Bureau detected possibility of terrorist attack in 54 weeks
-[b]04/03[/b] Ireland: operation continues
-[b]25/02[/b] Ireland (Wonderland): counterintelligence slowed down operation
-[b]18/02[/b] Ireland: operation continues
-[b]11/02[/b] Ireland: operation continues
-[b]04/02[/b] Wonderland: 4 officer(s) departed to Ireland
-[b]04/02[/b] New craft is available: set up thorough covers for officers
-[b]04/02[/b] New craft is available: attemp walk in from a street
-[b]28/01[/b] Bureau started a new operation in United Kingdom: Huckleberry Finn
-[b]28/01[/b] Government designated a new operation: Wonderland
-[b]28/01[/b] Bureau finished operation All Systems Red
-[b]28/01[/b] United Kingdom (All Systems Red): 1 officer(s) returned to Homeland
-[b]21/01[/b] United Kingdom: operation continues
-[b]14/01[/b] All Systems Red: 1 officer(s) departed to United Kingdom
-[b]07/01[/b] New craft is available: perform basic psychological operation
-[b]07/01[/b] New year budget increase: +€70k
-[b]31/12[/b] Bureau started a new operation in United Kingdom: All Systems Red
-[b]17/12[/b] New officer joined Bureau
-[b]29/10[/b] New craft is available: open observation by disguised officers
-[b]22/10[/b] Bureau finished operation Moby Dick
-[b]22/10[/b] Germany (Moby Dick): 5 officer(s) returned to Homeland
-[b]15/10[/b] Germany: operation continues
-[b]08/10[/b] Germany: operation continues
-[b]01/10[/b] Germany: operation continues
-[b]24/09[/b] Germany: operation continues
-[b]17/09[/b] Germany: operation continues
-[b]10/09[/b] Bureau called off operation Middlemarch
-[b]10/09[/b] Germany (Moby Dick): counterintelligence slowed down operation
-[b]03/09[/b] Bureau started a new operation in France: Middlemarch
-[b]03/09[/b] Moby Dick: 5 officer(s) departed to Germany
-[b]20/08[/b] Bureau started a new operation in Germany: Moby Dick
-[b]13/08[/b] 4 officer(s) came back with improved knowledge about Spain
-[b]23/07[/b] Bureau finished operation Sun Also Rises
-[b]16/07[/b] Israel: operation continues
-[b]09/07[/b] Sun Also Rises: 1 officer(s) began operation
-[b]09/07[/b] New craft is available: track down and disrupt funding
-[b]02/07[/b] Bureau finished operation Altered Carbon
-[b]02/07[/b] Russia (Altered Carbon): 2 officer(s) returned to Homeland
-[b]25/06[/b] Russia: operation continues
-[b]18/06[/b] Russia: operation continues
-[b]11/06[/b] Russia: operation continues
-[b]04/06[/b] Russia: operation continues
-[b]28/05[/b] Government designated a new operation: Sun Also Rises
-[b]28/05[/b] Russia: operation continues
-[b]21/05[/b] 4 officer(s) departed to Spain to develop new skills
-[b]21/05[/b] Altered Carbon: 2 officer(s) departed to Russia
-[b]21/05[/b] New craft is available: install and operate external cameras
-[b]07/05[/b] Bureau started a new operation in Russia: Altered Carbon
-[b]09/04[/b] 2 officer(s) came back with improved knowledge about Ireland
-[b]19/03[/b] New officer joined Bureau
-[b]12/02[/b] 2 officer(s) departed to Ireland to develop new skills
-[b]05/02[/b] Bureau finished operation Artemis
-[b]05/02[/b] Ireland (Artemis): 4 officer(s) returned to Homeland
-[b]29/01[/b] Ireland: operation continues
-[b]22/01[/b] Artemis: 4 officer(s) departed to Ireland
-[b]08/01[/b] Government designated a new operation: Artemis
+[b]10/03[/b] Bureau finished operation Pilgrim’s Progress
+[b]10/03[/b] Ireland (Pilgrim’s Progress): 3 officer(s) returned to Homeland
+[b]10/03[/b] Bureau finished operation Mockingbird
+[b]10/03[/b] United Kingdom (Mockingbird): 3 officer(s) returned to Homeland
+[b]03/03[/b] Underworld: 2 officer(s) departed to Belgium
+[b]03/03[/b] United Kingdom, Ireland: operations continue
+[b]24/02[/b] United Kingdom, Ireland: operations continue
+[b]17/02[/b] Mockingbird: 3 officer(s) departed to United Kingdom
+[b]17/02[/b] Ireland: operation continues
+[b]10/02[/b] Government designated a new operation: Underworld
+[b]10/02[/b] Ireland: operation continues
+[b]03/02[/b] Ireland: operation continues
+[b]03/02[/b] United Kingdom (Mockingbird): officers were almost caught and had to flee to Homeland
+[b]27/01[/b] Pilgrim’s Progress: 3 officer(s) departed to Ireland
+[b]27/01[/b] Mockingbird: 4 officer(s) departed to United Kingdom
+[b]27/01[/b] 1 officer(s) came back with improved knowledge about Belgium
+[b]27/01[/b] New craft is available: capture and interrogate a member
+[b]20/01[/b] 1 officer(s) departed to training center
+[b]20/01[/b] Bureau started a new operation in Ireland: Pilgrim’s Progress
+[b]20/01[/b] Bureau started a new operation in United Kingdom: Mockingbird
+[b]06/01[/b] New craft is available: execute misinformation campaign
+[b]06/01[/b] New year budget increase: +€47k
+[b]30/12[/b] New craft is available: intercept local mobile communication
+[b]02/12[/b] 5 officer(s) came back with improved knowledge about Germany
+[b]02/12[/b] New craft is available: forced entry and rescue
+[b]02/12[/b] New craft is available: collect blackmail material
+[b]02/12[/b] New officer joined Bureau and brought in some knowledge about China
+[b]25/11[/b] France (Andromeda Strain): 2 officer(s) returned to Homeland after being arrested
+[b]18/11[/b] France: operation continues
+[b]11/11[/b] 5 officer(s) departed to training center
+[b]11/11[/b] France (Andromeda Strain): counterintelligence slowed down operation
+[b]04/11[/b] France: operation continues
+[b]28/10[/b] Andromeda Strain: 2 officer(s) departed to France
+[b]28/10[/b] Bureau finished operation Children of Time
+[b]28/10[/b] Belgium (Children of Time): 4 officer(s) returned to Homeland
+[b]28/10[/b] Government increased budget by €13k
+[b]21/10[/b] Belgium: operation continues
+[b]14/10[/b] Belgium: operation continues
+[b]07/10[/b] Belgium: operation continues
+[b]07/10[/b] New craft is available: construct network of close contacts
+[b]30/09[/b] Belgium: operation continues
+[b]30/09[/b] Bureau finished operation Call of the Wild
+[b]30/09[/b] Spain (Call of the Wild): 2 officer(s) returned to Homeland
+[b]30/09[/b] New craft is available: build relationship with potential assets
+[b]23/09[/b] Children of Time: 4 officer(s) departed to Belgium
+[b]23/09[/b] Spain: operation continues
+[b]23/09[/b] Bureau finished operation Animal Farm
+[b]23/09[/b] Belgium (Animal Farm): 3 officer(s) returned to Homeland
+[b]16/09[/b] Government designated a new operation: Children of Time
+[b]16/09[/b] Spain, Belgium: operations continue
+[b]09/09[/b] Call of the Wild: 2 officer(s) departed to Spain
+[b]09/09[/b] Belgium: operation continues
+[b]02/09[/b] Belgium: operation continues
+[b]26/08[/b] Belgium: operation continues
+[b]26/08[/b] France (Andromeda Strain): officers were almost caught and had to flee to Homeland
+[b]19/08[/b] Animal Farm: 3 officer(s) departed to Belgium
+[b]19/08[/b] France: operation continues
+[b]19/08[/b] Bureau finished operation Hadrian the Seventh
+[b]19/08[/b] Russia (Hadrian the Seventh): 3 officer(s) returned to Homeland
+[b]19/08[/b] New craft is available: honeytrap blackmail
+[b]12/08[/b] Russia: operation continues
+[b]12/08[/b] France (Andromeda Strain): counterintelligence slowed down operation
+[b]05/08[/b] Russia, France: operations continue
+[b]29/07[/b] Andromeda Strain: 4 officer(s) departed to France
+[b]29/07[/b] Russia: operation continues
+[b]29/07[/b] Spain (Call of the Wild): officers were almost caught and had to flee to Homeland
+[b]22/07[/b] Call of the Wild: 4 officer(s) departed to Spain
+[b]22/07[/b] Russia: operation continues
+[b]22/07[/b] 4 officer(s) came back with improved knowledge about France
+[b]15/07[/b] Hadrian the Seventh: 3 officer(s) departed to Russia
+[b]08/07[/b] Bureau started a new operation in Belgium: Animal Farm
+[b]08/07[/b] Bureau started a new operation in France: Andromeda Strain
+[b]08/07[/b] Bureau finished operation Three Men in a Boat
+[b]01/07[/b] Bureau started a new operation in Spain: Call of the Wild
+[b]01/07[/b] Russia: operation continues
+[b]24/06[/b] Russia: operation continues
+[b]17/06[/b] Bureau started a new operation in Russia: Hadrian the Seventh
+[b]17/06[/b] Russia: operation continues
+[b]17/06[/b] New craft is available: (remote) phishing attempt
+[b]10/06[/b] Three Men in a Boat: 3 officer(s) began operation
+[b]27/05[/b] Bureau started a new operation in Russia: Three Men in a Boat
+[b]27/05[/b] 4 officer(s) departed to France to develop new skills
+[b]06/05[/b] 7 officers returned to Homeland
+[b]29/04[/b] 7 officer(s) departed to assist in wartime evacuation
+[b]29/04[/b] All operations were called off
+[b]29/04[/b] United States: operation continues
+[b]22/04[/b] United States: operation continues
+[b]15/04[/b] United States: operation continues
+[b]08/04[/b] United States: operation continues
+[b]01/04[/b] Ship Who Sang: 3 officer(s) departed to United States
+[b]25/03[/b] Government designated a new operation: Ship Who Sang
+[b]18/03[/b] Switzerland (Cryptonomicon): 3 officer(s) returned to Homeland after being arrested
+[b]11/03[/b] Switzerland (Cryptonomicon): counterintelligence slowed down operation
+[b]04/03[/b] Cryptonomicon: 3 officer(s) departed to Switzerland
+[b]18/02[/b] Bureau started a new operation in Switzerland: Cryptonomicon
+[b]21/01[/b] New officer joined Bureau
+[b]14/01[/b] Bureau finished operation Galaxy Guide
+[b]14/01[/b] China (Galaxy Guide): 2 officer(s) returned to Homeland
+[b]07/01[/b] China: operation continues
+[b]07/01[/b] Bureau finished operation Space Odyssey
+[b]07/01[/b] United States (Space Odyssey): 2 officer(s) returned to Homeland
+[b]07/01[/b] New craft is available: set up thorough covers for officers
+[b]07/01[/b] New year budget increase: +€46k
+[b]31/12[/b] Bureau called off operation Left Hand
+[b]31/12[/b] United States, China: operations continue
+[b]24/12[/b] Bureau did not prevent terrorist attack with 5 casualties on Homeland
+[b]24/12[/b] United States, China: operations continue
+[b]17/12[/b] United States, China: operations continue
+[b]10/12[/b] Galaxy Guide: 2 officer(s) departed to China
+[b]10/12[/b] Space Odyssey: 2 officer(s) departed to United States
+[b]03/12[/b] Bureau started a new operation in China: Left Hand
+[b]26/11[/b] Bureau started a new operation in China: Galaxy Guide
+[b]26/11[/b] Bureau finished operation Time Machine
+[b]26/11[/b] Italy (Time Machine): 6 officer(s) returned to Homeland
+[b]19/11[/b] Italy: operation continues
+[b]12/11[/b] Italy: operation continues
+[b]05/11[/b] Bureau started a new operation in United States: Space Odyssey
+[b]05/11[/b] Italy: operation continues
+[b]29/10[/b] Italy: operation continues
+[b]22/10[/b] Time Machine: 6 officer(s) departed to Italy
+[b]08/10[/b] New craft is available: track down and disrupt funding
+[b]08/10[/b] New craft is available: (remote) tap into local cctv
+[b]01/10[/b] Bureau started a new operation in Italy: Time Machine
+[b]01/10[/b] New craft is available: attemp walk in from a street
+[b]24/09[/b] Bureau finished operation Babbitt
+[b]24/09[/b] Belgium (Babbitt): 3 officer(s) returned to Homeland
+[b]24/09[/b] Government increased budget by €15k
+[b]24/09[/b] 1 officer(s) came back with improved knowledge about Spain
+[b]17/09[/b] Belgium: operation continues
+[b]10/09[/b] Belgium: operation continues
+[b]03/09[/b] Belgium: operation continues
+[b]27/08[/b] Bureau called off operation Miss Jean Brodie
+[b]27/08[/b] Belgium: operation continues
+[b]20/08[/b] 1 officer(s) departed to training center
+[b]20/08[/b] Bureau started a new operation in France: Miss Jean Brodie
+[b]20/08[/b] Belgium: operation continues
+[b]13/08[/b] Babbitt: 3 officer(s) departed to Belgium
+[b]06/08[/b] Bureau finished operation Lay Dying
+[b]06/08[/b] Spain (Lay Dying): 6 officer(s) returned to Homeland
+[b]30/07[/b] Spain: operation continues
+[b]23/07[/b] Lay Dying: 6 officer(s) departed to Spain
+[b]23/07[/b] Belgium (Babbitt): officers were almost caught and had to flee to Homeland
+[b]16/07[/b] Babbitt: 4 officer(s) departed to Belgium
+[b]16/07[/b] New officer joined Bureau and brought in some knowledge about China
+[b]09/07[/b] Bureau started a new operation in Spain: Lay Dying
+[b]09/07[/b] Government designated a new operation: Babbitt
+[b]25/06[/b] New craft is available: perform basic psychological operation
+[b]25/06[/b] New craft is available: open observation by disguised officers
+[b]18/06[/b] Bureau finished operation Sybil
+[b]18/06[/b] Italy (Sybil): 4 officer(s) returned to Homeland
+[b]11/06[/b] Italy: operation continues
+[b]04/06[/b] Italy (Sybil): counterintelligence slowed down operation
+[b]28/05[/b] Italy: operation continues
+[b]21/05[/b] Italy (Sybil): counterintelligence slowed down operation
+[b]14/05[/b] Italy: operation continues
+[b]07/05[/b] Sybil: 4 officer(s) departed to Italy
+[b]30/04[/b] Bureau started a new operation in Italy: Sybil
+[b]12/03[/b] Bureau finished operation Tau Zero
+[b]12/03[/b] Switzerland (Tau Zero): 1 officer(s) returned to Homeland
+[b]12/03[/b] Government increased budget by €15k
+[b]05/03[/b] Switzerland: operation continues
+[b]26/02[/b] Switzerland: operation continues
+[b]19/02[/b] Switzerland (Tau Zero): counterintelligence slowed down operation
+[b]12/02[/b] Switzerland: operation continues
+[b]05/02[/b] Switzerland: operation continues
+[b]29/01[/b] Switzerland (Tau Zero): counterintelligence slowed down operation
+[b]29/01[/b] New craft is available: install and operate external cameras
+[b]22/01[/b] Switzerland: operation continues
+[b]15/01[/b] Tau Zero: 1 officer(s) departed to Switzerland
+[b]08/01[/b] Government designated a new operation: Tau Zero
 [b]01/01[/b] The bureau has opened
 
-[b]26/10/2024[/b] United States held joint military exercise with Spain
-[b]12/10/2024[/b] Black Lives Matter march on streets of United States
-[b]28/09/2024[/b] Terrorist attack in Russia, local authorities point to Vilayat Kavkaz as the perpetrator
-[b]28/09/2024[/b] Tensions rise between France and Homeland
-[b]07/09/2024[/b] New suspected arms dealer, Arcaneworks, discovered in Spain
-[b]07/09/2024[/b] Hong Kong Protesters march on streets of Russia
-[b]24/08/2024[/b] Terrorist attack in Homeland
-[b]24/08/2024[/b] Summit of China, Russia, Switzerland, Germany, France: governments issued a joint statement
-[b]17/08/2024[/b] New suspected terrorist organization, Lorinda, discovered in France
-[b]10/08/2024[/b] Terrorist attack in France, local authorities traced back attack to a new organization: Democratic Marsha Group
-[b]20/07/2024[/b] Minor terrorist incident in Russia, Marilyn claimed responsibility
-[b]20/07/2024[/b] Riots sparked by Yellow Vests in France
-[b]06/07/2024[/b] New suspected arms dealer, Owlimited, discovered in China
-[b]29/06/2024[/b] Elections in Belgium: Incumbent won, achieving 43%
-[b]22/06/2024[/b] Minor terrorist incident in United Kingdom, local authorities do not know the perpetrator
-[b]25/05/2024[/b] United States held joint military exercise with Israel
-[b]25/05/2024[/b] Elections in United Kingdom: New government formed, achieving 50%
-[b]18/05/2024[/b] Minor terrorist incident in Spain, local authorities do not know the perpetrator
-[b]04/05/2024[/b] United States signed a treaty with Switzerland
-[b]27/04/2024[/b] Switzerland expelled some citizens of Ireland
-[b]06/04/2024[/b] Significant technological breakthrough made by engineers in Spain
-[b]30/03/2024[/b] Terrorist attack in United States, local authorities point to Shani as the perpetrator
-[b]30/03/2024[/b] Minor terrorist incident in United States, local authorities point to Black Anu Group as the perpetrator
-[b]30/03/2024[/b] Belgium held joint military exercise with China
-[b]23/03/2024[/b] Minor terrorist incident in France, local authorities point to Islamic Separatists as the perpetrator
-[b]26/01/2024[/b] Terrorist attack in Israel, local authorities point to Islamic Separatists as the perpetrator
-[b]12/01/2024[/b] Summit of United Kingdom, Ireland, Russia, Spain, Homeland: governments could not reach consensus
-[b]05/01/2024[/b] Large terrorist attack with many casualties in Belgium, Revolutionary Lorinda claimed responsibility
-[b]29/12/2023[/b] Elections in Homeland: Incumbent won, achieving 46%
-[b]01/12/2023[/b] Decrease of government stability in Homeland
-[b]24/11/2023[/b] Belgium and Spain are on the brink of war
-[b]17/11/2023[/b] Terrorist attack in Belgium, local authorities point to ISIS Sympathizers as the perpetrator
-[b]03/11/2023[/b] Minor terrorist incident in China, local authorities point to Reich Citizens as the perpetrator
-[b]20/10/2023[/b] Belgium attributed destabilization of the region to Ireland
-[b]20/10/2023[/b] Tensions rise between United Kingdom and Spain
-[b]20/10/2023[/b] Elections in Switzerland: New government formed, achieving 45%
-[b]06/10/2023[/b] Minor terrorist incident in Ireland, local authorities do not know the perpetrator
-[b]06/10/2023[/b] Large terrorist attack with many casualties in Russia, Vilayat Kavkaz claimed responsibility
-[b]06/10/2023[/b] Anti-Lockdown Movement march on streets of France
-[b]22/09/2023[/b] Minor terrorist incident in Israel, local authorities do not know the perpetrator
-[b]15/09/2023[/b] Minor terrorist incident in Belgium, local authorities do not know the perpetrator
-[b]01/09/2023[/b] Significant technological breakthrough made by engineers in Israel
-[b]25/08/2023[/b] Large terrorist attack with many casualties in Belgium, local authorities do not know the perpetrator
-[b]18/08/2023[/b] New discovery reported by scientists in Israel
-[b]18/08/2023[/b] Yellow Vests protests in France
-[b]04/08/2023[/b] Minor terrorist incident in Spain, local authorities do not know the perpetrator
-[b]28/07/2023[/b] Terrorist attack in Ireland
-[b]14/07/2023[/b] Hong Kong Protesters protests in Russia
-[b]07/07/2023[/b] Large terrorist attack with many casualties in Russia, Real Ned Separatists claimed responsibility
-[b]30/06/2023[/b] Spain signed a treaty with France
-[b]30/06/2023[/b] Elections in Italy: New government formed, achieving 45%
-[b]16/06/2023[/b] Hong Kong Protesters protests in Russia
-[b]26/05/2023[/b] Elections in Spain: New government formed, achieving 34%
-[b]19/05/2023[/b] Protests against government in Italy
-[b]12/05/2023[/b] Belgium signed a treaty with Israel
-[b]21/04/2023[/b] New movement emerged: Israeli Extremists
-[b]07/04/2023[/b] Riots sparked by Black Lives Matter in United States
-[b]17/03/2023[/b] Large terrorist attack with many casualties in Spain
-[b]17/02/2023[/b] Switzerland condemned actions of Germany
-[b]10/02/2023[/b] Tensions rise between Germany and Homeland
-[b]06/01/2023[/b] Riots sparked by Yellow Vests in France
-[b]18/11/2022[/b] Terrorist attack in Germany, local authorities point to Right Anat as the perpetrator
-[b]28/10/2022[/b] Hong Kong Protesters march on streets of Russia
-[b]30/09/2022[/b] Italy attributed destabilization of the region to United Kingdom
-[b]23/09/2022[/b] Minor terrorist incident in Ireland, local authorities point to Esther as the perpetrator
-[b]19/08/2022[/b] Riots sparked by Islamic Fundamentalists in United Kingdom
-[b]12/08/2022[/b] New suspected terrorist organization, Manahem Action, discovered in United States
-[b]12/08/2022[/b] Yellow Vests protests in France
-[b]05/08/2022[/b] Terrorist attack in China, Revolutionary Lorinda claimed responsibility
-[b]29/07/2022[/b] Minor terrorist incident in Germany, local authorities do not know the perpetrator
-[b]29/07/2022[/b] Tensions rise between Germany and Italy
-[b]27/05/2022[/b] Elections in France: New government formed, achieving 33%
-[b]20/05/2022[/b] Black Lives Matter protests in United States
-[b]20/05/2022[/b] Decrease of government stability in United Kingdom
-[b]13/05/2022[/b] Germany refused to meet with officials of Belgium
-[b]29/04/2022[/b] Germany expelled some citizens of Homeland
-[b]01/04/2022[/b] United States signed a treaty with Germany
-[b]25/03/2022[/b] Minor terrorist incident in Russia, local authorities do not know the perpetrator
-[b]25/03/2022[/b] Summit of United States, Israel, Homeland, Belgium: governments issued a joint statement
-[b]11/02/2022[/b] Decrease of government stability in Homeland
-[b]28/01/2022[/b] Summit of Belgium, Israel, China: governments issued a joint statement
-[b]14/01/2022[/b] Ireland signed a treaty with United States
-[b]07/01/2022[/b] Minor terrorist incident in France, local authorities do not know the perpetrator
-[b]31/12/2021[/b] China signed a treaty with Switzerland
-[b]24/12/2021[/b] New suspected terrorist organization, Democratic Anat Militants, discovered in France
-[b]24/12/2021[/b] New discovery reported by scientists in United Kingdom
-[b]10/12/2021[/b] New suspected terrorist organization, Black Anu Group, discovered in Israel
-[b]10/12/2021[/b] Elections in Israel: New government formed, achieving 51%
-[b]03/12/2021[/b] New suspected terrorist organization, Marilyn, discovered in United Kingdom
-[b]03/12/2021[/b] Decrease of government stability in Spain
-[b]03/12/2021[/b] Israel signed a treaty with China
-[b]03/12/2021[/b] Government resigned in Israel
-[b]26/11/2021[/b] Riots sparked by Anti-Lockdown Movement in Germany
-[b]26/11/2021[/b] Italy expressed will to improve relations with Israel
-[b]26/11/2021[/b] Decrease of government stability in Homeland
-[b]22/10/2021[/b] New suspected terrorist organization, Adelle, discovered in Germany
-[b]17/09/2021[/b] Yellow Vests protests in France
-[b]17/09/2021[/b] Summit of Italy, United Kingdom: governments could not reach consensus
-[b]17/09/2021[/b] Protests against government in Israel
-[b]04/06/2021[/b] Terrorist attack in United Kingdom, local authorities do not know the perpetrator
-[b]28/05/2021[/b] Minor terrorist incident in Spain, local authorities point to Nik as the perpetrator
-[b]02/04/2021[/b] American Resistance protests in United States
-[b]02/04/2021[/b] Yellow Vests march on streets of France
-[b]19/03/2021[/b] Riots sparked by Hong Kong Protesters in Russia
-[b]26/02/2021[/b] New suspected terrorist organization, Republican Marsha Militants, discovered in Switzerland
-[b]03/12/2020[/b] Russia signed a treaty with France
-[b]19/11/2020[/b] Protests against government in Belgium
-[b]05/11/2020[/b] Summit of Homeland, Israel: governments could not reach consensus
-[b]22/10/2020[/b] Islamic Fundamentalists protests in France
-[b]15/10/2020[/b] New suspected terrorist organization, Right Anat, discovered in United Kingdom
-[b]20/08/2020[/b] New suspected arms dealer, Phantasm Intelligence, discovered in France
-[b]20/08/2020[/b] France expressed concern about changes in Spain
-[b]06/08/2020[/b] New suspected terrorist organization, Shani, discovered in United Kingdom
-[b]02/07/2020[/b] Large terrorist attack with many casualties in Russia, local authorities point to Vilayat Kavkaz as the perpetrator
-[b]18/06/2020[/b] New suspected terrorist organization, Esther, discovered in Russia
-[b]28/05/2020[/b] Islamic Fundamentalists march on streets of Germany
-[b]23/04/2020[/b] Riots sparked by Anti-Lockdown Movement in United States
-[b]16/04/2020[/b] Ireland attributed destabilization of the region to United Kingdom
-[b]02/04/2020[/b] Protests against government in United Kingdom
-[b]26/02/2020[/b] Summit of United States, France, Israel, Russia, Switzerland, Ireland: governments issued a joint statement
-[b]19/02/2020[/b] New suspected terrorist organization, Nik, discovered in Spain
-[b]12/02/2020[/b] Significant technological breakthrough made by engineers in United Kingdom
-[b]15/01/2020[/b] Terrorist attack in Germany, local authorities do not know the perpetrator
+[b]16/05/2026[/b] Elections in Germany: Incumbent won, achieving 54%
+[b]02/05/2026[/b] Terrorist attack in Belgium, local authorities do not know the perpetrator
+[b]02/05/2026[/b] Elections in Italy: New government formed, achieving 37%
+[b]25/04/2026[/b] Government resigned in Italy
+[b]11/04/2026[/b] Minor terrorist incident in Spain, Republican Myrddin Brotherhood claimed responsibility
+[b]28/03/2026[/b] Minor terrorist incident in Switzerland, local authorities point to Yseut Extremists as the perpetrator
+[b]28/03/2026[/b] Belgium and Israel are on the brink of war
+[b]21/03/2026[/b] Minor terrorist incident in Homeland
+[b]14/03/2026[/b] Protests against government in Germany
+[b]07/03/2026[/b] Significant technological breakthrough made by engineers in Ireland
+[b]21/02/2026[/b] Islamic Fundamentalists march on streets of Germany
+[b]07/02/2026[/b] Yellow Vests protests in France
+[b]31/01/2026[/b] Minor terrorist incident in United States, local authorities point to Proud Boys as the perpetrator
+[b]17/01/2026[/b] New suspected terrorist organization, Cindra, discovered in United States
+[b]10/01/2026[/b] Italy held joint military exercise with United Kingdom
+[b]27/12/2025[/b] Minor terrorist incident in United Kingdom, local authorities point to Republican Myrddin Brotherhood as the perpetrator
+[b]13/12/2025[/b] Italy expelled some citizens of Belgium
+[b]06/12/2025[/b] Israel expelled some citizens of Italy
+[b]01/11/2025[/b] Spain's officials visited Russia
+[b]18/10/2025[/b] Elections in United States: Incumbent won, achieving 55%
+[b]04/10/2025[/b] Protests against government in Spain
+[b]20/09/2025[/b] Minor terrorist incident in United Kingdom, local authorities point to Combat Davey Force as the perpetrator
+[b]30/08/2025[/b] New discovery reported by scientists in United States
+[b]30/08/2025[/b] Riots sparked by Islamic Fundamentalists in Germany
+[b]23/08/2025[/b] Elections in Israel: Incumbent won, achieving 31%
+[b]16/08/2025[/b] Summit of Spain, United Kingdom, Belgium, France, Israel, Switzerland: governments could not reach consensus
+[b]26/07/2025[/b] Anti-Lockdown Movement protests in France
+[b]19/07/2025[/b] Israel withdrew from a treaty with Homeland
+[b]21/06/2025[/b] France signed a treaty with United States
+[b]31/05/2025[/b] New discovery reported by scientists in United States
+[b]31/05/2025[/b] Riots sparked by QAnon in United States
+[b]17/05/2025[/b] New suspected terrorist organization, Marilyn Militants, discovered in France
+[b]08/03/2025[/b] Russia signed a treaty with Ireland
+[b]01/03/2025[/b] Minor terrorist incident in Russia, local authorities point to Vilayat Kavkaz as the perpetrator
+[b]01/03/2025[/b] Summit of France, Belgium, Spain, Israel: governments could not reach consensus
+[b]08/02/2025[/b] Decrease of government stability in Israel
+[b]08/02/2025[/b] Elections in Ireland: Incumbent won, achieving 31%
+[b]18/01/2025[/b] Terrorist attack in Italy, Combat Davey Force claimed responsibility
+[b]16/11/2024[/b] New discovery reported by scientists in United States
+[b]16/11/2024[/b] Black Lives Matter march on streets of United States
+[b]09/11/2024[/b] Scientific innovation presented in United States
+[b]09/11/2024[/b] Significant technological breakthrough made by engineers in Ireland
+[b]07/09/2024[/b] Minor terrorist incident in Russia, Vilayat Kavkaz claimed responsibility
+[b]24/08/2024[/b] New discovery reported by scientists in United States
+[b]03/08/2024[/b] Italy and Switzerland are on the brink of war
+[b]27/07/2024[/b] Decrease of government stability in Italy
+[b]20/07/2024[/b] New suspected arms dealer, Shadeshine, discovered in Italy
+[b]13/07/2024[/b] Scientific innovation presented in United Kingdom
+[b]13/07/2024[/b] Decrease of government stability in Germany
+[b]06/07/2024[/b] New suspected arms dealer, Lagoon Entertainment, discovered in Spain
+[b]29/06/2024[/b] Elections in Belgium: Incumbent won, achieving 36%
+[b]22/06/2024[/b] Significant technological breakthrough made by engineers in United States
+[b]22/06/2024[/b] Riots sparked by Hong Kong Protesters in China
+[b]25/05/2024[/b] Elections in United Kingdom: Incumbent won, achieving 36%
+[b]18/05/2024[/b] Yellow Vests protests in France
+[b]11/05/2024[/b] Islamic Fundamentalists march on streets of Spain
+[b]13/04/2024[/b] Scientific innovation presented in China
+[b]09/02/2024[/b] New suspected terrorist organization, Right Marsha, discovered in France
+[b]26/01/2024[/b] France signed a treaty with United States
+[b]19/01/2024[/b] Minor terrorist incident in France, Myrddin claimed responsibility
+[b]12/01/2024[/b] Decrease of government stability in Spain
+[b]29/12/2023[/b] Elections in Homeland: New government formed, achieving 46%
+[b]08/12/2023[/b] Summit of France, Ireland, Germany, Belgium: governments could not reach consensus
+[b]17/11/2023[/b] Russia signed a treaty with Germany
+[b]10/11/2023[/b] New suspected terrorist organization, Myrddin, discovered in United Kingdom
+[b]20/10/2023[/b] Elections in Switzerland: New government formed, achieving 55%
+[b]06/10/2023[/b] Minor terrorist incident in Homeland
+[b]29/09/2023[/b] Islamic Fundamentalists protests in France
+[b]22/09/2023[/b] New suspected terrorist organization, Black Yseut, discovered in United States
+[b]04/08/2023[/b] Terrorist attack in Italy, local authorities do not know the perpetrator
+[b]04/08/2023[/b] QAnon march on streets of United States
+[b]28/07/2023[/b] New discovery reported by scientists in United States
+[b]14/07/2023[/b] China signed a treaty with United States
+[b]30/06/2023[/b] Elections in Italy: Incumbent won, achieving 39%
+[b]16/06/2023[/b] Germany expelled some citizens of Italy
+[b]02/06/2023[/b] Summit of Ireland, France, United Kingdom, Spain: governments could not reach consensus
+[b]26/05/2023[/b] Minor terrorist incident in Belgium, local authorities point to ISIS Sympathizers as the perpetrator
+[b]26/05/2023[/b] Italy expelled some citizens of Ireland
+[b]26/05/2023[/b] Elections in Spain: Incumbent won, achieving 48%
+[b]19/05/2023[/b] QAnon march on streets of United States
+[b]28/04/2023[/b] Hong Kong Protesters protests in China
+[b]14/04/2023[/b] Minor terrorist incident in France, local authorities point to Marianne as the perpetrator
+[b]07/04/2023[/b] Scientific innovation presented in United States
+[b]07/04/2023[/b] Minor terrorist incident in Russia, local authorities point to ISIS Sympathizers as the perpetrator
+[b]07/04/2023[/b] Summit of Belgium, Homeland, Italy, France: governments could not reach consensus
+[b]07/04/2023[/b] Russia expressed will to improve relations with Ireland
+[b]10/03/2023[/b] Homeland refused to meet with officials of Germany
+[b]24/02/2023[/b] Germany expelled some citizens of Homeland
+[b]17/02/2023[/b] Terrorist attack in France, local authorities point to Yseut Extremists as the perpetrator
+[b]27/01/2023[/b] Spain expelled some citizens of Ireland
+[b]20/01/2023[/b] New discovery reported by scientists in United States
+[b]20/01/2023[/b] Significant technological breakthrough made by engineers in United States
+[b]13/01/2023[/b] Riots sparked by Anti-Lockdown Movement in Belgium
+[b]16/12/2022[/b] Scientific innovation presented in Russia
+[b]16/12/2022[/b] Minor terrorist incident in United States, local authorities point to Proud Boys as the perpetrator
+[b]11/11/2022[/b] New suspected arms dealer, Lagoonavigations, discovered in Ireland
+[b]11/11/2022[/b] Decrease of government stability in Spain
+[b]04/11/2022[/b] New suspected terrorist organization, Revolutionary Peronel Separatists, discovered in United Kingdom
+[b]30/09/2022[/b] Riots sparked by QAnon in United States
+[b]16/09/2022[/b] New suspected terrorist organization, Republican Myrddin Brotherhood, discovered in United Kingdom
+[b]02/09/2022[/b] New suspected terrorist organization, Revolutionary Nik Group, discovered in United States
+[b]05/08/2022[/b] Russia signed a treaty with Israel
+[b]22/07/2022[/b] New suspected terrorist organization, Combat Davey Force, discovered in United Kingdom
+[b]22/07/2022[/b] Hong Kong Protesters protests in China
+[b]08/07/2022[/b] Black Lives Matter protests in United States
+[b]24/06/2022[/b] New suspected terrorist organization, Marianne, discovered in United Kingdom
+[b]17/06/2022[/b] Decrease of government stability in Belgium
+[b]03/06/2022[/b] Significant technological breakthrough made by engineers in United States
+[b]27/05/2022[/b] New suspected arms dealer, Joy Acoustics, discovered in Switzerland
+[b]27/05/2022[/b] France won war with Belgium
+[b]27/05/2022[/b] France gained theater superiority over Belgium
+[b]27/05/2022[/b] Elections in France: New government formed, achieving 52%
+[b]20/05/2022[/b] France forces breached territory of Belgium
+[b]13/05/2022[/b] France won critical battle with Belgium
+[b]06/05/2022[/b] France made significant advances in war with Belgium
+[b]29/04/2022[/b] War began between France and Belgium
+[b]15/04/2022[/b] Decrease of government stability in Belgium
+[b]08/04/2022[/b] Significant technological breakthrough made by engineers in United States
+[b]04/03/2022[/b] Summit of United Kingdom, Russia, France: governments issued a joint statement
+[b]25/02/2022[/b] Italy expelled some citizens of Homeland
+[b]21/01/2022[/b] Riots sparked by Yellow Vests in France
+[b]31/12/2021[/b] New suspected arms dealer, Pink Productions, discovered in France
+[b]31/12/2021[/b] Italy's officials visited Russia
+[b]24/12/2021[/b] Minor terrorist incident in Homeland
+[b]10/12/2021[/b] New suspected terrorist organization, Lorinda, discovered in Russia
+[b]08/10/2021[/b] Yellow Vests march on streets of France
+[b]24/09/2021[/b] Switzerland's officials visited Russia
+[b]10/09/2021[/b] New suspected terrorist organization, Right Marianne Gang, discovered in Russia
+[b]03/09/2021[/b] New discovery reported by scientists in United States
+[b]03/09/2021[/b] Tensions rise between France and Belgium
+[b]27/08/2021[/b] Elections in Israel: New government formed, achieving 42%
+[b]20/08/2021[/b] Protests against government in Italy
+[b]20/08/2021[/b] Decrease of government stability in Spain
+[b]20/08/2021[/b] Government resigned in Israel
+[b]30/07/2021[/b] New suspected terrorist organization, Yseut Extremists, discovered in France
+[b]23/07/2021[/b] Germany expelled some citizens of Belgium
+[b]09/07/2021[/b] Israel signed a treaty with Russia
+[b]02/07/2021[/b] Decrease of government stability in Israel
+[b]30/04/2021[/b] Homeland expelled some citizens of Ireland
+[b]26/02/2021[/b] Protests against government in Homeland
+[b]15/10/2020[/b] Minor terrorist incident in Ireland, local authorities do not know the perpetrator
+[b]17/09/2020[/b] Spain's officials visited Italy
+[b]06/08/2020[/b] Significant technological breakthrough made by engineers in United States
+[b]30/07/2020[/b] Russia expressed will to improve relations with Homeland
+[b]23/07/2020[/b] Decrease of government stability in France
+[b]25/06/2020[/b] China's officials visited Homeland
+[b]30/04/2020[/b] Minor terrorist incident in United Kingdom, local authorities point to Al-Muhajiroun as the perpetrator
+[b]19/02/2020[/b] Significant technological breakthrough made by engineers in United Kingdom
+[b]29/01/2020[/b] Russia expelled some citizens of United States
+[b]29/01/2020[/b] France's officials visited Italy
+[b]22/01/2020[/b] Scientific innovation presented in United States
+[b]15/01/2020[/b] United Kingdom signed a treaty with United States

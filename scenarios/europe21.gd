@@ -482,7 +482,7 @@ func StartAll():
 	GameLogic.TurnOnWars = true
 	GameLogic.TurnOnWMD = true
 	GameLogic.TurnOnInfiltration = true
-	GameLogic.FrequencyAttacks = 0.5
+	GameLogic.FrequencyAttacks = 0.07
 	GameLogic.SoftPowerMonthsAgo = GenerateWorld()
 	GameLogic.DateYear = 2021
 	GameLogic.StartAll()

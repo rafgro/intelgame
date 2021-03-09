@@ -13,15 +13,14 @@ var PossibleCountries = [
 ]
 
 func GenerateWorld():
-	# - Homeland similar to Israel\n- On the brink of conflict with Iran\n- Iran returns to WMD program\n- Unstable neighbouring countries with terrorist organizations
 	WorldData.Countries[0].Size = 65
 	WorldData.Countries[0].SoftPower = 80
 	WorldData.Countries[0].ElectionPeriod = 52*5
 	WorldData.Countries[0].ElectionProgress = 52*2.3
-	GameLogic.WhenAllowAttacks = 52
-	GameLogic.BudgetFull = 500
-	GameLogic.ActiveOfficers = 10
-	GameLogic.OfficersInHQ = 10
+	GameLogic.WhenAllowAttacks = 55
+	GameLogic.BudgetFull = 250
+	GameLogic.ActiveOfficers = 8
+	GameLogic.OfficersInHQ = 8
 	GameLogic.StaffSkill = 20
 	GameLogic.StaffExperience = 20
 	GameLogic.Technology = 10
