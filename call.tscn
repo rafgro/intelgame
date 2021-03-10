@@ -1,9 +1,11 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://sourcesans.tres" type="DynamicFont" id=1]
 [ext_resource path="res://icons/call.png" type="Texture" id=2]
 [ext_resource path="res://callscreen.gd" type="Script" id=3]
 [ext_resource path="res://SourceSansPro-Bold.ttf" type="DynamicFontData" id=4]
+[ext_resource path="res://earth_small2.jpg" type="Texture" id=5]
+[ext_resource path="res://earth_small.jpg" type="Texture" id=6]
 
 [sub_resource type="DynamicFont" id=1]
 size = 24
@@ -44,6 +46,20 @@ margin_bottom = 100.0
 rect_min_size = Vector2( 0, 100 )
 size_flags_horizontal = 3
 color = Color( 0.12549, 0.12549, 0.145098, 1 )
+
+[node name="TextureRect" type="TextureRect" parent="C/V/ColorRect"]
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -497.179
+margin_top = -200.818
+margin_right = 502.821
+margin_bottom = -16.8183
+texture = ExtResource( 6 )
+stretch_mode = 7
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="M" type="MarginContainer" parent="C/V"]
 margin_top = 104.0
@@ -330,6 +346,20 @@ margin_bottom = 1480.0
 rect_min_size = Vector2( 0, 150 )
 size_flags_horizontal = 3
 color = Color( 0.12549, 0.12549, 0.145098, 1 )
+
+[node name="TextureRect" type="TextureRect" parent="C/V/ColorRect2"]
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -497.179
+margin_top = 18.3848
+margin_right = 502.821
+margin_bottom = 178.385
+texture = ExtResource( 5 )
+stretch_mode = 7
+__meta__ = {
+"_edit_use_anchors_": false
+}
 [connection signal="pressed" from="C/V/M/R/CButtons/Decision1" to="." method="_on_Decision1_pressed"]
 [connection signal="pressed" from="C/V/M/R/CButtons/Decision2" to="." method="_on_Decision2_pressed"]
 [connection signal="pressed" from="C/V/M/R/CButtons2/Decision3" to="." method="_on_Decision3_pressed"]

@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://sourcesans.tres" type="DynamicFont" id=1]
 [ext_resource path="res://mainmenu_1.gd" type="Script" id=2]
+[ext_resource path="res://earth_small.jpg" type="Texture" id=3]
+[ext_resource path="res://earth_small2.jpg" type="Texture" id=4]
 
 [node name="Panel" type="Control"]
 anchor_right = 1.0
@@ -39,6 +41,20 @@ rect_min_size = Vector2( 0, 150 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
 color = Color( 0.12549, 0.12549, 0.145098, 1 )
+
+[node name="TextureRect" type="TextureRect" parent="C/V/ColorRect"]
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -499.0
+margin_top = -46.0
+margin_right = 501.0
+margin_bottom = -19.0
+texture = ExtResource( 3 )
+stretch_mode = 7
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="M" type="MarginContainer" parent="C/V"]
 margin_top = 261.0
@@ -322,6 +338,20 @@ rect_min_size = Vector2( 0, 200 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
 color = Color( 0.12549, 0.12549, 0.145098, 1 )
+
+[node name="TextureRect" type="TextureRect" parent="C/V/ColorRect2"]
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -505.0
+margin_top = 18.0
+margin_right = 495.0
+margin_bottom = 71.0
+texture = ExtResource( 4 )
+stretch_mode = 7
+__meta__ = {
+"_edit_use_anchors_": false
+}
 [connection signal="pressed" from="C/V/M/R/CButtons/Decision1" to="." method="_on_NewRandom_pressed"]
 [connection signal="pressed" from="C/V/M/R/CButtons/Decision2" to="." method="_on_NewScenario_pressed"]
 [connection signal="pressed" from="C/V/M/R/CButtons2/Decision3" to="." method="_on_Load_pressed"]
