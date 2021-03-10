@@ -342,7 +342,7 @@ func NextWeek():
 				elif Directions[t].Type == 5:
 					if WorldData.Countries[Directions[t].Country].Station > 0:
 						WorldData.Countries[Directions[t].Country].Station += 1
-						AddEvent(WorldData.Countries[Directions[t]].Adjective + " intelligence station is expanded to " + str(int(WorldData.Countries[Directions[t].Country].Station)) + " officers")
+						AddEvent(WorldData.Countries[Directions[t].Country].Adjective + " intelligence station is expanded to " + str(int(WorldData.Countries[Directions[t].Country].Station)) + " officers")
 						StaffTrust += 1
 					else:
 						WorldData.Countries[Directions[t].Country].Station = 1
@@ -578,12 +578,12 @@ func NextWeek():
 					var localQuality = 0
 					if o.Type == OperationGenerator.Type.RESCUE: localQuality = 100
 					elif o.Type == OperationGenerator.Type.OFFENSIVE:
-						localQuality = 50 + 0.5*o.AbroadPlan.Quality
+						localQuality = 70 + 0.5*o.AbroadPlan.Quality
 					elif o.Type == OperationGenerator.Type.RECRUIT_SOURCE:
 						localQuality = 40 + 0.6*o.AbroadPlan.Quality
 					elif o.Type == OperationGenerator.Type.MORE_INTEL:
-						localQuality = 10 + 0.3*o.AbroadPlan.Quality
-					var localContent = "'" + o.Name + "' against " + WorldData.Organizations[o.Target].Name + " via "
+						localQuality = 5 + 0.3*o.AbroadPlan.Quality
+					var localContent = "'" + o.Name + "' against " + WorldData.Organizations[o.Target].Name + " using: "
 					var methodNames = []
 					for j in o.AbroadPlan.Methods: methodNames.append(WorldData.Methods[o.Type][j].Name)
 					localContent += PoolStringArray(methodNames).join(", ")

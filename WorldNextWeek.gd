@@ -218,7 +218,7 @@ func Execute(past):
 			else:
 				GameLogic.AddWorldEvent("War between " + WorldData.Countries[c].Name + " and " + WorldData.Countries[c2].Name + ": stalemate", past)
 		# homeland wmd war finish
-		if GameLogic.TurnOnWMD == true and WorldData.Wars[v].WeeksPassed == 1 and (c == 0 or c2 == 0):
+		if warFinished == false and GameLogic.TurnOnWMD == true and WorldData.Wars[v].WeeksPassed == 1 and (c == 0 or c2 == 0):
 			var against = c
 			if c == 0: against = c2
 			if GameLogic.random.randi_range(50,90) < WorldData.Countries[against].WMDProgress:
@@ -272,7 +272,6 @@ func Execute(past):
 							if WorldData.Organizations[x].Type == WorldData.OrgType.GOVERNMENT or WorldData.Organizations[x].Type == WorldData.OrgType.INTEL or WorldData.Organizations[x].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE or WorldData.Organizations[x].Type == WorldData.OrgType.UNIVERSITY:
 								WorldIntel.GatherOnOrg(x, 100, GameLogic.GiveDateWithYear(), true)
 					content = "[b]Homeland won war with " + WorldData.Countries[against].Name + ".[/b]\n\n" + WorldData.Countries[against].Name + " continues existence as a smaller, independent country. Homeland authorities captured wealth of intel from all " + WorldData.Countries[against].Adjective + " institutions, increasing our technological capabilities and knowledge about other organizations existing in the world."
-					WorldData.Countries[against].Size *= 0.5
 					GameLogic.Achievements.append("supported Homeland in war with " + WorldData.Countries[against].Name)
 				else:
 					# loss
@@ -280,11 +279,18 @@ func Execute(past):
 					var half = int(GameLogic.ActiveOfficers*0.5)
 					GameLogic.ActiveOfficers -= half
 					GameLogic.OfficersInHQ -= half
+					GameLogic.StaffExperience *= 0.3
+					GameLogic.StaffSkill *= 0.3
+					GameLogic.StaffTrust *= 0.3
 					GameLogic.Trust -= 10
 					WorldData.Countries[against].Size *= 1.2
 					WorldData.Countries[0].Size *= 0.5
-					content = "[b]Homeland lost war with " + WorldData.Countries[against].Name + ".[/b]\n\nOur country will continue existence as a smaller, independent state. " + WorldData.Countries[against].Adjective + " authorities captured all Bureau's intel, leading to loss of all networks and sources. In addition, budget was severely restricted and half of the staff was lost due to wartime turmoil, resignations, fleeing from the country, and other reasons."
-					WorldData.Countries[0].Size *= 0.5
+					for y in range(0, len(WorldData.Countries)):
+						WorldData.Countries[y].Network = 0
+						WorldData.Countries[y].Station = 0
+					for y in range(0, len(WorldData.Organization)):
+						WorldData.Organizations[y].IntelSources.clear()
+					content = "[b]Homeland lost war with " + WorldData.Countries[against].Name + ".[/b]\n\nOur country will continue existence as a smaller, independent state. " + WorldData.Countries[against].Adjective + " authorities captured all Bureau's intel, leading to loss of all networks, stations and sources. In addition, budget was severely restricted and half of the staff was lost due to wartime turmoil, resignations, fleeing from the country, and other reasons."
 				CallManager.CallQueue.append(
 					{
 						"Header": "Important Information",
@@ -985,7 +991,7 @@ func Execute(past):
 						GameLogic.AddWorldEvent(desc, past)
 				################################################################
 				# against homeland: just planning for the future
-				elif past == null and GameLogic.CurrentOpsAgainstHomeland <= GameLogic.random.randi_range(1,2) and GameLogic.YearlyOpsAgainstHomeland < GameLogic.OpsLimit:
+				elif past == null and GameLogic.CurrentOpsAgainstHomeland < GameLogic.random.randi_range(1,2) and GameLogic.YearlyOpsAgainstHomeland < GameLogic.OpsLimit:
 					var opSize = GameLogic.random.randi_range(1,10) * 0.1  # 0.0-1.0 of org resources
 					var opSecrecy = GameLogic.random.randi_range(WorldData.Organizations[w].Counterintelligence*0.7,100)
 					var opDamage = GameLogic.random.randi_range(WorldData.Organizations[w].Aggression*0.2, WorldData.Organizations[w].Aggression)
