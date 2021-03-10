@@ -15,6 +15,7 @@ enum Type {
 	RECRUIT_SOURCE = 1,
 	OFFENSIVE = 2,
 	RESCUE = 3,
+	INTERCEPT = 4,
 }
 
 enum Stage {
@@ -52,6 +53,9 @@ func NewOperation(source, againstOrg, countryId, whatType):
 		alevel = "Top Secret"
 	elif whatType == Type.RESCUE:
 		desc = "Rescue Homeland citizen from " + WorldData.Organizations[againstOrg].Name
+		alevel = "Top Secret"
+	elif whatType == Type.INTERCEPT:
+		desc = "Intercept members of " + WorldData.Organizations[againstOrg].Name
 		alevel = "Top Secret"
 	# local communicate
 	if source == 0:

@@ -37,17 +37,25 @@ func ProgressOperations():
 			var notEnoughIntel = []  # names of methods
 			# actual method planning
 			var j = 0
+			var localType = GameLogic.Operations[i].Type
+			if GameLogic.Operations[i].Type == OperationGenerator.Type.INTERCEPT: localType = -1
 			while j < 10:  # ten tries but will present only first three
 				j += 1  # in the beginning to allow early continue commands
+				if GameLogic.Operations[i].Type == OperationGenerator.Type.INTERCEPT:
+					# iterating through various types for intercept op
+					localType += 1
+					if localType >= 3: localType = 0
 				var totalCost = 0
 				var predictedLength = 3+GameLogic.random.randi_range(-2,2)  # in weeks
-				if GameLogic.Operations[i].Type == OperationGenerator.Type.RECRUIT_SOURCE:
+				if localType == OperationGenerator.Type.RECRUIT_SOURCE:
 					predictedLength *= 2
-				elif GameLogic.Operations[i].Type == OperationGenerator.Type.RESCUE:
+				elif localType == OperationGenerator.Type.RESCUE:
+					predictedLength = 1
+				if GameLogic.Operations[i].Type == OperationGenerator.Type.INTERCEPT:
 					predictedLength = 1
 				var usedOfficers = minOfficers
 				# finding methods to use in the operation
-				var mt = GameLogic.Operations[i].Type
+				var mt = localType
 				var noOfMethods = GameLogic.random.randi_range(1,3)
 				if GameLogic.random.randi_range(1,4) == 3: noOfMethods = GameLogic.random.randi_range(1,5)
 				var theMethods = []
@@ -55,7 +63,7 @@ func ProgressOperations():
 				var countUnavailable = 0
 				var countMinIntel = 0
 				var countMinLocal = 0
-				if GameLogic.Operations[i].Type == OperationGenerator.Type.OFFENSIVE:
+				if localType == OperationGenerator.Type.OFFENSIVE:
 					# picking only one method at a time
 					noOfMethods = 1
 					while safetyCounter < 10:
@@ -130,7 +138,7 @@ func ProgressOperations():
 				# remote/nonremote
 				var ifAllRemote = true
 				for m in theMethods:
-					if WorldData.Methods[GameLogic.Operations[i].Type][m].Remote == false:
+					if WorldData.Methods[localType][m].Remote == false:
 						ifAllRemote = false
 						break
 				# calculating cost and checking if it's possible
@@ -139,7 +147,7 @@ func ProgressOperations():
 					var singleOfficerCost = WorldData.Countries[GameLogic.Operations[i].Country].LocalCost + (WorldData.Countries[GameLogic.Operations[i].Country].TravelCost / predictedLength / 2)
 					totalCost += singleOfficerCost * usedOfficers * predictedLength
 					for m in theMethods:
-						totalCost += WorldData.Methods[GameLogic.Operations[i].Type][m].Cost * predictedLength
+						totalCost += WorldData.Methods[localType][m].Cost * predictedLength
 					if totalCost > GameLogic.FreeFundsWeekly()*predictedLength:
 						noPlanReasonCost += 1
 						continue
@@ -159,7 +167,7 @@ func ProgressOperations():
 					var singleOfficerCost = 0
 					totalCost += singleOfficerCost * usedOfficers * predictedLength
 					for m in theMethods:
-						totalCost += WorldData.Methods[GameLogic.Operations[i].Type][m].Cost * predictedLength
+						totalCost += WorldData.Methods[localType][m].Cost * predictedLength
 					if totalCost > GameLogic.FreeFundsWeekly()*predictedLength:
 						noPlanReasonCost += 1
 						continue
@@ -169,9 +177,9 @@ func ProgressOperations():
 				var methodQuality = 0
 				var highestQuality = 0
 				for m in theMethods:
-					methodQuality += WorldData.Methods[GameLogic.Operations[i].Type][m].Quality
-					if highestQuality < WorldData.Methods[GameLogic.Operations[i].Type][m].Quality:
-						highestQuality = WorldData.Methods[GameLogic.Operations[i].Type][m].Quality
+					methodQuality += WorldData.Methods[localType][m].Quality
+					if highestQuality < WorldData.Methods[localType][m].Quality:
+						highestQuality = WorldData.Methods[localType][m].Quality
 				methodQuality -= highestQuality
 				# this one is clever: average of highest quality method and all other
 				totalQuality += (highestQuality+(methodQuality*1.0/len(theMethods)))*0.8
@@ -202,10 +210,10 @@ func ProgressOperations():
 				var highestRisk = -1
 				var highestRiskName = ""  # for eventual investigation into failures
 				for m in theMethods:
-					methodRisk += WorldData.Methods[GameLogic.Operations[i].Type][m].Risk
-					if highestRisk < WorldData.Methods[GameLogic.Operations[i].Type][m].Risk:
-						highestRisk = WorldData.Methods[GameLogic.Operations[i].Type][m].Risk
-						highestRiskName = WorldData.Methods[GameLogic.Operations[i].Type][m].Name
+					methodRisk += WorldData.Methods[localType][m].Risk
+					if highestRisk < WorldData.Methods[localType][m].Risk:
+						highestRisk = WorldData.Methods[localType][m].Risk
+						highestRiskName = WorldData.Methods[localType][m].Name
 				methodRisk -= highestRisk
 				# this one is clever: average of highest risk method and all other
 				totalRisk += (highestRisk+(methodRisk*1.0/len(theMethods)))*0.7
@@ -234,12 +242,22 @@ func ProgressOperations():
 				if GameLogic.Operations[i].Type == OperationGenerator.Type.RECRUIT_SOURCE:
 					if totalRisk < 40: totalRisk = GameLogic.random.randi_range(35,45)
 				if totalRisk < 0: totalRisk = 0
+				if GameLogic.Operations[i].Type == OperationGenerator.Type.INTERCEPT: totalRisk += 15
 				var riskVsTime = totalRisk * predictedLength
 				var riskDesc = "no"
 				if riskVsTime >= 100: riskDesc = "extreme"
 				elif riskVsTime >= 70: riskDesc = "high"
 				elif riskVsTime >= 40: riskDesc = "medium"
 				elif riskVsTime >= 10: riskDesc = "low"
+				# hidden quality/risk change
+				if GameLogic.Operations[i].Type == OperationGenerator.Type.INTERCEPT:
+					for v in WorldData.Intercepts:
+						if v.Active == false: continue
+						if v.Op == i:
+							if v.Level < 0:
+								totalRisk += v.Level*(-1)
+							else:
+								totalQuality += v.Level*0.5
 				# saving and describing
 				var ifCovertTravel = false
 				if ifDiplomaticTravel == false: ifCovertTravel = true
@@ -248,9 +266,12 @@ func ProgressOperations():
 				elif ifCovertTravel == true: theDescription += "covert travel\n"
 				else: theDescription += "travel to embassy\n"
 				for m in theMethods:
-					theDescription += WorldData.Methods[GameLogic.Operations[i].Type][m].Name+"\n"
-				if GameLogic.Operations[i].Type == OperationGenerator.Type.RECRUIT_SOURCE:
+					theDescription += WorldData.Methods[localType][m].Name+"\n"
+				if localType == OperationGenerator.Type.RECRUIT_SOURCE:
 					theDescription += "approach and recruit selected asset\n"
+				var delayAllowed = true
+				if GameLogic.Operations[i].Type == OperationGenerator.Type.INTERCEPT or GameLogic.Operations[i].Type == OperationGenerator.Type.RESCUE:
+					delayAllowed = false
 				localPlans.append(
 					{
 						"OperationId": i,
@@ -266,6 +287,8 @@ func ProgressOperations():
 						"Description": theDescription,
 						"Covert": ifCovertTravel,
 						"Remote": ifAllRemote,
+						"RealType": localType,
+						"DelayAllowed": delayAllowed,
 					}
 				)
 			if len(localPlans) == 0:
@@ -282,6 +305,10 @@ func ProgressOperations():
 					noPlanReasons = "[u]" + PoolStringArray(noPlanReasonsArr.slice(0,len(noPlanReasonsArr)-2)).join(", ") + ", and " + noPlanReasonsArr[-1] + "[/u] to approach this target. "
 				else:
 					noPlanReasons = "[u]" + noPlanReasonsArr[0] + "[/u] to approach this target."
+				var secondButtonOn = true
+				if GameLogic.Operations[i].Type == OperationGenerator.Type.INTERCEPT:
+					noPlanReasons += "\n\nThe target will not be intercepted."
+					secondButtonOn = false
 				CallManager.CallQueue.append(
 					{
 						"Header": "Important Information",
@@ -293,7 +320,7 @@ func ProgressOperations():
 						"Show1": false,
 						"Show2": false,
 						"Show3": true,
-						"Show4": true,
+						"Show4": secondButtonOn,
 						"Text1": "",
 						"Text2": "",
 						"Text3": "Call off operation",
@@ -321,6 +348,8 @@ func ProgressOperations():
 					wholeContent = "After escape and return, officers designed new ground operation plans to be executed in "+localPlans[0].Country+ifHostile+"."+ifNoknowhow+"\n\n"
 				else:
 					wholeContent = "Officers designed following ground operation plans to be executed in "+localPlans[0].Country+ifHostile+"."+ifNoknowhow+"\n\n"
+				if GameLogic.Operations[i].Type == OperationGenerator.Type.INTERCEPT:
+					wholeContent = "For possible interception of members of " + WorldData.Organizations[GameLogic.Operations[i].Target].Name + ", officers designed following ground operation plans to be executed in "+localPlans[0].Country+ifHostile+"."+ifNoknowhow+"\n\n"
 				var sh2 = true
 				var sh3 = true
 				if len(localPlans) == 1:
@@ -341,6 +370,11 @@ func ProgressOperations():
 					wholeContent += "Following approaches were not available due to not enough intel gathered: " + PoolStringArray(notEnoughIntel).join(", ") + ".\n\n"
 				wholeContent += "Choose appropriate plan or wait for new plans."
 				noMoreThanOnePlan += 1
+				var fourthButton = "Return in the next week\nwith new plans"
+				var fourthFunc = "EmptyFunc"
+				if GameLogic.Operations[i].Type == OperationGenerator.Type.INTERCEPT:
+					fourthButton = "Call off operation"
+					fourthFunc = "ImplementCallOff"
 				# setting the call for player
 				CallManager.CallQueue.append(
 					{
@@ -355,15 +389,15 @@ func ProgressOperations():
 						"Text1": "Plan A",
 						"Text2": "Plan B",
 						"Text3": "Plan C",
-						"Text4": "Return in the next week\nwith new plans",
+						"Text4": fourthButton,
 						"Decision1Callback": funcref(GameLogic, "ImplementAbroad"),
 						"Decision1Argument": localPlans[0],
 						"Decision2Callback": funcref(GameLogic, "ImplementAbroad"),
 						"Decision2Argument": localPlans[1],
 						"Decision3Callback": funcref(GameLogic, "ImplementAbroad"),
 						"Decision3Argument": localPlans[2],
-						"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
-						"Decision4Argument": null,
+						"Decision4Callback": funcref(GameLogic, fourthFunc),
+						"Decision4Argument": i,
 						"EventualReturn": null,
 					}
 				)
@@ -376,7 +410,7 @@ func ProgressOperations():
 				if GameLogic.Operations[i].AbroadProgress > 0:  # check to avoid doubling events
 					#GameLogic.AddEvent(WorldData.Countries[GameLogic.Operations[i].Country].Name + " (" + GameLogic.Operations[i].Name + "): operation continues")
 					continuingOperations.append({"Country": WorldData.Countries[GameLogic.Operations[i].Country].Name, "Op": GameLogic.Operations[i].Name})
-					GameLogic.StaffTrust += 0.5
+					GameLogic.StaffTrust += 0.1
 			# second chance with help of a network
 			elif (WorldData.Countries[GameLogic.Operations[i].Country].Network - WorldData.Countries[GameLogic.Operations[i].Country].NetworkBlowup) > 0 and GameLogic.random.randi_range(0,GameLogic.Operations[i].AbroadPlan.Risk*2) < (WorldData.Countries[GameLogic.Operations[i].Country].Network - WorldData.Countries[GameLogic.Operations[i].Country].NetworkBlowup):
 				GameLogic.Operations[i].AbroadProgress -= GameLogic.Operations[i].AbroadRateOfProgress
@@ -404,7 +438,7 @@ func ProgressOperations():
 				# many shades of _something went wrong_
 				var whatHappened = GameLogic.random.randi_range(0, 100)
 				# first week - travel problems
-				if GameLogic.Operations[i].AbroadProgress == GameLogic.Operations[i].AbroadPlan.Length and GameLogic.Operations[i].AbroadPlan.Covert == true and whatHappened < WorldData.Countries[GameLogic.Operations[i].Country].CovertTravel:
+				if GameLogic.Operations[i].AbroadProgress == GameLogic.Operations[i].AbroadPlan.Length and GameLogic.Operations[i].AbroadPlan.Covert == true and whatHappened < WorldData.Countries[GameLogic.Operations[i].Country].CovertTravel and GameLogic.Operations[i].AbroadPlan.DelayAllowed == true:
 					GameLogic.AddEvent(WorldData.Countries[GameLogic.Operations[i].Country].Name + " (" + GameLogic.Operations[i].Name + "): covert travel did not succeed, officers were turned back at the border")
 					# internal debriefing
 					GameLogic.Operations[i].Stage = OperationGenerator.Stage.PLANNING_OPERATION
@@ -589,7 +623,7 @@ func ProgressOperations():
 							if GameLogic.Operations[i].Source == 1:
 								GameLogic.Trust -= GameLogic.random.randi_range(1,10)
 				# base p=25/100: escape
-				elif whatHappened <= 35:
+				elif whatHappened <= 35 and GameLogic.Operations[i].AbroadPlan.DelayAllowed == true:
 					GameLogic.AddEvent(WorldData.Countries[GameLogic.Operations[i].Country].Name + " (" + GameLogic.Operations[i].Name + "): officers were almost caught and had to flee to Homeland")
 					# internal debriefing
 					GameLogic.Operations[i].Stage = OperationGenerator.Stage.PLANNING_OPERATION
@@ -607,6 +641,9 @@ func ProgressOperations():
 					if (WorldData.Countries[0].PoliticsIntel+GameLogic.random.randi_range(-15,15)) > 50:
 						# changing only if government cares
 						GameLogic.Trust -= GameLogic.PriorityPublic*0.05
+				# last hope for no delay ops: just progress
+				elif GameLogic.Operations[i].AbroadPlan.DelayAllowed == false:
+					GameLogic.Operations[i].AbroadProgress -= GameLogic.Operations[i].AbroadRateOfProgress
 				# base p=65/100: slowdown
 				else:
 					GameLogic.AddEvent(WorldData.Countries[GameLogic.Operations[i].Country].Name + " (" + GameLogic.Operations[i].Name + "): counterintelligence slowed down operation")

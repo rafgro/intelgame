@@ -209,13 +209,18 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 	############################################################################
 	# operation intel, both discrete descriptions and logic mechanics
 	var antihomeland = ""
+	var activeOps = 0
 	if quality >= 5:
 		var alreadyAddedOpDesc = false
 		var ifGlobalKidnapping = false
 		var opDescriptions = []
+		var operationFocus = 0  # used to focus on operations if they're are suspected
+		if WorldData.Organizations[o].OffensiveClearance == true:  # shortcut for suspecting ops
+			operationFocus = 15
 		for z in range(0,len(WorldData.Organizations[o].OpsAgainstHomeland)):
 			if WorldData.Organizations[o].OpsAgainstHomeland[z].Active == false:
 				continue
+			activeOps += 1
 			# intelligence agency operations are different, have no expiration time etc
 			var ifCounterintel = false
 			if WorldData.Organizations[o].OpsAgainstHomeland[z].Type == WorldData.ExtOpType.COUNTERINTEL:
@@ -230,7 +235,7 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 			WorldData.Organizations[o].OpsAgainstHomeland[z].IntelValue += quality * ((100.0-WorldData.Organizations[o].OpsAgainstHomeland[z].Secrecy)*0.01)
 			var newIntel = WorldData.Organizations[o].OpsAgainstHomeland[z].IntelValue
 			# describing
-			if newIntel < 20:
+			if (newIntel+operationFocus) < 20:
 				var roundedD = WorldData.Organizations[o].OpsAgainstHomeland[z].FinishCounter/4 + GameLogic.random.randi_range(-2,2)
 				if roundedD < 1: roundedD = 1
 				if ifCounterintel == true:
@@ -240,7 +245,7 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 					WorldData.Organizations[o].KnownKidnapper = true
 				else:
 					opDescriptions.append("possible operation finishing in ~" + str(int(roundedD)) + " months")
-			elif newIntel < 40:
+			elif (newIntel+operationFocus) < 40:
 				if ifCounterintel == true:
 					var damage = "deep"
 					if WorldData.Organizations[o].OpsAgainstHomeland[z].Damage < 50: damage = "shallow"
@@ -259,7 +264,7 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 					var people = "few"
 					if WorldData.Organizations[o].OpsAgainstHomeland[z].Persons > 20: people = "dozens of"
 					opDescriptions.append("probable " + damage + " " + theType + ", with " + people + " people involved, finishing in ~" + str(int(roundedD)) + " weeks")
-			elif newIntel < 60:
+			elif (newIntel+operationFocus) < 60:
 				if ifCounterintel == true:
 					var damage = "deep"
 					if WorldData.Organizations[o].OpsAgainstHomeland[z].Damage < 20: damage = "shallow"
@@ -711,6 +716,62 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 			WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].IntelValue += GameLogic.random.randi_range(1,quality*0.2)
 		#WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].IntelDescription.push_front("[b]"+date+"[/b] discovered connection to " + WorldData.Organizations[o].Name)
 	############################################################################
+	# eventual meetings
+	var meetingInfo = ""
+	if WorldData.Organizations[o].Type == WorldData.OrgType.GENERALTERROR or WorldData.Organizations[o].Type == WorldData.OrgType.INTEL or WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE:
+		# meetings only matter if player can act on them
+		if GameLogic.OfficersInHQ > 0 and GameLogic.FreeFundsWeekly() > 10 and (quality > 40 or WorldData.Organizations[o].IntelValue > 20 or len(WorldData.Organizations[o].IntelSources) > 0):
+			var baseFrequency = 200  # very rare, 1 in 200
+			if WorldData.Organizations[o].OffensiveClearance == true: baseFrequency = 120
+			if activeOps > 0: baseFrequency = 24
+			if len(antihomeland) > 0: baseFrequency = 8
+			var where = GameLogic.random.randi_range(1, len(WorldData.Countries))
+			if !(where in WorldData.Organizations[o].Countries) and GameLogic.random.randi_range(0, baseFrequency) == 4:
+				var theLevel = GameLogic.random.randi_range(-85,100)
+				WorldData.Intercepts.append(WorldData.aNewIntercept(
+					{
+						"Country": where,
+						"Org": o,
+						"Level": theLevel,
+					}
+				))
+				OperationGenerator.NewOperation(0, o, where, OperationGenerator.Type.INTERCEPT)
+				GameLogic.Operations[-1].AnalyticalOfficers = GameLogic.OfficersInHQ
+				GameLogic.Operations[-1].Stage = OperationGenerator.Stage.PLANNING_OPERATION
+				GameLogic.Operations[-1].Started = GameLogic.GiveDateWithYear()
+				GameLogic.Operations[-1].Result = "ONGOING (PLANNING)"
+				WorldData.Intercepts[-1].Op = len(GameLogic.Operations)-1
+				if WorldData.Organizations[o].IntelIdentified < 1:
+					WorldData.Organizations[o].IntelIdentified = 1
+				var who = "some"
+				if abs(theLevel) > 50: who = "prominent"
+				CallManager.CallQueue.append(
+					{
+						"Header": "Important Information",
+						"Level": "Top Secret",
+						"Operation": "-//-",
+						"Content": "Intel gathered in " + WorldData.Organizations[o].Name + " suggests that " + who + " members of the organization will travel to " + WorldData.Countries[where].Name + " in the near future. Officers are designing possible plans for intercepting the target.",
+						"Show1": false,
+						"Show2": false,
+						"Show3": false,
+						"Show4": true,
+						"Text1": "",
+						"Text2": "",
+						"Text3": "",
+						"Text4": "Understood",
+						"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision1Argument": null,
+						"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision2Argument": null,
+						"Decision3Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision3Argument": null,
+						"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
+						"Decision4Argument": null,
+						"EventualReturn": null,
+					}
+				)
+				doesItEndWithCall = true
+	############################################################################
 	# wartime intel
 	if WorldData.Organizations[o].Type == WorldData.OrgType.GOVERNMENT or WorldData.Organizations[o].Type == WorldData.OrgType.INTEL or WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE:
 		var whichC = WorldData.Organizations[o].Countries[0]
@@ -736,13 +797,14 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 		var first = WorldData.Organizations[o].IntelDescription[0].right(18)
 		var second = antihomeland + "; " + discreteDesc
 		if first == second:
+			antihomeland = ""
 			discreteDesc = "no new intel"
 	############################################################################
 	# result
 	if len(antihomeland) > 0 and WorldData.Organizations[o].Type != WorldData.OrgType.COMPANY and WorldData.Organizations[o].Type != WorldData.OrgType.UNIVERSITY and WorldData.Organizations[o].Type != WorldData.OrgType.GOVERNMENT and WorldData.Organizations[o].Type != WorldData.OrgType.INTERNATIONAL:
-		WorldData.Organizations[o].IntelDescription.push_front("[b]"+date+"[/b] " + antihomeland + "; " + discreteDesc)
+		WorldData.Organizations[o].IntelDescription.push_front("[b]"+date+"[/b] " + meetingInfo + antihomeland + "; " + discreteDesc)
 	else:
-		WorldData.Organizations[o].IntelDescription.push_front("[b]"+date+"[/b] " + discreteDesc)
+		WorldData.Organizations[o].IntelDescription.push_front("[b]"+date+"[/b] " + meetingInfo + discreteDesc)
 	############################################################################
 	# backing up after deception
 	if credible == false:

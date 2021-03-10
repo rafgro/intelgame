@@ -263,6 +263,11 @@ func aNewWar(adict):
 
 var Wars = []
 
+func aNewIntercept(aDict):
+	return {"Active": true, "Country": aDict.Country, "Org": aDict.Org, "Level": aDict.Level, "Op": -1}
+
+var Intercepts = []
+
 # <countryA> phrase <countryB>
 var DiplomaticPhrasesPositive = ["'s officials visited ", " expressed will to improve relations with "]
 var DiplomaticPhrasesVeryPositive = [" signed a treaty with ", " held joint military exercise with ", " formed bilateral committee "]

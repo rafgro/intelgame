@@ -727,6 +727,12 @@ func NextWeek():
 			AttackTicker = upd
 		if WorldData.Organizations[AttackTickerOp.Org].OpsAgainstHomeland[AttackTickerOp.Op].Active == false:
 			AttackTicker = 0
+	# meetings recycling
+	for m in range(0, len(WorldData.Intercepts)):
+		if WorldData.Intercepts[m].Active == false: continue
+		if WorldData.Intercepts[m].Op < 0: continue
+		if Operations[WorldData.Intercepts[m].Op].Stage > 2:
+			WorldData.Intercepts[m].Active = false
 	# distance counters
 	DistWalkinCounter -= 1
 	DistGovopCounter -= 1
@@ -862,6 +868,8 @@ func ImplementAbroad(thePlan):
 		Operations[thePlan.OperationId].AbroadPlan = thePlan
 		Operations[thePlan.OperationId].AbroadRateOfProgress = 99.0/thePlan.Length
 		Operations[thePlan.OperationId].Result = "ONGOING (GROUND)"
+		if Operations[thePlan.OperationId].Type == OperationGenerator.Type.INTERCEPT:
+			Operations[thePlan.OperationId].Type = thePlan.RealType
 		# moving officers
 		OfficersInHQ -= thePlan.Officers
 		OfficersAbroad += thePlan.Officers

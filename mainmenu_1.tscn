@@ -83,18 +83,18 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="D" type="HBoxContainer" parent="C/V/M/R/CHeader/R"]
-margin_left = 273.0
-margin_right = 387.0
+margin_left = 224.0
+margin_right = 435.0
 margin_bottom = 34.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_constants/separation = 10
 
 [node name="Label" type="Label" parent="C/V/M/R/CHeader/R/D"]
-margin_right = 114.0
+margin_right = 211.0
 margin_bottom = 34.0
 custom_fonts/font = ExtResource( 1 )
-text = "Homeland"
+text = "Espionage Manager"
 __meta__ = {
 "_edit_use_anchors_": false
 }
