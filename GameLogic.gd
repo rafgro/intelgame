@@ -48,6 +48,7 @@ var PriorityOfflimitCountries = []  # ids of countries where gov doesn't want ta
 # Operations
 var Operations = []  # array of operation dictionaries
 var Directions = []  # array of simple operation-like dicts
+var PursuedDirections = 0  # internal counter of active directions
 var Investigations = []  # array of simple operation-like dicts
 # Internal logic variables, always describe them
 var AllWeeks = 0  # weeks passed for summaries and increasng difficulty
@@ -185,6 +186,10 @@ func NextWeek():
 		OnboardingIsOn(AllWeeks+1)
 		doesItEndWithCall = true
 	############################################################################
+	# patching eventual budget leaks
+	if BudgetOngoingOperations > 0 and PursuedOperations < 1 and PursuedDirections < 1:
+		BudgetOngoingOperations = 0
+	############################################################################
 	# date proceedings
 	# clearing u-tags in events
 	var i = 0
@@ -227,7 +232,8 @@ func NextWeek():
 	# hiring
 	var freeFund = FreeFundsWeekly()
 	if freeFund < 0: freeFund = 0
-	RecruitProgress += freeFund * (IntensityPercent(IntensityHiring)*0.01) / NewOfficerCost
+	if OfficersInHQ > 0:
+		RecruitProgress += freeFund * (IntensityPercent(IntensityHiring)*0.01) / NewOfficerCost
 	if RecruitProgress >= 1.0 and FreeFundsWeekly() >= 4 and YearlyHiring < 4:
 		# currently always plus one, sort of weekly onboarding limit
 		# in the future expand that to a loop
@@ -310,6 +316,7 @@ func NextWeek():
 			if Directions[t].LengthCounter <= 0:
 				# finish
 				Directions[t].Active = false
+				PursuedDirections -= 1
 				BudgetOngoingOperations -= Directions[t].MonthlyCost
 				OfficersInHQ += Directions[t].Officers
 				OfficersAbroad -= Directions[t].Officers
@@ -510,16 +517,16 @@ func NextWeek():
 				"Show4": true,
 				"Text1": "",
 				"Text2": "",
-				"Text3": "Reject intel",
-				"Text4": "Accept intel",
+				"Text3": "Accept intel",
+				"Text4": "Reject intel",
 				"Decision1Callback": funcref(GameLogic, "EmptyFunc"),
 				"Decision1Argument": null,
 				"Decision2Callback": funcref(GameLogic, "EmptyFunc"),
 				"Decision2Argument": null,
 				"Decision3Callback": funcref(GameLogic, "ImplementWalkin"),
-				"Decision3Argument": {"Choice":1},
+				"Decision3Argument": {"Choice":2,"Content":content,"Whichorg":whichOrg,"Quality":quality},
 				"Decision4Callback": funcref(GameLogic, "ImplementWalkin"),
-				"Decision4Argument": {"Choice":2,"Content":content,"Whichorg":whichOrg,"Quality":quality},
+				"Decision4Argument": {"Choice":1},
 			}
 		)
 		DistWalkinCounter = DistWalkinMin
@@ -642,6 +649,7 @@ func NextWeek():
 	############################################################################
 	# investigations
 	for e in range(0, len(Investigations)):
+		if OfficersInHQ < 1: continue
 		if Investigations[e].FinishCounter > 0:
 			Investigations[e].FinishCounter -= 1
 			if Investigations[e].FinishCounter == 0:
@@ -1104,6 +1112,7 @@ func ImplementDirectionDevelopment(aDict):
 					"Quality": quality,
 				}
 			)
+			PursuedDirections += 1
 			BudgetOngoingOperations += aDict.Cost * 4.0 / aDict.Length
 		########################################################################
 		if aDict.Choice != 5 and aDict.Choice != 8:

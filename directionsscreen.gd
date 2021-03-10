@@ -26,6 +26,16 @@ func _on_Return_pressed():
 
 func _on_Tabs_tab_changed(tab):
 	lastSelectedCategory = tab
+	# below - patch for one-item lists, not being able to select after tab change
+	if tab == 0:
+		if $C/M/R/Tabs/Hostile/List.get_item_count() > 0:
+			$C/M/R/Tabs/Hostile/List.emit_signal("item_selected", 0)
+	elif tab == 1:
+		if $C/M/R/Tabs/Friendly/List.get_item_count() > 0:
+			$C/M/R/Tabs/Friendly/List.emit_signal("item_selected", 0)
+	elif tab == 2:
+		if $C/M/R/Tabs/Neutral/List.get_item_count() > 0:
+			$C/M/R/Tabs/Neutral/List.emit_signal("item_selected", 0)
 
 func _on_List_item_selected(index):
 	if index >= len(mapOfCountries[lastSelectedCategory]): return false

@@ -110,7 +110,9 @@ func _on_Organizations_item_selected(index):
 		if len(WorldData.Organizations[o].IntelDescription) == 0:
 			desc += "No intel gathered."
 		else:
-			desc += WorldData.Organizations[o].IntelDescType + " | " + str(int(WorldData.Organizations[o].IntelIdentified)) + " identified members"
+			if len(WorldData.Organizations[o].IntelDescType) > 0:
+				desc += WorldData.Organizations[o].IntelDescType + " | "
+			desc += str(int(WorldData.Organizations[o].IntelIdentified)) + " identified members"
 			if len(WorldData.Organizations[o].IntelSources) > 0:
 				desc += " | " + str(len(WorldData.Organizations[o].IntelSources)) + " sources inside"
 			if WorldData.Organizations[o].IntelValue < -10: desc += "\nunknown precise location"
@@ -129,6 +131,7 @@ func _on_Organizations_item_selected(index):
 		if WorldData.Organizations[o].KnownKidnapper == true: $C/M/R/H/Offensive.text = "Rescue Op"
 		else: $C/M/R/H/Offensive.text = "Offensive Op"
 		if len(WorldData.Organizations[o].IntelSources) > 0: $C/M/R/H/Recruit.text = "Sources"
+		else: $C/M/R/H/Recruit.text = "Recruit Sources"
 
 func _on_Gather_pressed():
 	if lastSelectedOrg != -1:

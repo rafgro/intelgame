@@ -660,8 +660,9 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 			movDesc = ", probably not connected to terrorist organizations"
 			if len(WorldData.Organizations[o].ConnectedTo) > 0:
 				movDesc = ", potentially connected to at least one terrorist organization (" + WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].Name + ")"
-				WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].IntelValue += 5
-				WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].IntelDescription.push_front("[b]"+date+"[/b] discovered connection to " + WorldData.Organizations[o].Name)
+				if WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].IntelValue < 20:
+					WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].IntelValue += GameLogic.random.randi_range(1,5)
+				#WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].IntelDescription.push_front("[b]"+date+"[/b] discovered connection to " + WorldData.Organizations[o].Name)
 				if WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].Known == false:
 					WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].Known = true
 					GatherOnOrg(WorldData.Organizations[o].ConnectedTo[0], 5, date, ifHideCalls)
@@ -670,8 +671,9 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 			movDesc = ", probably not connected to terrorist organizations"
 			if len(WorldData.Organizations[o].ConnectedTo) > 0:
 				movDesc = ", connected to at least one terrorist organization (" + WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].Name + ")"
-				WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].IntelValue += 10
-				WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].IntelDescription.push_front("[b]"+date+"[/b] discovered connection to " + WorldData.Organizations[o].Name)
+				if WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].IntelValue < 40:
+					WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].IntelValue += GameLogic.random.randi_range(3,8)
+				#WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].IntelDescription.push_front("[b]"+date+"[/b] discovered connection to " + WorldData.Organizations[o].Name)
 				if WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].Known == false:
 					WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].Known = true
 					GatherOnOrg(WorldData.Organizations[o].ConnectedTo[0], 5, date, ifHideCalls)
@@ -680,14 +682,16 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 			movDesc = ", not connected to terrorist organizations"
 			if len(WorldData.Organizations[o].ConnectedTo) == 1:
 				movDesc = ", connected to a terrorist organization (" + WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].Name + ")"
-				WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].IntelValue += 20
-				WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].IntelDescription.push_front("[b]"+date+"[/b] discovered connection to " + WorldData.Organizations[o].Name)
+				if WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].IntelValue < 70:
+					WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].IntelValue += GameLogic.random.randi_range(4,10)
+				#WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].IntelDescription.push_front("[b]"+date+"[/b] discovered connection to " + WorldData.Organizations[o].Name)
 			elif len(WorldData.Organizations[o].ConnectedTo) > 1:
 				var orgNames = []
 				for y in WorldData.Organizations[o].ConnectedTo:
 					orgNames.append(WorldData.Organizations[y].Name)
-					WorldData.Organizations[y].IntelValue += 15
-					WorldData.Organizations[y].IntelDescription.push_front("[b]"+date+"[/b] discovered connection to " + WorldData.Organizations[o].Name)
+					if WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].IntelValue < 70:
+						WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].IntelValue += GameLogic.random.randi_range(3,8)
+					#WorldData.Organizations[y].IntelDescription.push_front("[b]"+date+"[/b] discovered connection to " + WorldData.Organizations[o].Name)
 					if WorldData.Organizations[y].Known == false:
 						WorldData.Organizations[y].Known = true
 						GatherOnOrg(y, 5, date, ifHideCalls)
@@ -697,8 +701,9 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 	# rare company connections
 	if len(WorldData.Organizations[o].ConnectedTo) > 0 and WorldData.Organizations[o].Type == WorldData.OrgType.COMPANY:
 		discreteDesc += ", connected to " + WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].Name
-		WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].IntelValue += quality*0.1
-		WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].IntelDescription.push_front("[b]"+date+"[/b] discovered connection to " + WorldData.Organizations[o].Name)
+		if WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].IntelValue < 40:
+			WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].IntelValue += GameLogic.random.randi_range(1,quality*0.2)
+		#WorldData.Organizations[WorldData.Organizations[o].ConnectedTo[0]].IntelDescription.push_front("[b]"+date+"[/b] discovered connection to " + WorldData.Organizations[o].Name)
 	############################################################################
 	# wartime intel
 	if WorldData.Organizations[o].Type == WorldData.OrgType.GOVERNMENT or WorldData.Organizations[o].Type == WorldData.OrgType.INTEL or WorldData.Organizations[o].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE:

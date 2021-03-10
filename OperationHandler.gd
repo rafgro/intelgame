@@ -56,6 +56,7 @@ func ProgressOperations():
 				var countMinLocal = 0
 				if GameLogic.Operations[i].Type == OperationGenerator.Type.OFFENSIVE:
 					# picking only one method at a time
+					noOfMethods = 1
 					while safetyCounter < 10:
 						safetyCounter += 1
 						var methodId = randi() % WorldData.Methods[mt].size()

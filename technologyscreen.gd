@@ -63,11 +63,11 @@ func _on_ItemList_item_selected(index):
 				desc += " (" + str(int(WorldData.Methods[t][m].OfficersRequired-GameLogic.ActiveOfficers)) + " officers more to enable)"
 			desc += "\nMinimal skill required: " + str(int(WorldData.Methods[t][m].MinimalSkill)) + "%"
 			if GameLogic.StaffSkill < WorldData.Methods[t][m].MinimalSkill:
-				desc += " (" + str(int(WorldData.Methods[t][m].MinimalSkill-GameLogic.StaffSkill)) + "% more required)\n"
+				desc += " (" + str(int(WorldData.Methods[t][m].MinimalSkill-GameLogic.StaffSkill)) + "% more required)"
 			if WorldData.Methods[t][m].MinimalTrust > 0 and WorldData.Methods[t][m].MinimalTrust > GameLogic.Trust:
-				desc += "Minimal government trust required: " + str(int(WorldData.Methods[t][m].MinimalTrust)) + "%"
-				desc += " (" + str(int(WorldData.Methods[t][m].MinimalTrust-GameLogic.Trust)) + "% more required)\n"
+				desc += "\nMinimal government trust required: " + str(int(WorldData.Methods[t][m].MinimalTrust)) + "%"
+				desc += " (" + str(int(WorldData.Methods[t][m].MinimalTrust-GameLogic.Trust)) + "% more required)"
 			if GameLogic.Technology < WorldData.Methods[t][m].MinimalTech:
-				desc += "Minimal technology level required: " + str(int(WorldData.Methods[t][m].MinimalTech)) + "%"
-				desc += " (" + str(int(WorldData.Methods[t][m].MinimalTech-GameLogic.Technology)) + "% more required)\n"
+				desc += "\nMinimal technology level required: " + str(int(WorldData.Methods[t][m].MinimalTech)) + "%"
+				desc += " (" + str(int(WorldData.Methods[t][m].MinimalTech-GameLogic.Technology)) + "% more required)"
 	$C/M/R/Details.text = desc
