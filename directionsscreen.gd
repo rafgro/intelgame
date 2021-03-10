@@ -65,7 +65,7 @@ func _on_List_item_selected(index):
 	elif WorldData.Countries[c].CovertTravel < 70: desc += "covert travel available"
 	else: desc += "covert travel always available"
 	if WorldData.Countries[c].Network > 0:
-		desc += "\n[b]Network of " + str(int(WorldData.Countries[c].Network)) + " local agents present[/b] (supports operations when possible)"
+		desc += "\n[b]Network of " + str(int(WorldData.Countries[c].Network)) + " local agents present[/b] (supports operations)"
 	if WorldData.Countries[c].Station > 0:
 		desc += "\n[b]Intelligence station with " + str(int(WorldData.Countries[c].Station)) + " officer(s) present[/b] (regularly gathers intel on all local organizations)"
 	desc += "\nAverage travel cost per officer: €" + str(int(WorldData.Countries[c].TravelCost)) + ",000\n"
@@ -178,6 +178,7 @@ func _on_Develop_pressed():
 				"Decision3Argument": {"Choice":3, "Cost": planCcost, "Length": planClength, "Officers": planCofficers, "Country": lastSelectedCountry},
 				"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 				"Decision4Argument": null,
+				"EventualReturn": "res://directions.tscn",
 			}
 		)
 		get_tree().change_scene("res://call.tscn")
@@ -191,6 +192,7 @@ func _on_Network_pressed():
 		if WorldData.Countries[lastSelectedCountry].Network > 0: content = "Expanding"
 		var planShow = true
 		var planAvailability = ""
+		var fundPercent = (planCost*1.0/planLength) / GameLogic.FreeFundsWeeklyWithoutOngoing() * 100
 		if (planCost*1.0/planLength) > GameLogic.FreeFundsWeeklyWithoutOngoing():
 			planShow = false
 			planAvailability = " Currently, it is financially unavailable."
@@ -199,7 +201,7 @@ func _on_Network_pressed():
 			planAvailability = " In this year, Bureau cannot work anymore on establishing or expanding network."
 		else:
 			planAvailability = " Remember that Bureau can work only on two networks in a year."
-		content += " local agent network in " + WorldData.Countries[lastSelectedCountry].Name + " will require €" + str(int(planCost)) + ",000 and " + str(int(planOfficers)) + " officers. The operation will last " + str(int(planLength)) + " weeks."+planAvailability+"\n\nNote that its effects are strictly correlated with familiarity with the country."
+		content += " local agent network in " + WorldData.Countries[lastSelectedCountry].Name + " will require €" + str(int(planCost)) + ",000 (" + (str(int(fundPercent))) + "% of free funds) and " + str(int(planOfficers)) + " officers. The operation will last " + str(int(planLength)) + " weeks."+planAvailability+"\n\nNote that its effects are strictly correlated with familiarity with the country."
 		if GameLogic.OfficersInHQ < 1:
 			planShow = false
 			content = "Currently, there are no officers to execute this operation."
@@ -226,6 +228,7 @@ func _on_Network_pressed():
 				"Decision3Argument": {"Choice":4, "Cost": planCost, "Length": planLength, "Officers": planOfficers, "Country": lastSelectedCountry},
 				"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 				"Decision4Argument": null,
+				"EventualReturn": "res://directions.tscn",
 			}
 		)
 		get_tree().change_scene("res://call.tscn")
@@ -244,12 +247,13 @@ func _on_Station_pressed():
 			whatHappens = "The new station officer will start work"
 		var planShow = true
 		var planAvailability = ""
+		var fundPercent = (planCost*1.0/planLength) / GameLogic.FreeFundsWeeklyWithoutOngoing() * 100
 		if (planCost*1.0/planLength) > GameLogic.FreeFundsWeeklyWithoutOngoing():
 			planShow = false
 			planAvailability = " Currently, it is financially unavailable."
 		else:
 			planAvailability = ""
-		content += " intelligence station in " + WorldData.Countries[lastSelectedCountry].Name + " will require €" + str(int(planCost)) + ",000 and will take out 1 officer from HQ to the station, permanently. " + whatHappens + " in " + str(int(planLength)) + " weeks."+planAvailability
+		content += " intelligence station in " + WorldData.Countries[lastSelectedCountry].Name + " will require €" + str(int(planCost)) + ",000 (" + (str(int(fundPercent))) + "% of free funds) and will take out 1 officer from HQ to the station, permanently. " + whatHappens + " in " + str(int(planLength)) + " weeks."+planAvailability
 		if GameLogic.OfficersInHQ < 1:
 			planShow = false
 			content = "Currently, there are no officers to execute this operation."
@@ -276,6 +280,7 @@ func _on_Station_pressed():
 				"Decision3Argument": {"Choice":5, "Cost": planCost, "Length": planLength, "Officers": 1, "Country": lastSelectedCountry},
 				"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 				"Decision4Argument": null,
+				"EventualReturn": "res://directions.tscn",
 			}
 		)
 		get_tree().change_scene("res://call.tscn")

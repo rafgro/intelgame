@@ -115,8 +115,8 @@ func _on_Organizations_item_selected(index):
 			desc += str(int(WorldData.Organizations[o].IntelIdentified)) + " identified members"
 			if len(WorldData.Organizations[o].IntelSources) > 0:
 				desc += " | " + str(len(WorldData.Organizations[o].IntelSources)) + " sources inside"
-			if WorldData.Organizations[o].IntelValue < -10: desc += "\nunknown precise location"
-			elif WorldData.Organizations[o].IntelValue < 0: desc += "\nlow intel awareness"
+			if WorldData.Organizations[o].IntelValue < -5: desc += "\nBureau does not know precise location"
+			elif WorldData.Organizations[o].IntelValue < 5: desc += "\nBureau has very low intel awareness"
 			var orgCountries = []
 			for c in WorldData.Organizations[o].Countries:
 				orgCountries.append(WorldData.Countries[c].Name)
@@ -188,6 +188,7 @@ func _on_Recruit_pressed():
 					"Decision3Argument": {"Choice":8, "Cost": planCost, "Length": 2, "Officers": 1, "Country": WorldData.Organizations[lastSelectedOrg].Countries[0], "Org": lastSelectedOrg},
 					"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 					"Decision4Argument": null,
+					"EventualReturn": "res://gatheredintel.tscn",
 				}
 			)
 			get_tree().change_scene("res://call.tscn")

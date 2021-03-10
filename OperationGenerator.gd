@@ -71,6 +71,7 @@ func NewOperation(source, againstOrg, countryId, whatType):
 			"AnalyticalOfficers": 0,
 			"OperationalOfficers": 0,
 			"Stage": Stage.NOT_STARTED,
+			"PlanningAgain": false,  # for better display, shows additional things if true
 			"AbroadPlan": null,
 			"AbroadRateOfProgress": 10,
 			"AbroadProgress": 100,

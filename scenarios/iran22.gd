@@ -383,5 +383,6 @@ func StartAll():
 			"Decision3Argument": null,
 			"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 			"Decision4Argument": null,
+			"EventualReturn": null,
 		}
 	)

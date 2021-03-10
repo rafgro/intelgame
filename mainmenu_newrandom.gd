@@ -55,6 +55,7 @@ func _on_Start_pressed():
 			"Decision3Argument": null,
 			"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 			"Decision4Argument": null,
+			"EventualReturn": null,
 		}
 	)
 	if $C/V/M/R/Onboarding.pressed == true: GameLogic.OnboardingIsOn(0)

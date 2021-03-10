@@ -2,9 +2,12 @@ extends Control
 
 func _ready():
 	# general stats
-	$C/M/R/MonthlyBudget.text = "Monthly budget: €" + str(int(GameLogic.BudgetFull)) \
-		+ ",000 (€" + str(int(GameLogic.FreeFundsWeekly()*4)) + "k free for new operations)" \
-		+ "\nCurrent cost of ongoing operations: €" + str(int(GameLogic.BudgetOngoingOperations))+ ",000"
+	var budgetDesc = "Monthly budget: €" + str(int(GameLogic.BudgetFull)) + ",000\nMaintenance costs: €" + str(int(GameLogic.BudgetFull - GameLogic.BudgetOngoingOperations - GameLogic.FreeFundsWeekly()*4)) + ",000\nCurrent cost of ongoing operations: €" + str(int(GameLogic.BudgetOngoingOperations))+ ",000"
+	if GameLogic.FreeFundsWeekly()*4 >= 0:
+		budgetDesc += "\nAvailable for new operations: €" + str(int(GameLogic.FreeFundsWeekly()*4)) + ",000"
+	else:
+		budgetDesc += "\nAvailable for new operations: none"
+	$C/M/R/MonthlyBudget.text = budgetDesc
 	# sliders
 	$C/M/R/CHiring/HiringLabel.text = "Hiring intensity: " + str(int(GameLogic.IntensityPercent(GameLogic.IntensityHiring))) + "%"
 	$C/M/R/CHiring/HiringSlider.max_value = 100

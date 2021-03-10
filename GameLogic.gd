@@ -395,6 +395,7 @@ func NextWeek():
 								"Decision3Argument": {"Org":whichOrg, "Source":suspectedSource, "InvestigationDetails": investigationDetails},
 								"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 								"Decision4Argument": null,
+								"EventualReturn": null,
 							}
 						)
 						doesItEndWithCall = true
@@ -482,6 +483,7 @@ func NextWeek():
 					"Decision3Argument": null,
 					"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 					"Decision4Argument": null,
+					"EventualReturn": null,
 				}
 			)
 			DistGovopCounter = DistGovopMin
@@ -527,6 +529,7 @@ func NextWeek():
 				"Decision3Argument": {"Choice":2,"Content":content,"Whichorg":whichOrg,"Quality":quality},
 				"Decision4Callback": funcref(GameLogic, "ImplementWalkin"),
 				"Decision4Argument": {"Choice":1},
+				"EventualReturn": null,
 			}
 		)
 		DistWalkinCounter = DistWalkinMin
@@ -557,6 +560,7 @@ func NextWeek():
 				"Decision3Argument": null,
 				"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 				"Decision4Argument": null,
+				"EventualReturn": null,
 			}
 		)
 		doesItEndWithCall = true
@@ -614,6 +618,7 @@ func NextWeek():
 						"Decision3Argument": null,
 						"Decision4Callback": funcref(GameLogic, "FinalQuit"),
 						"Decision4Argument": null,
+						"EventualReturn": null,
 					}
 				)
 				doesItEndWithCall = true
@@ -643,6 +648,7 @@ func NextWeek():
 						"Decision3Argument": null,
 						"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 						"Decision4Argument": null,
+						"EventualReturn": null,
 					}
 				)
 				doesItEndWithCall = true
@@ -703,6 +709,7 @@ func NextWeek():
 						"Decision3Argument": null,
 						"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 						"Decision4Argument": null,
+						"EventualReturn": null,
 					}
 				)
 				doesItEndWithCall = true
@@ -862,8 +869,8 @@ func ImplementAbroad(thePlan):
 		Operations[thePlan.OperationId].OperationalOfficers += thePlan.Officers
 		# moving budget
 		BudgetOngoingOperations += thePlan.Cost
-		#print('DEBUG:')
-		#print(Operations[thePlan.OperationId].AbroadPlan)
+	else:
+		AddEvent(Operations[thePlan.OperationId].Name + ": not enough officers to implement the plan")
 
 func ImplementCallOff(i):
 	Operations[i].Stage = OperationGenerator.Stage.CALLED_OFF
@@ -973,6 +980,7 @@ func ImplementOfficerRescue(adictionary):
 				"Decision3Argument": null,
 				"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 				"Decision4Argument": null,
+				"EventualReturn": null,
 			}
 		)
 
@@ -1008,6 +1016,7 @@ func ImplementWalkin(adict):
 				"Decision3Argument": null,
 				"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 				"Decision4Argument": null,
+				"EventualReturn": null,
 			}
 		)
 		var invDetail = "Investigation team concluded that intel provided by the source is highly credible and advances our knowledge about " + WorldData.Organizations[adict.Whichorg].Name + "."
@@ -1219,6 +1228,7 @@ func OnboardingIsOn(which):
 			"Decision3Argument": null,
 			"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 			"Decision4Argument": null,
+			"EventualReturn": null,
 		}
 	)
 

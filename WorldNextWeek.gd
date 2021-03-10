@@ -61,6 +61,7 @@ func Execute(past):
 						"Decision3Argument": null,
 						"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 						"Decision4Argument": null,
+						"EventualReturn": null,
 					}
 				)
 				doesItEndWithCall = true
@@ -244,6 +245,7 @@ func Execute(past):
 						"Decision3Argument": null,
 						"Decision4Callback": funcref(GameLogic, "FinalQuit"),
 						"Decision4Argument": null,
+						"EventualReturn": null,
 					}
 				)
 				doesItEndWithCall = true
@@ -305,6 +307,7 @@ func Execute(past):
 						"Decision3Argument": null,
 						"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 						"Decision4Argument": null,
+						"EventualReturn": null,
 					}
 				)
 				doesItEndWithCall = true
@@ -429,6 +432,7 @@ func Execute(past):
 								"Decision3Argument": null,
 								"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 								"Decision4Argument": null,
+								"EventualReturn": null,
 							}
 						)
 						doesItEndWithCall = true
@@ -486,6 +490,7 @@ func Execute(past):
 								"Decision3Argument": null,
 								"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 								"Decision4Argument": null,
+								"EventualReturn": null,
 							}
 						)
 						doesItEndWithCall = true
@@ -688,6 +693,7 @@ func Execute(past):
 							"Decision3Argument": null,
 							"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 							"Decision4Argument": null,
+							"EventualReturn": null,
 						}
 					)
 					GameLogic.AddEvent("Bureau prevented a terrorist attack on Homeland")
@@ -919,6 +925,7 @@ func Execute(past):
 						"Decision3Argument": null,
 						"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 						"Decision4Argument": null,
+						"EventualReturn": null,
 					}
 				)
 				if casualties > 1:
@@ -1034,6 +1041,7 @@ func Execute(past):
 								"Decision3Argument": null,
 								"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 								"Decision4Argument": null,
+								"EventualReturn": null,
 							}
 						)
 						GameLogic.AddEvent("Bureau tasked with rescue attempt in " + where)
@@ -1070,6 +1078,7 @@ func Execute(past):
 								"Decision3Argument": null,
 								"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 								"Decision4Argument": null,
+								"EventualReturn": null,
 							}
 						)
 						GameLogic.AddEvent("Bureau detected possibility of terrorist attack in "+str(opLength)+" weeks")
@@ -1162,6 +1171,7 @@ func Execute(past):
 							"Decision3Argument": {"Org":w,"Op":whichOp},
 							"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 							"Decision4Argument": null,
+							"EventualReturn": null,
 						}
 					)
 					doesItEndWithCall = true
@@ -1257,6 +1267,7 @@ func Execute(past):
 							"Decision3Argument": {"Org":w, "Source":whichS, "InvestigationDetails": investigationDetails},
 							"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 							"Decision4Argument": null,
+							"EventualReturn": null,
 						}
 					)
 					doesItEndWithCall = true

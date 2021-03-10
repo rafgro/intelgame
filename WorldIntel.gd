@@ -209,7 +209,8 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 	############################################################################
 	# operation intel, both discrete descriptions and logic mechanics
 	var antihomeland = ""
-	if quality >= 10:
+	if quality >= 5:
+		var alreadyAddedOpDesc = false
 		var ifGlobalKidnapping = false
 		var opDescriptions = []
 		for z in range(0,len(WorldData.Organizations[o].OpsAgainstHomeland)):
@@ -341,23 +342,26 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 						"Decision3Argument": null,
 						"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 						"Decision4Argument": null,
+						"EventualReturn": null,
 					}
 				)
 				if WorldData.Organizations[o].OffensiveClearance == false:
 					WorldData.Organizations[o].OffensiveClearance = true
 					GameLogic.AddEvent("Bureau received offensive clearance for targeting " + WorldData.Organizations[o].Name)
+				antihomeland = "[u]executes operations against Homeland[/u]  ([u]" + opDescriptions[0] + "[/u])"
+				alreadyAddedOpDesc = true
 				doesItEndWithCall = true
 		# op description assembly
 		if ifGlobalKidnapping == true:
 			antihomeland = "[u]" + opDescriptions[randi() % opDescriptions.size()] + "[/u]"
-		elif quality < 20:
+		elif quality < 10 and alreadyAddedOpDesc == false:
 			antihomeland = "lack of knowledge about activity against Homeland"
 			if WorldData.Organizations[o].ActiveOpsAgainstHomeland > 0:
 				if GameLogic.random.randi_range(1,4) == 2:
 					antihomeland = "[u]possible suspicious activity towards Homeland[/u]"
 					if len(opDescriptions) > 0:
 						antihomeland += " ([u]" + opDescriptions[randi() % opDescriptions.size()] + "[/u])"
-		elif quality < 40:
+		elif quality < 20 and alreadyAddedOpDesc == false:
 			antihomeland = "probably no operations against Homeland"
 			if WorldData.Organizations[o].ActiveOpsAgainstHomeland > 0:
 				if GameLogic.random.randi_range(1,2) == 1:
@@ -367,7 +371,7 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 					if WorldData.Organizations[o].OffensiveClearance == false:
 						WorldData.Organizations[o].OffensiveClearance = true
 						GameLogic.AddEvent("Bureau received offensive clearance for targeting " + WorldData.Organizations[o].Name)
-		elif quality < 60:
+		elif quality < 40 and alreadyAddedOpDesc == false:
 			antihomeland = "no operations against Homeland"
 			if WorldData.Organizations[o].ActiveOpsAgainstHomeland > 0:
 				antihomeland = "[u]executes operations against Homeland[/u]"
@@ -375,7 +379,7 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 				if WorldData.Organizations[o].OffensiveClearance == false:
 					WorldData.Organizations[o].OffensiveClearance = true
 					GameLogic.AddEvent("Bureau received offensive clearance for targeting " + WorldData.Organizations[o].Name)
-		else:
+		elif quality >= 40 and alreadyAddedOpDesc == false:
 			antihomeland = "no operations against Homeland"
 			if WorldData.Organizations[o].ActiveOpsAgainstHomeland > 0:
 				antihomeland = "[u]executes " +str(WorldData.Organizations[o].ActiveOpsAgainstHomeland)+ " operations against Homeland[/u]"
@@ -540,6 +544,7 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 					"Decision3Argument": null,
 					"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 					"Decision4Argument": null,
+					"EventualReturn": null,
 				}
 			)
 			doesItEndWithCall = true
@@ -642,6 +647,7 @@ func GatherOnOrg(o, quality, date, ifHideCalls):
 						"Decision3Argument": null,
 						"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 						"Decision4Argument": null,
+						"EventualReturn": null,
 					}
 				)
 				WorldData.Organizations[o].OffensiveClearance = true

@@ -4,6 +4,7 @@ func ProgressOperations():
 	var doesItEndWithCall = false
 	var i = 0
 	var continuingOperations = []  # array for op descriptions, to provide nice display
+	var noMoreThanOnePlan = 0  # officers can plan only one operation per week
 	while i < len(GameLogic.Operations):
 		GameLogic.Operations[i].WeeksPassed += 1
 		###########################################################################
@@ -17,7 +18,7 @@ func ProgressOperations():
 				GameLogic.Operations[i].Result = "ONGOING (PLANNING)"
 		#  used elif on purpose here: at least one week break after starting
 		###########################################################################
-		elif GameLogic.Operations[i].Stage == OperationGenerator.Stage.PLANNING_OPERATION and GameLogic.OfficersInHQ > 0:
+		elif GameLogic.Operations[i].Stage == OperationGenerator.Stage.PLANNING_OPERATION and GameLogic.OfficersInHQ > 0 and noMoreThanOnePlan < 1:
 			# designing possible approaches, three plus waiting another week
 			# differring by parameters: officers on the ground, cost of methods,
 			# quality of operation, risk of failure
@@ -230,6 +231,8 @@ func ProgressOperations():
 					if WorldData.Countries[whichCountry].Network > 40: networkSupport = 20
 					if WorldData.Countries[whichCountry].Network > 10: networkSupport = 10
 					totalRisk -= networkSupport
+				if GameLogic.Operations[i].Type == OperationGenerator.Type.RECRUIT_SOURCE:
+					if totalRisk < 40: totalRisk = GameLogic.random.randi_range(35,45)
 				if totalRisk < 0: totalRisk = 0
 				var riskVsTime = totalRisk * predictedLength
 				var riskDesc = "no"
@@ -253,7 +256,7 @@ func ProgressOperations():
 						"OperationId": i,
 						"Country": WorldData.Countries[GameLogic.Operations[i].Country].Name,
 						"Officers": usedOfficers,
-						"Cost": totalCost,
+						"Cost": totalCost * 4.0 / predictedLength,  # monthly!
 						"Length": predictedLength,
 						"Risk": totalRisk,
 						"Quality": totalQuality,
@@ -303,6 +306,7 @@ func ProgressOperations():
 						"Decision3Argument": i,
 						"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 						"Decision4Argument": null,
+						"EventualReturn": null,
 					}
 				)
 			else:
@@ -312,8 +316,11 @@ func ProgressOperations():
 				var ifNoknowhow = ""
 				if noPlanReasonLocal > 1:
 					ifNoknowhow = " Note that planning was constrained by unfamiliarity with local language and customs."
-				var wholeContent = "Officers designed following ground operation plans " \
-					+ "to be executed in "+localPlans[0].Country+ifHostile+"."+ifNoknowhow+"\n\n"
+				var wholeContent = ""
+				if GameLogic.Operations[i].PlanningAgain == true:
+					wholeContent = "After escape and return, officers designed new ground operation plans to be executed in "+localPlans[0].Country+ifHostile+"."+ifNoknowhow+"\n\n"
+				else:
+					wholeContent = "Officers designed following ground operation plans to be executed in "+localPlans[0].Country+ifHostile+"."+ifNoknowhow+"\n\n"
 				var sh2 = true
 				var sh3 = true
 				if len(localPlans) == 1:
@@ -333,6 +340,7 @@ func ProgressOperations():
 				if len(notEnoughIntel) > 0:
 					wholeContent += "Following approaches were not available due to not enough intel gathered: " + PoolStringArray(notEnoughIntel).join(", ") + ".\n\n"
 				wholeContent += "Choose appropriate plan or wait for new plans."
+				noMoreThanOnePlan += 1
 				# setting the call for player
 				CallManager.CallQueue.append(
 					{
@@ -356,6 +364,7 @@ func ProgressOperations():
 						"Decision3Argument": localPlans[2],
 						"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 						"Decision4Argument": null,
+						"EventualReturn": null,
 					}
 				)
 			doesItEndWithCall = true
@@ -465,7 +474,9 @@ func ProgressOperations():
 						GameLogic.StaffTrust *= 0.2
 						GameLogic.StaffSkill -= GameLogic.StaffSkill*staffPerecent
 						GameLogic.StaffExperience -= GameLogic.StaffExperience*staffPerecent
-						GameLogic.Trust *= (100-GameLogic.PriorityPublic)*0.01
+						var trustLoss = GameLogic.Trust*(100-GameLogic.PriorityPublic)*0.01
+						if trustLoss < -45: trustLoss = -45
+						GameLogic.Trust -= trustLoss
 						# diplomatic event
 						var ifDipl = ""
 						if (WorldData.Organizations[which].Type == WorldData.OrgType.GOVERNMENT or WorldData.Organizations[which].Type == WorldData.OrgType.INTEL or WorldData.Organizations[which].Type == WorldData.OrgType.UNIVERSITY or WorldData.Organizations[which].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE) and WorldData.Countries[GameLogic.Operations[i].Country].InStateOfWar == false:
@@ -506,6 +517,7 @@ func ProgressOperations():
 								"Decision3Argument": null,
 								"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 								"Decision4Argument": null,
+								"EventualReturn": null,
 							}
 						)
 						doesItEndWithCall = true
@@ -569,6 +581,7 @@ func ProgressOperations():
 									"Decision3Argument": {"Operation":i, "Choice":3},
 									"Decision4Callback": funcref(GameLogic, "ImplementOfficerRescue"),
 									"Decision4Argument": {"Operation":i, "Choice":4},
+									"EventualReturn": null,
 								}
 							)
 							doesItEndWithCall = true
@@ -585,6 +598,7 @@ func ProgressOperations():
 					GameLogic.BudgetOngoingOperations -= GameLogic.Operations[i].AbroadPlan.Cost
 					GameLogic.Operations[i].AbroadPlan = null
 					GameLogic.Operations[i].Result = "ONGOING (PLANNING)"
+					GameLogic.Operations[i].PlanningAgain = true
 					# world taking notice of our failure
 					WorldData.Organizations[GameLogic.Operations[i].Target].Counterintelligence *= 1.02
 					GameLogic.StaffTrust -= 5
@@ -669,7 +683,6 @@ func ProgressOperations():
 					if govFeedback < -5: govFeedback = GameLogic.random.randi_range(-5,-7)
 					if govFeedback > 5: govFeedback = GameLogic.random.randi_range(5,7)
 					govFeedback = int(govFeedback)
-					if govFeedback < 1 and govFeedback > -1: govFeedback = -1
 					var whichO = GameLogic.Operations[i].Target
 					# special gov feedbacks
 					if WorldData.Organizations[whichO].Type == WorldData.OrgType.COMPANY or WorldData.Organizations[whichO].Type == WorldData.OrgType.UNIVERSITY:
@@ -684,6 +697,8 @@ func ProgressOperations():
 						govFeedback *= (GameLogic.PriorityGovernments*0.012)
 					elif WorldData.Organizations[whichO].Type == WorldData.OrgType.UNIVERSITY_OFFENSIVE:
 						govFeedback *= (GameLogic.PriorityWMD*0.01)
+					if govFeedback < -45: govFeedback = -45
+					if govFeedback < 1 and govFeedback > -1: govFeedback = -1
 					GameLogic.Trust += govFeedback
 					var govFeedbackDesc = "negatively rated its execution. Bureau lost "+str(int((-1)*govFeedback))+"% of trust."
 					GameLogic.Operations[i].Result = "COMPLETED, negative feedback"
@@ -721,6 +736,7 @@ func ProgressOperations():
 						"Decision3Argument": null,
 						"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 						"Decision4Argument": null,
+						"EventualReturn": null,
 					}
 				)
 				doesItEndWithCall = true
@@ -834,6 +850,8 @@ func ProgressOperations():
 					# ad hoc error correction
 					if sourceLevel <= 0 and govFeedback > 0:
 						govFeedback = GameLogic.random.randi_range(-10,-5)
+					if govFeedback < -45: govFeedback = -45
+					if govFeedback < 1 and govFeedback > -1: govFeedback = -1
 					GameLogic.Trust += govFeedback
 					var govFeedbackDesc = "Officers failed at acquiring a new source in an organization indicated by the government. Bureau lost "+str(int((-1)*govFeedback))+"% of trust."
 					GameLogic.Operations[i].Result = "COMPLETED, negative feedback"
@@ -875,6 +893,7 @@ func ProgressOperations():
 						"Decision3Argument": null,
 						"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 						"Decision4Argument": null,
+						"EventualReturn": null,
 					}
 				)
 				doesItEndWithCall = true
@@ -1115,6 +1134,7 @@ func ProgressOperations():
 					govFeedback = int(govFeedback)
 					if len(attributionDesc) > 1: govFeedback -= 30
 					if (GameLogic.Trust-govFeedback) < 0: govFeedback = (-1)*GameLogic.Trust
+					if govFeedback < -45: govFeedback = -45
 					GameLogic.Trust += govFeedback
 					var govFeedbackDesc = "Officers failed at damaging an organization indicated by the government. Bureau lost "+str(int((-1)*govFeedback))+"% of trust. "
 					GameLogic.Operations[i].Result = "COMPLETED, negative feedback"
@@ -1156,6 +1176,7 @@ func ProgressOperations():
 						"Decision3Argument": null,
 						"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 						"Decision4Argument": null,
+						"EventualReturn": null,
 					}
 				)
 				doesItEndWithCall = true
@@ -1219,6 +1240,7 @@ func ProgressOperations():
 							"Decision3Argument": null,
 							"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 							"Decision4Argument": null,
+							"EventualReturn": null,
 						}
 					)
 					doesItEndWithCall = true
@@ -1254,6 +1276,7 @@ func ProgressOperations():
 							"Decision3Argument": null,
 							"Decision4Callback": funcref(GameLogic, "EmptyFunc"),
 							"Decision4Argument": null,
+							"EventualReturn": null,
 						}
 					)
 					doesItEndWithCall = true
